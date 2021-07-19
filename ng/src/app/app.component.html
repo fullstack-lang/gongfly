@@ -1,0 +1,80 @@
+<as-split *ngIf="view==carto" direction="vertical">
+    <as-split-area size="05">
+        <h4>&nbsp;</h4>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <mat-radio-group aria-label="Select an option" [(ngModel)]="view">
+            <mat-radio-button *ngFor="let view of views" [value]="view">
+                {{view}}&nbsp;&nbsp;&nbsp;
+            </mat-radio-button>
+        </mat-radio-group>
+    </as-split-area>
+    <as-split-area size="06">
+        <lib-engine-control simulationTitle="Gong Fly!" [engineUpdatedCallbackFunction]="engineUpdatedCallbackFunction">
+        </lib-engine-control>
+    </as-split-area>
+    <as-split-area size="89">
+        <app-cartoatc></app-cartoatc>
+    </as-split-area>
+</as-split>
+
+
+<as-split *ngIf="view==data" direction="vertical">
+    <as-split-area size="05">
+        <h4>&nbsp;</h4>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <mat-radio-group aria-label="Select an option" [(ngModel)]="view">
+            <mat-radio-button *ngFor="let view of views" [value]="view">
+                {{view}}&nbsp;&nbsp;&nbsp;
+            </mat-radio-button>
+        </mat-radio-group>
+    </as-split-area>
+    <as-split-area size="95">
+        <app-gongfly-splitter></app-gongfly-splitter>
+    </as-split-area>
+</as-split>
+
+<as-split *ngIf="view==leaflet" direction="vertical">
+    <as-split-area size="05">
+        <h4>&nbsp;</h4>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <mat-radio-group aria-label="Select an option" [(ngModel)]="view">
+            <mat-radio-button *ngFor="let view of views" [value]="view">
+                {{view}}&nbsp;&nbsp;&nbsp;
+            </mat-radio-button>
+        </mat-radio-group>
+    </as-split-area>
+    <as-split-area size="95">
+        <app-gongleaflet-splitter></app-gongleaflet-splitter>
+    </as-split-area>
+</as-split>
+
+<as-split *ngIf="view==sim" direction="vertical">
+    <as-split-area size="05">
+        <h4>&nbsp;</h4>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <mat-radio-group aria-label="Select an option" [(ngModel)]="view">
+            <mat-radio-button *ngFor="let view of views" [value]="view">
+                {{view}}&nbsp;&nbsp;&nbsp;
+            </mat-radio-button>
+        </mat-radio-group>
+    </as-split-area>
+    <as-split-area size="95">
+        <app-gongsim-splitter></app-gongsim-splitter>
+    </as-split-area>
+</as-split>
+
+
+<as-split *ngIf="view==diagrams" direction="vertical">
+    <as-split-area size="05">
+        <h4>&nbsp;</h4>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <mat-radio-group aria-label="Select an option" [(ngModel)]="view">
+            <mat-radio-button *ngFor="let view of views" [value]="view">
+                {{view}}&nbsp;&nbsp;&nbsp;
+            </mat-radio-button>
+        </mat-radio-group>
+    </as-split-area>
+    <as-split-area size="95">
+        <lib-pkgelt-docs></lib-pkgelt-docs>
+    </as-split-area>
+</as-split>

@@ -1,0 +1,55 @@
+
+<div class="presentation__header" (click)="setEditorRouterOutlet(opsline.ID)">
+    <h1>OpsLine's fields <span class="material-icons">edit</span></h1>
+</div>
+<table *ngIf="opsline" class="presentation__table mat-table">
+    <tr class="mat-header-row">
+        <th class="mat-header-cell">Name</th>
+        <th class="mat-header-cell">Value</th>
+    </tr>
+    <!-- insertion point for fields specific code -->
+    <tr class="mat-row">
+        <td class="mat-cell">IsTransmitting</td>
+        <td class="mat-cell">
+            <mat-checkbox [checked]="opsline.IsTransmitting" disabled=true>
+            </mat-checkbox>
+        </td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">TransmissionMessage</td>
+        <td class="mat-cell">{{opsline.TransmissionMessage}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">IsTransmittingBackward</td>
+        <td class="mat-cell">
+            <mat-checkbox [checked]="opsline.IsTransmittingBackward" disabled=true>
+            </mat-checkbox>
+        </td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">TransmissionMessageBackward</td>
+        <td class="mat-cell">{{opsline.TransmissionMessageBackward}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">TechName</td>
+        <td class="mat-cell">{{opsline.TechName}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">Scenario</td>
+        <td class="mat-cell">{{opsline.Scenario ? opsline.Scenario.Name : ""}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">State</td>
+        <td class="mat-cell">{{opsline.State}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">Name</td>
+        <td class="mat-cell">{{opsline.Name}}</td>
+    </tr>
+</table>
+<!-- hack to force loading of mat table style an error is generated but it is a know angular issue https://github.com/angular/components/issues/10941 -->
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <!-- Position Column -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

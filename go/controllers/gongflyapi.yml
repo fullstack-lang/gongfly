@@ -1,0 +1,2049 @@
+basePath: /api/github.com/fullstack-lang/gongfly/go/v1
+consumes:
+- application/json
+definitions:
+  DeletedAt:
+    $ref: '#/definitions/NullTime'
+  Duration:
+    description: |-
+      A Duration represents the elapsed time between two instants
+      as an int64 nanosecond count. The representation limits the
+      largest representable duration to approximately 290 years.
+    format: int64
+    type: integer
+    x-go-package: time
+  LatLngAgentInterface:
+    description: |-
+      LatLngAgentInterface is an interface to another agent
+      that have a name, a position and who can queue/fire events
+    properties:
+      GetLat:
+        format: double
+        type: number
+      GetLng:
+        format: double
+        type: number
+      GetName:
+        type: string
+    type: object
+    x-go-package: github.com/fullstack-lang/gongfly/go/models
+  NetworkCallbackInterface:
+    properties:
+      GetIsTransmittingBackwardOverride:
+        type: boolean
+      GetIsTransmittingOverride:
+        type: boolean
+      GetMessageBackwardOverride:
+        type: string
+      GetMessageOverride:
+        type: string
+    type: object
+    x-go-package: github.com/fullstack-lang/gongfly/go/models
+  NullBool:
+    description: |-
+      NullBool implements the Scanner interface so
+      it can be used as a scan destination, similar to NullString.
+    properties:
+      Bool:
+        type: boolean
+      Valid:
+        type: boolean
+    title: NullBool represents a bool that may be null.
+    type: object
+    x-go-package: database/sql
+  NullFloat64:
+    description: |-
+      NullFloat64 implements the Scanner interface so
+      it can be used as a scan destination, similar to NullString.
+    properties:
+      Float64:
+        format: double
+        type: number
+      Valid:
+        type: boolean
+    title: NullFloat64 represents a float64 that may be null.
+    type: object
+    x-go-package: database/sql
+  NullInt64:
+    description: |-
+      NullInt64 implements the Scanner interface so
+      it can be used as a scan destination, similar to NullString.
+    properties:
+      Int64:
+        format: int64
+        type: integer
+      Valid:
+        type: boolean
+    title: NullInt64 represents an int64 that may be null.
+    type: object
+    x-go-package: database/sql
+  NullString:
+    description: |-
+      var s NullString
+      err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+      ...
+      if s.Valid {
+      use s.String
+      } else {
+      NULL value
+      }
+    properties:
+      String:
+        type: string
+      Valid:
+        type: boolean
+    title: |-
+      NullString represents a string that may be null.
+      NullString implements the Scanner interface so
+      it can be used as a scan destination:
+    type: object
+    x-go-package: database/sql
+  NullTime:
+    description: |-
+      NullTime implements the Scanner interface so
+      it can be used as a scan destination, similar to NullString.
+    properties:
+      Time:
+        format: date-time
+        type: string
+      Valid:
+        type: boolean
+    title: NullTime represents a time.Time that may be null.
+    type: object
+    x-go-package: database/sql
+  OpsLine:
+    description: |-
+      An OpsLine is an  agent simulating a operational communication between
+      a Aircraft and a Center
+    properties:
+      Authority:
+        $ref: '#/definitions/LatLngAgentInterface'
+      IsTransmitting:
+        type: boolean
+      IsTransmittingBackward:
+        type: boolean
+      Name:
+        type: string
+      NetworkCallbackInterface:
+        $ref: '#/definitions/NetworkCallbackInterface'
+      Scenario:
+        $ref: '#/definitions/Scenario'
+      State:
+        enum:
+        - OPS_COM_LINK_OPERATIONAL_LINE_WORKING
+        - OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING
+        type: string
+      Subordonate:
+        $ref: '#/definitions/LatLngAgentInterface'
+      TransmissionMessage:
+        type: string
+      TransmissionMessageBackward:
+        type: string
+    title: OpsLine
+    type: object
+    x-go-package: github.com/fullstack-lang/gongfly/go/models
+  Scenario:
+    description: Scenario holds all infos about a scenario
+    properties:
+      Lat:
+        format: double
+        type: number
+        x-go-name: Lng
+      MessageVisualSpeed:
+        description: |-
+          Message Visual Speed, in km/h
+          this field can be tweaked by the end user
+        format: double
+        type: number
+      Name:
+        type: string
+      ZoomLevel:
+        format: double
+        type: number
+    type: object
+    x-go-package: github.com/fullstack-lang/gongfly/go/models
+  civilianairportAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Lat:
+        description: current position
+        format: double
+        type: number
+      Lng:
+        format: double
+        type: number
+      Name:
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: CivilianAirportAPI is the input in POST API
+    type: object
+    x-go-name: CivilianAirportAPI
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  civilianairportDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        $ref: '#/definitions/NullFloat64'
+      Lng_Data:
+        $ref: '#/definitions/NullFloat64'
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      TechName_Data:
+        $ref: '#/definitions/NullString'
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: CivilianAirportDB describes a civilianairport in the database
+    type: object
+    x-go-name: CivilianAirportDB
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  liner:
+    description: Liner
+    properties:
+      DistanceToTarget:
+        format: double
+        type: number
+      Heading:
+        description: heading in degrees
+        format: double
+        type: number
+      Lat:
+        description: current position
+        format: double
+        type: number
+      Level:
+        description: |-
+          level
+          for instance 210 means 21 000 feets
+        format: double
+        type: number
+      Lng:
+        format: double
+        type: number
+      MaxRotationalSpeed:
+        description: Max rotational speed, in degrees/seconds
+        format: double
+        type: number
+      Name:
+        type: string
+      ReporingLine:
+        $ref: '#/definitions/OpsLine'
+      Speed:
+        description: Horizonatl Speed, in km/h
+        format: double
+        type: number
+      State:
+        enum:
+        - EN_ROUTE_NOMINAL
+        - LANDED
+        type: string
+      TargetHeading:
+        description: Control of the aircraft
+        format: double
+        type: number
+      TargetLocationLat:
+        format: double
+        type: number
+      TargetLocationLng:
+        format: double
+        type: number
+      Timestampstring:
+        type: string
+      VerticalSpeed:
+        description: Vertical Speed
+        format: double
+        type: number
+    type: object
+    x-go-name: Liner
+    x-go-package: github.com/fullstack-lang/gongfly/go/models
+  linerAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      DistanceToTarget:
+        format: double
+        type: number
+      Heading:
+        description: heading in degrees
+        format: double
+        type: number
+      ID:
+        format: uint64
+        type: integer
+      Lat:
+        description: current position
+        format: double
+        type: number
+      Level:
+        description: |-
+          level
+          for instance 210 means 21 000 feets
+        format: double
+        type: number
+      Lng:
+        format: double
+        type: number
+      MaxRotationalSpeed:
+        description: Max rotational speed, in degrees/seconds
+        format: double
+        type: number
+      Name:
+        type: string
+      ReporingLine:
+        $ref: '#/definitions/OpsLine'
+      ReporingLineID:
+        $ref: '#/definitions/NullInt64'
+      Speed:
+        description: Horizonatl Speed, in km/h
+        format: double
+        type: number
+      State:
+        enum:
+        - EN_ROUTE_NOMINAL
+        - LANDED
+        type: string
+      TargetHeading:
+        description: Control of the aircraft
+        format: double
+        type: number
+      TargetLocationLat:
+        format: double
+        type: number
+      TargetLocationLng:
+        format: double
+        type: number
+      Timestampstring:
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+      VerticalSpeed:
+        description: Vertical Speed
+        format: double
+        type: number
+    title: LinerAPI is the input in POST API
+    type: object
+    x-go-name: LinerAPI
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  linerDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      DistanceToTarget_Data:
+        $ref: '#/definitions/NullFloat64'
+      Heading_Data:
+        $ref: '#/definitions/NullFloat64'
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        $ref: '#/definitions/NullFloat64'
+      Level_Data:
+        $ref: '#/definitions/NullFloat64'
+      Lng_Data:
+        $ref: '#/definitions/NullFloat64'
+      MaxRotationalSpeed_Data:
+        $ref: '#/definitions/NullFloat64'
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      ReporingLineID:
+        $ref: '#/definitions/NullInt64'
+      Speed_Data:
+        $ref: '#/definitions/NullFloat64'
+      State_Data:
+        $ref: '#/definitions/NullString'
+      TargetHeading_Data:
+        $ref: '#/definitions/NullFloat64'
+      TargetLocationLat_Data:
+        $ref: '#/definitions/NullFloat64'
+      TargetLocationLng_Data:
+        $ref: '#/definitions/NullFloat64'
+      TechName_Data:
+        $ref: '#/definitions/NullString'
+      Timestampstring_Data:
+        $ref: '#/definitions/NullString'
+      UpdatedAt:
+        format: date-time
+        type: string
+      VerticalSpeed_Data:
+        $ref: '#/definitions/NullFloat64'
+    title: LinerDB describes a liner in the database
+    type: object
+    x-go-name: LinerDB
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  messageAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      About_string:
+        type: string
+      Content:
+        type: string
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      Destination:
+        type: string
+      Display:
+        type: boolean
+      DistanceToTarget:
+        format: double
+        type: number
+      DurationSinceSimulationStart:
+        $ref: '#/definitions/Duration'
+      From:
+        $ref: '#/definitions/LatLngAgentInterface'
+      Heading:
+        description: heading in degrees
+        format: double
+        type: number
+      ID:
+        format: uint64
+        type: integer
+      Lat:
+        description: current position
+        format: double
+        type: number
+      Level:
+        description: |-
+          level
+          for instance 210 means 21 000 feets
+        format: double
+        type: number
+      Lng:
+        format: double
+        type: number
+      Name:
+        type: string
+      Source:
+        type: string
+      Speed:
+        description: Horizonatl Speed, in km/h
+        format: double
+        type: number
+      State:
+        enum:
+        - MESSAGE_EN_ROUTE
+        - MESSAGE_ARRIVED
+        type: string
+      TargetLocationLat:
+        description: Control of the aircraft
+        format: double
+        type: number
+      TargetLocationLng:
+        format: double
+        type: number
+      Timestampstartstring:
+        type: string
+      Timestampstring:
+        type: string
+      To:
+        $ref: '#/definitions/LatLngAgentInterface'
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: MessageAPI is the input in POST API
+    type: object
+    x-go-name: MessageAPI
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  messageDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      About_string_Data:
+        $ref: '#/definitions/NullString'
+      Content_Data:
+        $ref: '#/definitions/NullString'
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      Destination_Data:
+        $ref: '#/definitions/NullString'
+      Display_Data:
+        $ref: '#/definitions/NullBool'
+      DistanceToTarget_Data:
+        $ref: '#/definitions/NullFloat64'
+      DurationSinceSimulationStart_Data:
+        $ref: '#/definitions/NullInt64'
+      Heading_Data:
+        $ref: '#/definitions/NullFloat64'
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        $ref: '#/definitions/NullFloat64'
+      Level_Data:
+        $ref: '#/definitions/NullFloat64'
+      Lng_Data:
+        $ref: '#/definitions/NullFloat64'
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      Source_Data:
+        $ref: '#/definitions/NullString'
+      Speed_Data:
+        $ref: '#/definitions/NullFloat64'
+      State_Data:
+        $ref: '#/definitions/NullString'
+      TargetLocationLat_Data:
+        $ref: '#/definitions/NullFloat64'
+      TargetLocationLng_Data:
+        $ref: '#/definitions/NullFloat64'
+      TechName_Data:
+        $ref: '#/definitions/NullString'
+      Timestampstartstring_Data:
+        $ref: '#/definitions/NullString'
+      Timestampstring_Data:
+        $ref: '#/definitions/NullString'
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: MessageDB describes a message in the database
+    type: object
+    x-go-name: MessageDB
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  opslineAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      Authority:
+        $ref: '#/definitions/LatLngAgentInterface'
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      IsTransmitting:
+        type: boolean
+      IsTransmittingBackward:
+        type: boolean
+      Name:
+        type: string
+      NetworkCallbackInterface:
+        $ref: '#/definitions/NetworkCallbackInterface'
+      Scenario:
+        $ref: '#/definitions/Scenario'
+      ScenarioID:
+        $ref: '#/definitions/NullInt64'
+      State:
+        enum:
+        - OPS_COM_LINK_OPERATIONAL_LINE_WORKING
+        - OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING
+        type: string
+      Subordonate:
+        $ref: '#/definitions/LatLngAgentInterface'
+      TransmissionMessage:
+        type: string
+      TransmissionMessageBackward:
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: OpsLineAPI is the input in POST API
+    type: object
+    x-go-name: OpsLineAPI
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  opslineDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      IsTransmitting_Data:
+        $ref: '#/definitions/NullBool'
+      IsTransmittingBackward_Data:
+        $ref: '#/definitions/NullBool'
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      ScenarioID:
+        $ref: '#/definitions/NullInt64'
+      State_Data:
+        $ref: '#/definitions/NullString'
+      TechName_Data:
+        $ref: '#/definitions/NullString'
+      TransmissionMessage_Data:
+        $ref: '#/definitions/NullString'
+      TransmissionMessageBackward_Data:
+        $ref: '#/definitions/NullString'
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: OpsLineDB describes a opsline in the database
+    type: object
+    x-go-name: OpsLineDB
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  orderAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      Duration:
+        $ref: '#/definitions/Duration'
+      ID:
+        format: uint64
+        type: integer
+      Name:
+        type: string
+      Number:
+        format: int64
+        type: integer
+      OrderMessage:
+        type: string
+      Target:
+        $ref: '#/definitions/liner'
+      TargetID:
+        $ref: '#/definitions/NullInt64'
+      TargetLat:
+        format: double
+        type: number
+      TargetLng:
+        format: double
+        type: number
+      Type:
+        enum:
+        - TAKE_OFF
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: OrderAPI is the input in POST API
+    type: object
+    x-go-name: OrderAPI
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  orderDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      Duration_Data:
+        $ref: '#/definitions/NullInt64'
+      ID:
+        format: uint64
+        type: integer
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      Number_Data:
+        $ref: '#/definitions/NullInt64'
+      OrderMessage_Data:
+        $ref: '#/definitions/NullString'
+      TargetID:
+        $ref: '#/definitions/NullInt64'
+      TargetLat_Data:
+        $ref: '#/definitions/NullFloat64'
+      TargetLng_Data:
+        $ref: '#/definitions/NullFloat64'
+      Type_Data:
+        $ref: '#/definitions/NullString'
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: OrderDB describes a order in the database
+    type: object
+    x-go-name: OrderDB
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  radarAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Lat:
+        description: current position
+        format: double
+        type: number
+      Lng:
+        format: double
+        type: number
+      Name:
+        type: string
+      Range:
+        description: range in km
+        format: double
+        type: number
+      State:
+        enum:
+        - WORKING
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: RadarAPI is the input in POST API
+    type: object
+    x-go-name: RadarAPI
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  radarDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        $ref: '#/definitions/NullFloat64'
+      Lng_Data:
+        $ref: '#/definitions/NullFloat64'
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      Range_Data:
+        $ref: '#/definitions/NullFloat64'
+      State_Data:
+        $ref: '#/definitions/NullString'
+      TechName_Data:
+        $ref: '#/definitions/NullString'
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: RadarDB describes a radar in the database
+    type: object
+    x-go-name: RadarDB
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  reportAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      About:
+        $ref: '#/definitions/liner'
+      AboutID:
+        $ref: '#/definitions/NullInt64'
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      Duration:
+        $ref: '#/definitions/Duration'
+      ID:
+        format: uint64
+        type: integer
+      Name:
+        type: string
+      Number:
+        format: int64
+        type: integer
+      OpsLine:
+        $ref: '#/definitions/OpsLine'
+      OpsLineID:
+        $ref: '#/definitions/NullInt64'
+      ReportMessage:
+        type: string
+      Type:
+        enum:
+        - TAKE_OFF_COMPLETED
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: ReportAPI is the input in POST API
+    type: object
+    x-go-name: ReportAPI
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  reportDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      AboutID:
+        $ref: '#/definitions/NullInt64'
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      Duration_Data:
+        $ref: '#/definitions/NullInt64'
+      ID:
+        format: uint64
+        type: integer
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      Number_Data:
+        $ref: '#/definitions/NullInt64'
+      OpsLineID:
+        $ref: '#/definitions/NullInt64'
+      ReportMessage_Data:
+        $ref: '#/definitions/NullString'
+      Type_Data:
+        $ref: '#/definitions/NullString'
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: ReportDB describes a report in the database
+    type: object
+    x-go-name: ReportDB
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  scenarioAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Lat:
+        format: double
+        type: number
+        x-go-name: Lng
+      MessageVisualSpeed:
+        description: |-
+          Message Visual Speed, in km/h
+          this field can be tweaked by the end user
+        format: double
+        type: number
+      Name:
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+      ZoomLevel:
+        format: double
+        type: number
+    title: ScenarioAPI is the input in POST API
+    type: object
+    x-go-name: ScenarioAPI
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+  scenarioDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        $ref: '#/definitions/NullFloat64'
+      Lng_Data:
+        $ref: '#/definitions/NullFloat64'
+      MessageVisualSpeed_Data:
+        $ref: '#/definitions/NullFloat64'
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      UpdatedAt:
+        format: date-time
+        type: string
+      ZoomLevel_Data:
+        $ref: '#/definitions/NullFloat64'
+    title: ScenarioDB describes a scenario in the database
+    type: object
+    x-go-name: ScenarioDB
+    x-go-package: github.com/fullstack-lang/gongfly/go/orm
+host: localhost:8080
+info:
+  description: gongfly exposes types of a package.
+  title: gongfly backend API
+  version: "0.1"
+paths:
+  /civilianairports:
+    get:
+      description: Get all civilianairports
+      operationId: getCivilianAirports
+      responses:
+        "200":
+          $ref: '#/responses/civilianairportDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - civilianairports
+    post:
+      consumes:
+      - application/json
+      description: Creates a civilianairport
+      operationId: postCivilianAirport
+      parameters:
+      - description: The CivilianAirport to submit or modify
+        in: body
+        name: CivilianAirport
+        schema:
+          $ref: '#/definitions/civilianairportAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/civilianairportDBResponse'
+      tags:
+      - civilianairports
+  /civilianairports/{ID}:
+    delete:
+      description: Delete a civilianairport
+      operationId: deleteCivilianAirport
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - civilianairports
+    get:
+      operationId: getCivilianAirport
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/civilianairportDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a civilianairport.
+      tags:
+      - civilianairports
+    patch:
+      description: Update a civilianairport
+      operationId: updateCivilianAirport
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The CivilianAirport to submit or modify
+        in: body
+        name: CivilianAirport
+        schema:
+          $ref: '#/definitions/civilianairportAPI'
+      responses:
+        "200":
+          $ref: '#/responses/civilianairportDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - civilianairports
+  /commitnb:
+    get:
+      operationId: GetLastCommitNb
+      tags:
+      - backrepo
+  /liners:
+    get:
+      description: Get all liners
+      operationId: getLiners
+      responses:
+        "200":
+          $ref: '#/responses/linerDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - liners
+    post:
+      consumes:
+      - application/json
+      description: Creates a liner
+      operationId: postLiner
+      parameters:
+      - description: The Liner to submit or modify
+        in: body
+        name: Liner
+        schema:
+          $ref: '#/definitions/linerAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/linerDBResponse'
+      tags:
+      - liners
+  /liners/{ID}:
+    delete:
+      description: Delete a liner
+      operationId: deleteLiner
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - liners
+    get:
+      operationId: getLiner
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/linerDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a liner.
+      tags:
+      - liners
+    patch:
+      description: Update a liner
+      operationId: updateLiner
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The Liner to submit or modify
+        in: body
+        name: Liner
+        schema:
+          $ref: '#/definitions/linerAPI'
+      responses:
+        "200":
+          $ref: '#/responses/linerDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - liners
+  /messages:
+    get:
+      description: Get all messages
+      operationId: getMessages
+      responses:
+        "200":
+          $ref: '#/responses/messageDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - messages
+    post:
+      consumes:
+      - application/json
+      description: Creates a message
+      operationId: postMessage
+      parameters:
+      - description: The Message to submit or modify
+        in: body
+        name: Message
+        schema:
+          $ref: '#/definitions/messageAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/messageDBResponse'
+      tags:
+      - messages
+  /messages/{ID}:
+    delete:
+      description: Delete a message
+      operationId: deleteMessage
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - messages
+    get:
+      operationId: getMessage
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/messageDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a message.
+      tags:
+      - messages
+    patch:
+      description: Update a message
+      operationId: updateMessage
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The Message to submit or modify
+        in: body
+        name: Message
+        schema:
+          $ref: '#/definitions/messageAPI'
+      responses:
+        "200":
+          $ref: '#/responses/messageDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - messages
+  /opslines:
+    get:
+      description: Get all opslines
+      operationId: getOpsLines
+      responses:
+        "200":
+          $ref: '#/responses/opslineDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - opslines
+    post:
+      consumes:
+      - application/json
+      description: Creates a opsline
+      operationId: postOpsLine
+      parameters:
+      - description: The OpsLine to submit or modify
+        in: body
+        name: OpsLine
+        schema:
+          $ref: '#/definitions/opslineAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/opslineDBResponse'
+      tags:
+      - opslines
+  /opslines/{ID}:
+    delete:
+      description: Delete a opsline
+      operationId: deleteOpsLine
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - opslines
+    get:
+      operationId: getOpsLine
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/opslineDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a opsline.
+      tags:
+      - opslines
+    patch:
+      description: Update a opsline
+      operationId: updateOpsLine
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The OpsLine to submit or modify
+        in: body
+        name: OpsLine
+        schema:
+          $ref: '#/definitions/opslineAPI'
+      responses:
+        "200":
+          $ref: '#/responses/opslineDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - opslines
+  /orders:
+    get:
+      description: Get all orders
+      operationId: getOrders
+      responses:
+        "200":
+          $ref: '#/responses/orderDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - orders
+    post:
+      consumes:
+      - application/json
+      description: Creates a order
+      operationId: postOrder
+      parameters:
+      - description: The Order to submit or modify
+        in: body
+        name: Order
+        schema:
+          $ref: '#/definitions/orderAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/orderDBResponse'
+      tags:
+      - orders
+  /orders/{ID}:
+    delete:
+      description: Delete a order
+      operationId: deleteOrder
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - orders
+    get:
+      operationId: getOrder
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/orderDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a order.
+      tags:
+      - orders
+    patch:
+      description: Update a order
+      operationId: updateOrder
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The Order to submit or modify
+        in: body
+        name: Order
+        schema:
+          $ref: '#/definitions/orderAPI'
+      responses:
+        "200":
+          $ref: '#/responses/orderDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - orders
+  /pushfromfrontnb:
+    get:
+      operationId: GetLastPushFromFrontNb
+      tags:
+      - backrepo
+  /radars:
+    get:
+      description: Get all radars
+      operationId: getRadars
+      responses:
+        "200":
+          $ref: '#/responses/radarDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - radars
+    post:
+      consumes:
+      - application/json
+      description: Creates a radar
+      operationId: postRadar
+      parameters:
+      - description: The Radar to submit or modify
+        in: body
+        name: Radar
+        schema:
+          $ref: '#/definitions/radarAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/radarDBResponse'
+      tags:
+      - radars
+  /radars/{ID}:
+    delete:
+      description: Delete a radar
+      operationId: deleteRadar
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - radars
+    get:
+      operationId: getRadar
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/radarDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a radar.
+      tags:
+      - radars
+    patch:
+      description: Update a radar
+      operationId: updateRadar
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The Radar to submit or modify
+        in: body
+        name: Radar
+        schema:
+          $ref: '#/definitions/radarAPI'
+      responses:
+        "200":
+          $ref: '#/responses/radarDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - radars
+  /reports:
+    get:
+      description: Get all reports
+      operationId: getReports
+      responses:
+        "200":
+          $ref: '#/responses/reportDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - reports
+    post:
+      consumes:
+      - application/json
+      description: Creates a report
+      operationId: postReport
+      parameters:
+      - description: The Report to submit or modify
+        in: body
+        name: Report
+        schema:
+          $ref: '#/definitions/reportAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/reportDBResponse'
+      tags:
+      - reports
+  /reports/{ID}:
+    delete:
+      description: Delete a report
+      operationId: deleteReport
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - reports
+    get:
+      operationId: getReport
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/reportDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a report.
+      tags:
+      - reports
+    patch:
+      description: Update a report
+      operationId: updateReport
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The Report to submit or modify
+        in: body
+        name: Report
+        schema:
+          $ref: '#/definitions/reportAPI'
+      responses:
+        "200":
+          $ref: '#/responses/reportDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - reports
+  /scenarios:
+    get:
+      description: Get all scenarios
+      operationId: getScenarios
+      responses:
+        "200":
+          $ref: '#/responses/scenarioDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - scenarios
+    post:
+      consumes:
+      - application/json
+      description: Creates a scenario
+      operationId: postScenario
+      parameters:
+      - description: The Scenario to submit or modify
+        in: body
+        name: Scenario
+        schema:
+          $ref: '#/definitions/scenarioAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/scenarioDBResponse'
+      tags:
+      - scenarios
+  /scenarios/{ID}:
+    delete:
+      description: Delete a scenario
+      operationId: deleteScenario
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - scenarios
+    get:
+      operationId: getScenario
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/scenarioDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a scenario.
+      tags:
+      - scenarios
+    patch:
+      description: Update a scenario
+      operationId: updateScenario
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The Scenario to submit or modify
+        in: body
+        name: Scenario
+        schema:
+          $ref: '#/definitions/scenarioAPI'
+      responses:
+        "200":
+          $ref: '#/responses/scenarioDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - scenarios
+produces:
+- application/json
+responses:
+  civilianairportDBResponse:
+    description: CivilianAirportDBResponse provides response
+    headers:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt: {}
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field civilianairportDB.Lat {{BasicKind}} (to be completed)
+      Lng_Data:
+        description: Declation for basic field civilianairportDB.Lng {{BasicKind}}
+          (to be completed)
+      Name_Data:
+        description: Declation for basic field civilianairportDB.Name {{BasicKind}}
+          (to be completed)
+      TechName_Data:
+        description: Declation for basic field civilianairportDB.TechName {{BasicKind}}
+          (to be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+    schema:
+      $ref: '#/definitions/NullString'
+  civilianairportDBsResponse:
+    description: CivilianAirportDBs arrays civilianairportDBs
+    schema:
+      items:
+        $ref: '#/definitions/civilianairportDB'
+      type: array
+  genericError:
+    description: |-
+      A GenericError is the default error message that is generated.
+      For certain status codes there are more appropriate error structures.
+    schema:
+      properties:
+        code:
+          format: int32
+          type: integer
+          x-go-name: Code
+        message:
+          type: string
+          x-go-name: Message
+      type: object
+  linerDBResponse:
+    description: LinerDBResponse provides response
+    headers:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt: {}
+      DistanceToTarget_Data:
+        description: Declation for basic field linerDB.DistanceToTarget {{BasicKind}}
+          (to be completed)
+      Heading_Data:
+        description: Declation for basic field linerDB.Heading {{BasicKind}} (to be
+          completed)
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field linerDB.Lat {{BasicKind}} (to be completed)
+      Level_Data:
+        description: Declation for basic field linerDB.Level {{BasicKind}} (to be
+          completed)
+      Lng_Data:
+        description: Declation for basic field linerDB.Lng {{BasicKind}} (to be completed)
+      MaxRotationalSpeed_Data:
+        description: Declation for basic field linerDB.MaxRotationalSpeed {{BasicKind}}
+          (to be completed)
+      Name_Data:
+        description: Declation for basic field linerDB.Name {{BasicKind}} (to be completed)
+      ReporingLineID:
+        description: |-
+          insertion for pointer fields encoding declaration
+          field ReporingLine is a pointer to another Struct (optional or 0..1)
+          This field is generated into another field to enable AS ONE association
+      Speed_Data:
+        description: Declation for basic field linerDB.Speed {{BasicKind}} (to be
+          completed)
+      State_Data:
+        description: Declation for basic field linerDB.State {{BasicKind}} (to be
+          completed)
+      TargetHeading_Data:
+        description: Declation for basic field linerDB.TargetHeading {{BasicKind}}
+          (to be completed)
+      TargetLocationLat_Data:
+        description: Declation for basic field linerDB.TargetLocationLat {{BasicKind}}
+          (to be completed)
+      TargetLocationLng_Data:
+        description: Declation for basic field linerDB.TargetLocationLng {{BasicKind}}
+          (to be completed)
+      TechName_Data:
+        description: Declation for basic field linerDB.TechName {{BasicKind}} (to
+          be completed)
+      Timestampstring_Data:
+        description: Declation for basic field linerDB.Timestampstring {{BasicKind}}
+          (to be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+      VerticalSpeed_Data:
+        description: Declation for basic field linerDB.VerticalSpeed {{BasicKind}}
+          (to be completed)
+    schema:
+      $ref: '#/definitions/NullInt64'
+  linerDBsResponse:
+    description: LinerDBs arrays linerDBs
+    schema:
+      items:
+        $ref: '#/definitions/linerDB'
+      type: array
+  messageDBResponse:
+    description: MessageDBResponse provides response
+    headers:
+      About_string_Data:
+        description: Declation for basic field messageDB.About_string {{BasicKind}}
+          (to be completed)
+      Content_Data:
+        description: Declation for basic field messageDB.Content {{BasicKind}} (to
+          be completed)
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt: {}
+      Destination_Data:
+        description: Declation for basic field messageDB.Destination {{BasicKind}}
+          (to be completed)
+      Display_Data:
+        description: |-
+          Declation for basic field messageDB.Display bool (to be completed)
+          provide the sql storage for the boolan
+      DistanceToTarget_Data:
+        description: Declation for basic field messageDB.DistanceToTarget {{BasicKind}}
+          (to be completed)
+      DurationSinceSimulationStart_Data:
+        description: Declation for basic field messageDB.DurationSinceSimulationStart
+          {{BasicKind}} (to be completed)
+      Heading_Data:
+        description: Declation for basic field messageDB.Heading {{BasicKind}} (to
+          be completed)
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field messageDB.Lat {{BasicKind}} (to be completed)
+      Level_Data:
+        description: Declation for basic field messageDB.Level {{BasicKind}} (to be
+          completed)
+      Lng_Data:
+        description: Declation for basic field messageDB.Lng {{BasicKind}} (to be
+          completed)
+      Name_Data:
+        description: Declation for basic field messageDB.Name {{BasicKind}} (to be
+          completed)
+      Source_Data:
+        description: Declation for basic field messageDB.Source {{BasicKind}} (to
+          be completed)
+      Speed_Data:
+        description: Declation for basic field messageDB.Speed {{BasicKind}} (to be
+          completed)
+      State_Data:
+        description: Declation for basic field messageDB.State {{BasicKind}} (to be
+          completed)
+      TargetLocationLat_Data:
+        description: Declation for basic field messageDB.TargetLocationLat {{BasicKind}}
+          (to be completed)
+      TargetLocationLng_Data:
+        description: Declation for basic field messageDB.TargetLocationLng {{BasicKind}}
+          (to be completed)
+      TechName_Data:
+        description: Declation for basic field messageDB.TechName {{BasicKind}} (to
+          be completed)
+      Timestampstartstring_Data:
+        description: Declation for basic field messageDB.Timestampstartstring {{BasicKind}}
+          (to be completed)
+      Timestampstring_Data:
+        description: Declation for basic field messageDB.Timestampstring {{BasicKind}}
+          (to be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+    schema:
+      $ref: '#/definitions/NullBool'
+  messageDBsResponse:
+    description: MessageDBs arrays messageDBs
+    schema:
+      items:
+        $ref: '#/definitions/messageDB'
+      type: array
+  opslineDBResponse:
+    description: OpsLineDBResponse provides response
+    headers:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt: {}
+      ID:
+        format: uint64
+        type: integer
+      IsTransmitting_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field opslineDB.IsTransmitting bool (to be completed)
+          provide the sql storage for the boolan
+      IsTransmittingBackward_Data:
+        description: |-
+          Declation for basic field opslineDB.IsTransmittingBackward bool (to be completed)
+          provide the sql storage for the boolan
+      Name_Data:
+        description: Declation for basic field opslineDB.Name {{BasicKind}} (to be
+          completed)
+      ScenarioID:
+        description: |-
+          insertion for pointer fields encoding declaration
+          field Scenario is a pointer to another Struct (optional or 0..1)
+          This field is generated into another field to enable AS ONE association
+      State_Data:
+        description: Declation for basic field opslineDB.State {{BasicKind}} (to be
+          completed)
+      TechName_Data:
+        description: Declation for basic field opslineDB.TechName {{BasicKind}} (to
+          be completed)
+      TransmissionMessage_Data:
+        description: Declation for basic field opslineDB.TransmissionMessage {{BasicKind}}
+          (to be completed)
+      TransmissionMessageBackward_Data:
+        description: Declation for basic field opslineDB.TransmissionMessageBackward
+          {{BasicKind}} (to be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+    schema:
+      $ref: '#/definitions/NullInt64'
+  opslineDBsResponse:
+    description: OpsLineDBs arrays opslineDBs
+    schema:
+      items:
+        $ref: '#/definitions/opslineDB'
+      type: array
+  orderDBResponse:
+    description: OrderDBResponse provides response
+    headers:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt: {}
+      Duration_Data:
+        description: Declation for basic field orderDB.Duration {{BasicKind}} (to
+          be completed)
+      ID:
+        format: uint64
+        type: integer
+      Name_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field orderDB.Name {{BasicKind}} (to be completed)
+      Number_Data:
+        description: Declation for basic field orderDB.Number {{BasicKind}} (to be
+          completed)
+      OrderMessage_Data:
+        description: Declation for basic field orderDB.OrderMessage {{BasicKind}}
+          (to be completed)
+      TargetID:
+        description: |-
+          insertion for pointer fields encoding declaration
+          field Target is a pointer to another Struct (optional or 0..1)
+          This field is generated into another field to enable AS ONE association
+      TargetLat_Data:
+        description: Declation for basic field orderDB.TargetLat {{BasicKind}} (to
+          be completed)
+      TargetLng_Data:
+        description: Declation for basic field orderDB.TargetLng {{BasicKind}} (to
+          be completed)
+      Type_Data:
+        description: Declation for basic field orderDB.Type {{BasicKind}} (to be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+    schema:
+      $ref: '#/definitions/NullInt64'
+  orderDBsResponse:
+    description: OrderDBs arrays orderDBs
+    schema:
+      items:
+        $ref: '#/definitions/orderDB'
+      type: array
+  radarDBResponse:
+    description: RadarDBResponse provides response
+    headers:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt: {}
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        description: Declation for basic field radarDB.Lat {{BasicKind}} (to be completed)
+      Lng_Data:
+        description: Declation for basic field radarDB.Lng {{BasicKind}} (to be completed)
+      Name_Data:
+        description: Declation for basic field radarDB.Name {{BasicKind}} (to be completed)
+      Range_Data:
+        description: Declation for basic field radarDB.Range {{BasicKind}} (to be
+          completed)
+      State_Data:
+        description: Declation for basic field radarDB.State {{BasicKind}} (to be
+          completed)
+      TechName_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field radarDB.TechName {{BasicKind}} (to be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+    schema:
+      $ref: '#/definitions/NullFloat64'
+  radarDBsResponse:
+    description: RadarDBs arrays radarDBs
+    schema:
+      items:
+        $ref: '#/definitions/radarDB'
+      type: array
+  reportDBResponse:
+    description: ReportDBResponse provides response
+    headers:
+      AboutID:
+        description: |-
+          insertion for pointer fields encoding declaration
+          field About is a pointer to another Struct (optional or 0..1)
+          This field is generated into another field to enable AS ONE association
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt: {}
+      Duration_Data:
+        description: Declation for basic field reportDB.Duration {{BasicKind}} (to
+          be completed)
+      ID:
+        format: uint64
+        type: integer
+      Name_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field reportDB.Name {{BasicKind}} (to be completed)
+      Number_Data:
+        description: Declation for basic field reportDB.Number {{BasicKind}} (to be
+          completed)
+      OpsLineID:
+        description: |-
+          field OpsLine is a pointer to another Struct (optional or 0..1)
+          This field is generated into another field to enable AS ONE association
+      ReportMessage_Data:
+        description: Declation for basic field reportDB.ReportMessage {{BasicKind}}
+          (to be completed)
+      Type_Data:
+        description: Declation for basic field reportDB.Type {{BasicKind}} (to be
+          completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+    schema:
+      $ref: '#/definitions/NullInt64'
+  reportDBsResponse:
+    description: ReportDBs arrays reportDBs
+    schema:
+      items:
+        $ref: '#/definitions/reportDB'
+      type: array
+  scenarioDBResponse:
+    description: ScenarioDBResponse provides response
+    headers:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt: {}
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        description: Declation for basic field scenarioDB.Lat {{BasicKind}} (to be
+          completed)
+      Lng_Data:
+        description: Declation for basic field scenarioDB.Lng {{BasicKind}} (to be
+          completed)
+      MessageVisualSpeed_Data:
+        description: Declation for basic field scenarioDB.MessageVisualSpeed {{BasicKind}}
+          (to be completed)
+      Name_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field scenarioDB.Name {{BasicKind}} (to be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+      ZoomLevel_Data:
+        description: Declation for basic field scenarioDB.ZoomLevel {{BasicKind}}
+          (to be completed)
+    schema:
+      $ref: '#/definitions/NullFloat64'
+  scenarioDBsResponse:
+    description: ScenarioDBs arrays scenarioDBs
+    schema:
+      items:
+        $ref: '#/definitions/scenarioDB'
+      type: array
+  validationError:
+    description: |-
+      A ValidationError is an that is generated for validation failures.
+      It has the same fields as a generic error but adds a Field property.
+    schema:
+      properties:
+        code:
+          format: int32
+          type: integer
+          x-go-name: Code
+        field:
+          type: string
+          x-go-name: Field
+        message:
+          type: string
+          x-go-name: Message
+      type: object
+schemes:
+- http
+securityDefinitions:
+  basic:
+    type: basic
+swagger: "2.0"

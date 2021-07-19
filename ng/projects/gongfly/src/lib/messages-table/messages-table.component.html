@@ -1,0 +1,191 @@
+<div>
+    <mat-form-field>
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
+    </mat-form-field>
+    <h1 *ngIf="dialogData">message</h1>
+    <table class="table" mat-table [dataSource]="matTableDataSource" matSort>
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="select" sticky>
+            <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
+                </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+                </mat-checkbox>
+            </td>
+        </ng-container>
+
+        <!-- insertion point for fields specific code -->
+        <!-- -->
+        <ng-container matColumnDef="Lat">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Lat </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.Lat.toPrecision(5)}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="Lng">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Lng </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.Lng.toPrecision(5)}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="Heading">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Heading </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.Heading.toPrecision(5)}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="Level">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Level </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.Level.toPrecision(5)}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="Speed">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Speed </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.Speed.toPrecision(5)}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="TechName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> TechName </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.TechName}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="State">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> State </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.State}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.Name}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="TargetLocationLat">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> TargetLocationLat </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.TargetLocationLat.toPrecision(5)}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="TargetLocationLng">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> TargetLocationLng </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.TargetLocationLng.toPrecision(5)}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="DistanceToTarget">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> DistanceToTarget </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.DistanceToTarget.toPrecision(5)}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="Timestampstring">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Timestampstring </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.Timestampstring}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="DurationSinceSimulationStart">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> DurationSinceSimulationStart </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.DurationSinceSimulationStart_string}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="Timestampstartstring">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Timestampstartstring </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.Timestampstartstring}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="Source">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Source </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.Source}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="Destination">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Destination </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.Destination}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="Content">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Content </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.Content}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="About_string">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> About_string </th>
+            <td mat-cell *matCellDef="let Message">
+                {{Message.About_string}}
+            </td>
+        </ng-container>
+        <!-- -->
+        <ng-container matColumnDef="Display">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Display </th>
+            <td mat-cell *matCellDef="let Message">
+                <mat-checkbox [checked]="Message.Display" disabled=true></mat-checkbox>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="ID" sticky>
+            <th mat-header-cell *matHeaderCellDef> ID. </th>
+            <td mat-cell *matCellDef="let Message"> {{Message.ID}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Edit">
+            <th mat-header-cell *matHeaderCellDef> Edit </th>
+            <td mat-cell *matCellDef="let message;  let j = index;">
+                <i class="material-icons" [ngStyle]="{'color':'rgba(0,0,0,.50)'}" (click)="setEditorRouterOutlet(message.ID)">edit</i>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Delete">
+            <th mat-header-cell *matHeaderCellDef> Delete </th>
+            <td mat-cell *matCellDef="let message;  let j = index;">
+                <i class="material-icons" [ngStyle]="{'color':'rgba(0,0,0,.50)'}" (click)="deleteMessage(message.ID, message)">delete</i>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+
+        <tr mat-row *matRowDef="
+        let row; 
+        columns: displayedColumns;
+        " (click)="setPresentationRouterOutlet( row.ID ) " class="row-link">
+        </tr>
+
+        <!-- Row shown when there is no matching data. -->
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+        </tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[10, 20, 50, 100, 500, 1000]" showFirstLastButtons></mat-paginator>
+</div>
+<button class="table__save" color="primary" *ngIf="dialogData" mat-raised-button (click)="save()">
+    Save
+</button>

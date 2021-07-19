@@ -1,0 +1,81 @@
+
+<div class="presentation__header" (click)="setEditorRouterOutlet(liner.ID)">
+    <h1>Liner's fields <span class="material-icons">edit</span></h1>
+</div>
+<table *ngIf="liner" class="presentation__table mat-table">
+    <tr class="mat-header-row">
+        <th class="mat-header-cell">Name</th>
+        <th class="mat-header-cell">Value</th>
+    </tr>
+    <!-- insertion point for fields specific code -->
+    <tr class="mat-row">
+        <td class="mat-cell">Lat</td>
+        <td class="mat-cell">{{liner.Lat}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">Lng</td>
+        <td class="mat-cell">{{liner.Lng}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">Heading</td>
+        <td class="mat-cell">{{liner.Heading}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">Level</td>
+        <td class="mat-cell">{{liner.Level}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">Speed</td>
+        <td class="mat-cell">{{liner.Speed}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">TechName</td>
+        <td class="mat-cell">{{liner.TechName}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">State</td>
+        <td class="mat-cell">{{liner.State}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">Name</td>
+        <td class="mat-cell">{{liner.Name}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">TargetHeading</td>
+        <td class="mat-cell">{{liner.TargetHeading}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">TargetLocationLat</td>
+        <td class="mat-cell">{{liner.TargetLocationLat}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">TargetLocationLng</td>
+        <td class="mat-cell">{{liner.TargetLocationLng}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">DistanceToTarget</td>
+        <td class="mat-cell">{{liner.DistanceToTarget}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">MaxRotationalSpeed</td>
+        <td class="mat-cell">{{liner.MaxRotationalSpeed}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">VerticalSpeed</td>
+        <td class="mat-cell">{{liner.VerticalSpeed}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">Timestampstring</td>
+        <td class="mat-cell">{{liner.Timestampstring}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">ReporingLine</td>
+        <td class="mat-cell">{{liner.ReporingLine ? liner.ReporingLine.Name : ""}}</td>
+    </tr>
+</table>
+<!-- hack to force loading of mat table style an error is generated but it is a know angular issue https://github.com/angular/components/issues/10941 -->
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <!-- Position Column -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

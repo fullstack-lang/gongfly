@@ -1,0 +1,67 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "es2020",
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "paths": {
+      // 
+      // https://angular.io/guide/creating-libraries#use-typescript-path-mapping-for-peer-dependencies
+      //
+      // Angular libraries should list any @angular/* 
+      // dependencies the library depends on as peer dependencies. This ensures that when modules ask for Angular, 
+      // they all get the exact same module. If a library lists @angular/core in dependencies instead of peerDependencies, 
+      // it might get a different Angular module instead, which would cause your application to break.
+      "@angular/*": [
+        "./node_modules/@angular/*"
+      ],
+      "rxjs/operators": [
+        "./node_modules/rxjs/operators"
+      ],
+      "rxjs": [
+        "./node_modules/rxjs"
+      ],
+      "angular-split": [
+        "./node_modules/angular-split"
+      ],
+      "tslib": [
+        "./node_modules/tslib"
+      ],
+      //
+      "gongfly": [
+        "projects/gongfly/src/public-api.ts"
+      ],
+      "gongsim": [
+        "../../../fullstack-lang/gongsim/ng/projects/gongsim/src/public-api.ts"
+      ],
+      "gongsimcontrol": [
+        "../../../fullstack-lang/gongsim/ng/projects/gongsimcontrol/src/public-api.ts"
+      ],
+      "gong": [
+        "../../../fullstack-lang/gong/ng/projects/gong/src/public-api.ts"
+      ],
+      "gongdoc": [
+        "../../../fullstack-lang/gongdoc/ng/projects/gongdoc/src/public-api.ts"
+      ],
+      "gongdocdiagrams": [
+        "../../../fullstack-lang/gongdoc/ng/projects/gongdocdiagrams/src/public-api.ts"
+      ],
+      "gongleaflet": [
+        "../../../fullstack-lang/gongleaflet/ng/projects/gongleaflet/src/public-api.ts"
+      ],
+      "gongleafletspecific": [
+        "../../../fullstack-lang/gongleaflet/ng/projects/gongleafletspecific/src/public-api.ts"
+      ],
+    }
+  }
+}
