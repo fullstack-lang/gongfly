@@ -16,6 +16,7 @@ definitions:
     description: |-
       LatLngAgentInterface is an interface to another agent
       that have a name, a position and who can queue/fire events
+      usefull for handling message from one agent to another
     properties:
       GetLat:
         format: double
@@ -177,7 +178,7 @@ definitions:
         format: uint64
         type: integer
       Lat:
-        description: current position
+        description: fixed position
         format: double
         type: number
       Lng:
@@ -221,7 +222,7 @@ definitions:
     x-go-name: CivilianAirportDB
     x-go-package: github.com/fullstack-lang/gongfly/go/orm
   liner:
-    description: Liner
+    description: Liner is a moving object
     properties:
       DistanceToTarget:
         format: double
