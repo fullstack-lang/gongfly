@@ -10,7 +10,6 @@ import { BehaviorSubject } from 'rxjs';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
-import { OrderAPI } from './order-api';
 import { OrderDB } from './order-db';
 
 @Injectable({

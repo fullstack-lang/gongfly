@@ -10,7 +10,6 @@ import { BehaviorSubject } from 'rxjs';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
-import { ScenarioAPI } from './scenario-api';
 import { ScenarioDB } from './scenario-db';
 
 @Injectable({

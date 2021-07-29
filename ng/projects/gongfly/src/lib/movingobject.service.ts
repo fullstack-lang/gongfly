@@ -10,7 +10,6 @@ import { BehaviorSubject } from 'rxjs';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
-import { MovingObjectAPI } from './movingobject-api';
 import { MovingObjectDB } from './movingobject-db';
 
 @Injectable({

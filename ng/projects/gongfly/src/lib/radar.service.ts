@@ -10,7 +10,6 @@ import { BehaviorSubject } from 'rxjs';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
-import { RadarAPI } from './radar-api';
 import { RadarDB } from './radar-db';
 
 @Injectable({
