@@ -49,7 +49,7 @@ var (
 	logGINFlag = flag.Bool("logGIN", false, "log mode for gin")
 	apiFlag    = flag.Bool("api", false, "it true, use api controllers instead of default controllers")
 
-	diagrams = flag.Bool("diagrams", false, "parse diagrams (takes a few seconds)")
+	diagrams = flag.Bool("diagrams", true, "parse diagrams (takes a few seconds)")
 )
 
 func main() {
