@@ -21,8 +21,8 @@ import (
 )
 
 // dummy variable to have the import declaration wihthout compile failure (even if no code needing this import is generated)
-var dummy_Report sql.NullBool
-var __Report_time__dummyDeclaration time.Duration
+var dummy_Report_sql sql.NullBool
+var dummy_Report_time time.Duration
 var dummy_Report_sort sort.Float64Slice
 
 // ReportAPI is the input in POST API

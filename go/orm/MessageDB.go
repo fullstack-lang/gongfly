@@ -21,8 +21,8 @@ import (
 )
 
 // dummy variable to have the import declaration wihthout compile failure (even if no code needing this import is generated)
-var dummy_Message sql.NullBool
-var __Message_time__dummyDeclaration time.Duration
+var dummy_Message_sql sql.NullBool
+var dummy_Message_time time.Duration
 var dummy_Message_sort sort.Float64Slice
 
 // MessageAPI is the input in POST API

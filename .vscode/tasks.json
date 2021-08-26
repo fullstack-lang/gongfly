@@ -49,9 +49,9 @@
       "group": "build"
     },
     {
-      "label": "03 - ng build gongfly",
+      "label": "03 - ng build",
       "type": "shell",
-      "command": "cd ng; ng build gongfly",
+      "command": "cd ng; ng build",
       "group": "build",
       "problemMatcher": []
     },
@@ -155,6 +155,15 @@
       "args": [
         "mod",
         "tidy"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "00 - go build",
+      "type": "shell",
+      "command": "go",
+      "args": [
+        "build"
       ],
       "group": "build"
     },

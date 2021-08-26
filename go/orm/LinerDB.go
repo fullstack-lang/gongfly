@@ -21,8 +21,8 @@ import (
 )
 
 // dummy variable to have the import declaration wihthout compile failure (even if no code needing this import is generated)
-var dummy_Liner sql.NullBool
-var __Liner_time__dummyDeclaration time.Duration
+var dummy_Liner_sql sql.NullBool
+var dummy_Liner_time time.Duration
 var dummy_Liner_sort sort.Float64Slice
 
 // LinerAPI is the input in POST API

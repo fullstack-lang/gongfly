@@ -138,15 +138,6 @@ func main() {
 	gong_controllers.RegisterControllers(r)
 	gongleaflet_controllers.RegisterControllers(r)
 
-	//
-	// init all back repositories
-	//
-	demoatc_orm.BackRepo.Init(db)
-	gongsim_orm.BackRepo.Init(db)
-	gongdoc_orm.BackRepo.Init(db)
-	gong_orm.BackRepo.Init(db)
-	gongleaflet_orm.BackRepo.Init(db)
-
 	// put all to database
 	demoatc_models.Stage.Commit()
 	gongsim_models.Stage.Commit()
