@@ -80,29 +80,29 @@ type BackRepoInterface interface {
 
 // swagger:ignore instructs the gong compiler (gongc) to avoid this particular struct
 var Stage StageStruct = StageStruct{ // insertion point for array initiatialisation
-	CivilianAirports:           make(map[*CivilianAirport]struct{}, 0),
-	CivilianAirports_mapString: make(map[string]*CivilianAirport, 0),
+	CivilianAirports:           make(map[*CivilianAirport]struct{}),
+	CivilianAirports_mapString: make(map[string]*CivilianAirport),
 
-	Liners:           make(map[*Liner]struct{}, 0),
-	Liners_mapString: make(map[string]*Liner, 0),
+	Liners:           make(map[*Liner]struct{}),
+	Liners_mapString: make(map[string]*Liner),
 
-	Messages:           make(map[*Message]struct{}, 0),
-	Messages_mapString: make(map[string]*Message, 0),
+	Messages:           make(map[*Message]struct{}),
+	Messages_mapString: make(map[string]*Message),
 
-	OpsLines:           make(map[*OpsLine]struct{}, 0),
-	OpsLines_mapString: make(map[string]*OpsLine, 0),
+	OpsLines:           make(map[*OpsLine]struct{}),
+	OpsLines_mapString: make(map[string]*OpsLine),
 
-	Orders:           make(map[*Order]struct{}, 0),
-	Orders_mapString: make(map[string]*Order, 0),
+	Orders:           make(map[*Order]struct{}),
+	Orders_mapString: make(map[string]*Order),
 
-	Radars:           make(map[*Radar]struct{}, 0),
-	Radars_mapString: make(map[string]*Radar, 0),
+	Radars:           make(map[*Radar]struct{}),
+	Radars_mapString: make(map[string]*Radar),
 
-	Reports:           make(map[*Report]struct{}, 0),
-	Reports_mapString: make(map[string]*Report, 0),
+	Reports:           make(map[*Report]struct{}),
+	Reports_mapString: make(map[string]*Report),
 
-	Scenarios:           make(map[*Scenario]struct{}, 0),
-	Scenarios_mapString: make(map[string]*Scenario, 0),
+	Scenarios:           make(map[*Scenario]struct{}),
+	Scenarios_mapString: make(map[string]*Scenario),
 
 	// end of insertion point
 }
@@ -988,29 +988,29 @@ type AllModelsStructDeleteInterface interface { // insertion point for Callbacks
 }
 
 func (stage *StageStruct) Reset() { // insertion point for array reset
-	stage.CivilianAirports = make(map[*CivilianAirport]struct{}, 0)
-	stage.CivilianAirports_mapString = make(map[string]*CivilianAirport, 0)
+	stage.CivilianAirports = make(map[*CivilianAirport]struct{})
+	stage.CivilianAirports_mapString = make(map[string]*CivilianAirport)
 
-	stage.Liners = make(map[*Liner]struct{}, 0)
-	stage.Liners_mapString = make(map[string]*Liner, 0)
+	stage.Liners = make(map[*Liner]struct{})
+	stage.Liners_mapString = make(map[string]*Liner)
 
-	stage.Messages = make(map[*Message]struct{}, 0)
-	stage.Messages_mapString = make(map[string]*Message, 0)
+	stage.Messages = make(map[*Message]struct{})
+	stage.Messages_mapString = make(map[string]*Message)
 
-	stage.OpsLines = make(map[*OpsLine]struct{}, 0)
-	stage.OpsLines_mapString = make(map[string]*OpsLine, 0)
+	stage.OpsLines = make(map[*OpsLine]struct{})
+	stage.OpsLines_mapString = make(map[string]*OpsLine)
 
-	stage.Orders = make(map[*Order]struct{}, 0)
-	stage.Orders_mapString = make(map[string]*Order, 0)
+	stage.Orders = make(map[*Order]struct{})
+	stage.Orders_mapString = make(map[string]*Order)
 
-	stage.Radars = make(map[*Radar]struct{}, 0)
-	stage.Radars_mapString = make(map[string]*Radar, 0)
+	stage.Radars = make(map[*Radar]struct{})
+	stage.Radars_mapString = make(map[string]*Radar)
 
-	stage.Reports = make(map[*Report]struct{}, 0)
-	stage.Reports_mapString = make(map[string]*Report, 0)
+	stage.Reports = make(map[*Report]struct{})
+	stage.Reports_mapString = make(map[string]*Report)
 
-	stage.Scenarios = make(map[*Scenario]struct{}, 0)
-	stage.Scenarios_mapString = make(map[string]*Scenario, 0)
+	stage.Scenarios = make(map[*Scenario]struct{})
+	stage.Scenarios_mapString = make(map[string]*Scenario)
 
 }
 
