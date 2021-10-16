@@ -13,6 +13,8 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { MovingObjectDB } from './movingobject-db';
 
+// insertion point for imports
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,14 +37,14 @@ export class MovingObjectService {
   ) {
     // path to the service share the same origin with the path to the document
     // get the origin in the URL to the document
-	let origin = this.document.location.origin
-    
-	// if debugging with ng, replace 4200 with 8080
-	origin = origin.replace("4200", "8080")
+    let origin = this.document.location.origin
+
+    // if debugging with ng, replace 4200 with 8080
+    origin = origin.replace("4200", "8080")
 
     // compute path to the service
     this.movingobjectsUrl = origin + '/api/github.com/fullstack-lang/gongfly/go/v1/movingobjects';
-   }
+  }
 
   /** GET movingobjects from the server */
   getMovingObjects(): Observable<MovingObjectDB[]> {
@@ -67,15 +69,15 @@ export class MovingObjectService {
   /** POST: add a new movingobject to the server */
   postMovingObject(movingobjectdb: MovingObjectDB): Observable<MovingObjectDB> {
 
-		// insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-		return this.http.post<MovingObjectDB>(this.movingobjectsUrl, movingobjectdb, this.httpOptions).pipe(
-			tap(_ => {
-				// insertion point for restoration of reverse pointers
-				this.log(`posted movingobjectdb id=${movingobjectdb.ID}`)
-			}),
-			catchError(this.handleError<MovingObjectDB>('postMovingObject'))
-		);
+    return this.http.post<MovingObjectDB>(this.movingobjectsUrl, movingobjectdb, this.httpOptions).pipe(
+      tap(_ => {
+        // insertion point for restoration of reverse pointers
+        this.log(`posted movingobjectdb id=${movingobjectdb.ID}`)
+      }),
+      catchError(this.handleError<MovingObjectDB>('postMovingObject'))
+    );
   }
 
   /** DELETE: delete the movingobjectdb from the server */
@@ -96,7 +98,7 @@ export class MovingObjectService {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.put(url, movingobjectdb, this.httpOptions).pipe(
+    return this.http.put<MovingObjectDB>(url, movingobjectdb, this.httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated movingobjectdb id=${movingobjectdb.ID}`)

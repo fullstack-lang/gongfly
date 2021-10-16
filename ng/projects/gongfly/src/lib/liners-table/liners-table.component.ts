@@ -7,7 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatButton } from '@angular/material/button'
 
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
-import { DialogData, FrontRepoService, FrontRepo, NullInt64, SelectionMode } from '../front-repo.service'
+import { DialogData, FrontRepoService, FrontRepo, SelectionMode } from '../front-repo.service'
+import { NullInt64 } from '../null-int64'
 import { SelectionModel } from '@angular/cdk/collections';
 
 const allowMultiSelect = true;
@@ -33,26 +34,28 @@ enum TableComponentMode {
 export class LinersTableComponent implements OnInit {
 
   // mode at invocation
-  mode: TableComponentMode
+  mode: TableComponentMode = TableComponentMode.DISPLAY_MODE
 
   // used if the component is called as a selection component of Liner instances
-  selection: SelectionModel<LinerDB>;
-  initialSelection = new Array<LinerDB>();
+  selection: SelectionModel<LinerDB> = new (SelectionModel)
+  initialSelection = new Array<LinerDB>()
 
   // the data source for the table
-  liners: LinerDB[];
-  matTableDataSource: MatTableDataSource<LinerDB>
+  liners: LinerDB[] = []
+  matTableDataSource: MatTableDataSource<LinerDB> = new (MatTableDataSource)
 
   // front repo, that will be referenced by this.liners
-  frontRepo: FrontRepo
+  frontRepo: FrontRepo = new (FrontRepo)
 
   // displayedColumns is referenced by the MatTable component for specify what columns
   // have to be displayed and in what order
   displayedColumns: string[];
 
   // for sorting & pagination
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort)
+  sort: MatSort | undefined
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator | undefined;
 
   ngAfterViewInit() {
 
@@ -109,7 +112,8 @@ export class LinersTableComponent implements OnInit {
           return (linerDB.ReporingLine ? linerDB.ReporingLine.Name : '');
 
         default:
-          return LinerDB[property];
+          console.assert(false, "Unknown field")
+          return "";
       }
     };
 
@@ -144,8 +148,8 @@ export class LinersTableComponent implements OnInit {
       return isSelected
     };
 
-    this.matTableDataSource.sort = this.sort;
-    this.matTableDataSource.paginator = this.paginator;
+    this.matTableDataSource.sort = this.sort!
+    this.matTableDataSource.paginator = this.paginator!
   }
 
   applyFilter(event: Event) {
@@ -249,7 +253,7 @@ export class LinersTableComponent implements OnInit {
           this.liners.forEach(
             liner => {
               let ID = this.dialogData.ID
-              let revPointer = liner[this.dialogData.ReversePointer]
+              let revPointer = liner[this.dialogData.ReversePointer as keyof LinerDB] as unknown as NullInt64
               if (revPointer.Int64 == ID) {
                 this.initialSelection.push(liner)
               }
@@ -260,15 +264,15 @@ export class LinersTableComponent implements OnInit {
 
         if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
 
-          let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s"]
-          let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)
+          let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s" as keyof FrontRepo] as Map<number, LinerDB>
+          let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)!
 
-          if (sourceInstance[this.dialogData.SourceField]) {
-            for (let associationInstance of sourceInstance[this.dialogData.SourceField]) {
-              let liner = associationInstance[this.dialogData.IntermediateStructField]
-              this.initialSelection.push(liner)
-            }
+          let sourceField = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as LinerDB[]
+          for (let associationInstance of sourceField) {
+            let liner = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as LinerDB
+            this.initialSelection.push(liner)
           }
+
           this.selection = new SelectionModel<LinerDB>(allowMultiSelect, this.initialSelection);
         }
 
@@ -344,8 +348,9 @@ export class LinersTableComponent implements OnInit {
       // reset all initial selection of liner that belong to liner
       this.initialSelection.forEach(
         liner => {
-          liner[this.dialogData.ReversePointer].Int64 = 0
-          liner[this.dialogData.ReversePointer].Valid = true
+          let index = liner[this.dialogData.ReversePointer as keyof LinerDB] as unknown as NullInt64
+          index.Int64 = 0
+          index.Valid = true
           toUpdate.add(liner)
         }
       )
@@ -353,9 +358,9 @@ export class LinersTableComponent implements OnInit {
       // from selection, set liner that belong to liner
       this.selection.selected.forEach(
         liner => {
-          let ID = +this.dialogData.ID
-          liner[this.dialogData.ReversePointer].Int64 = ID
-          liner[this.dialogData.ReversePointer].Valid = true
+          let ID = this.dialogData.ID as number
+          let reversePointer = liner[this.dialogData.ReversePointer  as keyof LinerDB] as unknown as NullInt64
+          reversePointer.Int64 = ID
           toUpdate.add(liner)
         }
       )
@@ -373,8 +378,9 @@ export class LinersTableComponent implements OnInit {
 
     if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
 
-      let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s"]
-      let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)
+      // get the source instance via the map of instances in the front repo
+      let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s" as keyof FrontRepo] as Map<number, LinerDB>
+      let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)!
 
       // First, parse all instance of the association struct and remove the instance
       // that have unselect
@@ -390,23 +396,21 @@ export class LinersTableComponent implements OnInit {
       }
 
       // delete the association instance
-      if (sourceInstance[this.dialogData.SourceField]) {
-        for (let associationInstance of sourceInstance[this.dialogData.SourceField]) {
-          let liner = associationInstance[this.dialogData.IntermediateStructField]
-          if (unselectedLiner.has(liner.ID)) {
+      let associationInstance = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]
+      let liner = associationInstance![this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as LinerDB
+      if (unselectedLiner.has(liner.ID)) {
+        this.frontRepoService.deleteService(this.dialogData.IntermediateStruct, associationInstance)
 
-            this.frontRepoService.deleteService( this.dialogData.IntermediateStruct, associationInstance )
-          }
-        }
+
       }
 
-      // is the source array is emptyn create it
-      if (sourceInstance[this.dialogData.SourceField] == undefined) {
-        sourceInstance[this.dialogData.SourceField] = new Array<any>()
+      // is the source array is empty create it
+      if (sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance] == undefined) {
+        (sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance] as unknown as Array<LinerDB>) = new Array<LinerDB>()
       }
 
       // second, parse all instance of the selected
-      if (sourceInstance[this.dialogData.SourceField]) {
+      if (sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]) {
         this.selection.selected.forEach(
           liner => {
             if (!this.initialSelection.includes(liner)) {
@@ -416,13 +420,11 @@ export class LinersTableComponent implements OnInit {
                 Name: sourceInstance["Name"] + "-" + liner.Name,
               }
 
-              associationInstance[this.dialogData.IntermediateStructField+"ID"] = new NullInt64
-              associationInstance[this.dialogData.IntermediateStructField+"ID"].Int64 = liner.ID
-              associationInstance[this.dialogData.IntermediateStructField+"ID"].Valid = true
+              let index = associationInstance[this.dialogData.IntermediateStructField+"ID" as keyof typeof associationInstance] as unknown as NullInt64
+              index.Int64 = liner.ID
 
-              associationInstance[this.dialogData.SourceStruct + "_" + this.dialogData.SourceField + "DBID"] = new NullInt64
-              associationInstance[this.dialogData.SourceStruct + "_" + this.dialogData.SourceField + "DBID"].Int64 = sourceInstance["ID"]
-              associationInstance[this.dialogData.SourceStruct + "_" + this.dialogData.SourceField + "DBID"].Valid = true
+              let indexDB = associationInstance[this.dialogData.IntermediateStructField+"DBID" as keyof typeof associationInstance] as unknown as NullInt64
+              indexDB.Int64 = liner.ID
 
               this.frontRepoService.postService( this.dialogData.IntermediateStruct, associationInstance )
 

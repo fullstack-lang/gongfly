@@ -13,6 +13,8 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { ScenarioDB } from './scenario-db';
 
+// insertion point for imports
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,14 +37,14 @@ export class ScenarioService {
   ) {
     // path to the service share the same origin with the path to the document
     // get the origin in the URL to the document
-	let origin = this.document.location.origin
-    
-	// if debugging with ng, replace 4200 with 8080
-	origin = origin.replace("4200", "8080")
+    let origin = this.document.location.origin
+
+    // if debugging with ng, replace 4200 with 8080
+    origin = origin.replace("4200", "8080")
 
     // compute path to the service
     this.scenariosUrl = origin + '/api/github.com/fullstack-lang/gongfly/go/v1/scenarios';
-   }
+  }
 
   /** GET scenarios from the server */
   getScenarios(): Observable<ScenarioDB[]> {
@@ -67,15 +69,15 @@ export class ScenarioService {
   /** POST: add a new scenario to the server */
   postScenario(scenariodb: ScenarioDB): Observable<ScenarioDB> {
 
-		// insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-		return this.http.post<ScenarioDB>(this.scenariosUrl, scenariodb, this.httpOptions).pipe(
-			tap(_ => {
-				// insertion point for restoration of reverse pointers
-				this.log(`posted scenariodb id=${scenariodb.ID}`)
-			}),
-			catchError(this.handleError<ScenarioDB>('postScenario'))
-		);
+    return this.http.post<ScenarioDB>(this.scenariosUrl, scenariodb, this.httpOptions).pipe(
+      tap(_ => {
+        // insertion point for restoration of reverse pointers
+        this.log(`posted scenariodb id=${scenariodb.ID}`)
+      }),
+      catchError(this.handleError<ScenarioDB>('postScenario'))
+    );
   }
 
   /** DELETE: delete the scenariodb from the server */
@@ -96,7 +98,7 @@ export class ScenarioService {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.put(url, scenariodb, this.httpOptions).pipe(
+    return this.http.put<ScenarioDB>(url, scenariodb, this.httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated scenariodb id=${scenariodb.ID}`)

@@ -40,7 +40,7 @@ export enum GongNodeType {
  */
 interface GongNode {
   name: string; // if STRUCT, the name of the struct, if INSTANCE the name of the instance
-  children?: GongNode[];
+  children: GongNode[];
   type: GongNodeType;
   structName: string;
   associationField: string;
@@ -147,8 +147,8 @@ export class SidebarComponent implements OnInit {
   hasChild = (_: number, node: GongFlatNode) => node.expandable;
 
   // front repo
-  frontRepo: FrontRepo
-  commitNb: number
+  frontRepo: FrontRepo = new (FrontRepo)
+  commitNb: number = 0
 
   // "data" tree that is constructed during NgInit and is passed to the mat-tree component
   gongNodeTree = new Array<GongNode>();
@@ -247,20 +247,19 @@ export class SidebarComponent implements OnInit {
       let memoryOfExpandedNodes = new Map<number, boolean>()
       let nonInstanceNodeId = 1
 
-      if (this.treeControl.dataNodes != undefined) {
-        this.treeControl.dataNodes.forEach(
-          node => {
-            if (this.treeControl.isExpanded(node)) {
-              memoryOfExpandedNodes[node.uniqueIdPerStack] = true
-            } else {
-              memoryOfExpandedNodes[node.uniqueIdPerStack] = false
-            }
+      this.treeControl.dataNodes?.forEach(
+        node => {
+          if (this.treeControl.isExpanded(node)) {
+            memoryOfExpandedNodes.set(node.uniqueIdPerStack, true)
+          } else {
+            memoryOfExpandedNodes.set(node.uniqueIdPerStack, false)
           }
-        )
-      }
+        }
+      )
 
+      // reset the gong node tree
       this.gongNodeTree = new Array<GongNode>();
-
+      
       // insertion point for per struct tree construction
       /**
       * fill up the CivilianAirport part of the mat tree
@@ -300,7 +299,7 @@ export class SidebarComponent implements OnInit {
             associatedStructName: "",
             children: new Array<GongNode>()
           }
-          civilianairportGongNodeStruct.children.push(civilianairportGongNodeInstance)
+          civilianairportGongNodeStruct.children!.push(civilianairportGongNodeInstance)
 
           // insertion point for per field code
         }
@@ -344,7 +343,7 @@ export class SidebarComponent implements OnInit {
             associatedStructName: "",
             children: new Array<GongNode>()
           }
-          linerGongNodeStruct.children.push(linerGongNodeInstance)
+          linerGongNodeStruct.children!.push(linerGongNodeInstance)
 
           // insertion point for per field code
           /**
@@ -361,7 +360,7 @@ export class SidebarComponent implements OnInit {
             children: new Array<GongNode>()
           }
           nonInstanceNodeId = nonInstanceNodeId + 1
-          linerGongNodeInstance.children.push(ReporingLineGongNodeAssociation)
+          linerGongNodeInstance.children!.push(ReporingLineGongNodeAssociation)
 
           /**
             * let append a node for the instance behind the asssociation ReporingLine
@@ -423,7 +422,7 @@ export class SidebarComponent implements OnInit {
             associatedStructName: "",
             children: new Array<GongNode>()
           }
-          messageGongNodeStruct.children.push(messageGongNodeInstance)
+          messageGongNodeStruct.children!.push(messageGongNodeInstance)
 
           // insertion point for per field code
         }
@@ -467,7 +466,7 @@ export class SidebarComponent implements OnInit {
             associatedStructName: "",
             children: new Array<GongNode>()
           }
-          opslineGongNodeStruct.children.push(opslineGongNodeInstance)
+          opslineGongNodeStruct.children!.push(opslineGongNodeInstance)
 
           // insertion point for per field code
           /**
@@ -484,7 +483,7 @@ export class SidebarComponent implements OnInit {
             children: new Array<GongNode>()
           }
           nonInstanceNodeId = nonInstanceNodeId + 1
-          opslineGongNodeInstance.children.push(ScenarioGongNodeAssociation)
+          opslineGongNodeInstance.children!.push(ScenarioGongNodeAssociation)
 
           /**
             * let append a node for the instance behind the asssociation Scenario
@@ -546,7 +545,7 @@ export class SidebarComponent implements OnInit {
             associatedStructName: "",
             children: new Array<GongNode>()
           }
-          orderGongNodeStruct.children.push(orderGongNodeInstance)
+          orderGongNodeStruct.children!.push(orderGongNodeInstance)
 
           // insertion point for per field code
           /**
@@ -563,7 +562,7 @@ export class SidebarComponent implements OnInit {
             children: new Array<GongNode>()
           }
           nonInstanceNodeId = nonInstanceNodeId + 1
-          orderGongNodeInstance.children.push(TargetGongNodeAssociation)
+          orderGongNodeInstance.children!.push(TargetGongNodeAssociation)
 
           /**
             * let append a node for the instance behind the asssociation Target
@@ -625,7 +624,7 @@ export class SidebarComponent implements OnInit {
             associatedStructName: "",
             children: new Array<GongNode>()
           }
-          radarGongNodeStruct.children.push(radarGongNodeInstance)
+          radarGongNodeStruct.children!.push(radarGongNodeInstance)
 
           // insertion point for per field code
         }
@@ -669,7 +668,7 @@ export class SidebarComponent implements OnInit {
             associatedStructName: "",
             children: new Array<GongNode>()
           }
-          reportGongNodeStruct.children.push(reportGongNodeInstance)
+          reportGongNodeStruct.children!.push(reportGongNodeInstance)
 
           // insertion point for per field code
           /**
@@ -686,7 +685,7 @@ export class SidebarComponent implements OnInit {
             children: new Array<GongNode>()
           }
           nonInstanceNodeId = nonInstanceNodeId + 1
-          reportGongNodeInstance.children.push(AboutGongNodeAssociation)
+          reportGongNodeInstance.children!.push(AboutGongNodeAssociation)
 
           /**
             * let append a node for the instance behind the asssociation About
@@ -721,7 +720,7 @@ export class SidebarComponent implements OnInit {
             children: new Array<GongNode>()
           }
           nonInstanceNodeId = nonInstanceNodeId + 1
-          reportGongNodeInstance.children.push(OpsLineGongNodeAssociation)
+          reportGongNodeInstance.children!.push(OpsLineGongNodeAssociation)
 
           /**
             * let append a node for the instance behind the asssociation OpsLine
@@ -783,7 +782,7 @@ export class SidebarComponent implements OnInit {
             associatedStructName: "",
             children: new Array<GongNode>()
           }
-          scenarioGongNodeStruct.children.push(scenarioGongNodeInstance)
+          scenarioGongNodeStruct.children!.push(scenarioGongNodeInstance)
 
           // insertion point for per field code
         }
@@ -793,17 +792,13 @@ export class SidebarComponent implements OnInit {
       this.dataSource.data = this.gongNodeTree
 
       // expand nodes that were exapanded before
-      if (this.treeControl.dataNodes != undefined) {
-        this.treeControl.dataNodes.forEach(
-          node => {
-            if (memoryOfExpandedNodes[node.uniqueIdPerStack] != undefined) {
-              if (memoryOfExpandedNodes[node.uniqueIdPerStack]) {
-                this.treeControl.expand(node)
-              }
-            }
+      this.treeControl.dataNodes?.forEach(
+        node => {
+          if (memoryOfExpandedNodes.get(node.uniqueIdPerStack)) {
+            this.treeControl.expand(node)
           }
-        )
-      }
+        }
+      )
     });
 
     // fetch the number of commits
@@ -849,7 +844,7 @@ export class SidebarComponent implements OnInit {
     }
   }
 
-  setEditorRouterOutlet(path) {
+  setEditorRouterOutlet(path: string) {
     this.router.navigate([{
       outlets: {
         github_com_fullstack_lang_gongfly_go_editor: ["github_com_fullstack_lang_gongfly_go-" + path.toLowerCase()]
@@ -857,7 +852,7 @@ export class SidebarComponent implements OnInit {
     }]);
   }
 
-  setEditorSpecialRouterOutlet( node: GongFlatNode) {
+  setEditorSpecialRouterOutlet(node: GongFlatNode) {
     this.router.navigate([{
       outlets: {
         github_com_fullstack_lang_gongfly_go_editor: ["github_com_fullstack_lang_gongfly_go-" + node.associatedStructName.toLowerCase() + "-adder", node.id, node.structName, node.associationField]

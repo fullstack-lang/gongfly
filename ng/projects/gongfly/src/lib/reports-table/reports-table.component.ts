@@ -7,7 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatButton } from '@angular/material/button'
 
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
-import { DialogData, FrontRepoService, FrontRepo, NullInt64, SelectionMode } from '../front-repo.service'
+import { DialogData, FrontRepoService, FrontRepo, SelectionMode } from '../front-repo.service'
+import { NullInt64 } from '../null-int64'
 import { SelectionModel } from '@angular/cdk/collections';
 
 const allowMultiSelect = true;
@@ -33,26 +34,28 @@ enum TableComponentMode {
 export class ReportsTableComponent implements OnInit {
 
   // mode at invocation
-  mode: TableComponentMode
+  mode: TableComponentMode = TableComponentMode.DISPLAY_MODE
 
   // used if the component is called as a selection component of Report instances
-  selection: SelectionModel<ReportDB>;
-  initialSelection = new Array<ReportDB>();
+  selection: SelectionModel<ReportDB> = new (SelectionModel)
+  initialSelection = new Array<ReportDB>()
 
   // the data source for the table
-  reports: ReportDB[];
-  matTableDataSource: MatTableDataSource<ReportDB>
+  reports: ReportDB[] = []
+  matTableDataSource: MatTableDataSource<ReportDB> = new (MatTableDataSource)
 
   // front repo, that will be referenced by this.reports
-  frontRepo: FrontRepo
+  frontRepo: FrontRepo = new (FrontRepo)
 
   // displayedColumns is referenced by the MatTable component for specify what columns
   // have to be displayed and in what order
   displayedColumns: string[];
 
   // for sorting & pagination
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort)
+  sort: MatSort | undefined
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator | undefined;
 
   ngAfterViewInit() {
 
@@ -82,7 +85,8 @@ export class ReportsTableComponent implements OnInit {
           return (reportDB.OpsLine ? reportDB.OpsLine.Name : '');
 
         default:
-          return ReportDB[property];
+          console.assert(false, "Unknown field")
+          return "";
       }
     };
 
@@ -109,8 +113,8 @@ export class ReportsTableComponent implements OnInit {
       return isSelected
     };
 
-    this.matTableDataSource.sort = this.sort;
-    this.matTableDataSource.paginator = this.paginator;
+    this.matTableDataSource.sort = this.sort!
+    this.matTableDataSource.paginator = this.paginator!
   }
 
   applyFilter(event: Event) {
@@ -203,7 +207,7 @@ export class ReportsTableComponent implements OnInit {
           this.reports.forEach(
             report => {
               let ID = this.dialogData.ID
-              let revPointer = report[this.dialogData.ReversePointer]
+              let revPointer = report[this.dialogData.ReversePointer as keyof ReportDB] as unknown as NullInt64
               if (revPointer.Int64 == ID) {
                 this.initialSelection.push(report)
               }
@@ -214,15 +218,15 @@ export class ReportsTableComponent implements OnInit {
 
         if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
 
-          let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s"]
-          let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)
+          let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s" as keyof FrontRepo] as Map<number, ReportDB>
+          let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)!
 
-          if (sourceInstance[this.dialogData.SourceField]) {
-            for (let associationInstance of sourceInstance[this.dialogData.SourceField]) {
-              let report = associationInstance[this.dialogData.IntermediateStructField]
-              this.initialSelection.push(report)
-            }
+          let sourceField = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as ReportDB[]
+          for (let associationInstance of sourceField) {
+            let report = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as ReportDB
+            this.initialSelection.push(report)
           }
+
           this.selection = new SelectionModel<ReportDB>(allowMultiSelect, this.initialSelection);
         }
 
@@ -298,8 +302,9 @@ export class ReportsTableComponent implements OnInit {
       // reset all initial selection of report that belong to report
       this.initialSelection.forEach(
         report => {
-          report[this.dialogData.ReversePointer].Int64 = 0
-          report[this.dialogData.ReversePointer].Valid = true
+          let index = report[this.dialogData.ReversePointer as keyof ReportDB] as unknown as NullInt64
+          index.Int64 = 0
+          index.Valid = true
           toUpdate.add(report)
         }
       )
@@ -307,9 +312,9 @@ export class ReportsTableComponent implements OnInit {
       // from selection, set report that belong to report
       this.selection.selected.forEach(
         report => {
-          let ID = +this.dialogData.ID
-          report[this.dialogData.ReversePointer].Int64 = ID
-          report[this.dialogData.ReversePointer].Valid = true
+          let ID = this.dialogData.ID as number
+          let reversePointer = report[this.dialogData.ReversePointer  as keyof ReportDB] as unknown as NullInt64
+          reversePointer.Int64 = ID
           toUpdate.add(report)
         }
       )
@@ -327,8 +332,9 @@ export class ReportsTableComponent implements OnInit {
 
     if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
 
-      let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s"]
-      let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)
+      // get the source instance via the map of instances in the front repo
+      let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s" as keyof FrontRepo] as Map<number, ReportDB>
+      let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)!
 
       // First, parse all instance of the association struct and remove the instance
       // that have unselect
@@ -344,23 +350,21 @@ export class ReportsTableComponent implements OnInit {
       }
 
       // delete the association instance
-      if (sourceInstance[this.dialogData.SourceField]) {
-        for (let associationInstance of sourceInstance[this.dialogData.SourceField]) {
-          let report = associationInstance[this.dialogData.IntermediateStructField]
-          if (unselectedReport.has(report.ID)) {
+      let associationInstance = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]
+      let report = associationInstance![this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as ReportDB
+      if (unselectedReport.has(report.ID)) {
+        this.frontRepoService.deleteService(this.dialogData.IntermediateStruct, associationInstance)
 
-            this.frontRepoService.deleteService( this.dialogData.IntermediateStruct, associationInstance )
-          }
-        }
+
       }
 
-      // is the source array is emptyn create it
-      if (sourceInstance[this.dialogData.SourceField] == undefined) {
-        sourceInstance[this.dialogData.SourceField] = new Array<any>()
+      // is the source array is empty create it
+      if (sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance] == undefined) {
+        (sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance] as unknown as Array<ReportDB>) = new Array<ReportDB>()
       }
 
       // second, parse all instance of the selected
-      if (sourceInstance[this.dialogData.SourceField]) {
+      if (sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]) {
         this.selection.selected.forEach(
           report => {
             if (!this.initialSelection.includes(report)) {
@@ -370,13 +374,11 @@ export class ReportsTableComponent implements OnInit {
                 Name: sourceInstance["Name"] + "-" + report.Name,
               }
 
-              associationInstance[this.dialogData.IntermediateStructField+"ID"] = new NullInt64
-              associationInstance[this.dialogData.IntermediateStructField+"ID"].Int64 = report.ID
-              associationInstance[this.dialogData.IntermediateStructField+"ID"].Valid = true
+              let index = associationInstance[this.dialogData.IntermediateStructField+"ID" as keyof typeof associationInstance] as unknown as NullInt64
+              index.Int64 = report.ID
 
-              associationInstance[this.dialogData.SourceStruct + "_" + this.dialogData.SourceField + "DBID"] = new NullInt64
-              associationInstance[this.dialogData.SourceStruct + "_" + this.dialogData.SourceField + "DBID"].Int64 = sourceInstance["ID"]
-              associationInstance[this.dialogData.SourceStruct + "_" + this.dialogData.SourceField + "DBID"].Valid = true
+              let indexDB = associationInstance[this.dialogData.IntermediateStructField+"DBID" as keyof typeof associationInstance] as unknown as NullInt64
+              indexDB.Int64 = report.ID
 
               this.frontRepoService.postService( this.dialogData.IntermediateStruct, associationInstance )
 

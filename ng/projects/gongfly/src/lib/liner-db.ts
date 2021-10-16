@@ -2,32 +2,32 @@
 import { OpsLineDB } from './opsline-db'
 
 // usefull for managing pointer ID values that can be nullable
-import { NullInt64 } from './front-repo.service'
+import { NullInt64 } from './null-int64'
 
 export class LinerDB {
-	CreatedAt?: string;
-	DeletedAt?: string;
-	ID?: number;
+	CreatedAt?: string
+	DeletedAt?: string
+	ID: number = 0
 
 	// insertion point for basic fields declarations
-	Lat?: number
-	Lng?: number
-	Heading?: number
-	Level?: number
-	Speed?: number
-	TechName?: string
-	State?: string
-	Name?: string
-	TargetHeading?: number
-	TargetLocationLat?: number
-	TargetLocationLng?: number
-	DistanceToTarget?: number
-	MaxRotationalSpeed?: number
-	VerticalSpeed?: number
-	Timestampstring?: string
+	Lat: number = 0
+	Lng: number = 0
+	Heading: number = 0
+	Level: number = 0
+	Speed: number = 0
+	TechName: string = ""
+	State: string = ""
+	Name: string = ""
+	TargetHeading: number = 0
+	TargetLocationLat: number = 0
+	TargetLocationLng: number = 0
+	DistanceToTarget: number = 0
+	MaxRotationalSpeed: number = 0
+	VerticalSpeed: number = 0
+	Timestampstring: string = ""
 
 	// insertion point for other declarations
 	ReporingLine?: OpsLineDB
-	ReporingLineID?: NullInt64
+	ReporingLineID: NullInt64 = new NullInt64 // if pointer is null, ReporingLine.ID = 0
 
 }

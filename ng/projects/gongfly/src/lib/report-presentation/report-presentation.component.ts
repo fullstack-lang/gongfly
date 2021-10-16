@@ -23,17 +23,17 @@ export class ReportPresentationComponent implements OnInit {
 
 	// insertion point for declarations
 	// fields from Duration
-	Duration_Hours: number
-	Duration_Minutes: number
-	Duration_Seconds: number
+	Duration_Hours: number = 0
+	Duration_Minutes: number = 0
+	Duration_Seconds: number = 0
 
-	displayedColumns: string[] = [];
-	dataSource = ELEMENT_DATA;
+	displayedColumns: string[] = []
+	dataSource = ELEMENT_DATA
 
-	report: ReportDB;
+	report: ReportDB = new (ReportDB)
 
 	// front repo
-	frontRepo: FrontRepo
+	frontRepo: FrontRepo = new (FrontRepo)
  
 	constructor(
 		private reportService: ReportService,
@@ -60,12 +60,12 @@ export class ReportPresentationComponent implements OnInit {
 	}
 
 	getReport(): void {
-		const id = +this.route.snapshot.paramMap.get('id');
+		const id = +this.route.snapshot.paramMap.get('id')!
 		this.frontRepoService.pull().subscribe(
 			frontRepo => {
 				this.frontRepo = frontRepo
 
-				this.report = this.frontRepo.Reports.get(id)
+				this.report = this.frontRepo.Reports.get(id)!
 
 				// insertion point for recovery of durations
 				// computation of Hours, Minutes, Seconds for Duration

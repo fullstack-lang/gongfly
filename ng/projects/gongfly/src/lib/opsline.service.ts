@@ -13,6 +13,9 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { OpsLineDB } from './opsline-db';
 
+// insertion point for imports
+import { ScenarioDB } from './scenario-db'
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,14 +38,14 @@ export class OpsLineService {
   ) {
     // path to the service share the same origin with the path to the document
     // get the origin in the URL to the document
-	let origin = this.document.location.origin
-    
-	// if debugging with ng, replace 4200 with 8080
-	origin = origin.replace("4200", "8080")
+    let origin = this.document.location.origin
+
+    // if debugging with ng, replace 4200 with 8080
+    origin = origin.replace("4200", "8080")
 
     // compute path to the service
     this.opslinesUrl = origin + '/api/github.com/fullstack-lang/gongfly/go/v1/opslines';
-   }
+  }
 
   /** GET opslines from the server */
   getOpsLines(): Observable<OpsLineDB[]> {
@@ -67,16 +70,16 @@ export class OpsLineService {
   /** POST: add a new opsline to the server */
   postOpsLine(opslinedb: OpsLineDB): Observable<OpsLineDB> {
 
-		// insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    opslinedb.Scenario = {}
+    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    opslinedb.Scenario = new ScenarioDB
 
-		return this.http.post<OpsLineDB>(this.opslinesUrl, opslinedb, this.httpOptions).pipe(
-			tap(_ => {
-				// insertion point for restoration of reverse pointers
-				this.log(`posted opslinedb id=${opslinedb.ID}`)
-			}),
-			catchError(this.handleError<OpsLineDB>('postOpsLine'))
-		);
+    return this.http.post<OpsLineDB>(this.opslinesUrl, opslinedb, this.httpOptions).pipe(
+      tap(_ => {
+        // insertion point for restoration of reverse pointers
+        this.log(`posted opslinedb id=${opslinedb.ID}`)
+      }),
+      catchError(this.handleError<OpsLineDB>('postOpsLine'))
+    );
   }
 
   /** DELETE: delete the opslinedb from the server */
@@ -96,9 +99,9 @@ export class OpsLineService {
     const url = `${this.opslinesUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    opslinedb.Scenario = {}
+    opslinedb.Scenario = new ScenarioDB
 
-    return this.http.put(url, opslinedb, this.httpOptions).pipe(
+    return this.http.put<OpsLineDB>(url, opslinedb, this.httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated opslinedb id=${opslinedb.ID}`)

@@ -16,7 +16,7 @@ import { Router, RouterState, ActivatedRoute } from '@angular/router';
 
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 
-import { NullInt64 } from '../front-repo.service'
+import { NullInt64 } from '../null-int64'
 
 // RadarDetailComponent is initilizaed from different routes
 // RadarDetailComponentState detail different cases 
@@ -34,13 +34,13 @@ enum RadarDetailComponentState {
 export class RadarDetailComponent implements OnInit {
 
 	// insertion point for declarations
-	RadarStateEnumList: RadarStateEnumSelect[]
+	RadarStateEnumList: RadarStateEnumSelect[] = []
 
 	// the RadarDB of interest
-	radar: RadarDB;
+	radar: RadarDB = new RadarDB
 
 	// front repo
-	frontRepo: FrontRepo
+	frontRepo: FrontRepo = new FrontRepo
 
 	// this stores the information related to string fields
 	// if false, the field is inputed with an <input ...> form 
@@ -48,15 +48,15 @@ export class RadarDetailComponent implements OnInit {
 	mapFields_displayAsTextArea = new Map<string, boolean>()
 
 	// the state at initialization (CREATION, UPDATE or CREATE with one association set)
-	state: RadarDetailComponentState
+	state: RadarDetailComponentState = RadarDetailComponentState.CREATE_INSTANCE
 
 	// in UDPATE state, if is the id of the instance to update
 	// in CREATE state with one association set, this is the id of the associated instance
-	id: number
+	id: number = 0
 
 	// in CREATE state with one association set, this is the id of the associated instance
-	originStruct: string
-	originStructFieldName: string
+	originStruct: string = ""
+	originStructFieldName: string = ""
 
 	constructor(
 		private radarService: RadarService,
@@ -70,9 +70,9 @@ export class RadarDetailComponent implements OnInit {
 	ngOnInit(): void {
 
 		// compute state
-		this.id = +this.route.snapshot.paramMap.get('id');
-		this.originStruct = this.route.snapshot.paramMap.get('originStruct');
-		this.originStructFieldName = this.route.snapshot.paramMap.get('originStructFieldName');
+		this.id = +this.route.snapshot.paramMap.get('id')!;
+		this.originStruct = this.route.snapshot.paramMap.get('originStruct')!;
+		this.originStructFieldName = this.route.snapshot.paramMap.get('originStructFieldName')!;
 
 		const association = this.route.snapshot.paramMap.get('association');
 		if (this.id == 0) {
@@ -115,7 +115,9 @@ export class RadarDetailComponent implements OnInit {
 						this.radar = new (RadarDB)
 						break;
 					case RadarDetailComponentState.UPDATE_INSTANCE:
-						this.radar = frontRepo.Radars.get(this.id)
+						let radar = frontRepo.Radars.get(this.id)
+						console.assert(radar != undefined, "missing radar with id:" + this.id)
+						this.radar = radar!
 						break;
 					// insertion point for init of association field
 					default:
@@ -150,7 +152,7 @@ export class RadarDetailComponent implements OnInit {
 			default:
 				this.radarService.postRadar(this.radar).subscribe(radar => {
 					this.radarService.RadarServiceChanged.next("post")
-					this.radar = {} // reset fields
+					this.radar = new (RadarDB) // reset fields
 				});
 		}
 	}
@@ -159,7 +161,7 @@ export class RadarDetailComponent implements OnInit {
 	// ONE-MANY association
 	// It uses the MapOfComponent provided by the front repo
 	openReverseSelection(AssociatedStruct: string, reverseField: string, selectionMode: string,
-		sourceField: string, intermediateStructField: string, nextAssociatedStruct: string ) {
+		sourceField: string, intermediateStructField: string, nextAssociatedStruct: string) {
 
 		console.log("mode " + selectionMode)
 
@@ -173,7 +175,7 @@ export class RadarDetailComponent implements OnInit {
 		dialogConfig.height = "50%"
 		if (selectionMode == SelectionMode.ONE_MANY_ASSOCIATION_MODE) {
 
-			dialogData.ID = this.radar.ID
+			dialogData.ID = this.radar.ID!
 			dialogData.ReversePointer = reverseField
 			dialogData.OrderingMode = false
 			dialogData.SelectionMode = selectionMode
@@ -189,7 +191,7 @@ export class RadarDetailComponent implements OnInit {
 			});
 		}
 		if (selectionMode == SelectionMode.MANY_MANY_ASSOCIATION_MODE) {
-			dialogData.ID = this.radar.ID
+			dialogData.ID = this.radar.ID!
 			dialogData.ReversePointer = reverseField
 			dialogData.OrderingMode = false
 			dialogData.SelectionMode = selectionMode
@@ -240,7 +242,7 @@ export class RadarDetailComponent implements OnInit {
 		});
 	}
 
-	fillUpNameIfEmpty(event) {
+	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
 		if (this.radar.Name == undefined) {
 			this.radar.Name = event.value.Name
 		}
@@ -257,7 +259,7 @@ export class RadarDetailComponent implements OnInit {
 
 	isATextArea(fieldName: string): boolean {
 		if (this.mapFields_displayAsTextArea.has(fieldName)) {
-			return this.mapFields_displayAsTextArea.get(fieldName)
+			return this.mapFields_displayAsTextArea.get(fieldName)!
 		} else {
 			return false
 		}

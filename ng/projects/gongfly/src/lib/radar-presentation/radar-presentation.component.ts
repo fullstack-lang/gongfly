@@ -23,13 +23,13 @@ export class RadarPresentationComponent implements OnInit {
 
 	// insertion point for declarations
 
-	displayedColumns: string[] = [];
-	dataSource = ELEMENT_DATA;
+	displayedColumns: string[] = []
+	dataSource = ELEMENT_DATA
 
-	radar: RadarDB;
+	radar: RadarDB = new (RadarDB)
 
 	// front repo
-	frontRepo: FrontRepo
+	frontRepo: FrontRepo = new (FrontRepo)
  
 	constructor(
 		private radarService: RadarService,
@@ -56,12 +56,12 @@ export class RadarPresentationComponent implements OnInit {
 	}
 
 	getRadar(): void {
-		const id = +this.route.snapshot.paramMap.get('id');
+		const id = +this.route.snapshot.paramMap.get('id')!
 		this.frontRepoService.pull().subscribe(
 			frontRepo => {
 				this.frontRepo = frontRepo
 
-				this.radar = this.frontRepo.Radars.get(id)
+				this.radar = this.frontRepo.Radars.get(id)!
 
 				// insertion point for recovery of durations
 			}

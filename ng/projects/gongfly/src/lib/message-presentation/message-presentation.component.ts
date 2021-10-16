@@ -23,17 +23,17 @@ export class MessagePresentationComponent implements OnInit {
 
 	// insertion point for declarations
 	// fields from DurationSinceSimulationStart
-	DurationSinceSimulationStart_Hours: number
-	DurationSinceSimulationStart_Minutes: number
-	DurationSinceSimulationStart_Seconds: number
+	DurationSinceSimulationStart_Hours: number = 0
+	DurationSinceSimulationStart_Minutes: number = 0
+	DurationSinceSimulationStart_Seconds: number = 0
 
-	displayedColumns: string[] = [];
-	dataSource = ELEMENT_DATA;
+	displayedColumns: string[] = []
+	dataSource = ELEMENT_DATA
 
-	message: MessageDB;
+	message: MessageDB = new (MessageDB)
 
 	// front repo
-	frontRepo: FrontRepo
+	frontRepo: FrontRepo = new (FrontRepo)
  
 	constructor(
 		private messageService: MessageService,
@@ -60,12 +60,12 @@ export class MessagePresentationComponent implements OnInit {
 	}
 
 	getMessage(): void {
-		const id = +this.route.snapshot.paramMap.get('id');
+		const id = +this.route.snapshot.paramMap.get('id')!
 		this.frontRepoService.pull().subscribe(
 			frontRepo => {
 				this.frontRepo = frontRepo
 
-				this.message = this.frontRepo.Messages.get(id)
+				this.message = this.frontRepo.Messages.get(id)!
 
 				// insertion point for recovery of durations
 				// computation of Hours, Minutes, Seconds for DurationSinceSimulationStart

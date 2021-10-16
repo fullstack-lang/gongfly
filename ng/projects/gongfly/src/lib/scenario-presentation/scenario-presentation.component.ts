@@ -23,13 +23,13 @@ export class ScenarioPresentationComponent implements OnInit {
 
 	// insertion point for declarations
 
-	displayedColumns: string[] = [];
-	dataSource = ELEMENT_DATA;
+	displayedColumns: string[] = []
+	dataSource = ELEMENT_DATA
 
-	scenario: ScenarioDB;
+	scenario: ScenarioDB = new (ScenarioDB)
 
 	// front repo
-	frontRepo: FrontRepo
+	frontRepo: FrontRepo = new (FrontRepo)
  
 	constructor(
 		private scenarioService: ScenarioService,
@@ -56,12 +56,12 @@ export class ScenarioPresentationComponent implements OnInit {
 	}
 
 	getScenario(): void {
-		const id = +this.route.snapshot.paramMap.get('id');
+		const id = +this.route.snapshot.paramMap.get('id')!
 		this.frontRepoService.pull().subscribe(
 			frontRepo => {
 				this.frontRepo = frontRepo
 
-				this.scenario = this.frontRepo.Scenarios.get(id)
+				this.scenario = this.frontRepo.Scenarios.get(id)!
 
 				// insertion point for recovery of durations
 			}

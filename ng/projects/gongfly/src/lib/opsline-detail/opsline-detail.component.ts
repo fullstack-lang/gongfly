@@ -16,7 +16,7 @@ import { Router, RouterState, ActivatedRoute } from '@angular/router';
 
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 
-import { NullInt64 } from '../front-repo.service'
+import { NullInt64 } from '../null-int64'
 
 // OpsLineDetailComponent is initilizaed from different routes
 // OpsLineDetailComponentState detail different cases 
@@ -36,13 +36,13 @@ export class OpsLineDetailComponent implements OnInit {
 	// insertion point for declarations
 	IsTransmittingFormControl = new FormControl(false);
 	IsTransmittingBackwardFormControl = new FormControl(false);
-	OperationalLineStateEnumList: OperationalLineStateEnumSelect[]
+	OperationalLineStateEnumList: OperationalLineStateEnumSelect[] = []
 
 	// the OpsLineDB of interest
-	opsline: OpsLineDB;
+	opsline: OpsLineDB = new OpsLineDB
 
 	// front repo
-	frontRepo: FrontRepo
+	frontRepo: FrontRepo = new FrontRepo
 
 	// this stores the information related to string fields
 	// if false, the field is inputed with an <input ...> form 
@@ -50,15 +50,15 @@ export class OpsLineDetailComponent implements OnInit {
 	mapFields_displayAsTextArea = new Map<string, boolean>()
 
 	// the state at initialization (CREATION, UPDATE or CREATE with one association set)
-	state: OpsLineDetailComponentState
+	state: OpsLineDetailComponentState = OpsLineDetailComponentState.CREATE_INSTANCE
 
 	// in UDPATE state, if is the id of the instance to update
 	// in CREATE state with one association set, this is the id of the associated instance
-	id: number
+	id: number = 0
 
 	// in CREATE state with one association set, this is the id of the associated instance
-	originStruct: string
-	originStructFieldName: string
+	originStruct: string = ""
+	originStructFieldName: string = ""
 
 	constructor(
 		private opslineService: OpsLineService,
@@ -72,9 +72,9 @@ export class OpsLineDetailComponent implements OnInit {
 	ngOnInit(): void {
 
 		// compute state
-		this.id = +this.route.snapshot.paramMap.get('id');
-		this.originStruct = this.route.snapshot.paramMap.get('originStruct');
-		this.originStructFieldName = this.route.snapshot.paramMap.get('originStructFieldName');
+		this.id = +this.route.snapshot.paramMap.get('id')!;
+		this.originStruct = this.route.snapshot.paramMap.get('originStruct')!;
+		this.originStructFieldName = this.route.snapshot.paramMap.get('originStructFieldName')!;
 
 		const association = this.route.snapshot.paramMap.get('association');
 		if (this.id == 0) {
@@ -117,7 +117,9 @@ export class OpsLineDetailComponent implements OnInit {
 						this.opsline = new (OpsLineDB)
 						break;
 					case OpsLineDetailComponentState.UPDATE_INSTANCE:
-						this.opsline = frontRepo.OpsLines.get(this.id)
+						let opsline = frontRepo.OpsLines.get(this.id)
+						console.assert(opsline != undefined, "missing opsline with id:" + this.id)
+						this.opsline = opsline!
 						break;
 					// insertion point for init of association field
 					default:
@@ -166,7 +168,7 @@ export class OpsLineDetailComponent implements OnInit {
 			default:
 				this.opslineService.postOpsLine(this.opsline).subscribe(opsline => {
 					this.opslineService.OpsLineServiceChanged.next("post")
-					this.opsline = {} // reset fields
+					this.opsline = new (OpsLineDB) // reset fields
 				});
 		}
 	}
@@ -175,7 +177,7 @@ export class OpsLineDetailComponent implements OnInit {
 	// ONE-MANY association
 	// It uses the MapOfComponent provided by the front repo
 	openReverseSelection(AssociatedStruct: string, reverseField: string, selectionMode: string,
-		sourceField: string, intermediateStructField: string, nextAssociatedStruct: string ) {
+		sourceField: string, intermediateStructField: string, nextAssociatedStruct: string) {
 
 		console.log("mode " + selectionMode)
 
@@ -189,7 +191,7 @@ export class OpsLineDetailComponent implements OnInit {
 		dialogConfig.height = "50%"
 		if (selectionMode == SelectionMode.ONE_MANY_ASSOCIATION_MODE) {
 
-			dialogData.ID = this.opsline.ID
+			dialogData.ID = this.opsline.ID!
 			dialogData.ReversePointer = reverseField
 			dialogData.OrderingMode = false
 			dialogData.SelectionMode = selectionMode
@@ -205,7 +207,7 @@ export class OpsLineDetailComponent implements OnInit {
 			});
 		}
 		if (selectionMode == SelectionMode.MANY_MANY_ASSOCIATION_MODE) {
-			dialogData.ID = this.opsline.ID
+			dialogData.ID = this.opsline.ID!
 			dialogData.ReversePointer = reverseField
 			dialogData.OrderingMode = false
 			dialogData.SelectionMode = selectionMode
@@ -256,7 +258,7 @@ export class OpsLineDetailComponent implements OnInit {
 		});
 	}
 
-	fillUpNameIfEmpty(event) {
+	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
 		if (this.opsline.Name == undefined) {
 			this.opsline.Name = event.value.Name
 		}
@@ -273,7 +275,7 @@ export class OpsLineDetailComponent implements OnInit {
 
 	isATextArea(fieldName: string): boolean {
 		if (this.mapFields_displayAsTextArea.has(fieldName)) {
-			return this.mapFields_displayAsTextArea.get(fieldName)
+			return this.mapFields_displayAsTextArea.get(fieldName)!
 		} else {
 			return false
 		}

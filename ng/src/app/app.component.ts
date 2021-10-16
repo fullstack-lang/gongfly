@@ -25,8 +25,8 @@ export class AppComponent {
   diagrams = 'Diagrams view'
   views: string[] = [this.carto, this.data, this.leaflet, this.sim, this.diagrams];
 
-  obsTimer: Observable<number> = timer(1000, 500); // due time 1', period
-  currTime: number;
+  obsTimer: Observable<number> = timer(1000, 500) // due time 1', period
+  currTime: number = 0
 
   constructor(
     private MessageService: gongfly.MessageService,

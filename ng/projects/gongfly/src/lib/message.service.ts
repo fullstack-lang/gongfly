@@ -13,6 +13,8 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { MessageDB } from './message-db';
 
+// insertion point for imports
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,14 +37,14 @@ export class MessageService {
   ) {
     // path to the service share the same origin with the path to the document
     // get the origin in the URL to the document
-	let origin = this.document.location.origin
-    
-	// if debugging with ng, replace 4200 with 8080
-	origin = origin.replace("4200", "8080")
+    let origin = this.document.location.origin
+
+    // if debugging with ng, replace 4200 with 8080
+    origin = origin.replace("4200", "8080")
 
     // compute path to the service
     this.messagesUrl = origin + '/api/github.com/fullstack-lang/gongfly/go/v1/messages';
-   }
+  }
 
   /** GET messages from the server */
   getMessages(): Observable<MessageDB[]> {
@@ -67,15 +69,15 @@ export class MessageService {
   /** POST: add a new message to the server */
   postMessage(messagedb: MessageDB): Observable<MessageDB> {
 
-		// insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-		return this.http.post<MessageDB>(this.messagesUrl, messagedb, this.httpOptions).pipe(
-			tap(_ => {
-				// insertion point for restoration of reverse pointers
-				this.log(`posted messagedb id=${messagedb.ID}`)
-			}),
-			catchError(this.handleError<MessageDB>('postMessage'))
-		);
+    return this.http.post<MessageDB>(this.messagesUrl, messagedb, this.httpOptions).pipe(
+      tap(_ => {
+        // insertion point for restoration of reverse pointers
+        this.log(`posted messagedb id=${messagedb.ID}`)
+      }),
+      catchError(this.handleError<MessageDB>('postMessage'))
+    );
   }
 
   /** DELETE: delete the messagedb from the server */
@@ -96,7 +98,7 @@ export class MessageService {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.put(url, messagedb, this.httpOptions).pipe(
+    return this.http.put<MessageDB>(url, messagedb, this.httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated messagedb id=${messagedb.ID}`)

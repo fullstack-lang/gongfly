@@ -13,6 +13,9 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { OrderDB } from './order-db';
 
+// insertion point for imports
+import { LinerDB } from './liner-db'
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,14 +38,14 @@ export class OrderService {
   ) {
     // path to the service share the same origin with the path to the document
     // get the origin in the URL to the document
-	let origin = this.document.location.origin
-    
-	// if debugging with ng, replace 4200 with 8080
-	origin = origin.replace("4200", "8080")
+    let origin = this.document.location.origin
+
+    // if debugging with ng, replace 4200 with 8080
+    origin = origin.replace("4200", "8080")
 
     // compute path to the service
     this.ordersUrl = origin + '/api/github.com/fullstack-lang/gongfly/go/v1/orders';
-   }
+  }
 
   /** GET orders from the server */
   getOrders(): Observable<OrderDB[]> {
@@ -67,16 +70,16 @@ export class OrderService {
   /** POST: add a new order to the server */
   postOrder(orderdb: OrderDB): Observable<OrderDB> {
 
-		// insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    orderdb.Target = {}
+    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    orderdb.Target = new LinerDB
 
-		return this.http.post<OrderDB>(this.ordersUrl, orderdb, this.httpOptions).pipe(
-			tap(_ => {
-				// insertion point for restoration of reverse pointers
-				this.log(`posted orderdb id=${orderdb.ID}`)
-			}),
-			catchError(this.handleError<OrderDB>('postOrder'))
-		);
+    return this.http.post<OrderDB>(this.ordersUrl, orderdb, this.httpOptions).pipe(
+      tap(_ => {
+        // insertion point for restoration of reverse pointers
+        this.log(`posted orderdb id=${orderdb.ID}`)
+      }),
+      catchError(this.handleError<OrderDB>('postOrder'))
+    );
   }
 
   /** DELETE: delete the orderdb from the server */
@@ -96,9 +99,9 @@ export class OrderService {
     const url = `${this.ordersUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    orderdb.Target = {}
+    orderdb.Target = new LinerDB
 
-    return this.http.put(url, orderdb, this.httpOptions).pipe(
+    return this.http.put<OrderDB>(url, orderdb, this.httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated orderdb id=${orderdb.ID}`)

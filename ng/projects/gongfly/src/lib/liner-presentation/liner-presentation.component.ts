@@ -23,13 +23,13 @@ export class LinerPresentationComponent implements OnInit {
 
 	// insertion point for declarations
 
-	displayedColumns: string[] = [];
-	dataSource = ELEMENT_DATA;
+	displayedColumns: string[] = []
+	dataSource = ELEMENT_DATA
 
-	liner: LinerDB;
+	liner: LinerDB = new (LinerDB)
 
 	// front repo
-	frontRepo: FrontRepo
+	frontRepo: FrontRepo = new (FrontRepo)
  
 	constructor(
 		private linerService: LinerService,
@@ -56,12 +56,12 @@ export class LinerPresentationComponent implements OnInit {
 	}
 
 	getLiner(): void {
-		const id = +this.route.snapshot.paramMap.get('id');
+		const id = +this.route.snapshot.paramMap.get('id')!
 		this.frontRepoService.pull().subscribe(
 			frontRepo => {
 				this.frontRepo = frontRepo
 
-				this.liner = this.frontRepo.Liners.get(id)
+				this.liner = this.frontRepo.Liners.get(id)!
 
 				// insertion point for recovery of durations
 			}

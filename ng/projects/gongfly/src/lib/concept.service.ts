@@ -13,6 +13,8 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { ConceptDB } from './concept-db';
 
+// insertion point for imports
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,14 +37,14 @@ export class ConceptService {
   ) {
     // path to the service share the same origin with the path to the document
     // get the origin in the URL to the document
-	let origin = this.document.location.origin
-    
-	// if debugging with ng, replace 4200 with 8080
-	origin = origin.replace("4200", "8080")
+    let origin = this.document.location.origin
+
+    // if debugging with ng, replace 4200 with 8080
+    origin = origin.replace("4200", "8080")
 
     // compute path to the service
     this.conceptsUrl = origin + '/api/github.com/fullstack-lang/gongfly/go/v1/concepts';
-   }
+  }
 
   /** GET concepts from the server */
   getConcepts(): Observable<ConceptDB[]> {
@@ -67,15 +69,15 @@ export class ConceptService {
   /** POST: add a new concept to the server */
   postConcept(conceptdb: ConceptDB): Observable<ConceptDB> {
 
-		// insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-		return this.http.post<ConceptDB>(this.conceptsUrl, conceptdb, this.httpOptions).pipe(
-			tap(_ => {
-				// insertion point for restoration of reverse pointers
-				this.log(`posted conceptdb id=${conceptdb.ID}`)
-			}),
-			catchError(this.handleError<ConceptDB>('postConcept'))
-		);
+    return this.http.post<ConceptDB>(this.conceptsUrl, conceptdb, this.httpOptions).pipe(
+      tap(_ => {
+        // insertion point for restoration of reverse pointers
+        this.log(`posted conceptdb id=${conceptdb.ID}`)
+      }),
+      catchError(this.handleError<ConceptDB>('postConcept'))
+    );
   }
 
   /** DELETE: delete the conceptdb from the server */
@@ -96,7 +98,7 @@ export class ConceptService {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.put(url, conceptdb, this.httpOptions).pipe(
+    return this.http.put<ConceptDB>(url, conceptdb, this.httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated conceptdb id=${conceptdb.ID}`)

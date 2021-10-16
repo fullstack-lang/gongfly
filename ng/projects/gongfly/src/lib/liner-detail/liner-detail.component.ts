@@ -16,7 +16,7 @@ import { Router, RouterState, ActivatedRoute } from '@angular/router';
 
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 
-import { NullInt64 } from '../front-repo.service'
+import { NullInt64 } from '../null-int64'
 
 // LinerDetailComponent is initilizaed from different routes
 // LinerDetailComponentState detail different cases 
@@ -34,13 +34,13 @@ enum LinerDetailComponentState {
 export class LinerDetailComponent implements OnInit {
 
 	// insertion point for declarations
-	LinerStateEnumList: LinerStateEnumSelect[]
+	LinerStateEnumList: LinerStateEnumSelect[] = []
 
 	// the LinerDB of interest
-	liner: LinerDB;
+	liner: LinerDB = new LinerDB
 
 	// front repo
-	frontRepo: FrontRepo
+	frontRepo: FrontRepo = new FrontRepo
 
 	// this stores the information related to string fields
 	// if false, the field is inputed with an <input ...> form 
@@ -48,15 +48,15 @@ export class LinerDetailComponent implements OnInit {
 	mapFields_displayAsTextArea = new Map<string, boolean>()
 
 	// the state at initialization (CREATION, UPDATE or CREATE with one association set)
-	state: LinerDetailComponentState
+	state: LinerDetailComponentState = LinerDetailComponentState.CREATE_INSTANCE
 
 	// in UDPATE state, if is the id of the instance to update
 	// in CREATE state with one association set, this is the id of the associated instance
-	id: number
+	id: number = 0
 
 	// in CREATE state with one association set, this is the id of the associated instance
-	originStruct: string
-	originStructFieldName: string
+	originStruct: string = ""
+	originStructFieldName: string = ""
 
 	constructor(
 		private linerService: LinerService,
@@ -70,9 +70,9 @@ export class LinerDetailComponent implements OnInit {
 	ngOnInit(): void {
 
 		// compute state
-		this.id = +this.route.snapshot.paramMap.get('id');
-		this.originStruct = this.route.snapshot.paramMap.get('originStruct');
-		this.originStructFieldName = this.route.snapshot.paramMap.get('originStructFieldName');
+		this.id = +this.route.snapshot.paramMap.get('id')!;
+		this.originStruct = this.route.snapshot.paramMap.get('originStruct')!;
+		this.originStructFieldName = this.route.snapshot.paramMap.get('originStructFieldName')!;
 
 		const association = this.route.snapshot.paramMap.get('association');
 		if (this.id == 0) {
@@ -115,7 +115,9 @@ export class LinerDetailComponent implements OnInit {
 						this.liner = new (LinerDB)
 						break;
 					case LinerDetailComponentState.UPDATE_INSTANCE:
-						this.liner = frontRepo.Liners.get(this.id)
+						let liner = frontRepo.Liners.get(this.id)
+						console.assert(liner != undefined, "missing liner with id:" + this.id)
+						this.liner = liner!
 						break;
 					// insertion point for init of association field
 					default:
@@ -160,7 +162,7 @@ export class LinerDetailComponent implements OnInit {
 			default:
 				this.linerService.postLiner(this.liner).subscribe(liner => {
 					this.linerService.LinerServiceChanged.next("post")
-					this.liner = {} // reset fields
+					this.liner = new (LinerDB) // reset fields
 				});
 		}
 	}
@@ -169,7 +171,7 @@ export class LinerDetailComponent implements OnInit {
 	// ONE-MANY association
 	// It uses the MapOfComponent provided by the front repo
 	openReverseSelection(AssociatedStruct: string, reverseField: string, selectionMode: string,
-		sourceField: string, intermediateStructField: string, nextAssociatedStruct: string ) {
+		sourceField: string, intermediateStructField: string, nextAssociatedStruct: string) {
 
 		console.log("mode " + selectionMode)
 
@@ -183,7 +185,7 @@ export class LinerDetailComponent implements OnInit {
 		dialogConfig.height = "50%"
 		if (selectionMode == SelectionMode.ONE_MANY_ASSOCIATION_MODE) {
 
-			dialogData.ID = this.liner.ID
+			dialogData.ID = this.liner.ID!
 			dialogData.ReversePointer = reverseField
 			dialogData.OrderingMode = false
 			dialogData.SelectionMode = selectionMode
@@ -199,7 +201,7 @@ export class LinerDetailComponent implements OnInit {
 			});
 		}
 		if (selectionMode == SelectionMode.MANY_MANY_ASSOCIATION_MODE) {
-			dialogData.ID = this.liner.ID
+			dialogData.ID = this.liner.ID!
 			dialogData.ReversePointer = reverseField
 			dialogData.OrderingMode = false
 			dialogData.SelectionMode = selectionMode
@@ -250,7 +252,7 @@ export class LinerDetailComponent implements OnInit {
 		});
 	}
 
-	fillUpNameIfEmpty(event) {
+	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
 		if (this.liner.Name == undefined) {
 			this.liner.Name = event.value.Name
 		}
@@ -267,7 +269,7 @@ export class LinerDetailComponent implements OnInit {
 
 	isATextArea(fieldName: string): boolean {
 		if (this.mapFields_displayAsTextArea.has(fieldName)) {
-			return this.mapFields_displayAsTextArea.get(fieldName)
+			return this.mapFields_displayAsTextArea.get(fieldName)!
 		} else {
 			return false
 		}

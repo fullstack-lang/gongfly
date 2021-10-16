@@ -15,7 +15,7 @@ import { Router, RouterState, ActivatedRoute } from '@angular/router';
 
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 
-import { NullInt64 } from '../front-repo.service'
+import { NullInt64 } from '../null-int64'
 
 // CivilianAirportDetailComponent is initilizaed from different routes
 // CivilianAirportDetailComponentState detail different cases 
@@ -35,10 +35,10 @@ export class CivilianAirportDetailComponent implements OnInit {
 	// insertion point for declarations
 
 	// the CivilianAirportDB of interest
-	civilianairport: CivilianAirportDB;
+	civilianairport: CivilianAirportDB = new CivilianAirportDB
 
 	// front repo
-	frontRepo: FrontRepo
+	frontRepo: FrontRepo = new FrontRepo
 
 	// this stores the information related to string fields
 	// if false, the field is inputed with an <input ...> form 
@@ -46,15 +46,15 @@ export class CivilianAirportDetailComponent implements OnInit {
 	mapFields_displayAsTextArea = new Map<string, boolean>()
 
 	// the state at initialization (CREATION, UPDATE or CREATE with one association set)
-	state: CivilianAirportDetailComponentState
+	state: CivilianAirportDetailComponentState = CivilianAirportDetailComponentState.CREATE_INSTANCE
 
 	// in UDPATE state, if is the id of the instance to update
 	// in CREATE state with one association set, this is the id of the associated instance
-	id: number
+	id: number = 0
 
 	// in CREATE state with one association set, this is the id of the associated instance
-	originStruct: string
-	originStructFieldName: string
+	originStruct: string = ""
+	originStructFieldName: string = ""
 
 	constructor(
 		private civilianairportService: CivilianAirportService,
@@ -68,9 +68,9 @@ export class CivilianAirportDetailComponent implements OnInit {
 	ngOnInit(): void {
 
 		// compute state
-		this.id = +this.route.snapshot.paramMap.get('id');
-		this.originStruct = this.route.snapshot.paramMap.get('originStruct');
-		this.originStructFieldName = this.route.snapshot.paramMap.get('originStructFieldName');
+		this.id = +this.route.snapshot.paramMap.get('id')!;
+		this.originStruct = this.route.snapshot.paramMap.get('originStruct')!;
+		this.originStructFieldName = this.route.snapshot.paramMap.get('originStructFieldName')!;
 
 		const association = this.route.snapshot.paramMap.get('association');
 		if (this.id == 0) {
@@ -112,7 +112,9 @@ export class CivilianAirportDetailComponent implements OnInit {
 						this.civilianairport = new (CivilianAirportDB)
 						break;
 					case CivilianAirportDetailComponentState.UPDATE_INSTANCE:
-						this.civilianairport = frontRepo.CivilianAirports.get(this.id)
+						let civilianairport = frontRepo.CivilianAirports.get(this.id)
+						console.assert(civilianairport != undefined, "missing civilianairport with id:" + this.id)
+						this.civilianairport = civilianairport!
 						break;
 					// insertion point for init of association field
 					default:
@@ -147,7 +149,7 @@ export class CivilianAirportDetailComponent implements OnInit {
 			default:
 				this.civilianairportService.postCivilianAirport(this.civilianairport).subscribe(civilianairport => {
 					this.civilianairportService.CivilianAirportServiceChanged.next("post")
-					this.civilianairport = {} // reset fields
+					this.civilianairport = new (CivilianAirportDB) // reset fields
 				});
 		}
 	}
@@ -156,7 +158,7 @@ export class CivilianAirportDetailComponent implements OnInit {
 	// ONE-MANY association
 	// It uses the MapOfComponent provided by the front repo
 	openReverseSelection(AssociatedStruct: string, reverseField: string, selectionMode: string,
-		sourceField: string, intermediateStructField: string, nextAssociatedStruct: string ) {
+		sourceField: string, intermediateStructField: string, nextAssociatedStruct: string) {
 
 		console.log("mode " + selectionMode)
 
@@ -170,7 +172,7 @@ export class CivilianAirportDetailComponent implements OnInit {
 		dialogConfig.height = "50%"
 		if (selectionMode == SelectionMode.ONE_MANY_ASSOCIATION_MODE) {
 
-			dialogData.ID = this.civilianairport.ID
+			dialogData.ID = this.civilianairport.ID!
 			dialogData.ReversePointer = reverseField
 			dialogData.OrderingMode = false
 			dialogData.SelectionMode = selectionMode
@@ -186,7 +188,7 @@ export class CivilianAirportDetailComponent implements OnInit {
 			});
 		}
 		if (selectionMode == SelectionMode.MANY_MANY_ASSOCIATION_MODE) {
-			dialogData.ID = this.civilianairport.ID
+			dialogData.ID = this.civilianairport.ID!
 			dialogData.ReversePointer = reverseField
 			dialogData.OrderingMode = false
 			dialogData.SelectionMode = selectionMode
@@ -237,7 +239,7 @@ export class CivilianAirportDetailComponent implements OnInit {
 		});
 	}
 
-	fillUpNameIfEmpty(event) {
+	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
 		if (this.civilianairport.Name == undefined) {
 			this.civilianairport.Name = event.value.Name
 		}
@@ -254,7 +256,7 @@ export class CivilianAirportDetailComponent implements OnInit {
 
 	isATextArea(fieldName: string): boolean {
 		if (this.mapFields_displayAsTextArea.has(fieldName)) {
-			return this.mapFields_displayAsTextArea.get(fieldName)
+			return this.mapFields_displayAsTextArea.get(fieldName)!
 		} else {
 			return false
 		}

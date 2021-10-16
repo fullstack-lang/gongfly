@@ -1,18 +1,18 @@
 // insertion point for imports
 
 // usefull for managing pointer ID values that can be nullable
-import { NullInt64 } from './front-repo.service'
+import { NullInt64 } from './null-int64'
 
 export class NetworkDB {
-	CreatedAt?: string;
-	DeletedAt?: string;
-	ID?: number;
+	CreatedAt?: string
+	DeletedAt?: string
+	ID: number = 0
 
 	// insertion point for basic fields declarations
-	IsTransmitting?: string
-	TransmissionMessage?: string
-	IsTransmittingBackward?: string
-	TransmissionMessageBackward?: string
+	IsTransmitting: boolean = false
+	TransmissionMessage: string = ""
+	IsTransmittingBackward: boolean = false
+	TransmissionMessageBackward: string = ""
 
 	// insertion point for other declarations
 }

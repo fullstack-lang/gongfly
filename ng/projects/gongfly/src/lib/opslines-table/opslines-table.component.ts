@@ -7,7 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatButton } from '@angular/material/button'
 
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
-import { DialogData, FrontRepoService, FrontRepo, NullInt64, SelectionMode } from '../front-repo.service'
+import { DialogData, FrontRepoService, FrontRepo, SelectionMode } from '../front-repo.service'
+import { NullInt64 } from '../null-int64'
 import { SelectionModel } from '@angular/cdk/collections';
 
 const allowMultiSelect = true;
@@ -33,26 +34,28 @@ enum TableComponentMode {
 export class OpsLinesTableComponent implements OnInit {
 
   // mode at invocation
-  mode: TableComponentMode
+  mode: TableComponentMode = TableComponentMode.DISPLAY_MODE
 
   // used if the component is called as a selection component of OpsLine instances
-  selection: SelectionModel<OpsLineDB>;
-  initialSelection = new Array<OpsLineDB>();
+  selection: SelectionModel<OpsLineDB> = new (SelectionModel)
+  initialSelection = new Array<OpsLineDB>()
 
   // the data source for the table
-  opslines: OpsLineDB[];
-  matTableDataSource: MatTableDataSource<OpsLineDB>
+  opslines: OpsLineDB[] = []
+  matTableDataSource: MatTableDataSource<OpsLineDB> = new (MatTableDataSource)
 
   // front repo, that will be referenced by this.opslines
-  frontRepo: FrontRepo
+  frontRepo: FrontRepo = new (FrontRepo)
 
   // displayedColumns is referenced by the MatTable component for specify what columns
   // have to be displayed and in what order
   displayedColumns: string[];
 
   // for sorting & pagination
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort)
+  sort: MatSort | undefined
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator | undefined;
 
   ngAfterViewInit() {
 
@@ -61,13 +64,13 @@ export class OpsLinesTableComponent implements OnInit {
       switch (property) {
         // insertion point for specific sorting accessor
         case 'IsTransmitting':
-          return opslineDB.IsTransmitting;
+          return opslineDB.IsTransmitting?"true":"false";
 
         case 'TransmissionMessage':
           return opslineDB.TransmissionMessage;
 
         case 'IsTransmittingBackward':
-          return opslineDB.IsTransmittingBackward;
+          return opslineDB.IsTransmittingBackward?"true":"false";
 
         case 'TransmissionMessageBackward':
           return opslineDB.TransmissionMessageBackward;
@@ -85,7 +88,8 @@ export class OpsLinesTableComponent implements OnInit {
           return opslineDB.Name;
 
         default:
-          return OpsLineDB[property];
+          console.assert(false, "Unknown field")
+          return "";
       }
     };
 
@@ -110,8 +114,8 @@ export class OpsLinesTableComponent implements OnInit {
       return isSelected
     };
 
-    this.matTableDataSource.sort = this.sort;
-    this.matTableDataSource.paginator = this.paginator;
+    this.matTableDataSource.sort = this.sort!
+    this.matTableDataSource.paginator = this.paginator!
   }
 
   applyFilter(event: Event) {
@@ -199,7 +203,7 @@ export class OpsLinesTableComponent implements OnInit {
           this.opslines.forEach(
             opsline => {
               let ID = this.dialogData.ID
-              let revPointer = opsline[this.dialogData.ReversePointer]
+              let revPointer = opsline[this.dialogData.ReversePointer as keyof OpsLineDB] as unknown as NullInt64
               if (revPointer.Int64 == ID) {
                 this.initialSelection.push(opsline)
               }
@@ -210,15 +214,15 @@ export class OpsLinesTableComponent implements OnInit {
 
         if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
 
-          let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s"]
-          let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)
+          let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s" as keyof FrontRepo] as Map<number, OpsLineDB>
+          let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)!
 
-          if (sourceInstance[this.dialogData.SourceField]) {
-            for (let associationInstance of sourceInstance[this.dialogData.SourceField]) {
-              let opsline = associationInstance[this.dialogData.IntermediateStructField]
-              this.initialSelection.push(opsline)
-            }
+          let sourceField = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as OpsLineDB[]
+          for (let associationInstance of sourceField) {
+            let opsline = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as OpsLineDB
+            this.initialSelection.push(opsline)
           }
+
           this.selection = new SelectionModel<OpsLineDB>(allowMultiSelect, this.initialSelection);
         }
 
@@ -294,8 +298,9 @@ export class OpsLinesTableComponent implements OnInit {
       // reset all initial selection of opsline that belong to opsline
       this.initialSelection.forEach(
         opsline => {
-          opsline[this.dialogData.ReversePointer].Int64 = 0
-          opsline[this.dialogData.ReversePointer].Valid = true
+          let index = opsline[this.dialogData.ReversePointer as keyof OpsLineDB] as unknown as NullInt64
+          index.Int64 = 0
+          index.Valid = true
           toUpdate.add(opsline)
         }
       )
@@ -303,9 +308,9 @@ export class OpsLinesTableComponent implements OnInit {
       // from selection, set opsline that belong to opsline
       this.selection.selected.forEach(
         opsline => {
-          let ID = +this.dialogData.ID
-          opsline[this.dialogData.ReversePointer].Int64 = ID
-          opsline[this.dialogData.ReversePointer].Valid = true
+          let ID = this.dialogData.ID as number
+          let reversePointer = opsline[this.dialogData.ReversePointer  as keyof OpsLineDB] as unknown as NullInt64
+          reversePointer.Int64 = ID
           toUpdate.add(opsline)
         }
       )
@@ -323,8 +328,9 @@ export class OpsLinesTableComponent implements OnInit {
 
     if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
 
-      let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s"]
-      let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)
+      // get the source instance via the map of instances in the front repo
+      let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s" as keyof FrontRepo] as Map<number, OpsLineDB>
+      let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)!
 
       // First, parse all instance of the association struct and remove the instance
       // that have unselect
@@ -340,23 +346,21 @@ export class OpsLinesTableComponent implements OnInit {
       }
 
       // delete the association instance
-      if (sourceInstance[this.dialogData.SourceField]) {
-        for (let associationInstance of sourceInstance[this.dialogData.SourceField]) {
-          let opsline = associationInstance[this.dialogData.IntermediateStructField]
-          if (unselectedOpsLine.has(opsline.ID)) {
+      let associationInstance = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]
+      let opsline = associationInstance![this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as OpsLineDB
+      if (unselectedOpsLine.has(opsline.ID)) {
+        this.frontRepoService.deleteService(this.dialogData.IntermediateStruct, associationInstance)
 
-            this.frontRepoService.deleteService( this.dialogData.IntermediateStruct, associationInstance )
-          }
-        }
+
       }
 
-      // is the source array is emptyn create it
-      if (sourceInstance[this.dialogData.SourceField] == undefined) {
-        sourceInstance[this.dialogData.SourceField] = new Array<any>()
+      // is the source array is empty create it
+      if (sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance] == undefined) {
+        (sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance] as unknown as Array<OpsLineDB>) = new Array<OpsLineDB>()
       }
 
       // second, parse all instance of the selected
-      if (sourceInstance[this.dialogData.SourceField]) {
+      if (sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]) {
         this.selection.selected.forEach(
           opsline => {
             if (!this.initialSelection.includes(opsline)) {
@@ -366,13 +370,11 @@ export class OpsLinesTableComponent implements OnInit {
                 Name: sourceInstance["Name"] + "-" + opsline.Name,
               }
 
-              associationInstance[this.dialogData.IntermediateStructField+"ID"] = new NullInt64
-              associationInstance[this.dialogData.IntermediateStructField+"ID"].Int64 = opsline.ID
-              associationInstance[this.dialogData.IntermediateStructField+"ID"].Valid = true
+              let index = associationInstance[this.dialogData.IntermediateStructField+"ID" as keyof typeof associationInstance] as unknown as NullInt64
+              index.Int64 = opsline.ID
 
-              associationInstance[this.dialogData.SourceStruct + "_" + this.dialogData.SourceField + "DBID"] = new NullInt64
-              associationInstance[this.dialogData.SourceStruct + "_" + this.dialogData.SourceField + "DBID"].Int64 = sourceInstance["ID"]
-              associationInstance[this.dialogData.SourceStruct + "_" + this.dialogData.SourceField + "DBID"].Valid = true
+              let indexDB = associationInstance[this.dialogData.IntermediateStructField+"DBID" as keyof typeof associationInstance] as unknown as NullInt64
+              indexDB.Int64 = opsline.ID
 
               this.frontRepoService.postService( this.dialogData.IntermediateStruct, associationInstance )
 

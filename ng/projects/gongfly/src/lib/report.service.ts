@@ -13,6 +13,10 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { ReportDB } from './report-db';
 
+// insertion point for imports
+import { LinerDB } from './liner-db'
+import { OpsLineDB } from './opsline-db'
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,14 +39,14 @@ export class ReportService {
   ) {
     // path to the service share the same origin with the path to the document
     // get the origin in the URL to the document
-	let origin = this.document.location.origin
-    
-	// if debugging with ng, replace 4200 with 8080
-	origin = origin.replace("4200", "8080")
+    let origin = this.document.location.origin
+
+    // if debugging with ng, replace 4200 with 8080
+    origin = origin.replace("4200", "8080")
 
     // compute path to the service
     this.reportsUrl = origin + '/api/github.com/fullstack-lang/gongfly/go/v1/reports';
-   }
+  }
 
   /** GET reports from the server */
   getReports(): Observable<ReportDB[]> {
@@ -67,17 +71,17 @@ export class ReportService {
   /** POST: add a new report to the server */
   postReport(reportdb: ReportDB): Observable<ReportDB> {
 
-		// insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    reportdb.About = {}
-    reportdb.OpsLine = {}
+    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    reportdb.About = new LinerDB
+    reportdb.OpsLine = new OpsLineDB
 
-		return this.http.post<ReportDB>(this.reportsUrl, reportdb, this.httpOptions).pipe(
-			tap(_ => {
-				// insertion point for restoration of reverse pointers
-				this.log(`posted reportdb id=${reportdb.ID}`)
-			}),
-			catchError(this.handleError<ReportDB>('postReport'))
-		);
+    return this.http.post<ReportDB>(this.reportsUrl, reportdb, this.httpOptions).pipe(
+      tap(_ => {
+        // insertion point for restoration of reverse pointers
+        this.log(`posted reportdb id=${reportdb.ID}`)
+      }),
+      catchError(this.handleError<ReportDB>('postReport'))
+    );
   }
 
   /** DELETE: delete the reportdb from the server */
@@ -97,10 +101,10 @@ export class ReportService {
     const url = `${this.reportsUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    reportdb.About = {}
-    reportdb.OpsLine = {}
+    reportdb.About = new LinerDB
+    reportdb.OpsLine = new OpsLineDB
 
-    return this.http.put(url, reportdb, this.httpOptions).pipe(
+    return this.http.put<ReportDB>(url, reportdb, this.httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated reportdb id=${reportdb.ID}`)

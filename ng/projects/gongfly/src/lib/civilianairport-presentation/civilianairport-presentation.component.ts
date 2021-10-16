@@ -23,13 +23,13 @@ export class CivilianAirportPresentationComponent implements OnInit {
 
 	// insertion point for declarations
 
-	displayedColumns: string[] = [];
-	dataSource = ELEMENT_DATA;
+	displayedColumns: string[] = []
+	dataSource = ELEMENT_DATA
 
-	civilianairport: CivilianAirportDB;
+	civilianairport: CivilianAirportDB = new (CivilianAirportDB)
 
 	// front repo
-	frontRepo: FrontRepo
+	frontRepo: FrontRepo = new (FrontRepo)
  
 	constructor(
 		private civilianairportService: CivilianAirportService,
@@ -56,12 +56,12 @@ export class CivilianAirportPresentationComponent implements OnInit {
 	}
 
 	getCivilianAirport(): void {
-		const id = +this.route.snapshot.paramMap.get('id');
+		const id = +this.route.snapshot.paramMap.get('id')!
 		this.frontRepoService.pull().subscribe(
 			frontRepo => {
 				this.frontRepo = frontRepo
 
-				this.civilianairport = this.frontRepo.CivilianAirports.get(id)
+				this.civilianairport = this.frontRepo.CivilianAirports.get(id)!
 
 				// insertion point for recovery of durations
 			}

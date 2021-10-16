@@ -13,6 +13,8 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { CivilianAirportDB } from './civilianairport-db';
 
+// insertion point for imports
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,14 +37,14 @@ export class CivilianAirportService {
   ) {
     // path to the service share the same origin with the path to the document
     // get the origin in the URL to the document
-	let origin = this.document.location.origin
-    
-	// if debugging with ng, replace 4200 with 8080
-	origin = origin.replace("4200", "8080")
+    let origin = this.document.location.origin
+
+    // if debugging with ng, replace 4200 with 8080
+    origin = origin.replace("4200", "8080")
 
     // compute path to the service
     this.civilianairportsUrl = origin + '/api/github.com/fullstack-lang/gongfly/go/v1/civilianairports';
-   }
+  }
 
   /** GET civilianairports from the server */
   getCivilianAirports(): Observable<CivilianAirportDB[]> {
@@ -67,15 +69,15 @@ export class CivilianAirportService {
   /** POST: add a new civilianairport to the server */
   postCivilianAirport(civilianairportdb: CivilianAirportDB): Observable<CivilianAirportDB> {
 
-		// insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-		return this.http.post<CivilianAirportDB>(this.civilianairportsUrl, civilianairportdb, this.httpOptions).pipe(
-			tap(_ => {
-				// insertion point for restoration of reverse pointers
-				this.log(`posted civilianairportdb id=${civilianairportdb.ID}`)
-			}),
-			catchError(this.handleError<CivilianAirportDB>('postCivilianAirport'))
-		);
+    return this.http.post<CivilianAirportDB>(this.civilianairportsUrl, civilianairportdb, this.httpOptions).pipe(
+      tap(_ => {
+        // insertion point for restoration of reverse pointers
+        this.log(`posted civilianairportdb id=${civilianairportdb.ID}`)
+      }),
+      catchError(this.handleError<CivilianAirportDB>('postCivilianAirport'))
+    );
   }
 
   /** DELETE: delete the civilianairportdb from the server */
@@ -96,7 +98,7 @@ export class CivilianAirportService {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.put(url, civilianairportdb, this.httpOptions).pipe(
+    return this.http.put<CivilianAirportDB>(url, civilianairportdb, this.httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated civilianairportdb id=${civilianairportdb.ID}`)

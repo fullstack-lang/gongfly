@@ -13,6 +13,9 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { LinerDB } from './liner-db';
 
+// insertion point for imports
+import { OpsLineDB } from './opsline-db'
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,14 +38,14 @@ export class LinerService {
   ) {
     // path to the service share the same origin with the path to the document
     // get the origin in the URL to the document
-	let origin = this.document.location.origin
-    
-	// if debugging with ng, replace 4200 with 8080
-	origin = origin.replace("4200", "8080")
+    let origin = this.document.location.origin
+
+    // if debugging with ng, replace 4200 with 8080
+    origin = origin.replace("4200", "8080")
 
     // compute path to the service
     this.linersUrl = origin + '/api/github.com/fullstack-lang/gongfly/go/v1/liners';
-   }
+  }
 
   /** GET liners from the server */
   getLiners(): Observable<LinerDB[]> {
@@ -67,16 +70,16 @@ export class LinerService {
   /** POST: add a new liner to the server */
   postLiner(linerdb: LinerDB): Observable<LinerDB> {
 
-		// insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    linerdb.ReporingLine = {}
+    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    linerdb.ReporingLine = new OpsLineDB
 
-		return this.http.post<LinerDB>(this.linersUrl, linerdb, this.httpOptions).pipe(
-			tap(_ => {
-				// insertion point for restoration of reverse pointers
-				this.log(`posted linerdb id=${linerdb.ID}`)
-			}),
-			catchError(this.handleError<LinerDB>('postLiner'))
-		);
+    return this.http.post<LinerDB>(this.linersUrl, linerdb, this.httpOptions).pipe(
+      tap(_ => {
+        // insertion point for restoration of reverse pointers
+        this.log(`posted linerdb id=${linerdb.ID}`)
+      }),
+      catchError(this.handleError<LinerDB>('postLiner'))
+    );
   }
 
   /** DELETE: delete the linerdb from the server */
@@ -96,9 +99,9 @@ export class LinerService {
     const url = `${this.linersUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    linerdb.ReporingLine = {}
+    linerdb.ReporingLine = new OpsLineDB
 
-    return this.http.put(url, linerdb, this.httpOptions).pipe(
+    return this.http.put<LinerDB>(url, linerdb, this.httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated linerdb id=${linerdb.ID}`)
