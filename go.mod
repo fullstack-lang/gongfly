@@ -4,10 +4,10 @@ go 1.16
 
 require (
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
-	github.com/fullstack-lang/gong v0.0.0-20211015092943-d3ff3e66aa7b
-	github.com/fullstack-lang/gongdoc v0.0.0-20211015120532-112013202eaa
-	github.com/fullstack-lang/gongleaflet v0.0.0-20211016234427-9a197def1017
-	github.com/fullstack-lang/gongsim v0.0.0-20211015083741-46f94da8a039
+	github.com/fullstack-lang/gong v0.0.0-20211017113338-dc0dc3e819d3
+	github.com/fullstack-lang/gongdoc v0.0.0-20211017113338-587953175006
+	github.com/fullstack-lang/gongleaflet v0.0.0-20211017113339-d6eaa7308f57
+	github.com/fullstack-lang/gongsim v0.0.0-20211017113339-d090724cf663
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.7.4
@@ -16,8 +16,12 @@ require (
 	github.com/lib/pq v1.10.3 // indirect
 	github.com/tealeg/xlsx/v3 v3.2.3
 	github.com/ziutek/mymysql v1.5.4 // indirect
-	gorm.io/driver/sqlite v1.1.5
-	gorm.io/gorm v1.21.15
+	gorm.io/driver/sqlite v1.1.6
+	gorm.io/gorm v1.21.16
 )
 
-require github.com/ajstarks/svgo v0.0.0-20210923152817-c3b6e2f0c527 // indirect
+require (
+	github.com/ajstarks/svgo v0.0.0-20210923152817-c3b6e2f0c527 // indirect
+	github.com/tdewolff/parse/v2 v2.5.22 // indirect
+	golang.org/x/tools v0.1.7 // indirect
+)
