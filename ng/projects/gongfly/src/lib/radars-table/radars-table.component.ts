@@ -188,16 +188,14 @@ export class RadarsTableComponent implements OnInit {
 
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
-          this.radars.forEach(
-            radar => {
-              let ID = this.dialogData.ID
-              let revPointer = radar[this.dialogData.ReversePointer as keyof RadarDB] as unknown as NullInt64
-              if (revPointer.Int64 == ID) {
-                this.initialSelection.push(radar)
-              }
+          for (let radar of this.radars) {
+            let ID = this.dialogData.ID
+            let revPointer = radar[this.dialogData.ReversePointer as keyof RadarDB] as unknown as NullInt64
+            if (revPointer.Int64 == ID) {
+              this.initialSelection.push(radar)
             }
-          )
-          this.selection = new SelectionModel<RadarDB>(allowMultiSelect, this.initialSelection);
+            this.selection = new SelectionModel<RadarDB>(allowMultiSelect, this.initialSelection);
+          }
         }
 
         if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -284,34 +282,31 @@ export class RadarsTableComponent implements OnInit {
       let toUpdate = new Set<RadarDB>()
 
       // reset all initial selection of radar that belong to radar
-      this.initialSelection.forEach(
-        radar => {
-          let index = radar[this.dialogData.ReversePointer as keyof RadarDB] as unknown as NullInt64
-          index.Int64 = 0
-          index.Valid = true
-          toUpdate.add(radar)
-        }
-      )
+      for (let radar of this.initialSelection) {
+        let index = radar[this.dialogData.ReversePointer as keyof RadarDB] as unknown as NullInt64
+        index.Int64 = 0
+        index.Valid = true
+        toUpdate.add(radar)
+
+      }
 
       // from selection, set radar that belong to radar
-      this.selection.selected.forEach(
-        radar => {
-          let ID = this.dialogData.ID as number
-          let reversePointer = radar[this.dialogData.ReversePointer  as keyof RadarDB] as unknown as NullInt64
-          reversePointer.Int64 = ID
-          toUpdate.add(radar)
-        }
-      )
+      for (let radar of this.selection.selected) {
+        let ID = this.dialogData.ID as number
+        let reversePointer = radar[this.dialogData.ReversePointer as keyof RadarDB] as unknown as NullInt64
+        reversePointer.Int64 = ID
+        reversePointer.Valid = true
+        toUpdate.add(radar)
+      }
+
 
       // update all radar (only update selection & initial selection)
-      toUpdate.forEach(
-        radar => {
-          this.radarService.updateRadar(radar)
-            .subscribe(radar => {
-              this.radarService.RadarServiceChanged.next("update")
-            });
-        }
-      )
+      for (let radar of toUpdate) {
+        this.radarService.updateRadar(radar)
+          .subscribe(radar => {
+            this.radarService.RadarServiceChanged.next("update")
+          });
+      }
     }
 
     if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -358,13 +353,15 @@ export class RadarsTableComponent implements OnInit {
                 Name: sourceInstance["Name"] + "-" + radar.Name,
               }
 
-              let index = associationInstance[this.dialogData.IntermediateStructField+"ID" as keyof typeof associationInstance] as unknown as NullInt64
+              let index = associationInstance[this.dialogData.IntermediateStructField + "ID" as keyof typeof associationInstance] as unknown as NullInt64
               index.Int64 = radar.ID
+              index.Valid = true
 
-              let indexDB = associationInstance[this.dialogData.IntermediateStructField+"DBID" as keyof typeof associationInstance] as unknown as NullInt64
+              let indexDB = associationInstance[this.dialogData.IntermediateStructField + "DBID" as keyof typeof associationInstance] as unknown as NullInt64
               indexDB.Int64 = radar.ID
+              index.Valid = true
 
-              this.frontRepoService.postService( this.dialogData.IntermediateStruct, associationInstance )
+              this.frontRepoService.postService(this.dialogData.IntermediateStruct, associationInstance)
 
             } else {
               // console.log("radar " + radar.Name + " is still selected")

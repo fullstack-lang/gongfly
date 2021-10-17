@@ -208,16 +208,14 @@ export class OrdersTableComponent implements OnInit {
 
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
-          this.orders.forEach(
-            order => {
-              let ID = this.dialogData.ID
-              let revPointer = order[this.dialogData.ReversePointer as keyof OrderDB] as unknown as NullInt64
-              if (revPointer.Int64 == ID) {
-                this.initialSelection.push(order)
-              }
+          for (let order of this.orders) {
+            let ID = this.dialogData.ID
+            let revPointer = order[this.dialogData.ReversePointer as keyof OrderDB] as unknown as NullInt64
+            if (revPointer.Int64 == ID) {
+              this.initialSelection.push(order)
             }
-          )
-          this.selection = new SelectionModel<OrderDB>(allowMultiSelect, this.initialSelection);
+            this.selection = new SelectionModel<OrderDB>(allowMultiSelect, this.initialSelection);
+          }
         }
 
         if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -304,34 +302,31 @@ export class OrdersTableComponent implements OnInit {
       let toUpdate = new Set<OrderDB>()
 
       // reset all initial selection of order that belong to order
-      this.initialSelection.forEach(
-        order => {
-          let index = order[this.dialogData.ReversePointer as keyof OrderDB] as unknown as NullInt64
-          index.Int64 = 0
-          index.Valid = true
-          toUpdate.add(order)
-        }
-      )
+      for (let order of this.initialSelection) {
+        let index = order[this.dialogData.ReversePointer as keyof OrderDB] as unknown as NullInt64
+        index.Int64 = 0
+        index.Valid = true
+        toUpdate.add(order)
+
+      }
 
       // from selection, set order that belong to order
-      this.selection.selected.forEach(
-        order => {
-          let ID = this.dialogData.ID as number
-          let reversePointer = order[this.dialogData.ReversePointer  as keyof OrderDB] as unknown as NullInt64
-          reversePointer.Int64 = ID
-          toUpdate.add(order)
-        }
-      )
+      for (let order of this.selection.selected) {
+        let ID = this.dialogData.ID as number
+        let reversePointer = order[this.dialogData.ReversePointer as keyof OrderDB] as unknown as NullInt64
+        reversePointer.Int64 = ID
+        reversePointer.Valid = true
+        toUpdate.add(order)
+      }
+
 
       // update all order (only update selection & initial selection)
-      toUpdate.forEach(
-        order => {
-          this.orderService.updateOrder(order)
-            .subscribe(order => {
-              this.orderService.OrderServiceChanged.next("update")
-            });
-        }
-      )
+      for (let order of toUpdate) {
+        this.orderService.updateOrder(order)
+          .subscribe(order => {
+            this.orderService.OrderServiceChanged.next("update")
+          });
+      }
     }
 
     if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -378,13 +373,15 @@ export class OrdersTableComponent implements OnInit {
                 Name: sourceInstance["Name"] + "-" + order.Name,
               }
 
-              let index = associationInstance[this.dialogData.IntermediateStructField+"ID" as keyof typeof associationInstance] as unknown as NullInt64
+              let index = associationInstance[this.dialogData.IntermediateStructField + "ID" as keyof typeof associationInstance] as unknown as NullInt64
               index.Int64 = order.ID
+              index.Valid = true
 
-              let indexDB = associationInstance[this.dialogData.IntermediateStructField+"DBID" as keyof typeof associationInstance] as unknown as NullInt64
+              let indexDB = associationInstance[this.dialogData.IntermediateStructField + "DBID" as keyof typeof associationInstance] as unknown as NullInt64
               indexDB.Int64 = order.ID
+              index.Valid = true
 
-              this.frontRepoService.postService( this.dialogData.IntermediateStruct, associationInstance )
+              this.frontRepoService.postService(this.dialogData.IntermediateStruct, associationInstance)
 
             } else {
               // console.log("order " + order.Name + " is still selected")

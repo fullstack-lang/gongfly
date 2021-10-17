@@ -176,16 +176,14 @@ export class CivilianAirportsTableComponent implements OnInit {
 
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
-          this.civilianairports.forEach(
-            civilianairport => {
-              let ID = this.dialogData.ID
-              let revPointer = civilianairport[this.dialogData.ReversePointer as keyof CivilianAirportDB] as unknown as NullInt64
-              if (revPointer.Int64 == ID) {
-                this.initialSelection.push(civilianairport)
-              }
+          for (let civilianairport of this.civilianairports) {
+            let ID = this.dialogData.ID
+            let revPointer = civilianairport[this.dialogData.ReversePointer as keyof CivilianAirportDB] as unknown as NullInt64
+            if (revPointer.Int64 == ID) {
+              this.initialSelection.push(civilianairport)
             }
-          )
-          this.selection = new SelectionModel<CivilianAirportDB>(allowMultiSelect, this.initialSelection);
+            this.selection = new SelectionModel<CivilianAirportDB>(allowMultiSelect, this.initialSelection);
+          }
         }
 
         if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -272,34 +270,31 @@ export class CivilianAirportsTableComponent implements OnInit {
       let toUpdate = new Set<CivilianAirportDB>()
 
       // reset all initial selection of civilianairport that belong to civilianairport
-      this.initialSelection.forEach(
-        civilianairport => {
-          let index = civilianairport[this.dialogData.ReversePointer as keyof CivilianAirportDB] as unknown as NullInt64
-          index.Int64 = 0
-          index.Valid = true
-          toUpdate.add(civilianairport)
-        }
-      )
+      for (let civilianairport of this.initialSelection) {
+        let index = civilianairport[this.dialogData.ReversePointer as keyof CivilianAirportDB] as unknown as NullInt64
+        index.Int64 = 0
+        index.Valid = true
+        toUpdate.add(civilianairport)
+
+      }
 
       // from selection, set civilianairport that belong to civilianairport
-      this.selection.selected.forEach(
-        civilianairport => {
-          let ID = this.dialogData.ID as number
-          let reversePointer = civilianairport[this.dialogData.ReversePointer  as keyof CivilianAirportDB] as unknown as NullInt64
-          reversePointer.Int64 = ID
-          toUpdate.add(civilianairport)
-        }
-      )
+      for (let civilianairport of this.selection.selected) {
+        let ID = this.dialogData.ID as number
+        let reversePointer = civilianairport[this.dialogData.ReversePointer as keyof CivilianAirportDB] as unknown as NullInt64
+        reversePointer.Int64 = ID
+        reversePointer.Valid = true
+        toUpdate.add(civilianairport)
+      }
+
 
       // update all civilianairport (only update selection & initial selection)
-      toUpdate.forEach(
-        civilianairport => {
-          this.civilianairportService.updateCivilianAirport(civilianairport)
-            .subscribe(civilianairport => {
-              this.civilianairportService.CivilianAirportServiceChanged.next("update")
-            });
-        }
-      )
+      for (let civilianairport of toUpdate) {
+        this.civilianairportService.updateCivilianAirport(civilianairport)
+          .subscribe(civilianairport => {
+            this.civilianairportService.CivilianAirportServiceChanged.next("update")
+          });
+      }
     }
 
     if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -346,13 +341,15 @@ export class CivilianAirportsTableComponent implements OnInit {
                 Name: sourceInstance["Name"] + "-" + civilianairport.Name,
               }
 
-              let index = associationInstance[this.dialogData.IntermediateStructField+"ID" as keyof typeof associationInstance] as unknown as NullInt64
+              let index = associationInstance[this.dialogData.IntermediateStructField + "ID" as keyof typeof associationInstance] as unknown as NullInt64
               index.Int64 = civilianairport.ID
+              index.Valid = true
 
-              let indexDB = associationInstance[this.dialogData.IntermediateStructField+"DBID" as keyof typeof associationInstance] as unknown as NullInt64
+              let indexDB = associationInstance[this.dialogData.IntermediateStructField + "DBID" as keyof typeof associationInstance] as unknown as NullInt64
               indexDB.Int64 = civilianairport.ID
+              index.Valid = true
 
-              this.frontRepoService.postService( this.dialogData.IntermediateStruct, associationInstance )
+              this.frontRepoService.postService(this.dialogData.IntermediateStruct, associationInstance)
 
             } else {
               // console.log("civilianairport " + civilianairport.Name + " is still selected")

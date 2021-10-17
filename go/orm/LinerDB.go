@@ -325,6 +325,7 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseTwoInstance(backRepo *BackR
 		if liner.ReporingLine != nil {
 			if ReporingLineId, ok := (*backRepo.BackRepoOpsLine.Map_OpsLinePtr_OpsLineDBID)[liner.ReporingLine]; ok {
 				linerDB.ReporingLineID.Int64 = int64(ReporingLineId)
+				linerDB.ReporingLineID.Valid = true
 			}
 		}
 
@@ -720,6 +721,7 @@ func (backRepoLiner *BackRepoLinerStruct) RestorePhaseTwo() {
 		// reindexing ReporingLine field
 		if linerDB.ReporingLineID.Int64 != 0 {
 			linerDB.ReporingLineID.Int64 = int64(BackRepoOpsLineid_atBckpTime_newID[uint(linerDB.ReporingLineID.Int64)])
+			linerDB.ReporingLineID.Valid = true
 		}
 
 		// update databse with new index encoding

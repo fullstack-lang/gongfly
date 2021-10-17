@@ -204,16 +204,14 @@ export class ReportsTableComponent implements OnInit {
 
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
-          this.reports.forEach(
-            report => {
-              let ID = this.dialogData.ID
-              let revPointer = report[this.dialogData.ReversePointer as keyof ReportDB] as unknown as NullInt64
-              if (revPointer.Int64 == ID) {
-                this.initialSelection.push(report)
-              }
+          for (let report of this.reports) {
+            let ID = this.dialogData.ID
+            let revPointer = report[this.dialogData.ReversePointer as keyof ReportDB] as unknown as NullInt64
+            if (revPointer.Int64 == ID) {
+              this.initialSelection.push(report)
             }
-          )
-          this.selection = new SelectionModel<ReportDB>(allowMultiSelect, this.initialSelection);
+            this.selection = new SelectionModel<ReportDB>(allowMultiSelect, this.initialSelection);
+          }
         }
 
         if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -300,34 +298,31 @@ export class ReportsTableComponent implements OnInit {
       let toUpdate = new Set<ReportDB>()
 
       // reset all initial selection of report that belong to report
-      this.initialSelection.forEach(
-        report => {
-          let index = report[this.dialogData.ReversePointer as keyof ReportDB] as unknown as NullInt64
-          index.Int64 = 0
-          index.Valid = true
-          toUpdate.add(report)
-        }
-      )
+      for (let report of this.initialSelection) {
+        let index = report[this.dialogData.ReversePointer as keyof ReportDB] as unknown as NullInt64
+        index.Int64 = 0
+        index.Valid = true
+        toUpdate.add(report)
+
+      }
 
       // from selection, set report that belong to report
-      this.selection.selected.forEach(
-        report => {
-          let ID = this.dialogData.ID as number
-          let reversePointer = report[this.dialogData.ReversePointer  as keyof ReportDB] as unknown as NullInt64
-          reversePointer.Int64 = ID
-          toUpdate.add(report)
-        }
-      )
+      for (let report of this.selection.selected) {
+        let ID = this.dialogData.ID as number
+        let reversePointer = report[this.dialogData.ReversePointer as keyof ReportDB] as unknown as NullInt64
+        reversePointer.Int64 = ID
+        reversePointer.Valid = true
+        toUpdate.add(report)
+      }
+
 
       // update all report (only update selection & initial selection)
-      toUpdate.forEach(
-        report => {
-          this.reportService.updateReport(report)
-            .subscribe(report => {
-              this.reportService.ReportServiceChanged.next("update")
-            });
-        }
-      )
+      for (let report of toUpdate) {
+        this.reportService.updateReport(report)
+          .subscribe(report => {
+            this.reportService.ReportServiceChanged.next("update")
+          });
+      }
     }
 
     if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -374,13 +369,15 @@ export class ReportsTableComponent implements OnInit {
                 Name: sourceInstance["Name"] + "-" + report.Name,
               }
 
-              let index = associationInstance[this.dialogData.IntermediateStructField+"ID" as keyof typeof associationInstance] as unknown as NullInt64
+              let index = associationInstance[this.dialogData.IntermediateStructField + "ID" as keyof typeof associationInstance] as unknown as NullInt64
               index.Int64 = report.ID
+              index.Valid = true
 
-              let indexDB = associationInstance[this.dialogData.IntermediateStructField+"DBID" as keyof typeof associationInstance] as unknown as NullInt64
+              let indexDB = associationInstance[this.dialogData.IntermediateStructField + "DBID" as keyof typeof associationInstance] as unknown as NullInt64
               indexDB.Int64 = report.ID
+              index.Valid = true
 
-              this.frontRepoService.postService( this.dialogData.IntermediateStruct, associationInstance )
+              this.frontRepoService.postService(this.dialogData.IntermediateStruct, associationInstance)
 
             } else {
               // console.log("report " + report.Name + " is still selected")

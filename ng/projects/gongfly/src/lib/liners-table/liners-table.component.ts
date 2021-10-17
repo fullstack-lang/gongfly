@@ -250,16 +250,14 @@ export class LinersTableComponent implements OnInit {
 
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
-          this.liners.forEach(
-            liner => {
-              let ID = this.dialogData.ID
-              let revPointer = liner[this.dialogData.ReversePointer as keyof LinerDB] as unknown as NullInt64
-              if (revPointer.Int64 == ID) {
-                this.initialSelection.push(liner)
-              }
+          for (let liner of this.liners) {
+            let ID = this.dialogData.ID
+            let revPointer = liner[this.dialogData.ReversePointer as keyof LinerDB] as unknown as NullInt64
+            if (revPointer.Int64 == ID) {
+              this.initialSelection.push(liner)
             }
-          )
-          this.selection = new SelectionModel<LinerDB>(allowMultiSelect, this.initialSelection);
+            this.selection = new SelectionModel<LinerDB>(allowMultiSelect, this.initialSelection);
+          }
         }
 
         if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -346,34 +344,31 @@ export class LinersTableComponent implements OnInit {
       let toUpdate = new Set<LinerDB>()
 
       // reset all initial selection of liner that belong to liner
-      this.initialSelection.forEach(
-        liner => {
-          let index = liner[this.dialogData.ReversePointer as keyof LinerDB] as unknown as NullInt64
-          index.Int64 = 0
-          index.Valid = true
-          toUpdate.add(liner)
-        }
-      )
+      for (let liner of this.initialSelection) {
+        let index = liner[this.dialogData.ReversePointer as keyof LinerDB] as unknown as NullInt64
+        index.Int64 = 0
+        index.Valid = true
+        toUpdate.add(liner)
+
+      }
 
       // from selection, set liner that belong to liner
-      this.selection.selected.forEach(
-        liner => {
-          let ID = this.dialogData.ID as number
-          let reversePointer = liner[this.dialogData.ReversePointer  as keyof LinerDB] as unknown as NullInt64
-          reversePointer.Int64 = ID
-          toUpdate.add(liner)
-        }
-      )
+      for (let liner of this.selection.selected) {
+        let ID = this.dialogData.ID as number
+        let reversePointer = liner[this.dialogData.ReversePointer as keyof LinerDB] as unknown as NullInt64
+        reversePointer.Int64 = ID
+        reversePointer.Valid = true
+        toUpdate.add(liner)
+      }
+
 
       // update all liner (only update selection & initial selection)
-      toUpdate.forEach(
-        liner => {
-          this.linerService.updateLiner(liner)
-            .subscribe(liner => {
-              this.linerService.LinerServiceChanged.next("update")
-            });
-        }
-      )
+      for (let liner of toUpdate) {
+        this.linerService.updateLiner(liner)
+          .subscribe(liner => {
+            this.linerService.LinerServiceChanged.next("update")
+          });
+      }
     }
 
     if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -420,13 +415,15 @@ export class LinersTableComponent implements OnInit {
                 Name: sourceInstance["Name"] + "-" + liner.Name,
               }
 
-              let index = associationInstance[this.dialogData.IntermediateStructField+"ID" as keyof typeof associationInstance] as unknown as NullInt64
+              let index = associationInstance[this.dialogData.IntermediateStructField + "ID" as keyof typeof associationInstance] as unknown as NullInt64
               index.Int64 = liner.ID
+              index.Valid = true
 
-              let indexDB = associationInstance[this.dialogData.IntermediateStructField+"DBID" as keyof typeof associationInstance] as unknown as NullInt64
+              let indexDB = associationInstance[this.dialogData.IntermediateStructField + "DBID" as keyof typeof associationInstance] as unknown as NullInt64
               indexDB.Int64 = liner.ID
+              index.Valid = true
 
-              this.frontRepoService.postService( this.dialogData.IntermediateStruct, associationInstance )
+              this.frontRepoService.postService(this.dialogData.IntermediateStruct, associationInstance)
 
             } else {
               // console.log("liner " + liner.Name + " is still selected")

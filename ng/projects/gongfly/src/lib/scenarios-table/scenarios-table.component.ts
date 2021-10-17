@@ -182,16 +182,14 @@ export class ScenariosTableComponent implements OnInit {
 
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
-          this.scenarios.forEach(
-            scenario => {
-              let ID = this.dialogData.ID
-              let revPointer = scenario[this.dialogData.ReversePointer as keyof ScenarioDB] as unknown as NullInt64
-              if (revPointer.Int64 == ID) {
-                this.initialSelection.push(scenario)
-              }
+          for (let scenario of this.scenarios) {
+            let ID = this.dialogData.ID
+            let revPointer = scenario[this.dialogData.ReversePointer as keyof ScenarioDB] as unknown as NullInt64
+            if (revPointer.Int64 == ID) {
+              this.initialSelection.push(scenario)
             }
-          )
-          this.selection = new SelectionModel<ScenarioDB>(allowMultiSelect, this.initialSelection);
+            this.selection = new SelectionModel<ScenarioDB>(allowMultiSelect, this.initialSelection);
+          }
         }
 
         if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -278,34 +276,31 @@ export class ScenariosTableComponent implements OnInit {
       let toUpdate = new Set<ScenarioDB>()
 
       // reset all initial selection of scenario that belong to scenario
-      this.initialSelection.forEach(
-        scenario => {
-          let index = scenario[this.dialogData.ReversePointer as keyof ScenarioDB] as unknown as NullInt64
-          index.Int64 = 0
-          index.Valid = true
-          toUpdate.add(scenario)
-        }
-      )
+      for (let scenario of this.initialSelection) {
+        let index = scenario[this.dialogData.ReversePointer as keyof ScenarioDB] as unknown as NullInt64
+        index.Int64 = 0
+        index.Valid = true
+        toUpdate.add(scenario)
+
+      }
 
       // from selection, set scenario that belong to scenario
-      this.selection.selected.forEach(
-        scenario => {
-          let ID = this.dialogData.ID as number
-          let reversePointer = scenario[this.dialogData.ReversePointer  as keyof ScenarioDB] as unknown as NullInt64
-          reversePointer.Int64 = ID
-          toUpdate.add(scenario)
-        }
-      )
+      for (let scenario of this.selection.selected) {
+        let ID = this.dialogData.ID as number
+        let reversePointer = scenario[this.dialogData.ReversePointer as keyof ScenarioDB] as unknown as NullInt64
+        reversePointer.Int64 = ID
+        reversePointer.Valid = true
+        toUpdate.add(scenario)
+      }
+
 
       // update all scenario (only update selection & initial selection)
-      toUpdate.forEach(
-        scenario => {
-          this.scenarioService.updateScenario(scenario)
-            .subscribe(scenario => {
-              this.scenarioService.ScenarioServiceChanged.next("update")
-            });
-        }
-      )
+      for (let scenario of toUpdate) {
+        this.scenarioService.updateScenario(scenario)
+          .subscribe(scenario => {
+            this.scenarioService.ScenarioServiceChanged.next("update")
+          });
+      }
     }
 
     if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -352,13 +347,15 @@ export class ScenariosTableComponent implements OnInit {
                 Name: sourceInstance["Name"] + "-" + scenario.Name,
               }
 
-              let index = associationInstance[this.dialogData.IntermediateStructField+"ID" as keyof typeof associationInstance] as unknown as NullInt64
+              let index = associationInstance[this.dialogData.IntermediateStructField + "ID" as keyof typeof associationInstance] as unknown as NullInt64
               index.Int64 = scenario.ID
+              index.Valid = true
 
-              let indexDB = associationInstance[this.dialogData.IntermediateStructField+"DBID" as keyof typeof associationInstance] as unknown as NullInt64
+              let indexDB = associationInstance[this.dialogData.IntermediateStructField + "DBID" as keyof typeof associationInstance] as unknown as NullInt64
               indexDB.Int64 = scenario.ID
+              index.Valid = true
 
-              this.frontRepoService.postService( this.dialogData.IntermediateStruct, associationInstance )
+              this.frontRepoService.postService(this.dialogData.IntermediateStruct, associationInstance)
 
             } else {
               // console.log("scenario " + scenario.Name + " is still selected")

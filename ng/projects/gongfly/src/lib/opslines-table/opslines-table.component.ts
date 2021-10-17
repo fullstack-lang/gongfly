@@ -200,16 +200,14 @@ export class OpsLinesTableComponent implements OnInit {
 
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
-          this.opslines.forEach(
-            opsline => {
-              let ID = this.dialogData.ID
-              let revPointer = opsline[this.dialogData.ReversePointer as keyof OpsLineDB] as unknown as NullInt64
-              if (revPointer.Int64 == ID) {
-                this.initialSelection.push(opsline)
-              }
+          for (let opsline of this.opslines) {
+            let ID = this.dialogData.ID
+            let revPointer = opsline[this.dialogData.ReversePointer as keyof OpsLineDB] as unknown as NullInt64
+            if (revPointer.Int64 == ID) {
+              this.initialSelection.push(opsline)
             }
-          )
-          this.selection = new SelectionModel<OpsLineDB>(allowMultiSelect, this.initialSelection);
+            this.selection = new SelectionModel<OpsLineDB>(allowMultiSelect, this.initialSelection);
+          }
         }
 
         if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -296,34 +294,31 @@ export class OpsLinesTableComponent implements OnInit {
       let toUpdate = new Set<OpsLineDB>()
 
       // reset all initial selection of opsline that belong to opsline
-      this.initialSelection.forEach(
-        opsline => {
-          let index = opsline[this.dialogData.ReversePointer as keyof OpsLineDB] as unknown as NullInt64
-          index.Int64 = 0
-          index.Valid = true
-          toUpdate.add(opsline)
-        }
-      )
+      for (let opsline of this.initialSelection) {
+        let index = opsline[this.dialogData.ReversePointer as keyof OpsLineDB] as unknown as NullInt64
+        index.Int64 = 0
+        index.Valid = true
+        toUpdate.add(opsline)
+
+      }
 
       // from selection, set opsline that belong to opsline
-      this.selection.selected.forEach(
-        opsline => {
-          let ID = this.dialogData.ID as number
-          let reversePointer = opsline[this.dialogData.ReversePointer  as keyof OpsLineDB] as unknown as NullInt64
-          reversePointer.Int64 = ID
-          toUpdate.add(opsline)
-        }
-      )
+      for (let opsline of this.selection.selected) {
+        let ID = this.dialogData.ID as number
+        let reversePointer = opsline[this.dialogData.ReversePointer as keyof OpsLineDB] as unknown as NullInt64
+        reversePointer.Int64 = ID
+        reversePointer.Valid = true
+        toUpdate.add(opsline)
+      }
+
 
       // update all opsline (only update selection & initial selection)
-      toUpdate.forEach(
-        opsline => {
-          this.opslineService.updateOpsLine(opsline)
-            .subscribe(opsline => {
-              this.opslineService.OpsLineServiceChanged.next("update")
-            });
-        }
-      )
+      for (let opsline of toUpdate) {
+        this.opslineService.updateOpsLine(opsline)
+          .subscribe(opsline => {
+            this.opslineService.OpsLineServiceChanged.next("update")
+          });
+      }
     }
 
     if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -370,13 +365,15 @@ export class OpsLinesTableComponent implements OnInit {
                 Name: sourceInstance["Name"] + "-" + opsline.Name,
               }
 
-              let index = associationInstance[this.dialogData.IntermediateStructField+"ID" as keyof typeof associationInstance] as unknown as NullInt64
+              let index = associationInstance[this.dialogData.IntermediateStructField + "ID" as keyof typeof associationInstance] as unknown as NullInt64
               index.Int64 = opsline.ID
+              index.Valid = true
 
-              let indexDB = associationInstance[this.dialogData.IntermediateStructField+"DBID" as keyof typeof associationInstance] as unknown as NullInt64
+              let indexDB = associationInstance[this.dialogData.IntermediateStructField + "DBID" as keyof typeof associationInstance] as unknown as NullInt64
               indexDB.Int64 = opsline.ID
+              index.Valid = true
 
-              this.frontRepoService.postService( this.dialogData.IntermediateStruct, associationInstance )
+              this.frontRepoService.postService(this.dialogData.IntermediateStruct, associationInstance)
 
             } else {
               // console.log("opsline " + opsline.Name + " is still selected")

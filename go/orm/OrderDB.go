@@ -277,6 +277,7 @@ func (backRepoOrder *BackRepoOrderStruct) CommitPhaseTwoInstance(backRepo *BackR
 		if order.Target != nil {
 			if TargetId, ok := (*backRepo.BackRepoLiner.Map_LinerPtr_LinerDBID)[order.Target]; ok {
 				orderDB.TargetID.Int64 = int64(TargetId)
+				orderDB.TargetID.Valid = true
 			}
 		}
 
@@ -608,6 +609,7 @@ func (backRepoOrder *BackRepoOrderStruct) RestorePhaseTwo() {
 		// reindexing Target field
 		if orderDB.TargetID.Int64 != 0 {
 			orderDB.TargetID.Int64 = int64(BackRepoLinerid_atBckpTime_newID[uint(orderDB.TargetID.Int64)])
+			orderDB.TargetID.Valid = true
 		}
 
 		// update databse with new index encoding

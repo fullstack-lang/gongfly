@@ -279,6 +279,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseTwoInstance(backRepo *B
 		if opsline.Scenario != nil {
 			if ScenarioId, ok := (*backRepo.BackRepoScenario.Map_ScenarioPtr_ScenarioDBID)[opsline.Scenario]; ok {
 				opslineDB.ScenarioID.Int64 = int64(ScenarioId)
+				opslineDB.ScenarioID.Valid = true
 			}
 		}
 
@@ -610,6 +611,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) RestorePhaseTwo() {
 		// reindexing Scenario field
 		if opslineDB.ScenarioID.Int64 != 0 {
 			opslineDB.ScenarioID.Int64 = int64(BackRepoScenarioid_atBckpTime_newID[uint(opslineDB.ScenarioID.Int64)])
+			opslineDB.ScenarioID.Valid = true
 		}
 
 		// update databse with new index encoding

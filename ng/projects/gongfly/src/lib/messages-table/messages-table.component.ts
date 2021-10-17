@@ -271,16 +271,14 @@ export class MessagesTableComponent implements OnInit {
 
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
-          this.messages.forEach(
-            message => {
-              let ID = this.dialogData.ID
-              let revPointer = message[this.dialogData.ReversePointer as keyof MessageDB] as unknown as NullInt64
-              if (revPointer.Int64 == ID) {
-                this.initialSelection.push(message)
-              }
+          for (let message of this.messages) {
+            let ID = this.dialogData.ID
+            let revPointer = message[this.dialogData.ReversePointer as keyof MessageDB] as unknown as NullInt64
+            if (revPointer.Int64 == ID) {
+              this.initialSelection.push(message)
             }
-          )
-          this.selection = new SelectionModel<MessageDB>(allowMultiSelect, this.initialSelection);
+            this.selection = new SelectionModel<MessageDB>(allowMultiSelect, this.initialSelection);
+          }
         }
 
         if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -367,34 +365,31 @@ export class MessagesTableComponent implements OnInit {
       let toUpdate = new Set<MessageDB>()
 
       // reset all initial selection of message that belong to message
-      this.initialSelection.forEach(
-        message => {
-          let index = message[this.dialogData.ReversePointer as keyof MessageDB] as unknown as NullInt64
-          index.Int64 = 0
-          index.Valid = true
-          toUpdate.add(message)
-        }
-      )
+      for (let message of this.initialSelection) {
+        let index = message[this.dialogData.ReversePointer as keyof MessageDB] as unknown as NullInt64
+        index.Int64 = 0
+        index.Valid = true
+        toUpdate.add(message)
+
+      }
 
       // from selection, set message that belong to message
-      this.selection.selected.forEach(
-        message => {
-          let ID = this.dialogData.ID as number
-          let reversePointer = message[this.dialogData.ReversePointer  as keyof MessageDB] as unknown as NullInt64
-          reversePointer.Int64 = ID
-          toUpdate.add(message)
-        }
-      )
+      for (let message of this.selection.selected) {
+        let ID = this.dialogData.ID as number
+        let reversePointer = message[this.dialogData.ReversePointer as keyof MessageDB] as unknown as NullInt64
+        reversePointer.Int64 = ID
+        reversePointer.Valid = true
+        toUpdate.add(message)
+      }
+
 
       // update all message (only update selection & initial selection)
-      toUpdate.forEach(
-        message => {
-          this.messageService.updateMessage(message)
-            .subscribe(message => {
-              this.messageService.MessageServiceChanged.next("update")
-            });
-        }
-      )
+      for (let message of toUpdate) {
+        this.messageService.updateMessage(message)
+          .subscribe(message => {
+            this.messageService.MessageServiceChanged.next("update")
+          });
+      }
     }
 
     if (this.mode == TableComponentMode.MANY_MANY_ASSOCIATION_MODE) {
@@ -441,13 +436,15 @@ export class MessagesTableComponent implements OnInit {
                 Name: sourceInstance["Name"] + "-" + message.Name,
               }
 
-              let index = associationInstance[this.dialogData.IntermediateStructField+"ID" as keyof typeof associationInstance] as unknown as NullInt64
+              let index = associationInstance[this.dialogData.IntermediateStructField + "ID" as keyof typeof associationInstance] as unknown as NullInt64
               index.Int64 = message.ID
+              index.Valid = true
 
-              let indexDB = associationInstance[this.dialogData.IntermediateStructField+"DBID" as keyof typeof associationInstance] as unknown as NullInt64
+              let indexDB = associationInstance[this.dialogData.IntermediateStructField + "DBID" as keyof typeof associationInstance] as unknown as NullInt64
               indexDB.Int64 = message.ID
+              index.Valid = true
 
-              this.frontRepoService.postService( this.dialogData.IntermediateStruct, associationInstance )
+              this.frontRepoService.postService(this.dialogData.IntermediateStruct, associationInstance)
 
             } else {
               // console.log("message " + message.Name + " is still selected")

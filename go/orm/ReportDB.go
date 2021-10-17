@@ -269,6 +269,7 @@ func (backRepoReport *BackRepoReportStruct) CommitPhaseTwoInstance(backRepo *Bac
 		if report.About != nil {
 			if AboutId, ok := (*backRepo.BackRepoLiner.Map_LinerPtr_LinerDBID)[report.About]; ok {
 				reportDB.AboutID.Int64 = int64(AboutId)
+				reportDB.AboutID.Valid = true
 			}
 		}
 
@@ -277,6 +278,7 @@ func (backRepoReport *BackRepoReportStruct) CommitPhaseTwoInstance(backRepo *Bac
 		if report.OpsLine != nil {
 			if OpsLineId, ok := (*backRepo.BackRepoOpsLine.Map_OpsLinePtr_OpsLineDBID)[report.OpsLine]; ok {
 				reportDB.OpsLineID.Int64 = int64(OpsLineId)
+				reportDB.OpsLineID.Valid = true
 			}
 		}
 
@@ -596,11 +598,13 @@ func (backRepoReport *BackRepoReportStruct) RestorePhaseTwo() {
 		// reindexing About field
 		if reportDB.AboutID.Int64 != 0 {
 			reportDB.AboutID.Int64 = int64(BackRepoLinerid_atBckpTime_newID[uint(reportDB.AboutID.Int64)])
+			reportDB.AboutID.Valid = true
 		}
 
 		// reindexing OpsLine field
 		if reportDB.OpsLineID.Int64 != 0 {
 			reportDB.OpsLineID.Int64 = int64(BackRepoOpsLineid_atBckpTime_newID[uint(reportDB.OpsLineID.Int64)])
+			reportDB.OpsLineID.Valid = true
 		}
 
 		// update databse with new index encoding
