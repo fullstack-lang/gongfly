@@ -1625,14 +1625,11 @@ responses:
           insertion for basic fields declaration
           Declation for basic field civilianairportDB.Lat {{BasicKind}} (to be completed)
       Lng_Data:
-        description: Declation for basic field civilianairportDB.Lng {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field civilianairportDB.Lng {{BasicKind}} (to be completed)
       Name_Data:
-        description: Declation for basic field civilianairportDB.Name {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field civilianairportDB.Name {{BasicKind}} (to be completed)
       TechName_Data:
-        description: Declation for basic field civilianairportDB.TechName {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field civilianairportDB.TechName {{BasicKind}} (to be completed)
       UpdatedAt:
         format: date-time
         type: string
@@ -1666,11 +1663,9 @@ responses:
         type: string
       DeletedAt: {}
       DistanceToTarget_Data:
-        description: Declation for basic field linerDB.DistanceToTarget {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field linerDB.DistanceToTarget {{BasicKind}} (to be completed)
       Heading_Data:
-        description: Declation for basic field linerDB.Heading {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field linerDB.Heading {{BasicKind}} (to be completed)
       ID:
         format: uint64
         type: integer
@@ -1679,13 +1674,11 @@ responses:
           insertion for basic fields declaration
           Declation for basic field linerDB.Lat {{BasicKind}} (to be completed)
       Level_Data:
-        description: Declation for basic field linerDB.Level {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field linerDB.Level {{BasicKind}} (to be completed)
       Lng_Data:
         description: Declation for basic field linerDB.Lng {{BasicKind}} (to be completed)
       MaxRotationalSpeed_Data:
-        description: Declation for basic field linerDB.MaxRotationalSpeed {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field linerDB.MaxRotationalSpeed {{BasicKind}} (to be completed)
       Name_Data:
         description: Declation for basic field linerDB.Name {{BasicKind}} (to be completed)
       ReporingLineID:
@@ -1694,32 +1687,24 @@ responses:
           field ReporingLine is a pointer to another Struct (optional or 0..1)
           This field is generated into another field to enable AS ONE association
       Speed_Data:
-        description: Declation for basic field linerDB.Speed {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field linerDB.Speed {{BasicKind}} (to be completed)
       State_Data:
-        description: Declation for basic field linerDB.State {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field linerDB.State {{BasicKind}} (to be completed)
       TargetHeading_Data:
-        description: Declation for basic field linerDB.TargetHeading {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field linerDB.TargetHeading {{BasicKind}} (to be completed)
       TargetLocationLat_Data:
-        description: Declation for basic field linerDB.TargetLocationLat {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field linerDB.TargetLocationLat {{BasicKind}} (to be completed)
       TargetLocationLng_Data:
-        description: Declation for basic field linerDB.TargetLocationLng {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field linerDB.TargetLocationLng {{BasicKind}} (to be completed)
       TechName_Data:
-        description: Declation for basic field linerDB.TechName {{BasicKind}} (to
-          be completed)
+        description: Declation for basic field linerDB.TechName {{BasicKind}} (to be completed)
       Timestampstring_Data:
-        description: Declation for basic field linerDB.Timestampstring {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field linerDB.Timestampstring {{BasicKind}} (to be completed)
       UpdatedAt:
         format: date-time
         type: string
       VerticalSpeed_Data:
-        description: Declation for basic field linerDB.VerticalSpeed {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field linerDB.VerticalSpeed {{BasicKind}} (to be completed)
     schema:
       $ref: '#/definitions/NullInt64'
   linerDBsResponse:
@@ -1732,31 +1717,25 @@ responses:
     description: MessageDBResponse provides response
     headers:
       About_string_Data:
-        description: Declation for basic field messageDB.About_string {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field messageDB.About_string {{BasicKind}} (to be completed)
       Content_Data:
-        description: Declation for basic field messageDB.Content {{BasicKind}} (to
-          be completed)
+        description: Declation for basic field messageDB.Content {{BasicKind}} (to be completed)
       CreatedAt:
         format: date-time
         type: string
       DeletedAt: {}
       Destination_Data:
-        description: Declation for basic field messageDB.Destination {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field messageDB.Destination {{BasicKind}} (to be completed)
       Display_Data:
         description: |-
           Declation for basic field messageDB.Display bool (to be completed)
           provide the sql storage for the boolan
       DistanceToTarget_Data:
-        description: Declation for basic field messageDB.DistanceToTarget {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field messageDB.DistanceToTarget {{BasicKind}} (to be completed)
       DurationSinceSimulationStart_Data:
-        description: Declation for basic field messageDB.DurationSinceSimulationStart
-          {{BasicKind}} (to be completed)
+        description: Declation for basic field messageDB.DurationSinceSimulationStart {{BasicKind}} (to be completed)
       Heading_Data:
-        description: Declation for basic field messageDB.Heading {{BasicKind}} (to
-          be completed)
+        description: Declation for basic field messageDB.Heading {{BasicKind}} (to be completed)
       ID:
         format: uint64
         type: integer
@@ -1765,38 +1744,27 @@ responses:
           insertion for basic fields declaration
           Declation for basic field messageDB.Lat {{BasicKind}} (to be completed)
       Level_Data:
-        description: Declation for basic field messageDB.Level {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field messageDB.Level {{BasicKind}} (to be completed)
       Lng_Data:
-        description: Declation for basic field messageDB.Lng {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field messageDB.Lng {{BasicKind}} (to be completed)
       Name_Data:
-        description: Declation for basic field messageDB.Name {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field messageDB.Name {{BasicKind}} (to be completed)
       Source_Data:
-        description: Declation for basic field messageDB.Source {{BasicKind}} (to
-          be completed)
+        description: Declation for basic field messageDB.Source {{BasicKind}} (to be completed)
       Speed_Data:
-        description: Declation for basic field messageDB.Speed {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field messageDB.Speed {{BasicKind}} (to be completed)
       State_Data:
-        description: Declation for basic field messageDB.State {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field messageDB.State {{BasicKind}} (to be completed)
       TargetLocationLat_Data:
-        description: Declation for basic field messageDB.TargetLocationLat {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field messageDB.TargetLocationLat {{BasicKind}} (to be completed)
       TargetLocationLng_Data:
-        description: Declation for basic field messageDB.TargetLocationLng {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field messageDB.TargetLocationLng {{BasicKind}} (to be completed)
       TechName_Data:
-        description: Declation for basic field messageDB.TechName {{BasicKind}} (to
-          be completed)
+        description: Declation for basic field messageDB.TechName {{BasicKind}} (to be completed)
       Timestampstartstring_Data:
-        description: Declation for basic field messageDB.Timestampstartstring {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field messageDB.Timestampstartstring {{BasicKind}} (to be completed)
       Timestampstring_Data:
-        description: Declation for basic field messageDB.Timestampstring {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field messageDB.Timestampstring {{BasicKind}} (to be completed)
       UpdatedAt:
         format: date-time
         type: string
@@ -1828,25 +1796,20 @@ responses:
           Declation for basic field opslineDB.IsTransmittingBackward bool (to be completed)
           provide the sql storage for the boolan
       Name_Data:
-        description: Declation for basic field opslineDB.Name {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field opslineDB.Name {{BasicKind}} (to be completed)
       ScenarioID:
         description: |-
           insertion for pointer fields encoding declaration
           field Scenario is a pointer to another Struct (optional or 0..1)
           This field is generated into another field to enable AS ONE association
       State_Data:
-        description: Declation for basic field opslineDB.State {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field opslineDB.State {{BasicKind}} (to be completed)
       TechName_Data:
-        description: Declation for basic field opslineDB.TechName {{BasicKind}} (to
-          be completed)
+        description: Declation for basic field opslineDB.TechName {{BasicKind}} (to be completed)
       TransmissionMessage_Data:
-        description: Declation for basic field opslineDB.TransmissionMessage {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field opslineDB.TransmissionMessage {{BasicKind}} (to be completed)
       TransmissionMessageBackward_Data:
-        description: Declation for basic field opslineDB.TransmissionMessageBackward
-          {{BasicKind}} (to be completed)
+        description: Declation for basic field opslineDB.TransmissionMessageBackward {{BasicKind}} (to be completed)
       UpdatedAt:
         format: date-time
         type: string
@@ -1866,8 +1829,7 @@ responses:
         type: string
       DeletedAt: {}
       Duration_Data:
-        description: Declation for basic field orderDB.Duration {{BasicKind}} (to
-          be completed)
+        description: Declation for basic field orderDB.Duration {{BasicKind}} (to be completed)
       ID:
         format: uint64
         type: integer
@@ -1876,22 +1838,18 @@ responses:
           insertion for basic fields declaration
           Declation for basic field orderDB.Name {{BasicKind}} (to be completed)
       Number_Data:
-        description: Declation for basic field orderDB.Number {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field orderDB.Number {{BasicKind}} (to be completed)
       OrderMessage_Data:
-        description: Declation for basic field orderDB.OrderMessage {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field orderDB.OrderMessage {{BasicKind}} (to be completed)
       TargetID:
         description: |-
           insertion for pointer fields encoding declaration
           field Target is a pointer to another Struct (optional or 0..1)
           This field is generated into another field to enable AS ONE association
       TargetLat_Data:
-        description: Declation for basic field orderDB.TargetLat {{BasicKind}} (to
-          be completed)
+        description: Declation for basic field orderDB.TargetLat {{BasicKind}} (to be completed)
       TargetLng_Data:
-        description: Declation for basic field orderDB.TargetLng {{BasicKind}} (to
-          be completed)
+        description: Declation for basic field orderDB.TargetLng {{BasicKind}} (to be completed)
       Type_Data:
         description: Declation for basic field orderDB.Type {{BasicKind}} (to be completed)
       UpdatedAt:
@@ -1922,11 +1880,9 @@ responses:
       Name_Data:
         description: Declation for basic field radarDB.Name {{BasicKind}} (to be completed)
       Range_Data:
-        description: Declation for basic field radarDB.Range {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field radarDB.Range {{BasicKind}} (to be completed)
       State_Data:
-        description: Declation for basic field radarDB.State {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field radarDB.State {{BasicKind}} (to be completed)
       TechName_Data:
         description: |-
           insertion for basic fields declaration
@@ -1955,8 +1911,7 @@ responses:
         type: string
       DeletedAt: {}
       Duration_Data:
-        description: Declation for basic field reportDB.Duration {{BasicKind}} (to
-          be completed)
+        description: Declation for basic field reportDB.Duration {{BasicKind}} (to be completed)
       ID:
         format: uint64
         type: integer
@@ -1965,18 +1920,15 @@ responses:
           insertion for basic fields declaration
           Declation for basic field reportDB.Name {{BasicKind}} (to be completed)
       Number_Data:
-        description: Declation for basic field reportDB.Number {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field reportDB.Number {{BasicKind}} (to be completed)
       OpsLineID:
         description: |-
           field OpsLine is a pointer to another Struct (optional or 0..1)
           This field is generated into another field to enable AS ONE association
       ReportMessage_Data:
-        description: Declation for basic field reportDB.ReportMessage {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field reportDB.ReportMessage {{BasicKind}} (to be completed)
       Type_Data:
-        description: Declation for basic field reportDB.Type {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field reportDB.Type {{BasicKind}} (to be completed)
       UpdatedAt:
         format: date-time
         type: string
@@ -1999,14 +1951,11 @@ responses:
         format: uint64
         type: integer
       Lat_Data:
-        description: Declation for basic field scenarioDB.Lat {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field scenarioDB.Lat {{BasicKind}} (to be completed)
       Lng_Data:
-        description: Declation for basic field scenarioDB.Lng {{BasicKind}} (to be
-          completed)
+        description: Declation for basic field scenarioDB.Lng {{BasicKind}} (to be completed)
       MessageVisualSpeed_Data:
-        description: Declation for basic field scenarioDB.MessageVisualSpeed {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field scenarioDB.MessageVisualSpeed {{BasicKind}} (to be completed)
       Name_Data:
         description: |-
           insertion for basic fields declaration
@@ -2015,8 +1964,7 @@ responses:
         format: date-time
         type: string
       ZoomLevel_Data:
-        description: Declation for basic field scenarioDB.ZoomLevel {{BasicKind}}
-          (to be completed)
+        description: Declation for basic field scenarioDB.ZoomLevel {{BasicKind}} (to be completed)
     schema:
       $ref: '#/definitions/NullFloat64'
   scenarioDBsResponse:
