@@ -18,7 +18,7 @@
                 "resources": {
                     "limits": {
                         "memory": "256Mi",
-                        "cpu": 1,
+                        "cpu": 1
                     }
                 }
             },
@@ -36,6 +36,10 @@
             "webRoot": "${workspaceFolder}/ng",
             "pathMappings": [
                 {
+                    "url": "webpack:///gongleaflet",
+                    "path": "/Users/thomaspeugeot/go/src/github.com/fullstack-lang/gongleaflet"
+                },
+                {
                     "url": "webpack:///projects",
                     "path": "${workspaceFolder}/ng/projects"
                 }
@@ -49,6 +53,10 @@
             "url": "http://localhost:8080/",
             "webRoot": "${workspaceFolder}/ng",
             "pathMappings": [
+                {
+                    "url": "webpack:///gongleaflet",
+                    "path": "/Users/thomaspeugeot/go/src/github.com/fullstack-lang/gongleaflet"
+                },
                 {
                     "url": "webpack:///projects",
                     "path": "${workspaceFolder}/ng/projects"
