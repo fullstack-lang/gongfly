@@ -22,6 +22,7 @@ require (
 
 require (
 	github.com/ajstarks/svgo v0.0.0-20210923152817-c3b6e2f0c527 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/tdewolff/parse/v2 v2.5.22 // indirect
 	golang.org/x/tools v0.1.7 // indirect
 )

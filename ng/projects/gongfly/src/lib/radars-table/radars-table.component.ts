@@ -62,6 +62,9 @@ export class RadarsTableComponent implements OnInit {
     // enable sorting on all fields (including pointers and reverse pointer)
     this.matTableDataSource.sortingDataAccessor = (radarDB: RadarDB, property: string) => {
       switch (property) {
+        case 'ID':
+          return radarDB.ID
+
         // insertion point for specific sorting accessor
         case 'TechName':
           return radarDB.TechName;
