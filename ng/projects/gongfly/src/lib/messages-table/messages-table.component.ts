@@ -62,6 +62,9 @@ export class MessagesTableComponent implements OnInit {
     // enable sorting on all fields (including pointers and reverse pointer)
     this.matTableDataSource.sortingDataAccessor = (messageDB: MessageDB, property: string) => {
       switch (property) {
+        case 'ID':
+          return messageDB.ID
+
         // insertion point for specific sorting accessor
         case 'Lat':
           return messageDB.Lat;

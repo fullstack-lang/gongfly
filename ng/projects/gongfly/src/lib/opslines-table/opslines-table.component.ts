@@ -62,6 +62,9 @@ export class OpsLinesTableComponent implements OnInit {
     // enable sorting on all fields (including pointers and reverse pointer)
     this.matTableDataSource.sortingDataAccessor = (opslineDB: OpsLineDB, property: string) => {
       switch (property) {
+        case 'ID':
+          return opslineDB.ID
+
         // insertion point for specific sorting accessor
         case 'IsTransmitting':
           return opslineDB.IsTransmitting?"true":"false";
