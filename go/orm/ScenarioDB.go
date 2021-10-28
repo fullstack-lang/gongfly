@@ -57,6 +57,7 @@ type ScenarioDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
+
 	// Declation for basic field scenarioDB.Name {{BasicKind}} (to be completed)
 	Name_Data sql.NullString
 
@@ -71,7 +72,6 @@ type ScenarioDB struct {
 
 	// Declation for basic field scenarioDB.MessageVisualSpeed {{BasicKind}} (to be completed)
 	MessageVisualSpeed_Data sql.NullFloat64
-
 	// encoding of pointers
 	ScenarioPointersEnconding
 }
@@ -89,19 +89,19 @@ type ScenarioDBResponse struct {
 // ScenarioWOP is a Scenario without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type ScenarioWOP struct {
-	ID int
+	ID int `xlsx:"0"`
 
 	// insertion for WOP basic fields
 
-	Name string
+	Name string `xlsx:"1"`
 
-	Lat float64
+	Lat float64 `xlsx:"2"`
 
-	Lng float64
+	Lng float64 `xlsx:"3"`
 
-	ZoomLevel float64
+	ZoomLevel float64 `xlsx:"4"`
 
-	MessageVisualSpeed float64
+	MessageVisualSpeed float64 `xlsx:"5"`
 	// insertion for WOP pointer fields
 }
 
@@ -393,6 +393,7 @@ func (backRepo *BackRepoStruct) CheckoutScenario(scenario *models.Scenario) {
 // CopyBasicFieldsFromScenario
 func (scenarioDB *ScenarioDB) CopyBasicFieldsFromScenario(scenario *models.Scenario) {
 	// insertion point for fields commit
+
 	scenarioDB.Name_Data.String = scenario.Name
 	scenarioDB.Name_Data.Valid = true
 
@@ -407,12 +408,12 @@ func (scenarioDB *ScenarioDB) CopyBasicFieldsFromScenario(scenario *models.Scena
 
 	scenarioDB.MessageVisualSpeed_Data.Float64 = scenario.MessageVisualSpeed
 	scenarioDB.MessageVisualSpeed_Data.Valid = true
-
 }
 
 // CopyBasicFieldsFromScenarioWOP
 func (scenarioDB *ScenarioDB) CopyBasicFieldsFromScenarioWOP(scenario *ScenarioWOP) {
 	// insertion point for fields commit
+
 	scenarioDB.Name_Data.String = scenario.Name
 	scenarioDB.Name_Data.Valid = true
 
@@ -427,7 +428,6 @@ func (scenarioDB *ScenarioDB) CopyBasicFieldsFromScenarioWOP(scenario *ScenarioW
 
 	scenarioDB.MessageVisualSpeed_Data.Float64 = scenario.MessageVisualSpeed
 	scenarioDB.MessageVisualSpeed_Data.Valid = true
-
 }
 
 // CopyBasicFieldsToScenario
@@ -509,6 +509,51 @@ func (backRepoScenario *BackRepoScenarioStruct) BackupXL(file *xlsx.File) {
 		row := sh.AddRow()
 		row.WriteStruct(&scenarioWOP, -1)
 	}
+}
+
+// RestoreXL from the "Scenario" sheet all ScenarioDB instances
+func (backRepoScenario *BackRepoScenarioStruct) RestoreXLPhaseOne(file *xlsx.File) {
+
+	// resets the map
+	BackRepoScenarioid_atBckpTime_newID = make(map[uint]uint)
+
+	sh, ok := file.Sheet["Scenario"]
+	_ = sh
+	if !ok {
+		log.Panic(errors.New("sheet not found"))
+	}
+
+	// log.Println("Max row is", sh.MaxRow)
+	err := sh.ForEachRow(backRepoScenario.rowVisitorScenario)
+	if err != nil {
+		log.Panic("Err=", err)
+	}
+}
+
+func (backRepoScenario *BackRepoScenarioStruct) rowVisitorScenario(row *xlsx.Row) error {
+
+	log.Printf("row line %d\n", row.GetCoordinate())
+	log.Println(row)
+
+	// skip first line
+	if row.GetCoordinate() > 0 {
+		var scenarioWOP ScenarioWOP
+		row.ReadStruct(&scenarioWOP)
+
+		// add the unmarshalled struct to the stage
+		scenarioDB := new(ScenarioDB)
+		scenarioDB.CopyBasicFieldsFromScenarioWOP(&scenarioWOP)
+
+		scenarioDB_ID_atBackupTime := scenarioDB.ID
+		scenarioDB.ID = 0
+		query := backRepoScenario.db.Create(scenarioDB)
+		if query.Error != nil {
+			log.Panic(query.Error)
+		}
+		(*backRepoScenario.Map_ScenarioDBID_ScenarioDB)[scenarioDB.ID] = scenarioDB
+		BackRepoScenarioid_atBckpTime_newID[scenarioDB_ID_atBackupTime] = scenarioDB.ID
+	}
+	return nil
 }
 
 // RestorePhaseOne read the file "ScenarioDB.json" in dirPath that stores an array

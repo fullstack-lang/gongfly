@@ -57,6 +57,7 @@ type MessageDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
+
 	// Declation for basic field messageDB.Lat {{BasicKind}} (to be completed)
 	Lat_Data sql.NullFloat64
 
@@ -114,7 +115,6 @@ type MessageDB struct {
 	// Declation for basic field messageDB.Display bool (to be completed)
 	// provide the sql storage for the boolan
 	Display_Data sql.NullBool
-
 	// encoding of pointers
 	MessagePointersEnconding
 }
@@ -132,47 +132,47 @@ type MessageDBResponse struct {
 // MessageWOP is a Message without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type MessageWOP struct {
-	ID int
+	ID int `xlsx:"0"`
 
 	// insertion for WOP basic fields
 
-	Lat float64
+	Lat float64 `xlsx:"1"`
 
-	Lng float64
+	Lng float64 `xlsx:"2"`
 
-	Heading float64
+	Heading float64 `xlsx:"3"`
 
-	Level float64
+	Level float64 `xlsx:"4"`
 
-	Speed float64
+	Speed float64 `xlsx:"5"`
 
-	TechName string
+	TechName string `xlsx:"6"`
 
-	State models.MessageStateEnum
+	State models.MessageStateEnum `xlsx:"7"`
 
-	Name string
+	Name string `xlsx:"8"`
 
-	TargetLocationLat float64
+	TargetLocationLat float64 `xlsx:"9"`
 
-	TargetLocationLng float64
+	TargetLocationLng float64 `xlsx:"10"`
 
-	DistanceToTarget float64
+	DistanceToTarget float64 `xlsx:"11"`
 
-	Timestampstring string
+	Timestampstring string `xlsx:"12"`
 
-	DurationSinceSimulationStart time.Duration
+	DurationSinceSimulationStart time.Duration `xlsx:"13"`
 
-	Timestampstartstring string
+	Timestampstartstring string `xlsx:"14"`
 
-	Source string
+	Source string `xlsx:"15"`
 
-	Destination string
+	Destination string `xlsx:"16"`
 
-	Content string
+	Content string `xlsx:"17"`
 
-	About_string string
+	About_string string `xlsx:"18"`
 
-	Display bool
+	Display bool `xlsx:"19"`
 	// insertion for WOP pointer fields
 }
 
@@ -478,6 +478,7 @@ func (backRepo *BackRepoStruct) CheckoutMessage(message *models.Message) {
 // CopyBasicFieldsFromMessage
 func (messageDB *MessageDB) CopyBasicFieldsFromMessage(message *models.Message) {
 	// insertion point for fields commit
+
 	messageDB.Lat_Data.Float64 = message.Lat
 	messageDB.Lat_Data.Valid = true
 
@@ -534,12 +535,12 @@ func (messageDB *MessageDB) CopyBasicFieldsFromMessage(message *models.Message) 
 
 	messageDB.Display_Data.Bool = message.Display
 	messageDB.Display_Data.Valid = true
-
 }
 
 // CopyBasicFieldsFromMessageWOP
 func (messageDB *MessageDB) CopyBasicFieldsFromMessageWOP(message *MessageWOP) {
 	// insertion point for fields commit
+
 	messageDB.Lat_Data.Float64 = message.Lat
 	messageDB.Lat_Data.Valid = true
 
@@ -596,7 +597,6 @@ func (messageDB *MessageDB) CopyBasicFieldsFromMessageWOP(message *MessageWOP) {
 
 	messageDB.Display_Data.Bool = message.Display
 	messageDB.Display_Data.Valid = true
-
 }
 
 // CopyBasicFieldsToMessage
@@ -706,6 +706,51 @@ func (backRepoMessage *BackRepoMessageStruct) BackupXL(file *xlsx.File) {
 		row := sh.AddRow()
 		row.WriteStruct(&messageWOP, -1)
 	}
+}
+
+// RestoreXL from the "Message" sheet all MessageDB instances
+func (backRepoMessage *BackRepoMessageStruct) RestoreXLPhaseOne(file *xlsx.File) {
+
+	// resets the map
+	BackRepoMessageid_atBckpTime_newID = make(map[uint]uint)
+
+	sh, ok := file.Sheet["Message"]
+	_ = sh
+	if !ok {
+		log.Panic(errors.New("sheet not found"))
+	}
+
+	// log.Println("Max row is", sh.MaxRow)
+	err := sh.ForEachRow(backRepoMessage.rowVisitorMessage)
+	if err != nil {
+		log.Panic("Err=", err)
+	}
+}
+
+func (backRepoMessage *BackRepoMessageStruct) rowVisitorMessage(row *xlsx.Row) error {
+
+	log.Printf("row line %d\n", row.GetCoordinate())
+	log.Println(row)
+
+	// skip first line
+	if row.GetCoordinate() > 0 {
+		var messageWOP MessageWOP
+		row.ReadStruct(&messageWOP)
+
+		// add the unmarshalled struct to the stage
+		messageDB := new(MessageDB)
+		messageDB.CopyBasicFieldsFromMessageWOP(&messageWOP)
+
+		messageDB_ID_atBackupTime := messageDB.ID
+		messageDB.ID = 0
+		query := backRepoMessage.db.Create(messageDB)
+		if query.Error != nil {
+			log.Panic(query.Error)
+		}
+		(*backRepoMessage.Map_MessageDBID_MessageDB)[messageDB.ID] = messageDB
+		BackRepoMessageid_atBckpTime_newID[messageDB_ID_atBackupTime] = messageDB.ID
+	}
+	return nil
 }
 
 // RestorePhaseOne read the file "MessageDB.json" in dirPath that stores an array

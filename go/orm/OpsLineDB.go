@@ -45,10 +45,10 @@ type OpsLineAPI struct {
 // reverse pointers of slice of poitners to Struct
 type OpsLinePointersEnconding struct {
 	// insertion for pointer fields encoding declaration
+
 	// field Scenario is a pointer to another Struct (optional or 0..1)
 	// This field is generated into another field to enable AS ONE association
 	ScenarioID sql.NullInt64
-
 }
 
 // OpsLineDB describes a opsline in the database
@@ -61,6 +61,7 @@ type OpsLineDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
+
 	// Declation for basic field opslineDB.IsTransmitting bool (to be completed)
 	// provide the sql storage for the boolan
 	IsTransmitting_Data sql.NullBool
@@ -83,7 +84,6 @@ type OpsLineDB struct {
 
 	// Declation for basic field opslineDB.Name {{BasicKind}} (to be completed)
 	Name_Data sql.NullString
-
 	// encoding of pointers
 	OpsLinePointersEnconding
 }
@@ -101,23 +101,23 @@ type OpsLineDBResponse struct {
 // OpsLineWOP is a OpsLine without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type OpsLineWOP struct {
-	ID int
+	ID int `xlsx:"0"`
 
 	// insertion for WOP basic fields
 
-	IsTransmitting bool
+	IsTransmitting bool `xlsx:"1"`
 
-	TransmissionMessage string
+	TransmissionMessage string `xlsx:"2"`
 
-	IsTransmittingBackward bool
+	IsTransmittingBackward bool `xlsx:"3"`
 
-	TransmissionMessageBackward string
+	TransmissionMessageBackward string `xlsx:"4"`
 
-	TechName string
+	TechName string `xlsx:"5"`
 
-	State models.OperationalLineStateEnum
+	State models.OperationalLineStateEnum `xlsx:"6"`
 
-	Name string
+	Name string `xlsx:"7"`
 	// insertion for WOP pointer fields
 }
 
@@ -424,6 +424,7 @@ func (backRepo *BackRepoStruct) CheckoutOpsLine(opsline *models.OpsLine) {
 // CopyBasicFieldsFromOpsLine
 func (opslineDB *OpsLineDB) CopyBasicFieldsFromOpsLine(opsline *models.OpsLine) {
 	// insertion point for fields commit
+
 	opslineDB.IsTransmitting_Data.Bool = opsline.IsTransmitting
 	opslineDB.IsTransmitting_Data.Valid = true
 
@@ -444,12 +445,12 @@ func (opslineDB *OpsLineDB) CopyBasicFieldsFromOpsLine(opsline *models.OpsLine) 
 
 	opslineDB.Name_Data.String = opsline.Name
 	opslineDB.Name_Data.Valid = true
-
 }
 
 // CopyBasicFieldsFromOpsLineWOP
 func (opslineDB *OpsLineDB) CopyBasicFieldsFromOpsLineWOP(opsline *OpsLineWOP) {
 	// insertion point for fields commit
+
 	opslineDB.IsTransmitting_Data.Bool = opsline.IsTransmitting
 	opslineDB.IsTransmitting_Data.Valid = true
 
@@ -470,7 +471,6 @@ func (opslineDB *OpsLineDB) CopyBasicFieldsFromOpsLineWOP(opsline *OpsLineWOP) {
 
 	opslineDB.Name_Data.String = opsline.Name
 	opslineDB.Name_Data.Valid = true
-
 }
 
 // CopyBasicFieldsToOpsLine
@@ -556,6 +556,51 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) BackupXL(file *xlsx.File) {
 		row := sh.AddRow()
 		row.WriteStruct(&opslineWOP, -1)
 	}
+}
+
+// RestoreXL from the "OpsLine" sheet all OpsLineDB instances
+func (backRepoOpsLine *BackRepoOpsLineStruct) RestoreXLPhaseOne(file *xlsx.File) {
+
+	// resets the map
+	BackRepoOpsLineid_atBckpTime_newID = make(map[uint]uint)
+
+	sh, ok := file.Sheet["OpsLine"]
+	_ = sh
+	if !ok {
+		log.Panic(errors.New("sheet not found"))
+	}
+
+	// log.Println("Max row is", sh.MaxRow)
+	err := sh.ForEachRow(backRepoOpsLine.rowVisitorOpsLine)
+	if err != nil {
+		log.Panic("Err=", err)
+	}
+}
+
+func (backRepoOpsLine *BackRepoOpsLineStruct) rowVisitorOpsLine(row *xlsx.Row) error {
+
+	log.Printf("row line %d\n", row.GetCoordinate())
+	log.Println(row)
+
+	// skip first line
+	if row.GetCoordinate() > 0 {
+		var opslineWOP OpsLineWOP
+		row.ReadStruct(&opslineWOP)
+
+		// add the unmarshalled struct to the stage
+		opslineDB := new(OpsLineDB)
+		opslineDB.CopyBasicFieldsFromOpsLineWOP(&opslineWOP)
+
+		opslineDB_ID_atBackupTime := opslineDB.ID
+		opslineDB.ID = 0
+		query := backRepoOpsLine.db.Create(opslineDB)
+		if query.Error != nil {
+			log.Panic(query.Error)
+		}
+		(*backRepoOpsLine.Map_OpsLineDBID_OpsLineDB)[opslineDB.ID] = opslineDB
+		BackRepoOpsLineid_atBckpTime_newID[opslineDB_ID_atBackupTime] = opslineDB.ID
+	}
+	return nil
 }
 
 // RestorePhaseOne read the file "OpsLineDB.json" in dirPath that stores an array

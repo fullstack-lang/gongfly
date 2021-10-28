@@ -45,10 +45,10 @@ type OrderAPI struct {
 // reverse pointers of slice of poitners to Struct
 type OrderPointersEnconding struct {
 	// insertion for pointer fields encoding declaration
+
 	// field Target is a pointer to another Struct (optional or 0..1)
 	// This field is generated into another field to enable AS ONE association
 	TargetID sql.NullInt64
-
 }
 
 // OrderDB describes a order in the database
@@ -61,6 +61,7 @@ type OrderDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
+
 	// Declation for basic field orderDB.Name {{BasicKind}} (to be completed)
 	Name_Data sql.NullString
 
@@ -81,7 +82,6 @@ type OrderDB struct {
 
 	// Declation for basic field orderDB.TargetLng {{BasicKind}} (to be completed)
 	TargetLng_Data sql.NullFloat64
-
 	// encoding of pointers
 	OrderPointersEnconding
 }
@@ -99,23 +99,23 @@ type OrderDBResponse struct {
 // OrderWOP is a Order without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type OrderWOP struct {
-	ID int
+	ID int `xlsx:"0"`
 
 	// insertion for WOP basic fields
 
-	Name string
+	Name string `xlsx:"1"`
 
-	Duration time.Duration
+	Duration time.Duration `xlsx:"2"`
 
-	OrderMessage string
+	OrderMessage string `xlsx:"3"`
 
-	Number int
+	Number int `xlsx:"4"`
 
-	Type models.OrderEnum
+	Type models.OrderEnum `xlsx:"5"`
 
-	TargetLat float64
+	TargetLat float64 `xlsx:"6"`
 
-	TargetLng float64
+	TargetLng float64 `xlsx:"7"`
 	// insertion for WOP pointer fields
 }
 
@@ -422,6 +422,7 @@ func (backRepo *BackRepoStruct) CheckoutOrder(order *models.Order) {
 // CopyBasicFieldsFromOrder
 func (orderDB *OrderDB) CopyBasicFieldsFromOrder(order *models.Order) {
 	// insertion point for fields commit
+
 	orderDB.Name_Data.String = order.Name
 	orderDB.Name_Data.Valid = true
 
@@ -442,12 +443,12 @@ func (orderDB *OrderDB) CopyBasicFieldsFromOrder(order *models.Order) {
 
 	orderDB.TargetLng_Data.Float64 = order.TargetLng
 	orderDB.TargetLng_Data.Valid = true
-
 }
 
 // CopyBasicFieldsFromOrderWOP
 func (orderDB *OrderDB) CopyBasicFieldsFromOrderWOP(order *OrderWOP) {
 	// insertion point for fields commit
+
 	orderDB.Name_Data.String = order.Name
 	orderDB.Name_Data.Valid = true
 
@@ -468,7 +469,6 @@ func (orderDB *OrderDB) CopyBasicFieldsFromOrderWOP(order *OrderWOP) {
 
 	orderDB.TargetLng_Data.Float64 = order.TargetLng
 	orderDB.TargetLng_Data.Valid = true
-
 }
 
 // CopyBasicFieldsToOrder
@@ -554,6 +554,51 @@ func (backRepoOrder *BackRepoOrderStruct) BackupXL(file *xlsx.File) {
 		row := sh.AddRow()
 		row.WriteStruct(&orderWOP, -1)
 	}
+}
+
+// RestoreXL from the "Order" sheet all OrderDB instances
+func (backRepoOrder *BackRepoOrderStruct) RestoreXLPhaseOne(file *xlsx.File) {
+
+	// resets the map
+	BackRepoOrderid_atBckpTime_newID = make(map[uint]uint)
+
+	sh, ok := file.Sheet["Order"]
+	_ = sh
+	if !ok {
+		log.Panic(errors.New("sheet not found"))
+	}
+
+	// log.Println("Max row is", sh.MaxRow)
+	err := sh.ForEachRow(backRepoOrder.rowVisitorOrder)
+	if err != nil {
+		log.Panic("Err=", err)
+	}
+}
+
+func (backRepoOrder *BackRepoOrderStruct) rowVisitorOrder(row *xlsx.Row) error {
+
+	log.Printf("row line %d\n", row.GetCoordinate())
+	log.Println(row)
+
+	// skip first line
+	if row.GetCoordinate() > 0 {
+		var orderWOP OrderWOP
+		row.ReadStruct(&orderWOP)
+
+		// add the unmarshalled struct to the stage
+		orderDB := new(OrderDB)
+		orderDB.CopyBasicFieldsFromOrderWOP(&orderWOP)
+
+		orderDB_ID_atBackupTime := orderDB.ID
+		orderDB.ID = 0
+		query := backRepoOrder.db.Create(orderDB)
+		if query.Error != nil {
+			log.Panic(query.Error)
+		}
+		(*backRepoOrder.Map_OrderDBID_OrderDB)[orderDB.ID] = orderDB
+		BackRepoOrderid_atBckpTime_newID[orderDB_ID_atBackupTime] = orderDB.ID
+	}
+	return nil
 }
 
 // RestorePhaseOne read the file "OrderDB.json" in dirPath that stores an array

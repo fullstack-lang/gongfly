@@ -57,6 +57,7 @@ type CivilianAirportDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
+
 	// Declation for basic field civilianairportDB.Lat {{BasicKind}} (to be completed)
 	Lat_Data sql.NullFloat64
 
@@ -68,7 +69,6 @@ type CivilianAirportDB struct {
 
 	// Declation for basic field civilianairportDB.Name {{BasicKind}} (to be completed)
 	Name_Data sql.NullString
-
 	// encoding of pointers
 	CivilianAirportPointersEnconding
 }
@@ -86,17 +86,17 @@ type CivilianAirportDBResponse struct {
 // CivilianAirportWOP is a CivilianAirport without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type CivilianAirportWOP struct {
-	ID int
+	ID int `xlsx:"0"`
 
 	// insertion for WOP basic fields
 
-	Lat float64
+	Lat float64 `xlsx:"1"`
 
-	Lng float64
+	Lng float64 `xlsx:"2"`
 
-	TechName string
+	TechName string `xlsx:"3"`
 
-	Name string
+	Name string `xlsx:"4"`
 	// insertion for WOP pointer fields
 }
 
@@ -387,6 +387,7 @@ func (backRepo *BackRepoStruct) CheckoutCivilianAirport(civilianairport *models.
 // CopyBasicFieldsFromCivilianAirport
 func (civilianairportDB *CivilianAirportDB) CopyBasicFieldsFromCivilianAirport(civilianairport *models.CivilianAirport) {
 	// insertion point for fields commit
+
 	civilianairportDB.Lat_Data.Float64 = civilianairport.Lat
 	civilianairportDB.Lat_Data.Valid = true
 
@@ -398,12 +399,12 @@ func (civilianairportDB *CivilianAirportDB) CopyBasicFieldsFromCivilianAirport(c
 
 	civilianairportDB.Name_Data.String = civilianairport.Name
 	civilianairportDB.Name_Data.Valid = true
-
 }
 
 // CopyBasicFieldsFromCivilianAirportWOP
 func (civilianairportDB *CivilianAirportDB) CopyBasicFieldsFromCivilianAirportWOP(civilianairport *CivilianAirportWOP) {
 	// insertion point for fields commit
+
 	civilianairportDB.Lat_Data.Float64 = civilianairport.Lat
 	civilianairportDB.Lat_Data.Valid = true
 
@@ -415,7 +416,6 @@ func (civilianairportDB *CivilianAirportDB) CopyBasicFieldsFromCivilianAirportWO
 
 	civilianairportDB.Name_Data.String = civilianairport.Name
 	civilianairportDB.Name_Data.Valid = true
-
 }
 
 // CopyBasicFieldsToCivilianAirport
@@ -495,6 +495,51 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) BackupXL(file *xls
 		row := sh.AddRow()
 		row.WriteStruct(&civilianairportWOP, -1)
 	}
+}
+
+// RestoreXL from the "CivilianAirport" sheet all CivilianAirportDB instances
+func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) RestoreXLPhaseOne(file *xlsx.File) {
+
+	// resets the map
+	BackRepoCivilianAirportid_atBckpTime_newID = make(map[uint]uint)
+
+	sh, ok := file.Sheet["CivilianAirport"]
+	_ = sh
+	if !ok {
+		log.Panic(errors.New("sheet not found"))
+	}
+
+	// log.Println("Max row is", sh.MaxRow)
+	err := sh.ForEachRow(backRepoCivilianAirport.rowVisitorCivilianAirport)
+	if err != nil {
+		log.Panic("Err=", err)
+	}
+}
+
+func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) rowVisitorCivilianAirport(row *xlsx.Row) error {
+
+	log.Printf("row line %d\n", row.GetCoordinate())
+	log.Println(row)
+
+	// skip first line
+	if row.GetCoordinate() > 0 {
+		var civilianairportWOP CivilianAirportWOP
+		row.ReadStruct(&civilianairportWOP)
+
+		// add the unmarshalled struct to the stage
+		civilianairportDB := new(CivilianAirportDB)
+		civilianairportDB.CopyBasicFieldsFromCivilianAirportWOP(&civilianairportWOP)
+
+		civilianairportDB_ID_atBackupTime := civilianairportDB.ID
+		civilianairportDB.ID = 0
+		query := backRepoCivilianAirport.db.Create(civilianairportDB)
+		if query.Error != nil {
+			log.Panic(query.Error)
+		}
+		(*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB)[civilianairportDB.ID] = civilianairportDB
+		BackRepoCivilianAirportid_atBckpTime_newID[civilianairportDB_ID_atBackupTime] = civilianairportDB.ID
+	}
+	return nil
 }
 
 // RestorePhaseOne read the file "CivilianAirportDB.json" in dirPath that stores an array

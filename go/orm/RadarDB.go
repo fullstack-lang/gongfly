@@ -57,6 +57,7 @@ type RadarDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
+
 	// Declation for basic field radarDB.TechName {{BasicKind}} (to be completed)
 	TechName_Data sql.NullString
 
@@ -74,7 +75,6 @@ type RadarDB struct {
 
 	// Declation for basic field radarDB.Range {{BasicKind}} (to be completed)
 	Range_Data sql.NullFloat64
-
 	// encoding of pointers
 	RadarPointersEnconding
 }
@@ -92,21 +92,21 @@ type RadarDBResponse struct {
 // RadarWOP is a Radar without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type RadarWOP struct {
-	ID int
+	ID int `xlsx:"0"`
 
 	// insertion for WOP basic fields
 
-	TechName string
+	TechName string `xlsx:"1"`
 
-	State models.RadarStateEnum
+	State models.RadarStateEnum `xlsx:"2"`
 
-	Name string
+	Name string `xlsx:"3"`
 
-	Lat float64
+	Lat float64 `xlsx:"4"`
 
-	Lng float64
+	Lng float64 `xlsx:"5"`
 
-	Range float64
+	Range float64 `xlsx:"6"`
 	// insertion for WOP pointer fields
 }
 
@@ -399,6 +399,7 @@ func (backRepo *BackRepoStruct) CheckoutRadar(radar *models.Radar) {
 // CopyBasicFieldsFromRadar
 func (radarDB *RadarDB) CopyBasicFieldsFromRadar(radar *models.Radar) {
 	// insertion point for fields commit
+
 	radarDB.TechName_Data.String = radar.TechName
 	radarDB.TechName_Data.Valid = true
 
@@ -416,12 +417,12 @@ func (radarDB *RadarDB) CopyBasicFieldsFromRadar(radar *models.Radar) {
 
 	radarDB.Range_Data.Float64 = radar.Range
 	radarDB.Range_Data.Valid = true
-
 }
 
 // CopyBasicFieldsFromRadarWOP
 func (radarDB *RadarDB) CopyBasicFieldsFromRadarWOP(radar *RadarWOP) {
 	// insertion point for fields commit
+
 	radarDB.TechName_Data.String = radar.TechName
 	radarDB.TechName_Data.Valid = true
 
@@ -439,7 +440,6 @@ func (radarDB *RadarDB) CopyBasicFieldsFromRadarWOP(radar *RadarWOP) {
 
 	radarDB.Range_Data.Float64 = radar.Range
 	radarDB.Range_Data.Valid = true
-
 }
 
 // CopyBasicFieldsToRadar
@@ -523,6 +523,51 @@ func (backRepoRadar *BackRepoRadarStruct) BackupXL(file *xlsx.File) {
 		row := sh.AddRow()
 		row.WriteStruct(&radarWOP, -1)
 	}
+}
+
+// RestoreXL from the "Radar" sheet all RadarDB instances
+func (backRepoRadar *BackRepoRadarStruct) RestoreXLPhaseOne(file *xlsx.File) {
+
+	// resets the map
+	BackRepoRadarid_atBckpTime_newID = make(map[uint]uint)
+
+	sh, ok := file.Sheet["Radar"]
+	_ = sh
+	if !ok {
+		log.Panic(errors.New("sheet not found"))
+	}
+
+	// log.Println("Max row is", sh.MaxRow)
+	err := sh.ForEachRow(backRepoRadar.rowVisitorRadar)
+	if err != nil {
+		log.Panic("Err=", err)
+	}
+}
+
+func (backRepoRadar *BackRepoRadarStruct) rowVisitorRadar(row *xlsx.Row) error {
+
+	log.Printf("row line %d\n", row.GetCoordinate())
+	log.Println(row)
+
+	// skip first line
+	if row.GetCoordinate() > 0 {
+		var radarWOP RadarWOP
+		row.ReadStruct(&radarWOP)
+
+		// add the unmarshalled struct to the stage
+		radarDB := new(RadarDB)
+		radarDB.CopyBasicFieldsFromRadarWOP(&radarWOP)
+
+		radarDB_ID_atBackupTime := radarDB.ID
+		radarDB.ID = 0
+		query := backRepoRadar.db.Create(radarDB)
+		if query.Error != nil {
+			log.Panic(query.Error)
+		}
+		(*backRepoRadar.Map_RadarDBID_RadarDB)[radarDB.ID] = radarDB
+		BackRepoRadarid_atBckpTime_newID[radarDB_ID_atBackupTime] = radarDB.ID
+	}
+	return nil
 }
 
 // RestorePhaseOne read the file "RadarDB.json" in dirPath that stores an array
