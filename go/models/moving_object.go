@@ -20,8 +20,8 @@ type MovingObject struct {
 	Speed float64
 }
 
-func (*MovingObject) GetConcept() ConceptEnum           { return Aircraft_ }
-func (*MovingObject) GetVisualLayerName() (name string) { return string(Aircraft_) }
+func (*MovingObject) GetConcept() ConceptEnum          { return Aircraft_ }
+func (*MovingObject) GetLayerGroupName() (name string) { return string(Aircraft_) }
 
 type MovingObjectInterface interface {
 	GetName() string

@@ -21,8 +21,8 @@ type NetworkCallbackInterface interface {
 	GetMessageBackwardOverride() string
 }
 
-func (network *Network) GetConcept() ConceptEnum           { return Network_ }
-func (network *Network) GetVisualLayerName() (name string) { return string(Network_) }
+func (network *Network) GetConcept() ConceptEnum          { return Network_ }
+func (network *Network) GetLayerGroupName() (name string) { return string(Network_) }
 
 func (network *Network) GetIsTransmitting() bool {
 	if network.NetworkCallbackInterface != nil {

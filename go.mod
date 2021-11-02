@@ -6,7 +6,7 @@ require (
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
 	github.com/fullstack-lang/gong v0.0.0-20211017115116-4931b25a7529
 	github.com/fullstack-lang/gongdoc v0.0.0-20211017120233-0d3489c14f9f
-	github.com/fullstack-lang/gongleaflet v0.0.0-20211017115116-1589b0dfb1a1
+	github.com/fullstack-lang/gongleaflet v0.0.0-20211029074857-0c88e85e594e
 	github.com/fullstack-lang/gongsim v0.0.0-20211017121441-d7838965352d
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/static v0.0.1
@@ -23,6 +23,4 @@ require (
 require (
 	github.com/ajstarks/svgo v0.0.0-20210923152817-c3b6e2f0c527 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
-	github.com/tdewolff/parse/v2 v2.5.22 // indirect
-	golang.org/x/tools v0.1.7 // indirect
 )

@@ -112,7 +112,7 @@ func main() {
 	_false := false
 	visualMap.ZoomControl = _false
 	visualMap.AttributionControl = _true
-	visualMap.ZoomSnap = _true
+	visualMap.ZoomSnap = 1
 
 	// load package to analyse
 	modelPkg := &gong_models.ModelPkg{}

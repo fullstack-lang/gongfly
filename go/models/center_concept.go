@@ -7,5 +7,5 @@ type CenterConcept struct {
 	Lng float64
 }
 
-func (center *CenterConcept) GetConcept() ConceptEnum           { return Center_ }
-func (center *CenterConcept) GetVisualLayerName() (name string) { return string(Center_) }
+func (center *CenterConcept) GetConcept() ConceptEnum          { return Center_ }
+func (center *CenterConcept) GetLayerGroupName() (name string) { return string(Center_) }

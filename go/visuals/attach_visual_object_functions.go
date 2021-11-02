@@ -11,13 +11,13 @@ import (
 
 // attachVisualTrack attaches a visual track to track
 func attachVisualTrack(track gongleaflet_models.VisualTrackInterface,
-	visualIcon *gongleaflet_models.VisualIcon,
+	divIcon *gongleaflet_models.DivIcon,
 	visualColorEnum gongleaflet_models.VisualColorEnum,
 	displayTrackHistory bool,
 	displayLevelAndSpeed bool) {
 
 	// sometimes, the visual icon is nil (not reproductible bug)
-	if visualIcon == nil {
+	if divIcon == nil {
 		log.Fatal("nil visual icon")
 	}
 
@@ -25,7 +25,7 @@ func attachVisualTrack(track gongleaflet_models.VisualTrackInterface,
 	display := true
 	visualTrack.Display = display
 	visualTrack.VisualTrackInterface = track
-	visualTrack.VisualIcon = visualIcon
+	visualTrack.DivIcon = divIcon
 	visualTrack.DisplayTrackHistory = displayTrackHistory
 	visualTrack.DisplayLevelAndSpeed = displayLevelAndSpeed
 	visualTrack.VisualColorEnum = visualColorEnum
@@ -33,18 +33,18 @@ func attachVisualTrack(track gongleaflet_models.VisualTrackInterface,
 }
 
 // attach visual center to center
-func attachVisualCenter(
-	visualCenterInterface gongleaflet_models.VisualCenterInterface,
+func attachMarker(
+	visualCenterInterface gongleaflet_models.MarkerInterface,
 	visualColorEnum gongleaflet_models.VisualColorEnum,
-	visualIcon *gongleaflet_models.VisualIcon) {
-	if visualIcon == nil {
+	divIcon *gongleaflet_models.DivIcon) {
+	if divIcon == nil {
 		log.Fatal("nil visual icon")
 	}
-	visualCenter := new(gongleaflet_models.VisualCenter).Stage()
-	visualCenter.VisualCenterInteface = visualCenterInterface
+	visualCenter := new(gongleaflet_models.Marker).Stage()
+	visualCenter.MarkerInteface = visualCenterInterface
 	visualCenter.VisualColorEnum = visualColorEnum
-	visualCenter.VisualIcon = visualIcon
-	visualCenter.UpdateCenter()
+	visualCenter.DivIcon = divIcon
+	visualCenter.UpdateMarker()
 }
 
 // attach visual line to line
@@ -76,13 +76,13 @@ func AttachVisualElementsToModelElements() {
 		attachVisualTrack(obj, icons.Airplane, gongleaflet_models.GREY, true, true)
 	}
 	for obj := range target_models.Stage.Radars {
-		attachVisualCenter(obj,
+		attachMarker(obj,
 			gongleaflet_models.LIGHT_BROWN_8D6E63,
 			icons.Radar)
 		attachVisualCircle(obj, gongleaflet_models.FIVE_TWENTY)
 	}
 	for obj := range target_models.Stage.CivilianAirports {
-		attachVisualCenter(obj, gongleaflet_models.BLUE, icons.Airport)
+		attachMarker(obj, gongleaflet_models.BLUE, icons.Airport)
 	}
 	for obj := range target_models.Stage.OpsLines {
 		attachVisualLine(obj, gongleaflet_models.FIVE_TWENTY)

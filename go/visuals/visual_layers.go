@@ -6,18 +6,18 @@ import (
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
 )
 
-var AircraftVisualLayer = (&gongleaflet_models.VisualLayer{
+var AircraftLayerGroup = (&gongleaflet_models.LayerGroup{
 	Name: string(models.Aircraft_),
 }).StageCopy()
 
-var NetworkVisualLayer = (&gongleaflet_models.VisualLayer{
+var NetworkLayerGroup = (&gongleaflet_models.LayerGroup{
 	Name: string(models.Network_),
 }).StageCopy()
 
-var CenterVisualLayer = (&gongleaflet_models.VisualLayer{
+var CenterLayerGroup = (&gongleaflet_models.LayerGroup{
 	Name: string(models.Center_),
 }).StageCopy()
 
-var SystemVisualLayer = (&gongleaflet_models.VisualLayer{
+var SystemLayerGroup = (&gongleaflet_models.LayerGroup{
 	Name: string(models.System_),
 }).StageCopy()
