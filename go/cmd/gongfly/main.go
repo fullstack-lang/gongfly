@@ -104,7 +104,7 @@ func main() {
 	gongfly_visuals.AttachVisualElementsToModelElements()
 
 	// create the target map
-	visualMap := new(gongleaflet_models.VisualMap).Stage()
+	visualMap := new(gongleaflet_models.MapOptions).Stage()
 	visualMap.Lat = gongfly_reference.Scenario1.Lat
 	visualMap.Lng = gongfly_reference.Scenario1.Lng
 	visualMap.ZoomLevel = gongfly_reference.Scenario1.ZoomLevel

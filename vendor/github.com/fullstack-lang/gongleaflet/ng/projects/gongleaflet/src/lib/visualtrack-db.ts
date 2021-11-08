@@ -1,6 +1,6 @@
 // insertion point for imports
-import { VisualLayerDB } from './visuallayer-db'
-import { VisualIconDB } from './visualicon-db'
+import { LayerGroupDB } from './layergroup-db'
+import { DivIconDB } from './divicon-db'
 
 // usefull for managing pointer ID values that can be nullable
 import { NullInt64 } from './null-int64'
@@ -18,16 +18,15 @@ export class VisualTrackDB {
 	Speed: number = 0
 	VerticalSpeed: number = 0
 	Name: string = ""
-	VisualColorEnum: string = ""
-	Display: boolean = false
+	ColorEnum: string = ""
 	DisplayTrackHistory: boolean = false
 	DisplayLevelAndSpeed: boolean = false
 
 	// insertion point for other declarations
-	VisualLayer?: VisualLayerDB
-	VisualLayerID: NullInt64 = new NullInt64 // if pointer is null, VisualLayer.ID = 0
+	LayerGroup?: LayerGroupDB
+	LayerGroupID: NullInt64 = new NullInt64 // if pointer is null, LayerGroup.ID = 0
 
-	VisualIcon?: VisualIconDB
-	VisualIconID: NullInt64 = new NullInt64 // if pointer is null, VisualIcon.ID = 0
+	DivIcon?: DivIconDB
+	DivIconID: NullInt64 = new NullInt64 // if pointer is null, DivIcon.ID = 0
 
 }

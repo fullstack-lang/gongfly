@@ -142,6 +142,6 @@ func (liner *Liner) GetLevel() float64         { return liner.Level }
 func (liner *Liner) GetName() (name string)    { return liner.Name }
 
 // specific
-// func (liner *Liner) GetVisualColorEnum() VisualColorEnum { return GREY }
+// func (liner *Liner) GetColorEnum() ColorEnum { return GREY }
 
 func (liner *Liner) GetDisplay() bool { return true }

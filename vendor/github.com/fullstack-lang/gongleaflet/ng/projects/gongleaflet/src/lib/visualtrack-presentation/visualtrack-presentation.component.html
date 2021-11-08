@@ -37,23 +37,16 @@
         <td class="mat-cell">{{visualtrack.Name}}</td>
     </tr>
     <tr class="mat-row">
-        <td class="mat-cell">VisualColorEnum</td>
-        <td class="mat-cell">{{visualtrack.VisualColorEnum}}</td>
+        <td class="mat-cell">ColorEnum</td>
+        <td class="mat-cell">{{visualtrack.ColorEnum}}</td>
     </tr>
     <tr class="mat-row">
-        <td class="mat-cell">VisualLayer</td>
-        <td class="mat-cell">{{visualtrack.VisualLayer ? visualtrack.VisualLayer.Name : ""}}</td>
+        <td class="mat-cell">LayerGroup</td>
+        <td class="mat-cell">{{visualtrack.LayerGroup ? visualtrack.LayerGroup.Name : ""}}</td>
     </tr>
     <tr class="mat-row">
-        <td class="mat-cell">VisualIcon</td>
-        <td class="mat-cell">{{visualtrack.VisualIcon ? visualtrack.VisualIcon.Name : ""}}</td>
-    </tr>
-    <tr class="mat-row">
-        <td class="mat-cell">Display</td>
-        <td class="mat-cell">
-            <mat-checkbox [checked]="visualtrack.Display" disabled=true>
-            </mat-checkbox>
-        </td>
+        <td class="mat-cell">DivIcon</td>
+        <td class="mat-cell">{{visualtrack.DivIcon ? visualtrack.DivIcon.Name : ""}}</td>
     </tr>
     <tr class="mat-row">
         <td class="mat-cell">DisplayTrackHistory</td>

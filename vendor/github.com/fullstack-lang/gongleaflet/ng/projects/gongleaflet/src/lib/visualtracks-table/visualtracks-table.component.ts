@@ -62,6 +62,9 @@ export class VisualTracksTableComponent implements OnInit {
     // enable sorting on all fields (including pointers and reverse pointer)
     this.matTableDataSource.sortingDataAccessor = (visualtrackDB: VisualTrackDB, property: string) => {
       switch (property) {
+        case 'ID':
+          return visualtrackDB.ID
+
         // insertion point for specific sorting accessor
         case 'Lat':
           return visualtrackDB.Lat;
@@ -84,17 +87,14 @@ export class VisualTracksTableComponent implements OnInit {
         case 'Name':
           return visualtrackDB.Name;
 
-        case 'VisualColorEnum':
-          return visualtrackDB.VisualColorEnum;
+        case 'ColorEnum':
+          return visualtrackDB.ColorEnum;
 
-        case 'VisualLayer':
-          return (visualtrackDB.VisualLayer ? visualtrackDB.VisualLayer.Name : '');
+        case 'LayerGroup':
+          return (visualtrackDB.LayerGroup ? visualtrackDB.LayerGroup.Name : '');
 
-        case 'VisualIcon':
-          return (visualtrackDB.VisualIcon ? visualtrackDB.VisualIcon.Name : '');
-
-        case 'Display':
-          return visualtrackDB.Display?"true":"false";
+        case 'DivIcon':
+          return (visualtrackDB.DivIcon ? visualtrackDB.DivIcon.Name : '');
 
         case 'DisplayTrackHistory':
           return visualtrackDB.DisplayTrackHistory?"true":"false";
@@ -123,12 +123,12 @@ export class VisualTracksTableComponent implements OnInit {
       mergedContent += visualtrackDB.Speed.toString()
       mergedContent += visualtrackDB.VerticalSpeed.toString()
       mergedContent += visualtrackDB.Name.toLowerCase()
-      mergedContent += visualtrackDB.VisualColorEnum.toLowerCase()
-      if (visualtrackDB.VisualLayer) {
-        mergedContent += visualtrackDB.VisualLayer.Name.toLowerCase()
+      mergedContent += visualtrackDB.ColorEnum.toLowerCase()
+      if (visualtrackDB.LayerGroup) {
+        mergedContent += visualtrackDB.LayerGroup.Name.toLowerCase()
       }
-      if (visualtrackDB.VisualIcon) {
-        mergedContent += visualtrackDB.VisualIcon.Name.toLowerCase()
+      if (visualtrackDB.DivIcon) {
+        mergedContent += visualtrackDB.DivIcon.Name.toLowerCase()
       }
 
       let isSelected = mergedContent.includes(filter.toLowerCase())
@@ -187,10 +187,9 @@ export class VisualTracksTableComponent implements OnInit {
         "Speed",
         "VerticalSpeed",
         "Name",
-        "VisualColorEnum",
-        "VisualLayer",
-        "VisualIcon",
-        "Display",
+        "ColorEnum",
+        "LayerGroup",
+        "DivIcon",
         "DisplayTrackHistory",
         "DisplayLevelAndSpeed",
       ]
@@ -203,10 +202,9 @@ export class VisualTracksTableComponent implements OnInit {
         "Speed",
         "VerticalSpeed",
         "Name",
-        "VisualColorEnum",
-        "VisualLayer",
-        "VisualIcon",
-        "Display",
+        "ColorEnum",
+        "LayerGroup",
+        "DivIcon",
         "DisplayTrackHistory",
         "DisplayLevelAndSpeed",
       ]

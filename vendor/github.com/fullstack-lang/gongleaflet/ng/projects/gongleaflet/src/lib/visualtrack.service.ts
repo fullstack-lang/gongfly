@@ -14,8 +14,8 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { VisualTrackDB } from './visualtrack-db';
 
 // insertion point for imports
-import { VisualLayerDB } from './visuallayer-db'
-import { VisualIconDB } from './visualicon-db'
+import { LayerGroupDB } from './layergroup-db'
+import { DivIconDB } from './divicon-db'
 
 @Injectable({
   providedIn: 'root'
@@ -72,8 +72,8 @@ export class VisualTrackService {
   postVisualTrack(visualtrackdb: VisualTrackDB): Observable<VisualTrackDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    visualtrackdb.VisualLayer = new VisualLayerDB
-    visualtrackdb.VisualIcon = new VisualIconDB
+    visualtrackdb.LayerGroup = new LayerGroupDB
+    visualtrackdb.DivIcon = new DivIconDB
 
     return this.http.post<VisualTrackDB>(this.visualtracksUrl, visualtrackdb, this.httpOptions).pipe(
       tap(_ => {
@@ -101,8 +101,8 @@ export class VisualTrackService {
     const url = `${this.visualtracksUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    visualtrackdb.VisualLayer = new VisualLayerDB
-    visualtrackdb.VisualIcon = new VisualIconDB
+    visualtrackdb.LayerGroup = new LayerGroupDB
+    visualtrackdb.DivIcon = new DivIconDB
 
     return this.http.put<VisualTrackDB>(url, visualtrackdb, this.httpOptions).pipe(
       tap(_ => {

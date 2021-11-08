@@ -82,8 +82,6 @@ func (engineSpecific *Simulation) CommitAgents(engine *gongsim_models.Engine) {
 			visualTrack := new(gongleaflet_models.VisualTrack).Stage()
 			visualTrack.Name = message.Content
 			visualTrack.VisualTrackInterface = message
-			display := true
-			visualTrack.Display = display
 			visualTrack.DivIcon = icons.Arrow
 			_false := false
 			visualTrack.DisplayTrackHistory = _false
@@ -124,12 +122,12 @@ func (engineSpecific *Simulation) CommitAgents(engine *gongsim_models.Engine) {
 	}
 
 	// update all visual lines
-	for visualLine := range gongleaflet_models.Stage.VisualLines {
+	for visualLine := range gongleaflet_models.Stage.VLines {
 		visualLine.UpdateLine()
 	}
 
 	// update all visual circles
-	for visualCircle := range gongleaflet_models.Stage.VisualCircles {
+	for visualCircle := range gongleaflet_models.Stage.Circles {
 		visualCircle.UpdateCircle()
 	}
 

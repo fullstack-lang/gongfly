@@ -38,35 +38,40 @@ import { SplitterComponent } from './splitter/splitter.component'
 import { SidebarComponent } from './sidebar/sidebar.component';
 
 // insertion point for imports 
-import { VisualCentersTableComponent } from './visualcenters-table/visualcenters-table.component'
-import { VisualCenterSortingComponent } from './visualcenter-sorting/visualcenter-sorting.component'
-import { VisualCenterDetailComponent } from './visualcenter-detail/visualcenter-detail.component'
-import { VisualCenterPresentationComponent } from './visualcenter-presentation/visualcenter-presentation.component'
+import { CirclesTableComponent } from './circles-table/circles-table.component'
+import { CircleSortingComponent } from './circle-sorting/circle-sorting.component'
+import { CircleDetailComponent } from './circle-detail/circle-detail.component'
+import { CirclePresentationComponent } from './circle-presentation/circle-presentation.component'
 
-import { VisualCirclesTableComponent } from './visualcircles-table/visualcircles-table.component'
-import { VisualCircleSortingComponent } from './visualcircle-sorting/visualcircle-sorting.component'
-import { VisualCircleDetailComponent } from './visualcircle-detail/visualcircle-detail.component'
-import { VisualCirclePresentationComponent } from './visualcircle-presentation/visualcircle-presentation.component'
+import { DivIconsTableComponent } from './divicons-table/divicons-table.component'
+import { DivIconSortingComponent } from './divicon-sorting/divicon-sorting.component'
+import { DivIconDetailComponent } from './divicon-detail/divicon-detail.component'
+import { DivIconPresentationComponent } from './divicon-presentation/divicon-presentation.component'
 
-import { VisualIconsTableComponent } from './visualicons-table/visualicons-table.component'
-import { VisualIconSortingComponent } from './visualicon-sorting/visualicon-sorting.component'
-import { VisualIconDetailComponent } from './visualicon-detail/visualicon-detail.component'
-import { VisualIconPresentationComponent } from './visualicon-presentation/visualicon-presentation.component'
+import { LayerGroupsTableComponent } from './layergroups-table/layergroups-table.component'
+import { LayerGroupSortingComponent } from './layergroup-sorting/layergroup-sorting.component'
+import { LayerGroupDetailComponent } from './layergroup-detail/layergroup-detail.component'
+import { LayerGroupPresentationComponent } from './layergroup-presentation/layergroup-presentation.component'
 
-import { VisualLayersTableComponent } from './visuallayers-table/visuallayers-table.component'
-import { VisualLayerSortingComponent } from './visuallayer-sorting/visuallayer-sorting.component'
-import { VisualLayerDetailComponent } from './visuallayer-detail/visuallayer-detail.component'
-import { VisualLayerPresentationComponent } from './visuallayer-presentation/visuallayer-presentation.component'
+import { LayerGroupUsesTableComponent } from './layergroupuses-table/layergroupuses-table.component'
+import { LayerGroupUseSortingComponent } from './layergroupuse-sorting/layergroupuse-sorting.component'
+import { LayerGroupUseDetailComponent } from './layergroupuse-detail/layergroupuse-detail.component'
+import { LayerGroupUsePresentationComponent } from './layergroupuse-presentation/layergroupuse-presentation.component'
 
-import { VisualLinesTableComponent } from './visuallines-table/visuallines-table.component'
-import { VisualLineSortingComponent } from './visualline-sorting/visualline-sorting.component'
-import { VisualLineDetailComponent } from './visualline-detail/visualline-detail.component'
-import { VisualLinePresentationComponent } from './visualline-presentation/visualline-presentation.component'
+import { MapOptionssTableComponent } from './mapoptionss-table/mapoptionss-table.component'
+import { MapOptionsSortingComponent } from './mapoptions-sorting/mapoptions-sorting.component'
+import { MapOptionsDetailComponent } from './mapoptions-detail/mapoptions-detail.component'
+import { MapOptionsPresentationComponent } from './mapoptions-presentation/mapoptions-presentation.component'
 
-import { VisualMapsTableComponent } from './visualmaps-table/visualmaps-table.component'
-import { VisualMapSortingComponent } from './visualmap-sorting/visualmap-sorting.component'
-import { VisualMapDetailComponent } from './visualmap-detail/visualmap-detail.component'
-import { VisualMapPresentationComponent } from './visualmap-presentation/visualmap-presentation.component'
+import { MarkersTableComponent } from './markers-table/markers-table.component'
+import { MarkerSortingComponent } from './marker-sorting/marker-sorting.component'
+import { MarkerDetailComponent } from './marker-detail/marker-detail.component'
+import { MarkerPresentationComponent } from './marker-presentation/marker-presentation.component'
+
+import { VLinesTableComponent } from './vlines-table/vlines-table.component'
+import { VLineSortingComponent } from './vline-sorting/vline-sorting.component'
+import { VLineDetailComponent } from './vline-detail/vline-detail.component'
+import { VLinePresentationComponent } from './vline-presentation/vline-presentation.component'
 
 import { VisualTracksTableComponent } from './visualtracks-table/visualtracks-table.component'
 import { VisualTrackSortingComponent } from './visualtrack-sorting/visualtrack-sorting.component'
@@ -77,35 +82,40 @@ import { VisualTrackPresentationComponent } from './visualtrack-presentation/vis
 @NgModule({
 	declarations: [
 		// insertion point for declarations 
-		VisualCentersTableComponent,
-		VisualCenterSortingComponent,
-		VisualCenterDetailComponent,
-		VisualCenterPresentationComponent,
+		CirclesTableComponent,
+		CircleSortingComponent,
+		CircleDetailComponent,
+		CirclePresentationComponent,
 
-		VisualCirclesTableComponent,
-		VisualCircleSortingComponent,
-		VisualCircleDetailComponent,
-		VisualCirclePresentationComponent,
+		DivIconsTableComponent,
+		DivIconSortingComponent,
+		DivIconDetailComponent,
+		DivIconPresentationComponent,
 
-		VisualIconsTableComponent,
-		VisualIconSortingComponent,
-		VisualIconDetailComponent,
-		VisualIconPresentationComponent,
+		LayerGroupsTableComponent,
+		LayerGroupSortingComponent,
+		LayerGroupDetailComponent,
+		LayerGroupPresentationComponent,
 
-		VisualLayersTableComponent,
-		VisualLayerSortingComponent,
-		VisualLayerDetailComponent,
-		VisualLayerPresentationComponent,
+		LayerGroupUsesTableComponent,
+		LayerGroupUseSortingComponent,
+		LayerGroupUseDetailComponent,
+		LayerGroupUsePresentationComponent,
 
-		VisualLinesTableComponent,
-		VisualLineSortingComponent,
-		VisualLineDetailComponent,
-		VisualLinePresentationComponent,
+		MapOptionssTableComponent,
+		MapOptionsSortingComponent,
+		MapOptionsDetailComponent,
+		MapOptionsPresentationComponent,
 
-		VisualMapsTableComponent,
-		VisualMapSortingComponent,
-		VisualMapDetailComponent,
-		VisualMapPresentationComponent,
+		MarkersTableComponent,
+		MarkerSortingComponent,
+		MarkerDetailComponent,
+		MarkerPresentationComponent,
+
+		VLinesTableComponent,
+		VLineSortingComponent,
+		VLineDetailComponent,
+		VLinePresentationComponent,
 
 		VisualTracksTableComponent,
 		VisualTrackSortingComponent,
@@ -151,35 +161,40 @@ import { VisualTrackPresentationComponent } from './visualtrack-presentation/vis
 	],
 	exports: [
 		// insertion point for declarations 
-		VisualCentersTableComponent,
-		VisualCenterSortingComponent,
-		VisualCenterDetailComponent,
-		VisualCenterPresentationComponent,
+		CirclesTableComponent,
+		CircleSortingComponent,
+		CircleDetailComponent,
+		CirclePresentationComponent,
 
-		VisualCirclesTableComponent,
-		VisualCircleSortingComponent,
-		VisualCircleDetailComponent,
-		VisualCirclePresentationComponent,
+		DivIconsTableComponent,
+		DivIconSortingComponent,
+		DivIconDetailComponent,
+		DivIconPresentationComponent,
 
-		VisualIconsTableComponent,
-		VisualIconSortingComponent,
-		VisualIconDetailComponent,
-		VisualIconPresentationComponent,
+		LayerGroupsTableComponent,
+		LayerGroupSortingComponent,
+		LayerGroupDetailComponent,
+		LayerGroupPresentationComponent,
 
-		VisualLayersTableComponent,
-		VisualLayerSortingComponent,
-		VisualLayerDetailComponent,
-		VisualLayerPresentationComponent,
+		LayerGroupUsesTableComponent,
+		LayerGroupUseSortingComponent,
+		LayerGroupUseDetailComponent,
+		LayerGroupUsePresentationComponent,
 
-		VisualLinesTableComponent,
-		VisualLineSortingComponent,
-		VisualLineDetailComponent,
-		VisualLinePresentationComponent,
+		MapOptionssTableComponent,
+		MapOptionsSortingComponent,
+		MapOptionsDetailComponent,
+		MapOptionsPresentationComponent,
 
-		VisualMapsTableComponent,
-		VisualMapSortingComponent,
-		VisualMapDetailComponent,
-		VisualMapPresentationComponent,
+		MarkersTableComponent,
+		MarkerSortingComponent,
+		MarkerDetailComponent,
+		MarkerPresentationComponent,
+
+		VLinesTableComponent,
+		VLineSortingComponent,
+		VLineDetailComponent,
+		VLinePresentationComponent,
 
 		VisualTracksTableComponent,
 		VisualTrackSortingComponent,

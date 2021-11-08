@@ -10,7 +10,7 @@ import { MapOfComponents } from '../map-components'
 import { MapOfSortingComponents } from '../map-components'
 
 // insertion point for imports
-import { VisualColorEnumSelect, VisualColorEnumList } from '../VisualColorEnum'
+import { ColorEnumSelect, ColorEnumList } from '../ColorEnum'
 
 import { Router, RouterState, ActivatedRoute } from '@angular/router';
 
@@ -34,8 +34,7 @@ enum VisualTrackDetailComponentState {
 export class VisualTrackDetailComponent implements OnInit {
 
 	// insertion point for declarations
-	VisualColorEnumList: VisualColorEnumSelect[] = []
-	DisplayFormControl = new FormControl(false);
+	ColorEnumList: ColorEnumSelect[] = []
 	DisplayTrackHistoryFormControl = new FormControl(false);
 	DisplayLevelAndSpeedFormControl = new FormControl(false);
 
@@ -104,7 +103,7 @@ export class VisualTrackDetailComponent implements OnInit {
 		)
 
 		// insertion point for initialisation of enums list
-		this.VisualColorEnumList = VisualColorEnumList
+		this.ColorEnumList = ColorEnumList
 	}
 
 	getVisualTrack(): void {
@@ -128,7 +127,6 @@ export class VisualTrackDetailComponent implements OnInit {
 				}
 
 				// insertion point for recovery of form controls value for bool fields
-				this.DisplayFormControl.setValue(this.visualtrack.Display)
 				this.DisplayTrackHistoryFormControl.setValue(this.visualtrack.DisplayTrackHistory)
 				this.DisplayLevelAndSpeedFormControl.setValue(this.visualtrack.DisplayLevelAndSpeed)
 			}
@@ -143,27 +141,26 @@ export class VisualTrackDetailComponent implements OnInit {
 		// pointers fields, after the translation, are nulled in order to perform serialization
 
 		// insertion point for translation/nullation of each field
-		if (this.visualtrack.VisualLayerID == undefined) {
-			this.visualtrack.VisualLayerID = new NullInt64
+		if (this.visualtrack.LayerGroupID == undefined) {
+			this.visualtrack.LayerGroupID = new NullInt64
 		}
-		if (this.visualtrack.VisualLayer != undefined) {
-			this.visualtrack.VisualLayerID.Int64 = this.visualtrack.VisualLayer.ID
-			this.visualtrack.VisualLayerID.Valid = true
+		if (this.visualtrack.LayerGroup != undefined) {
+			this.visualtrack.LayerGroupID.Int64 = this.visualtrack.LayerGroup.ID
+			this.visualtrack.LayerGroupID.Valid = true
 		} else {
-			this.visualtrack.VisualLayerID.Int64 = 0
-			this.visualtrack.VisualLayerID.Valid = true
+			this.visualtrack.LayerGroupID.Int64 = 0
+			this.visualtrack.LayerGroupID.Valid = true
 		}
-		if (this.visualtrack.VisualIconID == undefined) {
-			this.visualtrack.VisualIconID = new NullInt64
+		if (this.visualtrack.DivIconID == undefined) {
+			this.visualtrack.DivIconID = new NullInt64
 		}
-		if (this.visualtrack.VisualIcon != undefined) {
-			this.visualtrack.VisualIconID.Int64 = this.visualtrack.VisualIcon.ID
-			this.visualtrack.VisualIconID.Valid = true
+		if (this.visualtrack.DivIcon != undefined) {
+			this.visualtrack.DivIconID.Int64 = this.visualtrack.DivIcon.ID
+			this.visualtrack.DivIconID.Valid = true
 		} else {
-			this.visualtrack.VisualIconID.Int64 = 0
-			this.visualtrack.VisualIconID.Valid = true
+			this.visualtrack.DivIconID.Int64 = 0
+			this.visualtrack.DivIconID.Valid = true
 		}
-		this.visualtrack.Display = this.DisplayFormControl.value
 		this.visualtrack.DisplayTrackHistory = this.DisplayTrackHistoryFormControl.value
 		this.visualtrack.DisplayLevelAndSpeed = this.DisplayLevelAndSpeedFormControl.value
 

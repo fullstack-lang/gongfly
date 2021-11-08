@@ -2,23 +2,23 @@ package models
 
 // VisualTrack provides all necessary elements to the front to display a track
 //
-// swagger:model visualtrack
+// In leaflet, it is translated into a MovingMarker
+//
+// swagger:model VisualTrack
 type VisualTrack struct {
 	Lat, Lng, Heading, Level, Speed, VerticalSpeed float64
 	Name                                           string
 
-	VisualColorEnum VisualColorEnum
+	ColorEnum ColorEnum
 
-	// VisualLayer the object belongs to
-	VisualLayer *VisualLayer
+	// LayerGroup the object belongs to
+	LayerGroup *LayerGroup
 
 	// access to the models instance that contains the original information
 	// swagger:ignore
 	VisualTrackInterface VisualTrackInterface `gorm:"-"`
 
-	VisualIcon *VisualIcon
-
-	Display bool
+	DivIcon *DivIcon
 
 	// if true display dots from the trajectory
 	DisplayTrackHistory bool
@@ -40,10 +40,7 @@ type VisualTrackInterface interface {
 	GetLevel() (level float64)
 
 	GetName() (name string)
-
-	// the models name knows wether it has to be displayed
-	GetDisplay() bool
-	GetVisualLayerName() string
+	GetLayerGroupName() string
 }
 
 func (visualTrack *VisualTrack) UpdateTrack() {
@@ -56,8 +53,7 @@ func (visualTrack *VisualTrack) UpdateTrack() {
 		visualTrack.Level = visualTrack.VisualTrackInterface.GetLevel()
 		visualTrack.Speed = visualTrack.VisualTrackInterface.GetSpeed()
 		visualTrack.VerticalSpeed = visualTrack.VisualTrackInterface.GetVerticalSpeed()
-		visualTrack.Display = visualTrack.VisualTrackInterface.GetDisplay()
 
-		visualTrack.VisualLayer = computeVisualLayerFromVisualLayerName(visualTrack.VisualTrackInterface.GetVisualLayerName())
+		visualTrack.LayerGroup = computeLayerGroupFromLayerGroupName(visualTrack.VisualTrackInterface.GetLayerGroupName())
 	}
 }
