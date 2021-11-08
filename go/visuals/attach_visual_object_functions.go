@@ -13,6 +13,7 @@ import (
 func attachVisualTrack(track gongleaflet_models.VisualTrackInterface,
 	divIcon *gongleaflet_models.DivIcon,
 	colorEnum gongleaflet_models.ColorEnum,
+	layerGroup *gongleaflet_models.LayerGroup,
 	displayTrackHistory bool,
 	displayLevelAndSpeed bool) {
 
@@ -27,6 +28,7 @@ func attachVisualTrack(track gongleaflet_models.VisualTrackInterface,
 	visualTrack.DisplayTrackHistory = displayTrackHistory
 	visualTrack.DisplayLevelAndSpeed = displayLevelAndSpeed
 	visualTrack.ColorEnum = colorEnum
+	visualTrack.LayerGroup = layerGroup
 	visualTrack.UpdateTrack()
 }
 
@@ -65,13 +67,13 @@ func attachCircle(
 	visualCircle.UpdateCircle()
 }
 
-func AttachVisualElementsToModelElements() {
+func AttachVisualElementsToModelElements(layerGroup *gongleaflet_models.LayerGroup) {
 
 	for obj := range target_models.Stage.Messages {
-		attachVisualTrack(obj, icons.Arrow, gongleaflet_models.GREY, false, false)
+		attachVisualTrack(obj, icons.Arrow, gongleaflet_models.GREY, layerGroup, false, false)
 	}
 	for obj := range target_models.Stage.Liners {
-		attachVisualTrack(obj, icons.Airplane, gongleaflet_models.GREY, true, true)
+		attachVisualTrack(obj, icons.Airplane, gongleaflet_models.GREY, layerGroup, true, true)
 	}
 	for obj := range target_models.Stage.Radars {
 		attachMarker(obj,

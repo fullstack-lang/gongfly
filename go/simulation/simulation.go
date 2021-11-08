@@ -2,7 +2,6 @@ package simulation
 
 import (
 	"log"
-	"time"
 
 	"github.com/fullstack-lang/gongfly/go/icons"
 	"github.com/fullstack-lang/gongfly/go/models"
@@ -36,12 +35,6 @@ func (engineSpecific *Simulation) setInitialStateVectorOfAgentsAndSimulation() {
 	log.Printf("Sim end  \t\t\t%s\n", engine.EndTime)
 
 	engine.Speed = 60
-
-	// liner MDM
-
-	*reference.Sc1_AF_3577_MDM = reference.Sc1_AF_CDG_HYE_ref
-	reference.Sc1_AF_3577_MDM.QueueUpdateEvent(1 * time.Second)
-
 }
 
 // NewSimulation ...

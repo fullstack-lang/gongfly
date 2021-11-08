@@ -4,3 +4,4 @@ go/.DS_Store
 .DS_Store
 go/controllers/gongflyapi.yml
 gongfly.exe
+main.go

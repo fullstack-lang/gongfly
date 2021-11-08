@@ -32,7 +32,7 @@ github.com/dsnet/compress/internal/errors
 github.com/erikstmartin/go-testdb
 # github.com/frankban/quicktest v1.13.1
 github.com/frankban/quicktest
-# github.com/fullstack-lang/gong v0.0.0-20211106094928-b24b1ab8d851
+# github.com/fullstack-lang/gong v0.0.0-20211108105935-f54808108fd2
 ## explicit
 github.com/fullstack-lang/gong/go/controllers
 github.com/fullstack-lang/gong/go/models
@@ -46,7 +46,7 @@ github.com/fullstack-lang/gongdoc/go/orm
 github.com/fullstack-lang/gongdoc/go/static
 github.com/fullstack-lang/gongdoc/go/walk
 github.com/fullstack-lang/gongdoc/ng
-# github.com/fullstack-lang/gongleaflet v0.0.0-20211108124329-c5f2550c0a1a
+# github.com/fullstack-lang/gongleaflet v0.0.0-20211108145023-b3b6d12d03b1
 ## explicit
 github.com/fullstack-lang/gongleaflet/go/controllers
 github.com/fullstack-lang/gongleaflet/go/models

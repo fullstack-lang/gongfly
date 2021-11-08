@@ -106,7 +106,7 @@
       "group": "build"
     },
     {
-      "label": "00 - update gong dependency",
+      "label": "00 - go get -d github.com/fullstack-lang/gong@HEADy",
       "type": "shell",
       "command": "go",
       "args": [
@@ -117,7 +117,7 @@
       "group": "build"
     },
     {
-      "label": "00 - update gongdoc dependency",
+      "label": "00 - go get -d github.com/fullstack-lang/gongdoc@HEAD",
       "type": "shell",
       "command": "go",
       "args": [
@@ -128,7 +128,7 @@
       "group": "build"
     },
     {
-      "label": "00 - update gongsim dependency",
+      "label": "00 - go get -d github.com/fullstack-lang/gongsim@HEAD",
       "type": "shell",
       "command": "go",
       "args": [
@@ -139,13 +139,24 @@
       "group": "build"
     },
     {
-      "label": "00 - update gongleaflet dependency",
+      "label": "00 - go get -d github.com/fullstack-lang/gongleaflet@HEAD",
       "type": "shell",
       "command": "go",
       "args": [
         "get",
         "-d",
         "github.com/fullstack-lang/gongleaflet@HEAD",
+      ],
+      "group": "build"
+    },
+    {
+      "label": "00 - go get -d github.com/fullstack-lang/gongleaflet@thomaspeugeot/issue5",
+      "type": "shell",
+      "command": "go",
+      "args": [
+        "get",
+        "-d",
+        "github.com/fullstack-lang/gongleaflet@thomaspeugeot/issue5",
       ],
       "group": "build"
     },
