@@ -153,7 +153,7 @@ func main() {
 	log.Print("Demoatc simulation is ready, waiting for client interactions (play/pause/...)")
 
 	// provide the static route for the angular pages
-	r.Use(static.Serve("/", EmbedFolder(gongfly_ng.DistNg, "ng/dist/ng")))
+	r.Use(static.Serve("/", EmbedFolder(gongfly_ng.Dist, "ng/dist")))
 	r.NoRoute(func(c *gin.Context) {
 		fmt.Println(c.Request.URL.Path, "doesn't exists, redirect on /")
 		c.Redirect(http.StatusMovedPermanently, "/")

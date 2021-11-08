@@ -175,7 +175,15 @@ func (simulation *Simulation) GetLastCommitNb() (commitNb uint) {
 		commitNb = models.Stage.BackRepo.GetLastCommitNb()
 	}
 
-	return commitNb
+	return
+}
+
+func (simulation *Simulation) GetLastCommitNbFromFront() (commitNb uint) {
+
+	if models.Stage.BackRepo != nil {
+		commitNb = models.Stage.BackRepo.GetLastPushFromFrontNb()
+	}
+	return
 }
 
 // CheckoutAgents checkout all staged agents to the back repo
