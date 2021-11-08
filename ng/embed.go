@@ -6,3 +6,7 @@ import "embed"
 // and align go source and ng source of the gong stack
 //go:embed projects
 var Projects embed.FS
+
+//Embed UI dist Folder recursively
+//go:embed dist
+var Dist embed.FS
