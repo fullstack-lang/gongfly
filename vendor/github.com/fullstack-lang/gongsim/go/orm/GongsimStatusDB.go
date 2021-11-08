@@ -57,6 +57,7 @@ type GongsimStatusDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
+
 	// Declation for basic field gongsimstatusDB.Name {{BasicKind}} (to be completed)
 	Name_Data sql.NullString
 
@@ -71,7 +72,6 @@ type GongsimStatusDB struct {
 
 	// Declation for basic field gongsimstatusDB.SpeedCommandCompletionDate {{BasicKind}} (to be completed)
 	SpeedCommandCompletionDate_Data sql.NullString
-
 	// encoding of pointers
 	GongsimStatusPointersEnconding
 }
@@ -89,19 +89,19 @@ type GongsimStatusDBResponse struct {
 // GongsimStatusWOP is a GongsimStatus without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type GongsimStatusWOP struct {
-	ID int
+	ID int `xlsx:"0"`
 
 	// insertion for WOP basic fields
 
-	Name string
+	Name string `xlsx:"1"`
 
-	CurrentCommand models.GongsimCommandType
+	CurrentCommand models.GongsimCommandType `xlsx:"2"`
 
-	CompletionDate string
+	CompletionDate string `xlsx:"3"`
 
-	CurrentSpeedCommand models.SpeedCommandType
+	CurrentSpeedCommand models.SpeedCommandType `xlsx:"4"`
 
-	SpeedCommandCompletionDate string
+	SpeedCommandCompletionDate string `xlsx:"5"`
 	// insertion for WOP pointer fields
 }
 
@@ -393,6 +393,7 @@ func (backRepo *BackRepoStruct) CheckoutGongsimStatus(gongsimstatus *models.Gong
 // CopyBasicFieldsFromGongsimStatus
 func (gongsimstatusDB *GongsimStatusDB) CopyBasicFieldsFromGongsimStatus(gongsimstatus *models.GongsimStatus) {
 	// insertion point for fields commit
+
 	gongsimstatusDB.Name_Data.String = gongsimstatus.Name
 	gongsimstatusDB.Name_Data.Valid = true
 
@@ -407,12 +408,12 @@ func (gongsimstatusDB *GongsimStatusDB) CopyBasicFieldsFromGongsimStatus(gongsim
 
 	gongsimstatusDB.SpeedCommandCompletionDate_Data.String = gongsimstatus.SpeedCommandCompletionDate
 	gongsimstatusDB.SpeedCommandCompletionDate_Data.Valid = true
-
 }
 
 // CopyBasicFieldsFromGongsimStatusWOP
 func (gongsimstatusDB *GongsimStatusDB) CopyBasicFieldsFromGongsimStatusWOP(gongsimstatus *GongsimStatusWOP) {
 	// insertion point for fields commit
+
 	gongsimstatusDB.Name_Data.String = gongsimstatus.Name
 	gongsimstatusDB.Name_Data.Valid = true
 
@@ -427,7 +428,6 @@ func (gongsimstatusDB *GongsimStatusDB) CopyBasicFieldsFromGongsimStatusWOP(gong
 
 	gongsimstatusDB.SpeedCommandCompletionDate_Data.String = gongsimstatus.SpeedCommandCompletionDate
 	gongsimstatusDB.SpeedCommandCompletionDate_Data.Valid = true
-
 }
 
 // CopyBasicFieldsToGongsimStatus
@@ -509,6 +509,51 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) BackupXL(file *xlsx.Fi
 		row := sh.AddRow()
 		row.WriteStruct(&gongsimstatusWOP, -1)
 	}
+}
+
+// RestoreXL from the "GongsimStatus" sheet all GongsimStatusDB instances
+func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) RestoreXLPhaseOne(file *xlsx.File) {
+
+	// resets the map
+	BackRepoGongsimStatusid_atBckpTime_newID = make(map[uint]uint)
+
+	sh, ok := file.Sheet["GongsimStatus"]
+	_ = sh
+	if !ok {
+		log.Panic(errors.New("sheet not found"))
+	}
+
+	// log.Println("Max row is", sh.MaxRow)
+	err := sh.ForEachRow(backRepoGongsimStatus.rowVisitorGongsimStatus)
+	if err != nil {
+		log.Panic("Err=", err)
+	}
+}
+
+func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) rowVisitorGongsimStatus(row *xlsx.Row) error {
+
+	log.Printf("row line %d\n", row.GetCoordinate())
+	log.Println(row)
+
+	// skip first line
+	if row.GetCoordinate() > 0 {
+		var gongsimstatusWOP GongsimStatusWOP
+		row.ReadStruct(&gongsimstatusWOP)
+
+		// add the unmarshalled struct to the stage
+		gongsimstatusDB := new(GongsimStatusDB)
+		gongsimstatusDB.CopyBasicFieldsFromGongsimStatusWOP(&gongsimstatusWOP)
+
+		gongsimstatusDB_ID_atBackupTime := gongsimstatusDB.ID
+		gongsimstatusDB.ID = 0
+		query := backRepoGongsimStatus.db.Create(gongsimstatusDB)
+		if query.Error != nil {
+			log.Panic(query.Error)
+		}
+		(*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB)[gongsimstatusDB.ID] = gongsimstatusDB
+		BackRepoGongsimStatusid_atBckpTime_newID[gongsimstatusDB_ID_atBackupTime] = gongsimstatusDB.ID
+	}
+	return nil
 }
 
 // RestorePhaseOne read the file "GongsimStatusDB.json" in dirPath that stores an array

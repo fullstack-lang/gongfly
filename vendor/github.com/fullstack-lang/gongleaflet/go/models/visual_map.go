@@ -13,7 +13,7 @@ type VisualMap struct {
 	MaxZoom            int
 	ZoomControl        bool
 	AttributionControl bool
-	ZoomSnap           int
+	ZoomSnap           bool
 
 	// swagger:ignore
 	// access to the models instance that contains the original information

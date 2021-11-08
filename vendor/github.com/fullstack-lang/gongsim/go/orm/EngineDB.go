@@ -57,6 +57,7 @@ type EngineDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
+
 	// Declation for basic field engineDB.Name {{BasicKind}} (to be completed)
 	Name_Data sql.NullString
 
@@ -80,7 +81,6 @@ type EngineDB struct {
 
 	// Declation for basic field engineDB.Speed {{BasicKind}} (to be completed)
 	Speed_Data sql.NullFloat64
-
 	// encoding of pointers
 	EnginePointersEnconding
 }
@@ -98,25 +98,25 @@ type EngineDBResponse struct {
 // EngineWOP is a Engine without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type EngineWOP struct {
-	ID int
+	ID int `xlsx:"0"`
 
 	// insertion for WOP basic fields
 
-	Name string
+	Name string `xlsx:"1"`
 
-	EndTime string
+	EndTime string `xlsx:"2"`
 
-	CurrentTime string
+	CurrentTime string `xlsx:"3"`
 
-	SecondsSinceStart float64
+	SecondsSinceStart float64 `xlsx:"4"`
 
-	Fired int
+	Fired int `xlsx:"5"`
 
-	ControlMode models.ControlMode
+	ControlMode models.ControlMode `xlsx:"6"`
 
-	State models.EngineState
+	State models.EngineState `xlsx:"7"`
 
-	Speed float64
+	Speed float64 `xlsx:"8"`
 	// insertion for WOP pointer fields
 }
 
@@ -411,6 +411,7 @@ func (backRepo *BackRepoStruct) CheckoutEngine(engine *models.Engine) {
 // CopyBasicFieldsFromEngine
 func (engineDB *EngineDB) CopyBasicFieldsFromEngine(engine *models.Engine) {
 	// insertion point for fields commit
+
 	engineDB.Name_Data.String = engine.Name
 	engineDB.Name_Data.Valid = true
 
@@ -434,12 +435,12 @@ func (engineDB *EngineDB) CopyBasicFieldsFromEngine(engine *models.Engine) {
 
 	engineDB.Speed_Data.Float64 = engine.Speed
 	engineDB.Speed_Data.Valid = true
-
 }
 
 // CopyBasicFieldsFromEngineWOP
 func (engineDB *EngineDB) CopyBasicFieldsFromEngineWOP(engine *EngineWOP) {
 	// insertion point for fields commit
+
 	engineDB.Name_Data.String = engine.Name
 	engineDB.Name_Data.Valid = true
 
@@ -463,7 +464,6 @@ func (engineDB *EngineDB) CopyBasicFieldsFromEngineWOP(engine *EngineWOP) {
 
 	engineDB.Speed_Data.Float64 = engine.Speed
 	engineDB.Speed_Data.Valid = true
-
 }
 
 // CopyBasicFieldsToEngine
@@ -551,6 +551,51 @@ func (backRepoEngine *BackRepoEngineStruct) BackupXL(file *xlsx.File) {
 		row := sh.AddRow()
 		row.WriteStruct(&engineWOP, -1)
 	}
+}
+
+// RestoreXL from the "Engine" sheet all EngineDB instances
+func (backRepoEngine *BackRepoEngineStruct) RestoreXLPhaseOne(file *xlsx.File) {
+
+	// resets the map
+	BackRepoEngineid_atBckpTime_newID = make(map[uint]uint)
+
+	sh, ok := file.Sheet["Engine"]
+	_ = sh
+	if !ok {
+		log.Panic(errors.New("sheet not found"))
+	}
+
+	// log.Println("Max row is", sh.MaxRow)
+	err := sh.ForEachRow(backRepoEngine.rowVisitorEngine)
+	if err != nil {
+		log.Panic("Err=", err)
+	}
+}
+
+func (backRepoEngine *BackRepoEngineStruct) rowVisitorEngine(row *xlsx.Row) error {
+
+	log.Printf("row line %d\n", row.GetCoordinate())
+	log.Println(row)
+
+	// skip first line
+	if row.GetCoordinate() > 0 {
+		var engineWOP EngineWOP
+		row.ReadStruct(&engineWOP)
+
+		// add the unmarshalled struct to the stage
+		engineDB := new(EngineDB)
+		engineDB.CopyBasicFieldsFromEngineWOP(&engineWOP)
+
+		engineDB_ID_atBackupTime := engineDB.ID
+		engineDB.ID = 0
+		query := backRepoEngine.db.Create(engineDB)
+		if query.Error != nil {
+			log.Panic(query.Error)
+		}
+		(*backRepoEngine.Map_EngineDBID_EngineDB)[engineDB.ID] = engineDB
+		BackRepoEngineid_atBckpTime_newID[engineDB_ID_atBackupTime] = engineDB.ID
+	}
+	return nil
 }
 
 // RestorePhaseOne read the file "EngineDB.json" in dirPath that stores an array

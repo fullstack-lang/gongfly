@@ -57,12 +57,12 @@ type EventDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
+
 	// Declation for basic field eventDB.Name {{BasicKind}} (to be completed)
 	Name_Data sql.NullString
 
 	// Declation for basic field eventDB.Duration {{BasicKind}} (to be completed)
 	Duration_Data sql.NullInt64
-
 	// encoding of pointers
 	EventPointersEnconding
 }
@@ -80,13 +80,13 @@ type EventDBResponse struct {
 // EventWOP is a Event without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type EventWOP struct {
-	ID int
+	ID int `xlsx:"0"`
 
 	// insertion for WOP basic fields
 
-	Name string
+	Name string `xlsx:"1"`
 
-	Duration time.Duration
+	Duration time.Duration `xlsx:"2"`
 	// insertion for WOP pointer fields
 }
 
@@ -375,23 +375,23 @@ func (backRepo *BackRepoStruct) CheckoutEvent(event *models.Event) {
 // CopyBasicFieldsFromEvent
 func (eventDB *EventDB) CopyBasicFieldsFromEvent(event *models.Event) {
 	// insertion point for fields commit
+
 	eventDB.Name_Data.String = event.Name
 	eventDB.Name_Data.Valid = true
 
 	eventDB.Duration_Data.Int64 = int64(event.Duration)
 	eventDB.Duration_Data.Valid = true
-
 }
 
 // CopyBasicFieldsFromEventWOP
 func (eventDB *EventDB) CopyBasicFieldsFromEventWOP(event *EventWOP) {
 	// insertion point for fields commit
+
 	eventDB.Name_Data.String = event.Name
 	eventDB.Name_Data.Valid = true
 
 	eventDB.Duration_Data.Int64 = int64(event.Duration)
 	eventDB.Duration_Data.Valid = true
-
 }
 
 // CopyBasicFieldsToEvent
@@ -467,6 +467,51 @@ func (backRepoEvent *BackRepoEventStruct) BackupXL(file *xlsx.File) {
 		row := sh.AddRow()
 		row.WriteStruct(&eventWOP, -1)
 	}
+}
+
+// RestoreXL from the "Event" sheet all EventDB instances
+func (backRepoEvent *BackRepoEventStruct) RestoreXLPhaseOne(file *xlsx.File) {
+
+	// resets the map
+	BackRepoEventid_atBckpTime_newID = make(map[uint]uint)
+
+	sh, ok := file.Sheet["Event"]
+	_ = sh
+	if !ok {
+		log.Panic(errors.New("sheet not found"))
+	}
+
+	// log.Println("Max row is", sh.MaxRow)
+	err := sh.ForEachRow(backRepoEvent.rowVisitorEvent)
+	if err != nil {
+		log.Panic("Err=", err)
+	}
+}
+
+func (backRepoEvent *BackRepoEventStruct) rowVisitorEvent(row *xlsx.Row) error {
+
+	log.Printf("row line %d\n", row.GetCoordinate())
+	log.Println(row)
+
+	// skip first line
+	if row.GetCoordinate() > 0 {
+		var eventWOP EventWOP
+		row.ReadStruct(&eventWOP)
+
+		// add the unmarshalled struct to the stage
+		eventDB := new(EventDB)
+		eventDB.CopyBasicFieldsFromEventWOP(&eventWOP)
+
+		eventDB_ID_atBackupTime := eventDB.ID
+		eventDB.ID = 0
+		query := backRepoEvent.db.Create(eventDB)
+		if query.Error != nil {
+			log.Panic(query.Error)
+		}
+		(*backRepoEvent.Map_EventDBID_EventDB)[eventDB.ID] = eventDB
+		BackRepoEventid_atBckpTime_newID[eventDB_ID_atBackupTime] = eventDB.ID
+	}
+	return nil
 }
 
 // RestorePhaseOne read the file "EventDB.json" in dirPath that stores an array

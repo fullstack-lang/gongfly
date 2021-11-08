@@ -12,3 +12,21 @@ const (
 	BLUE               VisualColorEnum = "BLUE"
 	NONE               VisualColorEnum = "NONE"
 )
+
+// DashStyleEnum ..
+// swagger:enum DashStyleEnum
+type DashStyleEnum string
+
+const (
+	FIVE_TEN    DashStyleEnum = "FIVE_TEN"
+	FIVE_TWENTY DashStyleEnum = "FIVE_TWENTY"
+)
+
+// VisualLayerEnum ..
+// swagger:enum VisualLayerEnum
+type VisualLayerEnum string
+
+const (
+	OPS     VisualLayerEnum = "OPS"
+	NETWORK VisualLayerEnum = "NETWORK"
+)

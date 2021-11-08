@@ -2,8 +2,6 @@ package models
 
 // VisualTrack provides all necessary elements to the front to display a track
 //
-// In leaflet, it is translated into a MovingMarker
-//
 // swagger:model visualtrack
 type VisualTrack struct {
 	Lat, Lng, Heading, Level, Speed, VerticalSpeed float64
@@ -11,14 +9,14 @@ type VisualTrack struct {
 
 	VisualColorEnum VisualColorEnum
 
-	// LayerGroup the object belongs to
-	LayerGroup *LayerGroup
+	// VisualLayer the object belongs to
+	VisualLayer *VisualLayer
 
 	// access to the models instance that contains the original information
 	// swagger:ignore
 	VisualTrackInterface VisualTrackInterface `gorm:"-"`
 
-	DivIcon *DivIcon
+	VisualIcon *VisualIcon
 
 	Display bool
 
@@ -45,7 +43,7 @@ type VisualTrackInterface interface {
 
 	// the models name knows wether it has to be displayed
 	GetDisplay() bool
-	GetLayerGroupName() string
+	GetVisualLayerName() string
 }
 
 func (visualTrack *VisualTrack) UpdateTrack() {
@@ -60,6 +58,6 @@ func (visualTrack *VisualTrack) UpdateTrack() {
 		visualTrack.VerticalSpeed = visualTrack.VisualTrackInterface.GetVerticalSpeed()
 		visualTrack.Display = visualTrack.VisualTrackInterface.GetDisplay()
 
-		visualTrack.LayerGroup = computeLayerGroupFromLayerGroupName(visualTrack.VisualTrackInterface.GetLayerGroupName())
+		visualTrack.VisualLayer = computeVisualLayerFromVisualLayerName(visualTrack.VisualTrackInterface.GetVisualLayerName())
 	}
 }

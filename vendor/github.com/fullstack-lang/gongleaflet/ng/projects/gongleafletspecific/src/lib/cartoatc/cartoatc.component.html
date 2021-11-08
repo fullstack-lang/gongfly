@@ -1,0 +1,18 @@
+<div id="atcmapid">
+    <ng-container *ngIf="mapOptions">
+        <div style="height:100%;width:100%;" leaflet [leafletOptions]="mapOptions">
+            <div [leafletLayers]="visualLayers"></div>
+            <app-cartoatc-centers *ngIf="visualCenters.length" [visualCenters]="visualCenters"></app-cartoatc-centers>
+            <app-cartoatc-circles></app-cartoatc-circles>
+            <app-cartoatc-lines></app-cartoatc-lines>
+            <div [leafletLayers]="visualTracksHistory"></div>
+        </div>
+        <app-cartoatc-control-settings></app-cartoatc-control-settings>
+    </ng-container>
+    <ng-container *ngIf="!mapOptions">
+        <div class="cartoatc--empty">
+            <p>Map options not yet loaded</p>
+        </div>
+    </ng-container>
+    Toto
+</div>

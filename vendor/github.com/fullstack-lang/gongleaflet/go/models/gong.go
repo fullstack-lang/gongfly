@@ -12,17 +12,17 @@ var __member __void
 // StageStruct enables storage of staged instances
 // swagger:ignore
 type StageStruct struct { // insertion point for definition of arrays registering instances
-	DivIcons           map[*DivIcon]struct{}
-	DivIcons_mapString map[string]*DivIcon
-
-	LayerGroups           map[*LayerGroup]struct{}
-	LayerGroups_mapString map[string]*LayerGroup
-
-	Markers           map[*Marker]struct{}
-	Markers_mapString map[string]*Marker
+	VisualCenters           map[*VisualCenter]struct{}
+	VisualCenters_mapString map[string]*VisualCenter
 
 	VisualCircles           map[*VisualCircle]struct{}
 	VisualCircles_mapString map[string]*VisualCircle
+
+	VisualIcons           map[*VisualIcon]struct{}
+	VisualIcons_mapString map[string]*VisualIcon
+
+	VisualLayers           map[*VisualLayer]struct{}
+	VisualLayers_mapString map[string]*VisualLayer
 
 	VisualLines           map[*VisualLine]struct{}
 	VisualLines_mapString map[string]*VisualLine
@@ -55,14 +55,14 @@ type BackRepoInterface interface {
 	BackupXL(stage *StageStruct, dirPath string)
 	RestoreXL(stage *StageStruct, dirPath string)
 	// insertion point for Commit and Checkout signatures
-	CommitDivIcon(divicon *DivIcon)
-	CheckoutDivIcon(divicon *DivIcon)
-	CommitLayerGroup(layergroup *LayerGroup)
-	CheckoutLayerGroup(layergroup *LayerGroup)
-	CommitMarker(marker *Marker)
-	CheckoutMarker(marker *Marker)
+	CommitVisualCenter(visualcenter *VisualCenter)
+	CheckoutVisualCenter(visualcenter *VisualCenter)
 	CommitVisualCircle(visualcircle *VisualCircle)
 	CheckoutVisualCircle(visualcircle *VisualCircle)
+	CommitVisualIcon(visualicon *VisualIcon)
+	CheckoutVisualIcon(visualicon *VisualIcon)
+	CommitVisualLayer(visuallayer *VisualLayer)
+	CheckoutVisualLayer(visuallayer *VisualLayer)
 	CommitVisualLine(visualline *VisualLine)
 	CheckoutVisualLine(visualline *VisualLine)
 	CommitVisualMap(visualmap *VisualMap)
@@ -75,17 +75,17 @@ type BackRepoInterface interface {
 
 // swagger:ignore instructs the gong compiler (gongc) to avoid this particular struct
 var Stage StageStruct = StageStruct{ // insertion point for array initiatialisation
-	DivIcons:           make(map[*DivIcon]struct{}),
-	DivIcons_mapString: make(map[string]*DivIcon),
-
-	LayerGroups:           make(map[*LayerGroup]struct{}),
-	LayerGroups_mapString: make(map[string]*LayerGroup),
-
-	Markers:           make(map[*Marker]struct{}),
-	Markers_mapString: make(map[string]*Marker),
+	VisualCenters:           make(map[*VisualCenter]struct{}),
+	VisualCenters_mapString: make(map[string]*VisualCenter),
 
 	VisualCircles:           make(map[*VisualCircle]struct{}),
 	VisualCircles_mapString: make(map[string]*VisualCircle),
+
+	VisualIcons:           make(map[*VisualIcon]struct{}),
+	VisualIcons_mapString: make(map[string]*VisualIcon),
+
+	VisualLayers:           make(map[*VisualLayer]struct{}),
+	VisualLayers_mapString: make(map[string]*VisualLayer),
 
 	VisualLines:           make(map[*VisualLine]struct{}),
 	VisualLines_mapString: make(map[string]*VisualLine),
@@ -140,309 +140,105 @@ func (stage *StageStruct) RestoreXL(dirPath string) {
 }
 
 // insertion point for cumulative sub template with model space calls
-func (stage *StageStruct) getDivIconOrderedStructWithNameField() []*DivIcon {
+func (stage *StageStruct) getVisualCenterOrderedStructWithNameField() []*VisualCenter {
 	// have alphabetical order generation
-	diviconOrdered := []*DivIcon{}
-	for divicon := range stage.DivIcons {
-		diviconOrdered = append(diviconOrdered, divicon)
+	visualcenterOrdered := []*VisualCenter{}
+	for visualcenter := range stage.VisualCenters {
+		visualcenterOrdered = append(visualcenterOrdered, visualcenter)
 	}
-	sort.Slice(diviconOrdered[:], func(i, j int) bool {
-		return diviconOrdered[i].Name < diviconOrdered[j].Name
+	sort.Slice(visualcenterOrdered[:], func(i, j int) bool {
+		return visualcenterOrdered[i].Name < visualcenterOrdered[j].Name
 	})
-	return diviconOrdered
+	return visualcenterOrdered
 }
 
-// Stage puts divicon to the model stage
-func (divicon *DivIcon) Stage() *DivIcon {
-	Stage.DivIcons[divicon] = __member
-	Stage.DivIcons_mapString[divicon.Name] = divicon
+// Stage puts visualcenter to the model stage
+func (visualcenter *VisualCenter) Stage() *VisualCenter {
+	Stage.VisualCenters[visualcenter] = __member
+	Stage.VisualCenters_mapString[visualcenter.Name] = visualcenter
 
-	return divicon
+	return visualcenter
 }
 
-// Unstage removes divicon off the model stage
-func (divicon *DivIcon) Unstage() *DivIcon {
-	delete(Stage.DivIcons, divicon)
-	delete(Stage.DivIcons_mapString, divicon.Name)
-	return divicon
+// Unstage removes visualcenter off the model stage
+func (visualcenter *VisualCenter) Unstage() *VisualCenter {
+	delete(Stage.VisualCenters, visualcenter)
+	delete(Stage.VisualCenters_mapString, visualcenter.Name)
+	return visualcenter
 }
 
-// commit divicon to the back repo (if it is already staged)
-func (divicon *DivIcon) Commit() *DivIcon {
-	if _, ok := Stage.DivIcons[divicon]; ok {
+// commit visualcenter to the back repo (if it is already staged)
+func (visualcenter *VisualCenter) Commit() *VisualCenter {
+	if _, ok := Stage.VisualCenters[visualcenter]; ok {
 		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitDivIcon(divicon)
+			Stage.BackRepo.CommitVisualCenter(visualcenter)
 		}
 	}
-	return divicon
+	return visualcenter
 }
 
-// Checkout divicon to the back repo (if it is already staged)
-func (divicon *DivIcon) Checkout() *DivIcon {
-	if _, ok := Stage.DivIcons[divicon]; ok {
+// Checkout visualcenter to the back repo (if it is already staged)
+func (visualcenter *VisualCenter) Checkout() *VisualCenter {
+	if _, ok := Stage.VisualCenters[visualcenter]; ok {
 		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutDivIcon(divicon)
+			Stage.BackRepo.CheckoutVisualCenter(visualcenter)
 		}
 	}
-	return divicon
+	return visualcenter
 }
 
 //
 // Legacy, to be deleted
 //
 
-// StageCopy appends a copy of divicon to the model stage
-func (divicon *DivIcon) StageCopy() *DivIcon {
-	_divicon := new(DivIcon)
-	*_divicon = *divicon
-	_divicon.Stage()
-	return _divicon
+// StageCopy appends a copy of visualcenter to the model stage
+func (visualcenter *VisualCenter) StageCopy() *VisualCenter {
+	_visualcenter := new(VisualCenter)
+	*_visualcenter = *visualcenter
+	_visualcenter.Stage()
+	return _visualcenter
 }
 
-// StageAndCommit appends divicon to the model stage and commit to the orm repo
-func (divicon *DivIcon) StageAndCommit() *DivIcon {
-	divicon.Stage()
+// StageAndCommit appends visualcenter to the model stage and commit to the orm repo
+func (visualcenter *VisualCenter) StageAndCommit() *VisualCenter {
+	visualcenter.Stage()
 	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMDivIcon(divicon)
+		Stage.AllModelsStructCreateCallback.CreateORMVisualCenter(visualcenter)
 	}
-	return divicon
+	return visualcenter
 }
 
-// DeleteStageAndCommit appends divicon to the model stage and commit to the orm repo
-func (divicon *DivIcon) DeleteStageAndCommit() *DivIcon {
-	divicon.Unstage()
-	DeleteORMDivIcon(divicon)
-	return divicon
+// DeleteStageAndCommit appends visualcenter to the model stage and commit to the orm repo
+func (visualcenter *VisualCenter) DeleteStageAndCommit() *VisualCenter {
+	visualcenter.Unstage()
+	DeleteORMVisualCenter(visualcenter)
+	return visualcenter
 }
 
-// StageCopyAndCommit appends a copy of divicon to the model stage and commit to the orm repo
-func (divicon *DivIcon) StageCopyAndCommit() *DivIcon {
-	_divicon := new(DivIcon)
-	*_divicon = *divicon
-	_divicon.Stage()
+// StageCopyAndCommit appends a copy of visualcenter to the model stage and commit to the orm repo
+func (visualcenter *VisualCenter) StageCopyAndCommit() *VisualCenter {
+	_visualcenter := new(VisualCenter)
+	*_visualcenter = *visualcenter
+	_visualcenter.Stage()
 	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMDivIcon(divicon)
+		Stage.AllModelsStructCreateCallback.CreateORMVisualCenter(visualcenter)
 	}
-	return _divicon
+	return _visualcenter
 }
 
-// CreateORMDivIcon enables dynamic staging of a DivIcon instance
-func CreateORMDivIcon(divicon *DivIcon) {
-	divicon.Stage()
+// CreateORMVisualCenter enables dynamic staging of a VisualCenter instance
+func CreateORMVisualCenter(visualcenter *VisualCenter) {
+	visualcenter.Stage()
 	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMDivIcon(divicon)
+		Stage.AllModelsStructCreateCallback.CreateORMVisualCenter(visualcenter)
 	}
 }
 
-// DeleteORMDivIcon enables dynamic staging of a DivIcon instance
-func DeleteORMDivIcon(divicon *DivIcon) {
-	divicon.Unstage()
+// DeleteORMVisualCenter enables dynamic staging of a VisualCenter instance
+func DeleteORMVisualCenter(visualcenter *VisualCenter) {
+	visualcenter.Unstage()
 	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMDivIcon(divicon)
-	}
-}
-
-func (stage *StageStruct) getLayerGroupOrderedStructWithNameField() []*LayerGroup {
-	// have alphabetical order generation
-	layergroupOrdered := []*LayerGroup{}
-	for layergroup := range stage.LayerGroups {
-		layergroupOrdered = append(layergroupOrdered, layergroup)
-	}
-	sort.Slice(layergroupOrdered[:], func(i, j int) bool {
-		return layergroupOrdered[i].Name < layergroupOrdered[j].Name
-	})
-	return layergroupOrdered
-}
-
-// Stage puts layergroup to the model stage
-func (layergroup *LayerGroup) Stage() *LayerGroup {
-	Stage.LayerGroups[layergroup] = __member
-	Stage.LayerGroups_mapString[layergroup.Name] = layergroup
-
-	return layergroup
-}
-
-// Unstage removes layergroup off the model stage
-func (layergroup *LayerGroup) Unstage() *LayerGroup {
-	delete(Stage.LayerGroups, layergroup)
-	delete(Stage.LayerGroups_mapString, layergroup.Name)
-	return layergroup
-}
-
-// commit layergroup to the back repo (if it is already staged)
-func (layergroup *LayerGroup) Commit() *LayerGroup {
-	if _, ok := Stage.LayerGroups[layergroup]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitLayerGroup(layergroup)
-		}
-	}
-	return layergroup
-}
-
-// Checkout layergroup to the back repo (if it is already staged)
-func (layergroup *LayerGroup) Checkout() *LayerGroup {
-	if _, ok := Stage.LayerGroups[layergroup]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutLayerGroup(layergroup)
-		}
-	}
-	return layergroup
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of layergroup to the model stage
-func (layergroup *LayerGroup) StageCopy() *LayerGroup {
-	_layergroup := new(LayerGroup)
-	*_layergroup = *layergroup
-	_layergroup.Stage()
-	return _layergroup
-}
-
-// StageAndCommit appends layergroup to the model stage and commit to the orm repo
-func (layergroup *LayerGroup) StageAndCommit() *LayerGroup {
-	layergroup.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMLayerGroup(layergroup)
-	}
-	return layergroup
-}
-
-// DeleteStageAndCommit appends layergroup to the model stage and commit to the orm repo
-func (layergroup *LayerGroup) DeleteStageAndCommit() *LayerGroup {
-	layergroup.Unstage()
-	DeleteORMLayerGroup(layergroup)
-	return layergroup
-}
-
-// StageCopyAndCommit appends a copy of layergroup to the model stage and commit to the orm repo
-func (layergroup *LayerGroup) StageCopyAndCommit() *LayerGroup {
-	_layergroup := new(LayerGroup)
-	*_layergroup = *layergroup
-	_layergroup.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMLayerGroup(layergroup)
-	}
-	return _layergroup
-}
-
-// CreateORMLayerGroup enables dynamic staging of a LayerGroup instance
-func CreateORMLayerGroup(layergroup *LayerGroup) {
-	layergroup.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMLayerGroup(layergroup)
-	}
-}
-
-// DeleteORMLayerGroup enables dynamic staging of a LayerGroup instance
-func DeleteORMLayerGroup(layergroup *LayerGroup) {
-	layergroup.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMLayerGroup(layergroup)
-	}
-}
-
-func (stage *StageStruct) getMarkerOrderedStructWithNameField() []*Marker {
-	// have alphabetical order generation
-	markerOrdered := []*Marker{}
-	for marker := range stage.Markers {
-		markerOrdered = append(markerOrdered, marker)
-	}
-	sort.Slice(markerOrdered[:], func(i, j int) bool {
-		return markerOrdered[i].Name < markerOrdered[j].Name
-	})
-	return markerOrdered
-}
-
-// Stage puts marker to the model stage
-func (marker *Marker) Stage() *Marker {
-	Stage.Markers[marker] = __member
-	Stage.Markers_mapString[marker.Name] = marker
-
-	return marker
-}
-
-// Unstage removes marker off the model stage
-func (marker *Marker) Unstage() *Marker {
-	delete(Stage.Markers, marker)
-	delete(Stage.Markers_mapString, marker.Name)
-	return marker
-}
-
-// commit marker to the back repo (if it is already staged)
-func (marker *Marker) Commit() *Marker {
-	if _, ok := Stage.Markers[marker]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitMarker(marker)
-		}
-	}
-	return marker
-}
-
-// Checkout marker to the back repo (if it is already staged)
-func (marker *Marker) Checkout() *Marker {
-	if _, ok := Stage.Markers[marker]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutMarker(marker)
-		}
-	}
-	return marker
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of marker to the model stage
-func (marker *Marker) StageCopy() *Marker {
-	_marker := new(Marker)
-	*_marker = *marker
-	_marker.Stage()
-	return _marker
-}
-
-// StageAndCommit appends marker to the model stage and commit to the orm repo
-func (marker *Marker) StageAndCommit() *Marker {
-	marker.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMMarker(marker)
-	}
-	return marker
-}
-
-// DeleteStageAndCommit appends marker to the model stage and commit to the orm repo
-func (marker *Marker) DeleteStageAndCommit() *Marker {
-	marker.Unstage()
-	DeleteORMMarker(marker)
-	return marker
-}
-
-// StageCopyAndCommit appends a copy of marker to the model stage and commit to the orm repo
-func (marker *Marker) StageCopyAndCommit() *Marker {
-	_marker := new(Marker)
-	*_marker = *marker
-	_marker.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMMarker(marker)
-	}
-	return _marker
-}
-
-// CreateORMMarker enables dynamic staging of a Marker instance
-func CreateORMMarker(marker *Marker) {
-	marker.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMMarker(marker)
-	}
-}
-
-// DeleteORMMarker enables dynamic staging of a Marker instance
-func DeleteORMMarker(marker *Marker) {
-	marker.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMMarker(marker)
+		Stage.AllModelsStructDeleteCallback.DeleteORMVisualCenter(visualcenter)
 	}
 }
 
@@ -545,6 +341,210 @@ func DeleteORMVisualCircle(visualcircle *VisualCircle) {
 	visualcircle.Unstage()
 	if Stage.AllModelsStructDeleteCallback != nil {
 		Stage.AllModelsStructDeleteCallback.DeleteORMVisualCircle(visualcircle)
+	}
+}
+
+func (stage *StageStruct) getVisualIconOrderedStructWithNameField() []*VisualIcon {
+	// have alphabetical order generation
+	visualiconOrdered := []*VisualIcon{}
+	for visualicon := range stage.VisualIcons {
+		visualiconOrdered = append(visualiconOrdered, visualicon)
+	}
+	sort.Slice(visualiconOrdered[:], func(i, j int) bool {
+		return visualiconOrdered[i].Name < visualiconOrdered[j].Name
+	})
+	return visualiconOrdered
+}
+
+// Stage puts visualicon to the model stage
+func (visualicon *VisualIcon) Stage() *VisualIcon {
+	Stage.VisualIcons[visualicon] = __member
+	Stage.VisualIcons_mapString[visualicon.Name] = visualicon
+
+	return visualicon
+}
+
+// Unstage removes visualicon off the model stage
+func (visualicon *VisualIcon) Unstage() *VisualIcon {
+	delete(Stage.VisualIcons, visualicon)
+	delete(Stage.VisualIcons_mapString, visualicon.Name)
+	return visualicon
+}
+
+// commit visualicon to the back repo (if it is already staged)
+func (visualicon *VisualIcon) Commit() *VisualIcon {
+	if _, ok := Stage.VisualIcons[visualicon]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CommitVisualIcon(visualicon)
+		}
+	}
+	return visualicon
+}
+
+// Checkout visualicon to the back repo (if it is already staged)
+func (visualicon *VisualIcon) Checkout() *VisualIcon {
+	if _, ok := Stage.VisualIcons[visualicon]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CheckoutVisualIcon(visualicon)
+		}
+	}
+	return visualicon
+}
+
+//
+// Legacy, to be deleted
+//
+
+// StageCopy appends a copy of visualicon to the model stage
+func (visualicon *VisualIcon) StageCopy() *VisualIcon {
+	_visualicon := new(VisualIcon)
+	*_visualicon = *visualicon
+	_visualicon.Stage()
+	return _visualicon
+}
+
+// StageAndCommit appends visualicon to the model stage and commit to the orm repo
+func (visualicon *VisualIcon) StageAndCommit() *VisualIcon {
+	visualicon.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMVisualIcon(visualicon)
+	}
+	return visualicon
+}
+
+// DeleteStageAndCommit appends visualicon to the model stage and commit to the orm repo
+func (visualicon *VisualIcon) DeleteStageAndCommit() *VisualIcon {
+	visualicon.Unstage()
+	DeleteORMVisualIcon(visualicon)
+	return visualicon
+}
+
+// StageCopyAndCommit appends a copy of visualicon to the model stage and commit to the orm repo
+func (visualicon *VisualIcon) StageCopyAndCommit() *VisualIcon {
+	_visualicon := new(VisualIcon)
+	*_visualicon = *visualicon
+	_visualicon.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMVisualIcon(visualicon)
+	}
+	return _visualicon
+}
+
+// CreateORMVisualIcon enables dynamic staging of a VisualIcon instance
+func CreateORMVisualIcon(visualicon *VisualIcon) {
+	visualicon.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMVisualIcon(visualicon)
+	}
+}
+
+// DeleteORMVisualIcon enables dynamic staging of a VisualIcon instance
+func DeleteORMVisualIcon(visualicon *VisualIcon) {
+	visualicon.Unstage()
+	if Stage.AllModelsStructDeleteCallback != nil {
+		Stage.AllModelsStructDeleteCallback.DeleteORMVisualIcon(visualicon)
+	}
+}
+
+func (stage *StageStruct) getVisualLayerOrderedStructWithNameField() []*VisualLayer {
+	// have alphabetical order generation
+	visuallayerOrdered := []*VisualLayer{}
+	for visuallayer := range stage.VisualLayers {
+		visuallayerOrdered = append(visuallayerOrdered, visuallayer)
+	}
+	sort.Slice(visuallayerOrdered[:], func(i, j int) bool {
+		return visuallayerOrdered[i].Name < visuallayerOrdered[j].Name
+	})
+	return visuallayerOrdered
+}
+
+// Stage puts visuallayer to the model stage
+func (visuallayer *VisualLayer) Stage() *VisualLayer {
+	Stage.VisualLayers[visuallayer] = __member
+	Stage.VisualLayers_mapString[visuallayer.Name] = visuallayer
+
+	return visuallayer
+}
+
+// Unstage removes visuallayer off the model stage
+func (visuallayer *VisualLayer) Unstage() *VisualLayer {
+	delete(Stage.VisualLayers, visuallayer)
+	delete(Stage.VisualLayers_mapString, visuallayer.Name)
+	return visuallayer
+}
+
+// commit visuallayer to the back repo (if it is already staged)
+func (visuallayer *VisualLayer) Commit() *VisualLayer {
+	if _, ok := Stage.VisualLayers[visuallayer]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CommitVisualLayer(visuallayer)
+		}
+	}
+	return visuallayer
+}
+
+// Checkout visuallayer to the back repo (if it is already staged)
+func (visuallayer *VisualLayer) Checkout() *VisualLayer {
+	if _, ok := Stage.VisualLayers[visuallayer]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CheckoutVisualLayer(visuallayer)
+		}
+	}
+	return visuallayer
+}
+
+//
+// Legacy, to be deleted
+//
+
+// StageCopy appends a copy of visuallayer to the model stage
+func (visuallayer *VisualLayer) StageCopy() *VisualLayer {
+	_visuallayer := new(VisualLayer)
+	*_visuallayer = *visuallayer
+	_visuallayer.Stage()
+	return _visuallayer
+}
+
+// StageAndCommit appends visuallayer to the model stage and commit to the orm repo
+func (visuallayer *VisualLayer) StageAndCommit() *VisualLayer {
+	visuallayer.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMVisualLayer(visuallayer)
+	}
+	return visuallayer
+}
+
+// DeleteStageAndCommit appends visuallayer to the model stage and commit to the orm repo
+func (visuallayer *VisualLayer) DeleteStageAndCommit() *VisualLayer {
+	visuallayer.Unstage()
+	DeleteORMVisualLayer(visuallayer)
+	return visuallayer
+}
+
+// StageCopyAndCommit appends a copy of visuallayer to the model stage and commit to the orm repo
+func (visuallayer *VisualLayer) StageCopyAndCommit() *VisualLayer {
+	_visuallayer := new(VisualLayer)
+	*_visuallayer = *visuallayer
+	_visuallayer.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMVisualLayer(visuallayer)
+	}
+	return _visuallayer
+}
+
+// CreateORMVisualLayer enables dynamic staging of a VisualLayer instance
+func CreateORMVisualLayer(visuallayer *VisualLayer) {
+	visuallayer.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMVisualLayer(visuallayer)
+	}
+}
+
+// DeleteORMVisualLayer enables dynamic staging of a VisualLayer instance
+func DeleteORMVisualLayer(visuallayer *VisualLayer) {
+	visuallayer.Unstage()
+	if Stage.AllModelsStructDeleteCallback != nil {
+		Stage.AllModelsStructDeleteCallback.DeleteORMVisualLayer(visuallayer)
 	}
 }
 
@@ -856,37 +856,37 @@ func DeleteORMVisualTrack(visualtrack *VisualTrack) {
 
 // swagger:ignore
 type AllModelsStructCreateInterface interface { // insertion point for Callbacks on creation
-	CreateORMDivIcon(DivIcon *DivIcon)
-	CreateORMLayerGroup(LayerGroup *LayerGroup)
-	CreateORMMarker(Marker *Marker)
+	CreateORMVisualCenter(VisualCenter *VisualCenter)
 	CreateORMVisualCircle(VisualCircle *VisualCircle)
+	CreateORMVisualIcon(VisualIcon *VisualIcon)
+	CreateORMVisualLayer(VisualLayer *VisualLayer)
 	CreateORMVisualLine(VisualLine *VisualLine)
 	CreateORMVisualMap(VisualMap *VisualMap)
 	CreateORMVisualTrack(VisualTrack *VisualTrack)
 }
 
 type AllModelsStructDeleteInterface interface { // insertion point for Callbacks on deletion
-	DeleteORMDivIcon(DivIcon *DivIcon)
-	DeleteORMLayerGroup(LayerGroup *LayerGroup)
-	DeleteORMMarker(Marker *Marker)
+	DeleteORMVisualCenter(VisualCenter *VisualCenter)
 	DeleteORMVisualCircle(VisualCircle *VisualCircle)
+	DeleteORMVisualIcon(VisualIcon *VisualIcon)
+	DeleteORMVisualLayer(VisualLayer *VisualLayer)
 	DeleteORMVisualLine(VisualLine *VisualLine)
 	DeleteORMVisualMap(VisualMap *VisualMap)
 	DeleteORMVisualTrack(VisualTrack *VisualTrack)
 }
 
 func (stage *StageStruct) Reset() { // insertion point for array reset
-	stage.DivIcons = make(map[*DivIcon]struct{})
-	stage.DivIcons_mapString = make(map[string]*DivIcon)
-
-	stage.LayerGroups = make(map[*LayerGroup]struct{})
-	stage.LayerGroups_mapString = make(map[string]*LayerGroup)
-
-	stage.Markers = make(map[*Marker]struct{})
-	stage.Markers_mapString = make(map[string]*Marker)
+	stage.VisualCenters = make(map[*VisualCenter]struct{})
+	stage.VisualCenters_mapString = make(map[string]*VisualCenter)
 
 	stage.VisualCircles = make(map[*VisualCircle]struct{})
 	stage.VisualCircles_mapString = make(map[string]*VisualCircle)
+
+	stage.VisualIcons = make(map[*VisualIcon]struct{})
+	stage.VisualIcons_mapString = make(map[string]*VisualIcon)
+
+	stage.VisualLayers = make(map[*VisualLayer]struct{})
+	stage.VisualLayers_mapString = make(map[string]*VisualLayer)
 
 	stage.VisualLines = make(map[*VisualLine]struct{})
 	stage.VisualLines_mapString = make(map[string]*VisualLine)
@@ -900,17 +900,17 @@ func (stage *StageStruct) Reset() { // insertion point for array reset
 }
 
 func (stage *StageStruct) Nil() { // insertion point for array nil
-	stage.DivIcons = nil
-	stage.DivIcons_mapString = nil
-
-	stage.LayerGroups = nil
-	stage.LayerGroups_mapString = nil
-
-	stage.Markers = nil
-	stage.Markers_mapString = nil
+	stage.VisualCenters = nil
+	stage.VisualCenters_mapString = nil
 
 	stage.VisualCircles = nil
 	stage.VisualCircles_mapString = nil
+
+	stage.VisualIcons = nil
+	stage.VisualIcons_mapString = nil
+
+	stage.VisualLayers = nil
+	stage.VisualLayers_mapString = nil
 
 	stage.VisualLines = nil
 	stage.VisualLines_mapString = nil

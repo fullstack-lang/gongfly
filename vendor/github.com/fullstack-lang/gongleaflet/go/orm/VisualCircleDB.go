@@ -45,10 +45,10 @@ type VisualCircleAPI struct {
 // reverse pointers of slice of poitners to Struct
 type VisualCirclePointersEnconding struct {
 	// insertion for pointer fields encoding declaration
-
-	// field LayerGroup is a pointer to another Struct (optional or 0..1)
+	// field VisualLayer is a pointer to another Struct (optional or 0..1)
 	// This field is generated into another field to enable AS ONE association
-	LayerGroupID sql.NullInt64
+	VisualLayerID sql.NullInt64
+
 }
 
 // VisualCircleDB describes a visualcircle in the database
@@ -61,7 +61,6 @@ type VisualCircleDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
-
 	// Declation for basic field visualcircleDB.Lat {{BasicKind}} (to be completed)
 	Lat_Data sql.NullFloat64
 
@@ -79,6 +78,7 @@ type VisualCircleDB struct {
 
 	// Declation for basic field visualcircleDB.DashStyleEnum {{BasicKind}} (to be completed)
 	DashStyleEnum_Data sql.NullString
+
 	// encoding of pointers
 	VisualCirclePointersEnconding
 }
@@ -96,21 +96,21 @@ type VisualCircleDBResponse struct {
 // VisualCircleWOP is a VisualCircle without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type VisualCircleWOP struct {
-	ID int `xlsx:"0"`
+	ID int
 
 	// insertion for WOP basic fields
 
-	Lat float64 `xlsx:"1"`
+	Lat float64
 
-	Lng float64 `xlsx:"2"`
+	Lng float64
 
-	Name string `xlsx:"3"`
+	Name string
 
-	Radius float64 `xlsx:"4"`
+	Radius float64
 
-	VisualColorEnum models.VisualColorEnum `xlsx:"5"`
+	VisualColorEnum models.VisualColorEnum
 
-	DashStyleEnum models.DashStyleEnum `xlsx:"6"`
+	DashStyleEnum models.DashStyleEnum
 	// insertion for WOP pointer fields
 }
 
@@ -266,12 +266,12 @@ func (backRepoVisualCircle *BackRepoVisualCircleStruct) CommitPhaseTwoInstance(b
 		visualcircleDB.CopyBasicFieldsFromVisualCircle(visualcircle)
 
 		// insertion point for translating pointers encodings into actual pointers
-		// commit pointer value visualcircle.LayerGroup translates to updating the visualcircle.LayerGroupID
-		visualcircleDB.LayerGroupID.Valid = true // allow for a 0 value (nil association)
-		if visualcircle.LayerGroup != nil {
-			if LayerGroupId, ok := (*backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[visualcircle.LayerGroup]; ok {
-				visualcircleDB.LayerGroupID.Int64 = int64(LayerGroupId)
-				visualcircleDB.LayerGroupID.Valid = true
+		// commit pointer value visualcircle.VisualLayer translates to updating the visualcircle.VisualLayerID
+		visualcircleDB.VisualLayerID.Valid = true // allow for a 0 value (nil association)
+		if visualcircle.VisualLayer != nil {
+			if VisualLayerId, ok := (*backRepo.BackRepoVisualLayer.Map_VisualLayerPtr_VisualLayerDBID)[visualcircle.VisualLayer]; ok {
+				visualcircleDB.VisualLayerID.Int64 = int64(VisualLayerId)
+				visualcircleDB.VisualLayerID.Valid = true
 			}
 		}
 
@@ -380,9 +380,9 @@ func (backRepoVisualCircle *BackRepoVisualCircleStruct) CheckoutPhaseTwoInstance
 	_ = visualcircle // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
-	// LayerGroup field
-	if visualcircleDB.LayerGroupID.Int64 != 0 {
-		visualcircle.LayerGroup = (*backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[uint(visualcircleDB.LayerGroupID.Int64)]
+	// VisualLayer field
+	if visualcircleDB.VisualLayerID.Int64 != 0 {
+		visualcircle.VisualLayer = (*backRepo.BackRepoVisualLayer.Map_VisualLayerDBID_VisualLayerPtr)[uint(visualcircleDB.VisualLayerID.Int64)]
 	}
 	return
 }
@@ -416,7 +416,6 @@ func (backRepo *BackRepoStruct) CheckoutVisualCircle(visualcircle *models.Visual
 // CopyBasicFieldsFromVisualCircle
 func (visualcircleDB *VisualCircleDB) CopyBasicFieldsFromVisualCircle(visualcircle *models.VisualCircle) {
 	// insertion point for fields commit
-
 	visualcircleDB.Lat_Data.Float64 = visualcircle.Lat
 	visualcircleDB.Lat_Data.Valid = true
 
@@ -434,12 +433,12 @@ func (visualcircleDB *VisualCircleDB) CopyBasicFieldsFromVisualCircle(visualcirc
 
 	visualcircleDB.DashStyleEnum_Data.String = string(visualcircle.DashStyleEnum)
 	visualcircleDB.DashStyleEnum_Data.Valid = true
+
 }
 
 // CopyBasicFieldsFromVisualCircleWOP
 func (visualcircleDB *VisualCircleDB) CopyBasicFieldsFromVisualCircleWOP(visualcircle *VisualCircleWOP) {
 	// insertion point for fields commit
-
 	visualcircleDB.Lat_Data.Float64 = visualcircle.Lat
 	visualcircleDB.Lat_Data.Valid = true
 
@@ -457,6 +456,7 @@ func (visualcircleDB *VisualCircleDB) CopyBasicFieldsFromVisualCircleWOP(visualc
 
 	visualcircleDB.DashStyleEnum_Data.String = string(visualcircle.DashStyleEnum)
 	visualcircleDB.DashStyleEnum_Data.Valid = true
+
 }
 
 // CopyBasicFieldsToVisualCircle
@@ -542,51 +542,6 @@ func (backRepoVisualCircle *BackRepoVisualCircleStruct) BackupXL(file *xlsx.File
 	}
 }
 
-// RestoreXL from the "VisualCircle" sheet all VisualCircleDB instances
-func (backRepoVisualCircle *BackRepoVisualCircleStruct) RestoreXLPhaseOne(file *xlsx.File) {
-
-	// resets the map
-	BackRepoVisualCircleid_atBckpTime_newID = make(map[uint]uint)
-
-	sh, ok := file.Sheet["VisualCircle"]
-	_ = sh
-	if !ok {
-		log.Panic(errors.New("sheet not found"))
-	}
-
-	// log.Println("Max row is", sh.MaxRow)
-	err := sh.ForEachRow(backRepoVisualCircle.rowVisitorVisualCircle)
-	if err != nil {
-		log.Panic("Err=", err)
-	}
-}
-
-func (backRepoVisualCircle *BackRepoVisualCircleStruct) rowVisitorVisualCircle(row *xlsx.Row) error {
-
-	log.Printf("row line %d\n", row.GetCoordinate())
-	log.Println(row)
-
-	// skip first line
-	if row.GetCoordinate() > 0 {
-		var visualcircleWOP VisualCircleWOP
-		row.ReadStruct(&visualcircleWOP)
-
-		// add the unmarshalled struct to the stage
-		visualcircleDB := new(VisualCircleDB)
-		visualcircleDB.CopyBasicFieldsFromVisualCircleWOP(&visualcircleWOP)
-
-		visualcircleDB_ID_atBackupTime := visualcircleDB.ID
-		visualcircleDB.ID = 0
-		query := backRepoVisualCircle.db.Create(visualcircleDB)
-		if query.Error != nil {
-			log.Panic(query.Error)
-		}
-		(*backRepoVisualCircle.Map_VisualCircleDBID_VisualCircleDB)[visualcircleDB.ID] = visualcircleDB
-		BackRepoVisualCircleid_atBckpTime_newID[visualcircleDB_ID_atBackupTime] = visualcircleDB.ID
-	}
-	return nil
-}
-
 // RestorePhaseOne read the file "VisualCircleDB.json" in dirPath that stores an array
 // of VisualCircleDB and stores it in the database
 // the map BackRepoVisualCircleid_atBckpTime_newID is updated accordingly
@@ -637,10 +592,10 @@ func (backRepoVisualCircle *BackRepoVisualCircleStruct) RestorePhaseTwo() {
 		_ = visualcircleDB
 
 		// insertion point for reindexing pointers encoding
-		// reindexing LayerGroup field
-		if visualcircleDB.LayerGroupID.Int64 != 0 {
-			visualcircleDB.LayerGroupID.Int64 = int64(BackRepoLayerGroupid_atBckpTime_newID[uint(visualcircleDB.LayerGroupID.Int64)])
-			visualcircleDB.LayerGroupID.Valid = true
+		// reindexing VisualLayer field
+		if visualcircleDB.VisualLayerID.Int64 != 0 {
+			visualcircleDB.VisualLayerID.Int64 = int64(BackRepoVisualLayerid_atBckpTime_newID[uint(visualcircleDB.VisualLayerID.Int64)])
+			visualcircleDB.VisualLayerID.Valid = true
 		}
 
 		// update databse with new index encoding

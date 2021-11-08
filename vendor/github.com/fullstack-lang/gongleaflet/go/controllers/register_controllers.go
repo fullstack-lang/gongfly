@@ -43,26 +43,12 @@ type ValidationError struct {
 func RegisterControllers(r *gin.Engine) {
 	v1 := r.Group("/api/github.com/fullstack-lang/gongleaflet/go")
 	{ // insertion point for registrations
-		v1.GET("/v1/divicons", GetDivIcons)
-		v1.GET("/v1/divicons/:id", GetDivIcon)
-		v1.POST("/v1/divicons", PostDivIcon)
-		v1.PATCH("/v1/divicons/:id", UpdateDivIcon)
-		v1.PUT("/v1/divicons/:id", UpdateDivIcon)
-		v1.DELETE("/v1/divicons/:id", DeleteDivIcon)
-
-		v1.GET("/v1/layergroups", GetLayerGroups)
-		v1.GET("/v1/layergroups/:id", GetLayerGroup)
-		v1.POST("/v1/layergroups", PostLayerGroup)
-		v1.PATCH("/v1/layergroups/:id", UpdateLayerGroup)
-		v1.PUT("/v1/layergroups/:id", UpdateLayerGroup)
-		v1.DELETE("/v1/layergroups/:id", DeleteLayerGroup)
-
-		v1.GET("/v1/markers", GetMarkers)
-		v1.GET("/v1/markers/:id", GetMarker)
-		v1.POST("/v1/markers", PostMarker)
-		v1.PATCH("/v1/markers/:id", UpdateMarker)
-		v1.PUT("/v1/markers/:id", UpdateMarker)
-		v1.DELETE("/v1/markers/:id", DeleteMarker)
+		v1.GET("/v1/visualcenters", GetVisualCenters)
+		v1.GET("/v1/visualcenters/:id", GetVisualCenter)
+		v1.POST("/v1/visualcenters", PostVisualCenter)
+		v1.PATCH("/v1/visualcenters/:id", UpdateVisualCenter)
+		v1.PUT("/v1/visualcenters/:id", UpdateVisualCenter)
+		v1.DELETE("/v1/visualcenters/:id", DeleteVisualCenter)
 
 		v1.GET("/v1/visualcircles", GetVisualCircles)
 		v1.GET("/v1/visualcircles/:id", GetVisualCircle)
@@ -70,6 +56,20 @@ func RegisterControllers(r *gin.Engine) {
 		v1.PATCH("/v1/visualcircles/:id", UpdateVisualCircle)
 		v1.PUT("/v1/visualcircles/:id", UpdateVisualCircle)
 		v1.DELETE("/v1/visualcircles/:id", DeleteVisualCircle)
+
+		v1.GET("/v1/visualicons", GetVisualIcons)
+		v1.GET("/v1/visualicons/:id", GetVisualIcon)
+		v1.POST("/v1/visualicons", PostVisualIcon)
+		v1.PATCH("/v1/visualicons/:id", UpdateVisualIcon)
+		v1.PUT("/v1/visualicons/:id", UpdateVisualIcon)
+		v1.DELETE("/v1/visualicons/:id", DeleteVisualIcon)
+
+		v1.GET("/v1/visuallayers", GetVisualLayers)
+		v1.GET("/v1/visuallayers/:id", GetVisualLayer)
+		v1.POST("/v1/visuallayers", PostVisualLayer)
+		v1.PATCH("/v1/visuallayers/:id", UpdateVisualLayer)
+		v1.PUT("/v1/visuallayers/:id", UpdateVisualLayer)
+		v1.DELETE("/v1/visuallayers/:id", DeleteVisualLayer)
 
 		v1.GET("/v1/visuallines", GetVisualLines)
 		v1.GET("/v1/visuallines/:id", GetVisualLine)

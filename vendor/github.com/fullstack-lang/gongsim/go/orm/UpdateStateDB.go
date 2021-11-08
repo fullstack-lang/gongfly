@@ -57,6 +57,7 @@ type UpdateStateDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
+
 	// Declation for basic field updatestateDB.Name {{BasicKind}} (to be completed)
 	Name_Data sql.NullString
 
@@ -65,7 +66,6 @@ type UpdateStateDB struct {
 
 	// Declation for basic field updatestateDB.Period {{BasicKind}} (to be completed)
 	Period_Data sql.NullInt64
-
 	// encoding of pointers
 	UpdateStatePointersEnconding
 }
@@ -83,15 +83,15 @@ type UpdateStateDBResponse struct {
 // UpdateStateWOP is a UpdateState without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type UpdateStateWOP struct {
-	ID int
+	ID int `xlsx:"0"`
 
 	// insertion for WOP basic fields
 
-	Name string
+	Name string `xlsx:"1"`
 
-	Duration time.Duration
+	Duration time.Duration `xlsx:"2"`
 
-	Period time.Duration
+	Period time.Duration `xlsx:"3"`
 	// insertion for WOP pointer fields
 }
 
@@ -381,6 +381,7 @@ func (backRepo *BackRepoStruct) CheckoutUpdateState(updatestate *models.UpdateSt
 // CopyBasicFieldsFromUpdateState
 func (updatestateDB *UpdateStateDB) CopyBasicFieldsFromUpdateState(updatestate *models.UpdateState) {
 	// insertion point for fields commit
+
 	updatestateDB.Name_Data.String = updatestate.Name
 	updatestateDB.Name_Data.Valid = true
 
@@ -389,12 +390,12 @@ func (updatestateDB *UpdateStateDB) CopyBasicFieldsFromUpdateState(updatestate *
 
 	updatestateDB.Period_Data.Int64 = int64(updatestate.Period)
 	updatestateDB.Period_Data.Valid = true
-
 }
 
 // CopyBasicFieldsFromUpdateStateWOP
 func (updatestateDB *UpdateStateDB) CopyBasicFieldsFromUpdateStateWOP(updatestate *UpdateStateWOP) {
 	// insertion point for fields commit
+
 	updatestateDB.Name_Data.String = updatestate.Name
 	updatestateDB.Name_Data.Valid = true
 
@@ -403,7 +404,6 @@ func (updatestateDB *UpdateStateDB) CopyBasicFieldsFromUpdateStateWOP(updatestat
 
 	updatestateDB.Period_Data.Int64 = int64(updatestate.Period)
 	updatestateDB.Period_Data.Valid = true
-
 }
 
 // CopyBasicFieldsToUpdateState
@@ -481,6 +481,51 @@ func (backRepoUpdateState *BackRepoUpdateStateStruct) BackupXL(file *xlsx.File) 
 		row := sh.AddRow()
 		row.WriteStruct(&updatestateWOP, -1)
 	}
+}
+
+// RestoreXL from the "UpdateState" sheet all UpdateStateDB instances
+func (backRepoUpdateState *BackRepoUpdateStateStruct) RestoreXLPhaseOne(file *xlsx.File) {
+
+	// resets the map
+	BackRepoUpdateStateid_atBckpTime_newID = make(map[uint]uint)
+
+	sh, ok := file.Sheet["UpdateState"]
+	_ = sh
+	if !ok {
+		log.Panic(errors.New("sheet not found"))
+	}
+
+	// log.Println("Max row is", sh.MaxRow)
+	err := sh.ForEachRow(backRepoUpdateState.rowVisitorUpdateState)
+	if err != nil {
+		log.Panic("Err=", err)
+	}
+}
+
+func (backRepoUpdateState *BackRepoUpdateStateStruct) rowVisitorUpdateState(row *xlsx.Row) error {
+
+	log.Printf("row line %d\n", row.GetCoordinate())
+	log.Println(row)
+
+	// skip first line
+	if row.GetCoordinate() > 0 {
+		var updatestateWOP UpdateStateWOP
+		row.ReadStruct(&updatestateWOP)
+
+		// add the unmarshalled struct to the stage
+		updatestateDB := new(UpdateStateDB)
+		updatestateDB.CopyBasicFieldsFromUpdateStateWOP(&updatestateWOP)
+
+		updatestateDB_ID_atBackupTime := updatestateDB.ID
+		updatestateDB.ID = 0
+		query := backRepoUpdateState.db.Create(updatestateDB)
+		if query.Error != nil {
+			log.Panic(query.Error)
+		}
+		(*backRepoUpdateState.Map_UpdateStateDBID_UpdateStateDB)[updatestateDB.ID] = updatestateDB
+		BackRepoUpdateStateid_atBckpTime_newID[updatestateDB_ID_atBackupTime] = updatestateDB.ID
+	}
+	return nil
 }
 
 // RestorePhaseOne read the file "UpdateStateDB.json" in dirPath that stores an array

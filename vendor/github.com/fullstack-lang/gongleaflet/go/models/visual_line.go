@@ -11,8 +11,8 @@ type VisualLine struct {
 	VisualColorEnum VisualColorEnum
 	DashStyleEnum   DashStyleEnum
 
-	// LayerGroup the object belongs to
-	LayerGroup *LayerGroup
+	// VisualLayer the object belongs to
+	VisualLayer *VisualLayer
 
 	IsTransmitting TransmittingEnum // display the message displacement
 	Message        string           // message to display
@@ -57,7 +57,7 @@ type VisualLineInterface interface {
 
 	GetName() (name string)
 
-	GetLayerGroupName() string
+	GetVisualLayerName() string
 
 	// transmission
 	GetIsTransmitting() bool // display the message displacement
@@ -78,8 +78,8 @@ func (visualLine *VisualLine) UpdateLine() {
 		visualLine.EndLat = visualLine.VisualLineInterface.GetEndLat()
 		visualLine.EndLng = visualLine.VisualLineInterface.GetEndLng()
 
-		visualLine.LayerGroup =
-			computeLayerGroupFromLayerGroupName(visualLine.VisualLineInterface.GetLayerGroupName())
+		visualLine.VisualLayer =
+			computeVisualLayerFromVisualLayerName(visualLine.VisualLineInterface.GetVisualLayerName())
 
 		// transmission status
 		if visualLine.VisualLineInterface.GetIsTransmitting() {

@@ -136,7 +136,7 @@ func GetLastPushFromFrontNb() uint {
 
 // Backup the BackRepoStruct
 func (backRepo *BackRepoStruct) Backup(stage *models.StageStruct, dirPath string) {
-	os.Mkdir(dirPath, os.ModePerm)
+	os.MkdirAll(dirPath, os.ModePerm)
 
 	// insertion point for per struct backup
 	backRepo.BackRepoGongBasicField.Backup(dirPath)
@@ -151,7 +151,7 @@ func (backRepo *BackRepoStruct) Backup(stage *models.StageStruct, dirPath string
 
 // Backup in XL the BackRepoStruct
 func (backRepo *BackRepoStruct) BackupXL(stage *models.StageStruct, dirPath string) {
-	os.Mkdir(dirPath, os.ModePerm)
+	os.MkdirAll(dirPath, os.ModePerm)
 
 	// open an existing file
 	file := xlsx.NewFile()
@@ -217,4 +217,35 @@ func (backRepo *BackRepoStruct) Restore(stage *models.StageStruct, dirPath strin
 
 // Restore the database into the back repo
 func (backRepo *BackRepoStruct) RestoreXL(stage *models.StageStruct, dirPath string) {
+
+	// clean the stage
+	models.Stage.Reset()
+
+	// commit the cleaned stage
+	models.Stage.Commit()
+
+	// open an existing file
+	filename := filepath.Join(dirPath, "bckp.xlsx")
+	file, err := xlsx.OpenFile(filename)
+
+	if err != nil {
+		log.Panic("Cannot read the XL file", err.Error())
+	}
+
+	//
+	// restauration first phase (create DB instance with new IDs)
+	//
+
+	// insertion point for per struct backup
+	backRepo.BackRepoGongBasicField.RestoreXLPhaseOne(file)
+	backRepo.BackRepoGongEnum.RestoreXLPhaseOne(file)
+	backRepo.BackRepoGongEnumValue.RestoreXLPhaseOne(file)
+	backRepo.BackRepoGongStruct.RestoreXLPhaseOne(file)
+	backRepo.BackRepoGongTimeField.RestoreXLPhaseOne(file)
+	backRepo.BackRepoModelPkg.RestoreXLPhaseOne(file)
+	backRepo.BackRepoPointerToGongStructField.RestoreXLPhaseOne(file)
+	backRepo.BackRepoSliceOfPointerToGongStructField.RestoreXLPhaseOne(file)
+
+	// commit the restored stage
+	models.Stage.Commit()
 }

@@ -15,6 +15,7 @@ func (specificEngine *Simulation) Reset(engine *Engine)                   {}
 func (specificEngine *Simulation) CommitAgents(engine *Engine)            {}
 func (specificEngine *Simulation) CheckoutAgents(engine *Engine)          {}
 func (specificEngine *Simulation) GetLastCommitNb() uint                  { return 0 }
+func (specificEngine *Simulation) GetLastCommitNbFromFront() uint         { return 0 }
 
 type DummyAgent struct {
 	Agent

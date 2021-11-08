@@ -1,0 +1,66 @@
+
+<div class="presentation__header" (click)="setEditorRouterOutlet(visualmap.ID)">
+    <h1>VisualMap's fields <span class="material-icons">edit</span></h1>
+</div>
+<table *ngIf="visualmap" class="presentation__table mat-table">
+    <tr class="mat-header-row">
+        <th class="mat-header-cell">Name</th>
+        <th class="mat-header-cell">Value</th>
+    </tr>
+    <!-- insertion point for fields specific code -->
+    <tr class="mat-row">
+        <td class="mat-cell">Lat</td>
+        <td class="mat-cell">{{visualmap.Lat}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">Lng</td>
+        <td class="mat-cell">{{visualmap.Lng}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">Name</td>
+        <td class="mat-cell">{{visualmap.Name}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">ZoomLevel</td>
+        <td class="mat-cell">{{visualmap.ZoomLevel}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">UrlTemplate</td>
+        <td class="mat-cell">{{visualmap.UrlTemplate}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">Attribution</td>
+        <td class="mat-cell">{{visualmap.Attribution}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">MaxZoom</td>
+        <td class="mat-cell">{{visualmap.MaxZoom}}</td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">ZoomControl</td>
+        <td class="mat-cell">
+            <mat-checkbox [checked]="visualmap.ZoomControl" disabled=true>
+            </mat-checkbox>
+        </td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">AttributionControl</td>
+        <td class="mat-cell">
+            <mat-checkbox [checked]="visualmap.AttributionControl" disabled=true>
+            </mat-checkbox>
+        </td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">ZoomSnap</td>
+        <td class="mat-cell">
+            <mat-checkbox [checked]="visualmap.ZoomSnap" disabled=true>
+            </mat-checkbox>
+        </td>
+    </tr>
+</table>
+<!-- hack to force loading of mat table style an error is generated but it is a know angular issue https://github.com/angular/components/issues/10941 -->
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <!-- Position Column -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

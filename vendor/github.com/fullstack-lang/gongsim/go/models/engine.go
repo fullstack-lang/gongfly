@@ -260,3 +260,12 @@ func (engine *Engine) GetLastCommitNb() (commitNb uint) {
 
 	return commitNb
 }
+
+func (engine *Engine) GetLastCommitNbFromFront() (commitNb uint) {
+
+	if engine.Simulation != nil {
+		commitNb = engine.Simulation.GetLastCommitNbFromFront()
+	}
+
+	return commitNb
+}

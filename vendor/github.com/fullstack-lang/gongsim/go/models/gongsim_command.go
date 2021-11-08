@@ -129,17 +129,19 @@ func (gongsimCommand *GongsimCommand) commitScheduler() {
 	}
 }
 
-// simulationCommitNbAfterLastEngineCommitOrCheckout recounts what was the commit nb after the last checkin.
+// commitFromFrontNbAfterLastEngineCommitOrCheckout recounts what was the commit nb after the last checkin.
 // It is usefull because if the commit nb has increased since the last engine checking, this
 // means the front repo has performed a commit and the simulation should performed a checkout
 // in order for the stage to update it state vectors
-var simulationCommitNbAfterLastEngineCommitOrCheckout uint
+var commitFromFrontNbAfterLastEngineCommitOrCheckout uint
 
 // The "checkout scheduler" is in charge of asking for a checkout of the back repo to the stage.
 //
+// This can happen when an user updates manualy update the state vector of an agent by using the GUI
+//
 // The checkout is performed only if both conditions are met:
 //  - the event number of the engine has not increased (if it is idle for instance)
-//  - the commitNb of the simulation backRepo has increased since the first condition is met
+//  - the commitNb from the frontof the simulation has increased since the first condition is met
 // Since the checkout
 // have to happend when the simulation is not advancing, the "checkout scheduler" only schedule the "engine driver"
 // to checkout the simlation stage when it will be ready.
@@ -156,7 +158,7 @@ func (gongsimCommand *GongsimCommand) checkoutScheduler() {
 			_ = t
 
 			if simulationEventForLastEngineCommit == EngineSingloton.Fired &&
-				simulationCommitNbAfterLastEngineCommitOrCheckout < EngineSingloton.GetLastCommitNb() {
+				commitFromFrontNbAfterLastEngineCommitOrCheckout < EngineSingloton.GetLastCommitNbFromFront() {
 				EngineSingloton.nextCheckoutDate = time.Now()
 			}
 		}
@@ -285,13 +287,13 @@ func (gongsimCommand *GongsimCommand) SetupGongsimThreads() *GongsimCommand {
 						EngineSingloton.Simulation.CommitAgents(EngineSingloton)
 						EngineSingloton.lastCommitDate = EngineSingloton.nextCommitDate
 						simulationEventForLastEngineCommit = EngineSingloton.Fired
-						simulationCommitNbAfterLastEngineCommitOrCheckout = EngineSingloton.GetLastCommitNb()
+						commitFromFrontNbAfterLastEngineCommitOrCheckout = EngineSingloton.GetLastCommitNbFromFront()
 					}
 				case CHECKOUT_AGENT_STATES:
 					if EngineSingloton.Simulation != nil {
 						EngineSingloton.Simulation.CheckoutAgents(EngineSingloton)
 						EngineSingloton.lastCheckoutDate = EngineSingloton.nextCheckoutDate
-						simulationCommitNbAfterLastEngineCommitOrCheckout = EngineSingloton.GetLastCommitNb()
+						commitFromFrontNbAfterLastEngineCommitOrCheckout = EngineSingloton.GetLastCommitNbFromFront()
 					}
 				case FIRE_ONE_EVENT:
 					if EngineSingloton.State != RUNNING {

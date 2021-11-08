@@ -28,6 +28,9 @@ type SimulationInterface interface {
 	// updates to the back repo from the front
 	GetLastCommitNb() uint
 
+	// GetLastCommitNbFromFront fetch the last commit nb from the front to the simulation
+	GetLastCommitNbFromFront() uint
+
 	// Reset simulation
 	Reset(engine *Engine)
 }

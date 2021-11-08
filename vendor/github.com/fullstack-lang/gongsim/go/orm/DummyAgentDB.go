@@ -45,10 +45,10 @@ type DummyAgentAPI struct {
 // reverse pointers of slice of poitners to Struct
 type DummyAgentPointersEnconding struct {
 	// insertion for pointer fields encoding declaration
+
 	// field Engine is a pointer to another Struct (optional or 0..1)
 	// This field is generated into another field to enable AS ONE association
 	EngineID sql.NullInt64
-
 }
 
 // DummyAgentDB describes a dummyagent in the database
@@ -61,12 +61,12 @@ type DummyAgentDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
+
 	// Declation for basic field dummyagentDB.TechName {{BasicKind}} (to be completed)
 	TechName_Data sql.NullString
 
 	// Declation for basic field dummyagentDB.Name {{BasicKind}} (to be completed)
 	Name_Data sql.NullString
-
 	// encoding of pointers
 	DummyAgentPointersEnconding
 }
@@ -84,13 +84,13 @@ type DummyAgentDBResponse struct {
 // DummyAgentWOP is a DummyAgent without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type DummyAgentWOP struct {
-	ID int
+	ID int `xlsx:"0"`
 
 	// insertion for WOP basic fields
 
-	TechName string
+	TechName string `xlsx:"1"`
 
-	Name string
+	Name string `xlsx:"2"`
 	// insertion for WOP pointer fields
 }
 
@@ -392,23 +392,23 @@ func (backRepo *BackRepoStruct) CheckoutDummyAgent(dummyagent *models.DummyAgent
 // CopyBasicFieldsFromDummyAgent
 func (dummyagentDB *DummyAgentDB) CopyBasicFieldsFromDummyAgent(dummyagent *models.DummyAgent) {
 	// insertion point for fields commit
+
 	dummyagentDB.TechName_Data.String = dummyagent.TechName
 	dummyagentDB.TechName_Data.Valid = true
 
 	dummyagentDB.Name_Data.String = dummyagent.Name
 	dummyagentDB.Name_Data.Valid = true
-
 }
 
 // CopyBasicFieldsFromDummyAgentWOP
 func (dummyagentDB *DummyAgentDB) CopyBasicFieldsFromDummyAgentWOP(dummyagent *DummyAgentWOP) {
 	// insertion point for fields commit
+
 	dummyagentDB.TechName_Data.String = dummyagent.TechName
 	dummyagentDB.TechName_Data.Valid = true
 
 	dummyagentDB.Name_Data.String = dummyagent.Name
 	dummyagentDB.Name_Data.Valid = true
-
 }
 
 // CopyBasicFieldsToDummyAgent
@@ -484,6 +484,51 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) BackupXL(file *xlsx.File) {
 		row := sh.AddRow()
 		row.WriteStruct(&dummyagentWOP, -1)
 	}
+}
+
+// RestoreXL from the "DummyAgent" sheet all DummyAgentDB instances
+func (backRepoDummyAgent *BackRepoDummyAgentStruct) RestoreXLPhaseOne(file *xlsx.File) {
+
+	// resets the map
+	BackRepoDummyAgentid_atBckpTime_newID = make(map[uint]uint)
+
+	sh, ok := file.Sheet["DummyAgent"]
+	_ = sh
+	if !ok {
+		log.Panic(errors.New("sheet not found"))
+	}
+
+	// log.Println("Max row is", sh.MaxRow)
+	err := sh.ForEachRow(backRepoDummyAgent.rowVisitorDummyAgent)
+	if err != nil {
+		log.Panic("Err=", err)
+	}
+}
+
+func (backRepoDummyAgent *BackRepoDummyAgentStruct) rowVisitorDummyAgent(row *xlsx.Row) error {
+
+	log.Printf("row line %d\n", row.GetCoordinate())
+	log.Println(row)
+
+	// skip first line
+	if row.GetCoordinate() > 0 {
+		var dummyagentWOP DummyAgentWOP
+		row.ReadStruct(&dummyagentWOP)
+
+		// add the unmarshalled struct to the stage
+		dummyagentDB := new(DummyAgentDB)
+		dummyagentDB.CopyBasicFieldsFromDummyAgentWOP(&dummyagentWOP)
+
+		dummyagentDB_ID_atBackupTime := dummyagentDB.ID
+		dummyagentDB.ID = 0
+		query := backRepoDummyAgent.db.Create(dummyagentDB)
+		if query.Error != nil {
+			log.Panic(query.Error)
+		}
+		(*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB)[dummyagentDB.ID] = dummyagentDB
+		BackRepoDummyAgentid_atBckpTime_newID[dummyagentDB_ID_atBackupTime] = dummyagentDB.ID
+	}
+	return nil
 }
 
 // RestorePhaseOne read the file "DummyAgentDB.json" in dirPath that stores an array

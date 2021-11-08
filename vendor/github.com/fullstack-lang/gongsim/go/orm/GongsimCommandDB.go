@@ -57,6 +57,7 @@ type GongsimCommandDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
+
 	// Declation for basic field gongsimcommandDB.Name {{BasicKind}} (to be completed)
 	Name_Data sql.NullString
 
@@ -71,7 +72,6 @@ type GongsimCommandDB struct {
 
 	// Declation for basic field gongsimcommandDB.DateSpeedCommand {{BasicKind}} (to be completed)
 	DateSpeedCommand_Data sql.NullString
-
 	// encoding of pointers
 	GongsimCommandPointersEnconding
 }
@@ -89,19 +89,19 @@ type GongsimCommandDBResponse struct {
 // GongsimCommandWOP is a GongsimCommand without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type GongsimCommandWOP struct {
-	ID int
+	ID int `xlsx:"0"`
 
 	// insertion for WOP basic fields
 
-	Name string
+	Name string `xlsx:"1"`
 
-	Command models.GongsimCommandType
+	Command models.GongsimCommandType `xlsx:"2"`
 
-	CommandDate string
+	CommandDate string `xlsx:"3"`
 
-	SpeedCommandType models.SpeedCommandType
+	SpeedCommandType models.SpeedCommandType `xlsx:"4"`
 
-	DateSpeedCommand string
+	DateSpeedCommand string `xlsx:"5"`
 	// insertion for WOP pointer fields
 }
 
@@ -393,6 +393,7 @@ func (backRepo *BackRepoStruct) CheckoutGongsimCommand(gongsimcommand *models.Go
 // CopyBasicFieldsFromGongsimCommand
 func (gongsimcommandDB *GongsimCommandDB) CopyBasicFieldsFromGongsimCommand(gongsimcommand *models.GongsimCommand) {
 	// insertion point for fields commit
+
 	gongsimcommandDB.Name_Data.String = gongsimcommand.Name
 	gongsimcommandDB.Name_Data.Valid = true
 
@@ -407,12 +408,12 @@ func (gongsimcommandDB *GongsimCommandDB) CopyBasicFieldsFromGongsimCommand(gong
 
 	gongsimcommandDB.DateSpeedCommand_Data.String = gongsimcommand.DateSpeedCommand
 	gongsimcommandDB.DateSpeedCommand_Data.Valid = true
-
 }
 
 // CopyBasicFieldsFromGongsimCommandWOP
 func (gongsimcommandDB *GongsimCommandDB) CopyBasicFieldsFromGongsimCommandWOP(gongsimcommand *GongsimCommandWOP) {
 	// insertion point for fields commit
+
 	gongsimcommandDB.Name_Data.String = gongsimcommand.Name
 	gongsimcommandDB.Name_Data.Valid = true
 
@@ -427,7 +428,6 @@ func (gongsimcommandDB *GongsimCommandDB) CopyBasicFieldsFromGongsimCommandWOP(g
 
 	gongsimcommandDB.DateSpeedCommand_Data.String = gongsimcommand.DateSpeedCommand
 	gongsimcommandDB.DateSpeedCommand_Data.Valid = true
-
 }
 
 // CopyBasicFieldsToGongsimCommand
@@ -509,6 +509,51 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) BackupXL(file *xlsx.
 		row := sh.AddRow()
 		row.WriteStruct(&gongsimcommandWOP, -1)
 	}
+}
+
+// RestoreXL from the "GongsimCommand" sheet all GongsimCommandDB instances
+func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) RestoreXLPhaseOne(file *xlsx.File) {
+
+	// resets the map
+	BackRepoGongsimCommandid_atBckpTime_newID = make(map[uint]uint)
+
+	sh, ok := file.Sheet["GongsimCommand"]
+	_ = sh
+	if !ok {
+		log.Panic(errors.New("sheet not found"))
+	}
+
+	// log.Println("Max row is", sh.MaxRow)
+	err := sh.ForEachRow(backRepoGongsimCommand.rowVisitorGongsimCommand)
+	if err != nil {
+		log.Panic("Err=", err)
+	}
+}
+
+func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) rowVisitorGongsimCommand(row *xlsx.Row) error {
+
+	log.Printf("row line %d\n", row.GetCoordinate())
+	log.Println(row)
+
+	// skip first line
+	if row.GetCoordinate() > 0 {
+		var gongsimcommandWOP GongsimCommandWOP
+		row.ReadStruct(&gongsimcommandWOP)
+
+		// add the unmarshalled struct to the stage
+		gongsimcommandDB := new(GongsimCommandDB)
+		gongsimcommandDB.CopyBasicFieldsFromGongsimCommandWOP(&gongsimcommandWOP)
+
+		gongsimcommandDB_ID_atBackupTime := gongsimcommandDB.ID
+		gongsimcommandDB.ID = 0
+		query := backRepoGongsimCommand.db.Create(gongsimcommandDB)
+		if query.Error != nil {
+			log.Panic(query.Error)
+		}
+		(*backRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandDB)[gongsimcommandDB.ID] = gongsimcommandDB
+		BackRepoGongsimCommandid_atBckpTime_newID[gongsimcommandDB_ID_atBackupTime] = gongsimcommandDB.ID
+	}
+	return nil
 }
 
 // RestorePhaseOne read the file "GongsimCommandDB.json" in dirPath that stores an array

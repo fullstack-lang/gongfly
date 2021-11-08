@@ -1,0 +1,1614 @@
+basePath: /api/github.com/fullstack-lang/gongleaflet/go/v1
+consumes:
+- application/json
+definitions:
+  DeletedAt:
+    $ref: '#/definitions/NullTime'
+  NullBool:
+    description: |-
+      NullBool implements the Scanner interface so
+      it can be used as a scan destination, similar to NullString.
+    properties:
+      Bool:
+        type: boolean
+      Valid:
+        type: boolean
+    title: NullBool represents a bool that may be null.
+    type: object
+    x-go-package: database/sql
+  NullFloat64:
+    description: |-
+      NullFloat64 implements the Scanner interface so
+      it can be used as a scan destination, similar to NullString.
+    properties:
+      Float64:
+        format: double
+        type: number
+      Valid:
+        type: boolean
+    title: NullFloat64 represents a float64 that may be null.
+    type: object
+    x-go-package: database/sql
+  NullInt64:
+    description: |-
+      NullInt64 implements the Scanner interface so
+      it can be used as a scan destination, similar to NullString.
+    properties:
+      Int64:
+        format: int64
+        type: integer
+      Valid:
+        type: boolean
+    title: NullInt64 represents an int64 that may be null.
+    type: object
+    x-go-package: database/sql
+  NullString:
+    description: |-
+      var s NullString
+      err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+      ...
+      if s.Valid {
+      use s.String
+      } else {
+      NULL value
+      }
+    properties:
+      String:
+        type: string
+      Valid:
+        type: boolean
+    title: |-
+      NullString represents a string that may be null.
+      NullString implements the Scanner interface so
+      it can be used as a scan destination:
+    type: object
+    x-go-package: database/sql
+  NullTime:
+    description: |-
+      NullTime implements the Scanner interface so
+      it can be used as a scan destination, similar to NullString.
+    properties:
+      Time:
+        format: date-time
+        type: string
+      Valid:
+        type: boolean
+    title: NullTime represents a time.Time that may be null.
+    type: object
+    x-go-package: database/sql
+  visualcenterAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Lat:
+        format: double
+        type: number
+        x-go-name: Lng
+      Name:
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+      VisualColorEnum:
+        enum:
+        - LIGHT_BROWN_8D6E63
+        - RED
+        - GREY
+        - GREEN
+        - BLUE
+        - NONE
+        type: string
+      VisualIcon:
+        $ref: '#/definitions/visualicon'
+      VisualIconID:
+        $ref: '#/definitions/NullInt64'
+      VisualLayer:
+        $ref: '#/definitions/visuallayer'
+      VisualLayerID:
+        $ref: '#/definitions/NullInt64'
+    title: VisualCenterAPI is the input in POST API
+    type: object
+    x-go-name: VisualCenterAPI
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+  visualcenterDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        $ref: '#/definitions/NullFloat64'
+      Lng_Data:
+        $ref: '#/definitions/NullFloat64'
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      UpdatedAt:
+        format: date-time
+        type: string
+      VisualColorEnum_Data:
+        $ref: '#/definitions/NullString'
+      VisualIconID:
+        $ref: '#/definitions/NullInt64'
+      VisualLayerID:
+        $ref: '#/definitions/NullInt64'
+    title: VisualCenterDB describes a visualcenter in the database
+    type: object
+    x-go-name: VisualCenterDB
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+  visualcircleAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DashStyleEnum:
+        enum:
+        - FIVE_TEN
+        - FIVE_TWENTY
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Lat:
+        format: double
+        type: number
+        x-go-name: Lng
+      Name:
+        type: string
+      Radius:
+        format: double
+        type: number
+      UpdatedAt:
+        format: date-time
+        type: string
+      VisualColorEnum:
+        enum:
+        - LIGHT_BROWN_8D6E63
+        - RED
+        - GREY
+        - GREEN
+        - BLUE
+        - NONE
+        type: string
+      VisualLayer:
+        $ref: '#/definitions/visuallayer'
+      VisualLayerID:
+        $ref: '#/definitions/NullInt64'
+    title: VisualCircleAPI is the input in POST API
+    type: object
+    x-go-name: VisualCircleAPI
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+  visualcircleDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DashStyleEnum_Data:
+        $ref: '#/definitions/NullString'
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        $ref: '#/definitions/NullFloat64'
+      Lng_Data:
+        $ref: '#/definitions/NullFloat64'
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      Radius_Data:
+        $ref: '#/definitions/NullFloat64'
+      UpdatedAt:
+        format: date-time
+        type: string
+      VisualColorEnum_Data:
+        $ref: '#/definitions/NullString'
+      VisualLayerID:
+        $ref: '#/definitions/NullInt64'
+    title: VisualCircleDB describes a visualcircle in the database
+    type: object
+    x-go-name: VisualCircleDB
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+  visualicon:
+    description: VisualIcon provides all necessary elements to the front to display
+      a track
+    properties:
+      Name:
+        type: string
+      SVG:
+        type: string
+    type: object
+    x-go-name: VisualIcon
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/models
+  visualiconAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Name:
+        type: string
+      SVG:
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: VisualIconAPI is the input in POST API
+    type: object
+    x-go-name: VisualIconAPI
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+  visualiconDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      SVG_Data:
+        $ref: '#/definitions/NullString'
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: VisualIconDB describes a visualicon in the database
+    type: object
+    x-go-name: VisualIconDB
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+  visuallayer:
+    description: VisualLayer provides all necessary elements to the front to display
+      a track
+    properties:
+      DisplayName:
+        type: string
+      Name:
+        type: string
+    type: object
+    x-go-name: VisualLayer
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/models
+  visuallayerAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      DisplayName:
+        type: string
+      ID:
+        format: uint64
+        type: integer
+      Name:
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: VisualLayerAPI is the input in POST API
+    type: object
+    x-go-name: VisualLayerAPI
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+  visuallayerDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      DisplayName_Data:
+        $ref: '#/definitions/NullString'
+      ID:
+        format: uint64
+        type: integer
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      UpdatedAt:
+        format: date-time
+        type: string
+    title: VisualLayerDB describes a visuallayer in the database
+    type: object
+    x-go-name: VisualLayerDB
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+  visuallineAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DashStyleEnum:
+        enum:
+        - FIVE_TEN
+        - FIVE_TWENTY
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      EndLat:
+        format: double
+        type: number
+        x-go-name: EndLng
+      ID:
+        format: uint64
+        type: integer
+      IsTransmitting:
+        enum:
+        - IS_TRANSMITTING
+        - IS_NOT_TRANSMITTING
+        type: string
+      IsTransmittingBackward:
+        enum:
+        - IS_TRANSMITTING
+        - IS_NOT_TRANSMITTING
+        type: string
+      Message:
+        type: string
+      MessageBackward:
+        type: string
+      Name:
+        type: string
+      StartLat:
+        format: double
+        type: number
+        x-go-name: StartLng
+      UpdatedAt:
+        format: date-time
+        type: string
+      VisualColorEnum:
+        enum:
+        - LIGHT_BROWN_8D6E63
+        - RED
+        - GREY
+        - GREEN
+        - BLUE
+        - NONE
+        type: string
+      VisualLayer:
+        $ref: '#/definitions/visuallayer'
+      VisualLayerID:
+        $ref: '#/definitions/NullInt64'
+    title: VisualLineAPI is the input in POST API
+    type: object
+    x-go-name: VisualLineAPI
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+  visuallineDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DashStyleEnum_Data:
+        $ref: '#/definitions/NullString'
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      EndLat_Data:
+        $ref: '#/definitions/NullFloat64'
+      EndLng_Data:
+        $ref: '#/definitions/NullFloat64'
+      ID:
+        format: uint64
+        type: integer
+      IsTransmitting_Data:
+        $ref: '#/definitions/NullString'
+      IsTransmittingBackward_Data:
+        $ref: '#/definitions/NullString'
+      Message_Data:
+        $ref: '#/definitions/NullString'
+      MessageBackward_Data:
+        $ref: '#/definitions/NullString'
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      StartLat_Data:
+        $ref: '#/definitions/NullFloat64'
+      StartLng_Data:
+        $ref: '#/definitions/NullFloat64'
+      UpdatedAt:
+        format: date-time
+        type: string
+      VisualColorEnum_Data:
+        $ref: '#/definitions/NullString'
+      VisualLayerID:
+        $ref: '#/definitions/NullInt64'
+    title: VisualLineDB describes a visualline in the database
+    type: object
+    x-go-name: VisualLineDB
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+  visualmapAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      Attribution:
+        type: string
+      AttributionControl:
+        type: boolean
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Lat:
+        format: double
+        type: number
+        x-go-name: Lng
+      MaxZoom:
+        format: int64
+        type: integer
+      Name:
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+      UrlTemplate:
+        type: string
+      ZoomControl:
+        type: boolean
+      ZoomLevel:
+        format: double
+        type: number
+      ZoomSnap:
+        type: boolean
+    title: VisualMapAPI is the input in POST API
+    type: object
+    x-go-name: VisualMapAPI
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+  visualmapDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      Attribution_Data:
+        $ref: '#/definitions/NullString'
+      AttributionControl_Data:
+        $ref: '#/definitions/NullBool'
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        $ref: '#/definitions/NullFloat64'
+      Lng_Data:
+        $ref: '#/definitions/NullFloat64'
+      MaxZoom_Data:
+        $ref: '#/definitions/NullInt64'
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      UpdatedAt:
+        format: date-time
+        type: string
+      UrlTemplate_Data:
+        $ref: '#/definitions/NullString'
+      ZoomControl_Data:
+        $ref: '#/definitions/NullBool'
+      ZoomLevel_Data:
+        $ref: '#/definitions/NullFloat64'
+      ZoomSnap_Data:
+        $ref: '#/definitions/NullBool'
+    title: VisualMapDB describes a visualmap in the database
+    type: object
+    x-go-name: VisualMapDB
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+  visualtrackAPI:
+    description: |-
+      for POST, API, one needs the fields of the model as well as the fields
+      from associations ("Has One" and "Has Many") that are generated to
+      fullfill the ORM requirements for associations
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      Display:
+        type: boolean
+      DisplayLevelAndSpeed:
+        description: if true, display level and speed below the icon
+        type: boolean
+      DisplayTrackHistory:
+        description: if true display dots from the trajectory
+        type: boolean
+      ID:
+        format: uint64
+        type: integer
+      Lat:
+        format: double
+        type: number
+        x-go-name: VerticalSpeed
+      Name:
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+      VisualColorEnum:
+        enum:
+        - LIGHT_BROWN_8D6E63
+        - RED
+        - GREY
+        - GREEN
+        - BLUE
+        - NONE
+        type: string
+      VisualIcon:
+        $ref: '#/definitions/visualicon'
+      VisualIconID:
+        $ref: '#/definitions/NullInt64'
+      VisualLayer:
+        $ref: '#/definitions/visuallayer'
+      VisualLayerID:
+        $ref: '#/definitions/NullInt64'
+    title: VisualTrackAPI is the input in POST API
+    type: object
+    x-go-name: VisualTrackAPI
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+  visualtrackDB:
+    description: |-
+      It incorporates the GORM ID, basic fields from the model (because they can be serialized),
+      the encoded version of pointers
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        $ref: '#/definitions/DeletedAt'
+      Display_Data:
+        $ref: '#/definitions/NullBool'
+      DisplayLevelAndSpeed_Data:
+        $ref: '#/definitions/NullBool'
+      DisplayTrackHistory_Data:
+        $ref: '#/definitions/NullBool'
+      Heading_Data:
+        $ref: '#/definitions/NullFloat64'
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        $ref: '#/definitions/NullFloat64'
+      Level_Data:
+        $ref: '#/definitions/NullFloat64'
+      Lng_Data:
+        $ref: '#/definitions/NullFloat64'
+      Name_Data:
+        $ref: '#/definitions/NullString'
+      Speed_Data:
+        $ref: '#/definitions/NullFloat64'
+      UpdatedAt:
+        format: date-time
+        type: string
+      VerticalSpeed_Data:
+        $ref: '#/definitions/NullFloat64'
+      VisualColorEnum_Data:
+        $ref: '#/definitions/NullString'
+      VisualIconID:
+        $ref: '#/definitions/NullInt64'
+      VisualLayerID:
+        $ref: '#/definitions/NullInt64'
+    title: VisualTrackDB describes a visualtrack in the database
+    type: object
+    x-go-name: VisualTrackDB
+    x-go-package: github.com/fullstack-lang/gongleaflet/go/orm
+host: localhost:8080
+info:
+  description: gongleaflet exposes types of a package.
+  title: gongleaflet backend API
+  version: "0.1"
+paths:
+  /commitnb:
+    get:
+      operationId: GetLastCommitNb
+      tags:
+      - backrepo
+  /pushfromfrontnb:
+    get:
+      operationId: GetLastPushFromFrontNb
+      tags:
+      - backrepo
+  /visualcenters:
+    get:
+      description: Get all visualcenters
+      operationId: getVisualCenters
+      responses:
+        "200":
+          $ref: '#/responses/visualcenterDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualcenters
+    post:
+      consumes:
+      - application/json
+      description: Creates a visualcenter
+      operationId: postVisualCenter
+      parameters:
+      - description: The VisualCenter to submit or modify
+        in: body
+        name: VisualCenter
+        schema:
+          $ref: '#/definitions/visualcenterAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/visualcenterDBResponse'
+      tags:
+      - visualcenters
+  /visualcenters/{ID}:
+    delete:
+      description: Delete a visualcenter
+      operationId: deleteVisualCenter
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualcenters
+    get:
+      operationId: getVisualCenter
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/visualcenterDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a visualcenter.
+      tags:
+      - visualcenters
+    patch:
+      description: Update a visualcenter
+      operationId: updateVisualCenter
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The VisualCenter to submit or modify
+        in: body
+        name: VisualCenter
+        schema:
+          $ref: '#/definitions/visualcenterAPI'
+      responses:
+        "200":
+          $ref: '#/responses/visualcenterDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualcenters
+  /visualcircles:
+    get:
+      description: Get all visualcircles
+      operationId: getVisualCircles
+      responses:
+        "200":
+          $ref: '#/responses/visualcircleDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualcircles
+    post:
+      consumes:
+      - application/json
+      description: Creates a visualcircle
+      operationId: postVisualCircle
+      parameters:
+      - description: The VisualCircle to submit or modify
+        in: body
+        name: VisualCircle
+        schema:
+          $ref: '#/definitions/visualcircleAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/visualcircleDBResponse'
+      tags:
+      - visualcircles
+  /visualcircles/{ID}:
+    delete:
+      description: Delete a visualcircle
+      operationId: deleteVisualCircle
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualcircles
+    get:
+      operationId: getVisualCircle
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/visualcircleDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a visualcircle.
+      tags:
+      - visualcircles
+    patch:
+      description: Update a visualcircle
+      operationId: updateVisualCircle
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The VisualCircle to submit or modify
+        in: body
+        name: VisualCircle
+        schema:
+          $ref: '#/definitions/visualcircleAPI'
+      responses:
+        "200":
+          $ref: '#/responses/visualcircleDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualcircles
+  /visualicons:
+    get:
+      description: Get all visualicons
+      operationId: getVisualIcons
+      responses:
+        "200":
+          $ref: '#/responses/visualiconDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualicons
+    post:
+      consumes:
+      - application/json
+      description: Creates a visualicon
+      operationId: postVisualIcon
+      parameters:
+      - description: The VisualIcon to submit or modify
+        in: body
+        name: VisualIcon
+        schema:
+          $ref: '#/definitions/visualiconAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/visualiconDBResponse'
+      tags:
+      - visualicons
+  /visualicons/{ID}:
+    delete:
+      description: Delete a visualicon
+      operationId: deleteVisualIcon
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualicons
+    get:
+      operationId: getVisualIcon
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/visualiconDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a visualicon.
+      tags:
+      - visualicons
+    patch:
+      description: Update a visualicon
+      operationId: updateVisualIcon
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The VisualIcon to submit or modify
+        in: body
+        name: VisualIcon
+        schema:
+          $ref: '#/definitions/visualiconAPI'
+      responses:
+        "200":
+          $ref: '#/responses/visualiconDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualicons
+  /visuallayers:
+    get:
+      description: Get all visuallayers
+      operationId: getVisualLayers
+      responses:
+        "200":
+          $ref: '#/responses/visuallayerDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visuallayers
+    post:
+      consumes:
+      - application/json
+      description: Creates a visuallayer
+      operationId: postVisualLayer
+      parameters:
+      - description: The VisualLayer to submit or modify
+        in: body
+        name: VisualLayer
+        schema:
+          $ref: '#/definitions/visuallayerAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/visuallayerDBResponse'
+      tags:
+      - visuallayers
+  /visuallayers/{ID}:
+    delete:
+      description: Delete a visuallayer
+      operationId: deleteVisualLayer
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visuallayers
+    get:
+      operationId: getVisualLayer
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/visuallayerDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a visuallayer.
+      tags:
+      - visuallayers
+    patch:
+      description: Update a visuallayer
+      operationId: updateVisualLayer
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The VisualLayer to submit or modify
+        in: body
+        name: VisualLayer
+        schema:
+          $ref: '#/definitions/visuallayerAPI'
+      responses:
+        "200":
+          $ref: '#/responses/visuallayerDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visuallayers
+  /visuallines:
+    get:
+      description: Get all visuallines
+      operationId: getVisualLines
+      responses:
+        "200":
+          $ref: '#/responses/visuallineDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visuallines
+    post:
+      consumes:
+      - application/json
+      description: Creates a visualline
+      operationId: postVisualLine
+      parameters:
+      - description: The VisualLine to submit or modify
+        in: body
+        name: VisualLine
+        schema:
+          $ref: '#/definitions/visuallineAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/visuallineDBResponse'
+      tags:
+      - visuallines
+  /visuallines/{ID}:
+    delete:
+      description: Delete a visualline
+      operationId: deleteVisualLine
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visuallines
+    get:
+      operationId: getVisualLine
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/visuallineDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a visualline.
+      tags:
+      - visuallines
+    patch:
+      description: Update a visualline
+      operationId: updateVisualLine
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The VisualLine to submit or modify
+        in: body
+        name: VisualLine
+        schema:
+          $ref: '#/definitions/visuallineAPI'
+      responses:
+        "200":
+          $ref: '#/responses/visuallineDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visuallines
+  /visualmaps:
+    get:
+      description: Get all visualmaps
+      operationId: getVisualMaps
+      responses:
+        "200":
+          $ref: '#/responses/visualmapDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualmaps
+    post:
+      consumes:
+      - application/json
+      description: Creates a visualmap
+      operationId: postVisualMap
+      parameters:
+      - description: The VisualMap to submit or modify
+        in: body
+        name: VisualMap
+        schema:
+          $ref: '#/definitions/visualmapAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/visualmapDBResponse'
+      tags:
+      - visualmaps
+  /visualmaps/{ID}:
+    delete:
+      description: Delete a visualmap
+      operationId: deleteVisualMap
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualmaps
+    get:
+      operationId: getVisualMap
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/visualmapDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a visualmap.
+      tags:
+      - visualmaps
+    patch:
+      description: Update a visualmap
+      operationId: updateVisualMap
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The VisualMap to submit or modify
+        in: body
+        name: VisualMap
+        schema:
+          $ref: '#/definitions/visualmapAPI'
+      responses:
+        "200":
+          $ref: '#/responses/visualmapDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualmaps
+  /visualtracks:
+    get:
+      description: Get all visualtracks
+      operationId: getVisualTracks
+      responses:
+        "200":
+          $ref: '#/responses/visualtrackDBsResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualtracks
+    post:
+      consumes:
+      - application/json
+      description: Creates a visualtrack
+      operationId: postVisualTrack
+      parameters:
+      - description: The VisualTrack to submit or modify
+        in: body
+        name: VisualTrack
+        schema:
+          $ref: '#/definitions/visualtrackAPI'
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/visualtrackDBResponse'
+      tags:
+      - visualtracks
+  /visualtracks/{ID}:
+    delete:
+      description: Delete a visualtrack
+      operationId: deleteVisualTrack
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualtracks
+    get:
+      operationId: getVisualTrack
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          $ref: '#/responses/visualtrackDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      summary: Gets the details for a visualtrack.
+      tags:
+      - visualtracks
+    patch:
+      description: Update a visualtrack
+      operationId: updateVisualTrack
+      parameters:
+      - description: The ID of the order
+        format: int64
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: The VisualTrack to submit or modify
+        in: body
+        name: VisualTrack
+        schema:
+          $ref: '#/definitions/visualtrackAPI'
+      responses:
+        "200":
+          $ref: '#/responses/visualtrackDBResponse'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - visualtracks
+produces:
+- application/json
+responses:
+  genericError:
+    description: |-
+      A GenericError is the default error message that is generated.
+      For certain status codes there are more appropriate error structures.
+    schema:
+      properties:
+        code:
+          format: int32
+          type: integer
+          x-go-name: Code
+        message:
+          type: string
+          x-go-name: Message
+      type: object
+  validationError:
+    description: |-
+      A ValidationError is an that is generated for validation failures.
+      It has the same fields as a generic error but adds a Field property.
+    schema:
+      properties:
+        code:
+          format: int32
+          type: integer
+          x-go-name: Code
+        field:
+          type: string
+          x-go-name: Field
+        message:
+          type: string
+          x-go-name: Message
+      type: object
+  visualcenterDBResponse:
+    description: VisualCenterDBResponse provides response
+    headers:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt: {}
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field visualcenterDB.Lat {{BasicKind}} (to be completed)
+      Lng_Data:
+        description: Declation for basic field visualcenterDB.Lng {{BasicKind}} (to
+          be completed)
+      Name_Data:
+        description: Declation for basic field visualcenterDB.Name {{BasicKind}} (to
+          be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+      VisualColorEnum_Data:
+        description: Declation for basic field visualcenterDB.VisualColorEnum {{BasicKind}}
+          (to be completed)
+      VisualIconID:
+        description: |-
+          field VisualIcon is a pointer to another Struct (optional or 0..1)
+          This field is generated into another field to enable AS ONE association
+      VisualLayerID:
+        description: |-
+          insertion for pointer fields encoding declaration
+          field VisualLayer is a pointer to another Struct (optional or 0..1)
+          This field is generated into another field to enable AS ONE association
+    schema:
+      $ref: '#/definitions/NullInt64'
+  visualcenterDBsResponse:
+    description: VisualCenterDBs arrays visualcenterDBs
+    schema:
+      items:
+        $ref: '#/definitions/visualcenterDB'
+      type: array
+  visualcircleDBResponse:
+    description: VisualCircleDBResponse provides response
+    headers:
+      CreatedAt:
+        format: date-time
+        type: string
+      DashStyleEnum_Data:
+        description: Declation for basic field visualcircleDB.DashStyleEnum {{BasicKind}}
+          (to be completed)
+      DeletedAt: {}
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field visualcircleDB.Lat {{BasicKind}} (to be completed)
+      Lng_Data:
+        description: Declation for basic field visualcircleDB.Lng {{BasicKind}} (to
+          be completed)
+      Name_Data:
+        description: Declation for basic field visualcircleDB.Name {{BasicKind}} (to
+          be completed)
+      Radius_Data:
+        description: Declation for basic field visualcircleDB.Radius {{BasicKind}}
+          (to be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+      VisualColorEnum_Data:
+        description: Declation for basic field visualcircleDB.VisualColorEnum {{BasicKind}}
+          (to be completed)
+      VisualLayerID:
+        description: |-
+          insertion for pointer fields encoding declaration
+          field VisualLayer is a pointer to another Struct (optional or 0..1)
+          This field is generated into another field to enable AS ONE association
+    schema:
+      $ref: '#/definitions/NullInt64'
+  visualcircleDBsResponse:
+    description: VisualCircleDBs arrays visualcircleDBs
+    schema:
+      items:
+        $ref: '#/definitions/visualcircleDB'
+      type: array
+  visualiconDBResponse:
+    description: VisualIconDBResponse provides response
+    headers:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt: {}
+      ID:
+        format: uint64
+        type: integer
+      Name_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field visualiconDB.Name {{BasicKind}} (to be completed)
+      SVG_Data:
+        description: Declation for basic field visualiconDB.SVG {{BasicKind}} (to
+          be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+    schema:
+      $ref: '#/definitions/NullString'
+  visualiconDBsResponse:
+    description: VisualIconDBs arrays visualiconDBs
+    schema:
+      items:
+        $ref: '#/definitions/visualiconDB'
+      type: array
+  visuallayerDBResponse:
+    description: VisualLayerDBResponse provides response
+    headers:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt: {}
+      DisplayName_Data:
+        description: Declation for basic field visuallayerDB.DisplayName {{BasicKind}}
+          (to be completed)
+      ID:
+        format: uint64
+        type: integer
+      Name_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field visuallayerDB.Name {{BasicKind}} (to be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+    schema:
+      $ref: '#/definitions/NullString'
+  visuallayerDBsResponse:
+    description: VisualLayerDBs arrays visuallayerDBs
+    schema:
+      items:
+        $ref: '#/definitions/visuallayerDB'
+      type: array
+  visuallineDBResponse:
+    description: VisualLineDBResponse provides response
+    headers:
+      CreatedAt:
+        format: date-time
+        type: string
+      DashStyleEnum_Data:
+        description: Declation for basic field visuallineDB.DashStyleEnum {{BasicKind}}
+          (to be completed)
+      DeletedAt: {}
+      EndLat_Data:
+        description: Declation for basic field visuallineDB.EndLat {{BasicKind}} (to
+          be completed)
+      EndLng_Data:
+        description: Declation for basic field visuallineDB.EndLng {{BasicKind}} (to
+          be completed)
+      ID:
+        format: uint64
+        type: integer
+      IsTransmitting_Data:
+        description: Declation for basic field visuallineDB.IsTransmitting {{BasicKind}}
+          (to be completed)
+      IsTransmittingBackward_Data:
+        description: Declation for basic field visuallineDB.IsTransmittingBackward
+          {{BasicKind}} (to be completed)
+      Message_Data:
+        description: Declation for basic field visuallineDB.Message {{BasicKind}}
+          (to be completed)
+      MessageBackward_Data:
+        description: Declation for basic field visuallineDB.MessageBackward {{BasicKind}}
+          (to be completed)
+      Name_Data:
+        description: Declation for basic field visuallineDB.Name {{BasicKind}} (to
+          be completed)
+      StartLat_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field visuallineDB.StartLat {{BasicKind}} (to be completed)
+      StartLng_Data:
+        description: Declation for basic field visuallineDB.StartLng {{BasicKind}}
+          (to be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+      VisualColorEnum_Data:
+        description: Declation for basic field visuallineDB.VisualColorEnum {{BasicKind}}
+          (to be completed)
+      VisualLayerID:
+        description: |-
+          insertion for pointer fields encoding declaration
+          field VisualLayer is a pointer to another Struct (optional or 0..1)
+          This field is generated into another field to enable AS ONE association
+    schema:
+      $ref: '#/definitions/NullInt64'
+  visuallineDBsResponse:
+    description: VisualLineDBs arrays visuallineDBs
+    schema:
+      items:
+        $ref: '#/definitions/visuallineDB'
+      type: array
+  visualmapDBResponse:
+    description: VisualMapDBResponse provides response
+    headers:
+      Attribution_Data:
+        description: Declation for basic field visualmapDB.Attribution {{BasicKind}}
+          (to be completed)
+      AttributionControl_Data:
+        description: |-
+          Declation for basic field visualmapDB.AttributionControl bool (to be completed)
+          provide the sql storage for the boolan
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt: {}
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field visualmapDB.Lat {{BasicKind}} (to be completed)
+      Lng_Data:
+        description: Declation for basic field visualmapDB.Lng {{BasicKind}} (to be
+          completed)
+      MaxZoom_Data:
+        description: Declation for basic field visualmapDB.MaxZoom {{BasicKind}} (to
+          be completed)
+      Name_Data:
+        description: Declation for basic field visualmapDB.Name {{BasicKind}} (to
+          be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+      UrlTemplate_Data:
+        description: Declation for basic field visualmapDB.UrlTemplate {{BasicKind}}
+          (to be completed)
+      ZoomControl_Data:
+        description: |-
+          Declation for basic field visualmapDB.ZoomControl bool (to be completed)
+          provide the sql storage for the boolan
+      ZoomLevel_Data:
+        description: Declation for basic field visualmapDB.ZoomLevel {{BasicKind}}
+          (to be completed)
+      ZoomSnap_Data:
+        description: |-
+          Declation for basic field visualmapDB.ZoomSnap bool (to be completed)
+          provide the sql storage for the boolan
+    schema:
+      $ref: '#/definitions/NullBool'
+  visualmapDBsResponse:
+    description: VisualMapDBs arrays visualmapDBs
+    schema:
+      items:
+        $ref: '#/definitions/visualmapDB'
+      type: array
+  visualtrackDBResponse:
+    description: VisualTrackDBResponse provides response
+    headers:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt: {}
+      Display_Data:
+        description: |-
+          Declation for basic field visualtrackDB.Display bool (to be completed)
+          provide the sql storage for the boolan
+      DisplayLevelAndSpeed_Data:
+        description: |-
+          Declation for basic field visualtrackDB.DisplayLevelAndSpeed bool (to be completed)
+          provide the sql storage for the boolan
+      DisplayTrackHistory_Data:
+        description: |-
+          Declation for basic field visualtrackDB.DisplayTrackHistory bool (to be completed)
+          provide the sql storage for the boolan
+      Heading_Data:
+        description: Declation for basic field visualtrackDB.Heading {{BasicKind}}
+          (to be completed)
+      ID:
+        format: uint64
+        type: integer
+      Lat_Data:
+        description: |-
+          insertion for basic fields declaration
+          Declation for basic field visualtrackDB.Lat {{BasicKind}} (to be completed)
+      Level_Data:
+        description: Declation for basic field visualtrackDB.Level {{BasicKind}} (to
+          be completed)
+      Lng_Data:
+        description: Declation for basic field visualtrackDB.Lng {{BasicKind}} (to
+          be completed)
+      Name_Data:
+        description: Declation for basic field visualtrackDB.Name {{BasicKind}} (to
+          be completed)
+      Speed_Data:
+        description: Declation for basic field visualtrackDB.Speed {{BasicKind}} (to
+          be completed)
+      UpdatedAt:
+        format: date-time
+        type: string
+      VerticalSpeed_Data:
+        description: Declation for basic field visualtrackDB.VerticalSpeed {{BasicKind}}
+          (to be completed)
+      VisualColorEnum_Data:
+        description: Declation for basic field visualtrackDB.VisualColorEnum {{BasicKind}}
+          (to be completed)
+      VisualIconID:
+        description: |-
+          field VisualIcon is a pointer to another Struct (optional or 0..1)
+          This field is generated into another field to enable AS ONE association
+      VisualLayerID:
+        description: |-
+          insertion for pointer fields encoding declaration
+          field VisualLayer is a pointer to another Struct (optional or 0..1)
+          This field is generated into another field to enable AS ONE association
+    schema:
+      $ref: '#/definitions/NullInt64'
+  visualtrackDBsResponse:
+    description: VisualTrackDBs arrays visualtrackDBs
+    schema:
+      items:
+        $ref: '#/definitions/visualtrackDB'
+      type: array
+schemes:
+- http
+securityDefinitions:
+  basic:
+    type: basic
+swagger: "2.0"

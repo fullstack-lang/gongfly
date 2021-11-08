@@ -45,14 +45,14 @@ type VisualTrackAPI struct {
 // reverse pointers of slice of poitners to Struct
 type VisualTrackPointersEnconding struct {
 	// insertion for pointer fields encoding declaration
-
-	// field LayerGroup is a pointer to another Struct (optional or 0..1)
+	// field VisualLayer is a pointer to another Struct (optional or 0..1)
 	// This field is generated into another field to enable AS ONE association
-	LayerGroupID sql.NullInt64
+	VisualLayerID sql.NullInt64
 
-	// field DivIcon is a pointer to another Struct (optional or 0..1)
+	// field VisualIcon is a pointer to another Struct (optional or 0..1)
 	// This field is generated into another field to enable AS ONE association
-	DivIconID sql.NullInt64
+	VisualIconID sql.NullInt64
+
 }
 
 // VisualTrackDB describes a visualtrack in the database
@@ -65,7 +65,6 @@ type VisualTrackDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
-
 	// Declation for basic field visualtrackDB.Lat {{BasicKind}} (to be completed)
 	Lat_Data sql.NullFloat64
 
@@ -101,6 +100,7 @@ type VisualTrackDB struct {
 	// Declation for basic field visualtrackDB.DisplayLevelAndSpeed bool (to be completed)
 	// provide the sql storage for the boolan
 	DisplayLevelAndSpeed_Data sql.NullBool
+
 	// encoding of pointers
 	VisualTrackPointersEnconding
 }
@@ -118,31 +118,31 @@ type VisualTrackDBResponse struct {
 // VisualTrackWOP is a VisualTrack without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type VisualTrackWOP struct {
-	ID int `xlsx:"0"`
+	ID int
 
 	// insertion for WOP basic fields
 
-	Lat float64 `xlsx:"1"`
+	Lat float64
 
-	Lng float64 `xlsx:"2"`
+	Lng float64
 
-	Heading float64 `xlsx:"3"`
+	Heading float64
 
-	Level float64 `xlsx:"4"`
+	Level float64
 
-	Speed float64 `xlsx:"5"`
+	Speed float64
 
-	VerticalSpeed float64 `xlsx:"6"`
+	VerticalSpeed float64
 
-	Name string `xlsx:"7"`
+	Name string
 
-	VisualColorEnum models.VisualColorEnum `xlsx:"8"`
+	VisualColorEnum models.VisualColorEnum
 
-	Display bool `xlsx:"9"`
+	Display bool
 
-	DisplayTrackHistory bool `xlsx:"10"`
+	DisplayTrackHistory bool
 
-	DisplayLevelAndSpeed bool `xlsx:"11"`
+	DisplayLevelAndSpeed bool
 	// insertion for WOP pointer fields
 }
 
@@ -303,21 +303,21 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseTwoInstance(bac
 		visualtrackDB.CopyBasicFieldsFromVisualTrack(visualtrack)
 
 		// insertion point for translating pointers encodings into actual pointers
-		// commit pointer value visualtrack.LayerGroup translates to updating the visualtrack.LayerGroupID
-		visualtrackDB.LayerGroupID.Valid = true // allow for a 0 value (nil association)
-		if visualtrack.LayerGroup != nil {
-			if LayerGroupId, ok := (*backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[visualtrack.LayerGroup]; ok {
-				visualtrackDB.LayerGroupID.Int64 = int64(LayerGroupId)
-				visualtrackDB.LayerGroupID.Valid = true
+		// commit pointer value visualtrack.VisualLayer translates to updating the visualtrack.VisualLayerID
+		visualtrackDB.VisualLayerID.Valid = true // allow for a 0 value (nil association)
+		if visualtrack.VisualLayer != nil {
+			if VisualLayerId, ok := (*backRepo.BackRepoVisualLayer.Map_VisualLayerPtr_VisualLayerDBID)[visualtrack.VisualLayer]; ok {
+				visualtrackDB.VisualLayerID.Int64 = int64(VisualLayerId)
+				visualtrackDB.VisualLayerID.Valid = true
 			}
 		}
 
-		// commit pointer value visualtrack.DivIcon translates to updating the visualtrack.DivIconID
-		visualtrackDB.DivIconID.Valid = true // allow for a 0 value (nil association)
-		if visualtrack.DivIcon != nil {
-			if DivIconId, ok := (*backRepo.BackRepoDivIcon.Map_DivIconPtr_DivIconDBID)[visualtrack.DivIcon]; ok {
-				visualtrackDB.DivIconID.Int64 = int64(DivIconId)
-				visualtrackDB.DivIconID.Valid = true
+		// commit pointer value visualtrack.VisualIcon translates to updating the visualtrack.VisualIconID
+		visualtrackDB.VisualIconID.Valid = true // allow for a 0 value (nil association)
+		if visualtrack.VisualIcon != nil {
+			if VisualIconId, ok := (*backRepo.BackRepoVisualIcon.Map_VisualIconPtr_VisualIconDBID)[visualtrack.VisualIcon]; ok {
+				visualtrackDB.VisualIconID.Int64 = int64(VisualIconId)
+				visualtrackDB.VisualIconID.Valid = true
 			}
 		}
 
@@ -426,13 +426,13 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseTwoInstance(b
 	_ = visualtrack // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
-	// LayerGroup field
-	if visualtrackDB.LayerGroupID.Int64 != 0 {
-		visualtrack.LayerGroup = (*backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[uint(visualtrackDB.LayerGroupID.Int64)]
+	// VisualLayer field
+	if visualtrackDB.VisualLayerID.Int64 != 0 {
+		visualtrack.VisualLayer = (*backRepo.BackRepoVisualLayer.Map_VisualLayerDBID_VisualLayerPtr)[uint(visualtrackDB.VisualLayerID.Int64)]
 	}
-	// DivIcon field
-	if visualtrackDB.DivIconID.Int64 != 0 {
-		visualtrack.DivIcon = (*backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr)[uint(visualtrackDB.DivIconID.Int64)]
+	// VisualIcon field
+	if visualtrackDB.VisualIconID.Int64 != 0 {
+		visualtrack.VisualIcon = (*backRepo.BackRepoVisualIcon.Map_VisualIconDBID_VisualIconPtr)[uint(visualtrackDB.VisualIconID.Int64)]
 	}
 	return
 }
@@ -466,7 +466,6 @@ func (backRepo *BackRepoStruct) CheckoutVisualTrack(visualtrack *models.VisualTr
 // CopyBasicFieldsFromVisualTrack
 func (visualtrackDB *VisualTrackDB) CopyBasicFieldsFromVisualTrack(visualtrack *models.VisualTrack) {
 	// insertion point for fields commit
-
 	visualtrackDB.Lat_Data.Float64 = visualtrack.Lat
 	visualtrackDB.Lat_Data.Valid = true
 
@@ -499,12 +498,12 @@ func (visualtrackDB *VisualTrackDB) CopyBasicFieldsFromVisualTrack(visualtrack *
 
 	visualtrackDB.DisplayLevelAndSpeed_Data.Bool = visualtrack.DisplayLevelAndSpeed
 	visualtrackDB.DisplayLevelAndSpeed_Data.Valid = true
+
 }
 
 // CopyBasicFieldsFromVisualTrackWOP
 func (visualtrackDB *VisualTrackDB) CopyBasicFieldsFromVisualTrackWOP(visualtrack *VisualTrackWOP) {
 	// insertion point for fields commit
-
 	visualtrackDB.Lat_Data.Float64 = visualtrack.Lat
 	visualtrackDB.Lat_Data.Valid = true
 
@@ -537,6 +536,7 @@ func (visualtrackDB *VisualTrackDB) CopyBasicFieldsFromVisualTrackWOP(visualtrac
 
 	visualtrackDB.DisplayLevelAndSpeed_Data.Bool = visualtrack.DisplayLevelAndSpeed
 	visualtrackDB.DisplayLevelAndSpeed_Data.Valid = true
+
 }
 
 // CopyBasicFieldsToVisualTrack
@@ -632,51 +632,6 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) BackupXL(file *xlsx.File) 
 	}
 }
 
-// RestoreXL from the "VisualTrack" sheet all VisualTrackDB instances
-func (backRepoVisualTrack *BackRepoVisualTrackStruct) RestoreXLPhaseOne(file *xlsx.File) {
-
-	// resets the map
-	BackRepoVisualTrackid_atBckpTime_newID = make(map[uint]uint)
-
-	sh, ok := file.Sheet["VisualTrack"]
-	_ = sh
-	if !ok {
-		log.Panic(errors.New("sheet not found"))
-	}
-
-	// log.Println("Max row is", sh.MaxRow)
-	err := sh.ForEachRow(backRepoVisualTrack.rowVisitorVisualTrack)
-	if err != nil {
-		log.Panic("Err=", err)
-	}
-}
-
-func (backRepoVisualTrack *BackRepoVisualTrackStruct) rowVisitorVisualTrack(row *xlsx.Row) error {
-
-	log.Printf("row line %d\n", row.GetCoordinate())
-	log.Println(row)
-
-	// skip first line
-	if row.GetCoordinate() > 0 {
-		var visualtrackWOP VisualTrackWOP
-		row.ReadStruct(&visualtrackWOP)
-
-		// add the unmarshalled struct to the stage
-		visualtrackDB := new(VisualTrackDB)
-		visualtrackDB.CopyBasicFieldsFromVisualTrackWOP(&visualtrackWOP)
-
-		visualtrackDB_ID_atBackupTime := visualtrackDB.ID
-		visualtrackDB.ID = 0
-		query := backRepoVisualTrack.db.Create(visualtrackDB)
-		if query.Error != nil {
-			log.Panic(query.Error)
-		}
-		(*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB)[visualtrackDB.ID] = visualtrackDB
-		BackRepoVisualTrackid_atBckpTime_newID[visualtrackDB_ID_atBackupTime] = visualtrackDB.ID
-	}
-	return nil
-}
-
 // RestorePhaseOne read the file "VisualTrackDB.json" in dirPath that stores an array
 // of VisualTrackDB and stores it in the database
 // the map BackRepoVisualTrackid_atBckpTime_newID is updated accordingly
@@ -727,16 +682,16 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) RestorePhaseTwo() {
 		_ = visualtrackDB
 
 		// insertion point for reindexing pointers encoding
-		// reindexing LayerGroup field
-		if visualtrackDB.LayerGroupID.Int64 != 0 {
-			visualtrackDB.LayerGroupID.Int64 = int64(BackRepoLayerGroupid_atBckpTime_newID[uint(visualtrackDB.LayerGroupID.Int64)])
-			visualtrackDB.LayerGroupID.Valid = true
+		// reindexing VisualLayer field
+		if visualtrackDB.VisualLayerID.Int64 != 0 {
+			visualtrackDB.VisualLayerID.Int64 = int64(BackRepoVisualLayerid_atBckpTime_newID[uint(visualtrackDB.VisualLayerID.Int64)])
+			visualtrackDB.VisualLayerID.Valid = true
 		}
 
-		// reindexing DivIcon field
-		if visualtrackDB.DivIconID.Int64 != 0 {
-			visualtrackDB.DivIconID.Int64 = int64(BackRepoDivIconid_atBckpTime_newID[uint(visualtrackDB.DivIconID.Int64)])
-			visualtrackDB.DivIconID.Valid = true
+		// reindexing VisualIcon field
+		if visualtrackDB.VisualIconID.Int64 != 0 {
+			visualtrackDB.VisualIconID.Int64 = int64(BackRepoVisualIconid_atBckpTime_newID[uint(visualtrackDB.VisualIconID.Int64)])
+			visualtrackDB.VisualIconID.Valid = true
 		}
 
 		// update databse with new index encoding

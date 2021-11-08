@@ -45,10 +45,10 @@ type VisualLineAPI struct {
 // reverse pointers of slice of poitners to Struct
 type VisualLinePointersEnconding struct {
 	// insertion for pointer fields encoding declaration
-
-	// field LayerGroup is a pointer to another Struct (optional or 0..1)
+	// field VisualLayer is a pointer to another Struct (optional or 0..1)
 	// This field is generated into another field to enable AS ONE association
-	LayerGroupID sql.NullInt64
+	VisualLayerID sql.NullInt64
+
 }
 
 // VisualLineDB describes a visualline in the database
@@ -61,7 +61,6 @@ type VisualLineDB struct {
 	gorm.Model
 
 	// insertion for basic fields declaration
-
 	// Declation for basic field visuallineDB.StartLat {{BasicKind}} (to be completed)
 	StartLat_Data sql.NullFloat64
 
@@ -94,6 +93,7 @@ type VisualLineDB struct {
 
 	// Declation for basic field visuallineDB.MessageBackward {{BasicKind}} (to be completed)
 	MessageBackward_Data sql.NullString
+
 	// encoding of pointers
 	VisualLinePointersEnconding
 }
@@ -111,31 +111,31 @@ type VisualLineDBResponse struct {
 // VisualLineWOP is a VisualLine without pointers (WOP is an acronym for "Without Pointers")
 // it holds the same basic fields but pointers are encoded into uint
 type VisualLineWOP struct {
-	ID int `xlsx:"0"`
+	ID int
 
 	// insertion for WOP basic fields
 
-	StartLat float64 `xlsx:"1"`
+	StartLat float64
 
-	StartLng float64 `xlsx:"2"`
+	StartLng float64
 
-	EndLat float64 `xlsx:"3"`
+	EndLat float64
 
-	EndLng float64 `xlsx:"4"`
+	EndLng float64
 
-	Name string `xlsx:"5"`
+	Name string
 
-	VisualColorEnum models.VisualColorEnum `xlsx:"6"`
+	VisualColorEnum models.VisualColorEnum
 
-	DashStyleEnum models.DashStyleEnum `xlsx:"7"`
+	DashStyleEnum models.DashStyleEnum
 
-	IsTransmitting models.TransmittingEnum `xlsx:"8"`
+	IsTransmitting models.TransmittingEnum
 
-	Message string `xlsx:"9"`
+	Message string
 
-	IsTransmittingBackward models.TransmittingEnum `xlsx:"10"`
+	IsTransmittingBackward models.TransmittingEnum
 
-	MessageBackward string `xlsx:"11"`
+	MessageBackward string
 	// insertion for WOP pointer fields
 }
 
@@ -296,12 +296,12 @@ func (backRepoVisualLine *BackRepoVisualLineStruct) CommitPhaseTwoInstance(backR
 		visuallineDB.CopyBasicFieldsFromVisualLine(visualline)
 
 		// insertion point for translating pointers encodings into actual pointers
-		// commit pointer value visualline.LayerGroup translates to updating the visualline.LayerGroupID
-		visuallineDB.LayerGroupID.Valid = true // allow for a 0 value (nil association)
-		if visualline.LayerGroup != nil {
-			if LayerGroupId, ok := (*backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[visualline.LayerGroup]; ok {
-				visuallineDB.LayerGroupID.Int64 = int64(LayerGroupId)
-				visuallineDB.LayerGroupID.Valid = true
+		// commit pointer value visualline.VisualLayer translates to updating the visualline.VisualLayerID
+		visuallineDB.VisualLayerID.Valid = true // allow for a 0 value (nil association)
+		if visualline.VisualLayer != nil {
+			if VisualLayerId, ok := (*backRepo.BackRepoVisualLayer.Map_VisualLayerPtr_VisualLayerDBID)[visualline.VisualLayer]; ok {
+				visuallineDB.VisualLayerID.Int64 = int64(VisualLayerId)
+				visuallineDB.VisualLayerID.Valid = true
 			}
 		}
 
@@ -410,9 +410,9 @@ func (backRepoVisualLine *BackRepoVisualLineStruct) CheckoutPhaseTwoInstance(bac
 	_ = visualline // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
-	// LayerGroup field
-	if visuallineDB.LayerGroupID.Int64 != 0 {
-		visualline.LayerGroup = (*backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[uint(visuallineDB.LayerGroupID.Int64)]
+	// VisualLayer field
+	if visuallineDB.VisualLayerID.Int64 != 0 {
+		visualline.VisualLayer = (*backRepo.BackRepoVisualLayer.Map_VisualLayerDBID_VisualLayerPtr)[uint(visuallineDB.VisualLayerID.Int64)]
 	}
 	return
 }
@@ -446,7 +446,6 @@ func (backRepo *BackRepoStruct) CheckoutVisualLine(visualline *models.VisualLine
 // CopyBasicFieldsFromVisualLine
 func (visuallineDB *VisualLineDB) CopyBasicFieldsFromVisualLine(visualline *models.VisualLine) {
 	// insertion point for fields commit
-
 	visuallineDB.StartLat_Data.Float64 = visualline.StartLat
 	visuallineDB.StartLat_Data.Valid = true
 
@@ -479,12 +478,12 @@ func (visuallineDB *VisualLineDB) CopyBasicFieldsFromVisualLine(visualline *mode
 
 	visuallineDB.MessageBackward_Data.String = visualline.MessageBackward
 	visuallineDB.MessageBackward_Data.Valid = true
+
 }
 
 // CopyBasicFieldsFromVisualLineWOP
 func (visuallineDB *VisualLineDB) CopyBasicFieldsFromVisualLineWOP(visualline *VisualLineWOP) {
 	// insertion point for fields commit
-
 	visuallineDB.StartLat_Data.Float64 = visualline.StartLat
 	visuallineDB.StartLat_Data.Valid = true
 
@@ -517,6 +516,7 @@ func (visuallineDB *VisualLineDB) CopyBasicFieldsFromVisualLineWOP(visualline *V
 
 	visuallineDB.MessageBackward_Data.String = visualline.MessageBackward
 	visuallineDB.MessageBackward_Data.Valid = true
+
 }
 
 // CopyBasicFieldsToVisualLine
@@ -612,51 +612,6 @@ func (backRepoVisualLine *BackRepoVisualLineStruct) BackupXL(file *xlsx.File) {
 	}
 }
 
-// RestoreXL from the "VisualLine" sheet all VisualLineDB instances
-func (backRepoVisualLine *BackRepoVisualLineStruct) RestoreXLPhaseOne(file *xlsx.File) {
-
-	// resets the map
-	BackRepoVisualLineid_atBckpTime_newID = make(map[uint]uint)
-
-	sh, ok := file.Sheet["VisualLine"]
-	_ = sh
-	if !ok {
-		log.Panic(errors.New("sheet not found"))
-	}
-
-	// log.Println("Max row is", sh.MaxRow)
-	err := sh.ForEachRow(backRepoVisualLine.rowVisitorVisualLine)
-	if err != nil {
-		log.Panic("Err=", err)
-	}
-}
-
-func (backRepoVisualLine *BackRepoVisualLineStruct) rowVisitorVisualLine(row *xlsx.Row) error {
-
-	log.Printf("row line %d\n", row.GetCoordinate())
-	log.Println(row)
-
-	// skip first line
-	if row.GetCoordinate() > 0 {
-		var visuallineWOP VisualLineWOP
-		row.ReadStruct(&visuallineWOP)
-
-		// add the unmarshalled struct to the stage
-		visuallineDB := new(VisualLineDB)
-		visuallineDB.CopyBasicFieldsFromVisualLineWOP(&visuallineWOP)
-
-		visuallineDB_ID_atBackupTime := visuallineDB.ID
-		visuallineDB.ID = 0
-		query := backRepoVisualLine.db.Create(visuallineDB)
-		if query.Error != nil {
-			log.Panic(query.Error)
-		}
-		(*backRepoVisualLine.Map_VisualLineDBID_VisualLineDB)[visuallineDB.ID] = visuallineDB
-		BackRepoVisualLineid_atBckpTime_newID[visuallineDB_ID_atBackupTime] = visuallineDB.ID
-	}
-	return nil
-}
-
 // RestorePhaseOne read the file "VisualLineDB.json" in dirPath that stores an array
 // of VisualLineDB and stores it in the database
 // the map BackRepoVisualLineid_atBckpTime_newID is updated accordingly
@@ -707,10 +662,10 @@ func (backRepoVisualLine *BackRepoVisualLineStruct) RestorePhaseTwo() {
 		_ = visuallineDB
 
 		// insertion point for reindexing pointers encoding
-		// reindexing LayerGroup field
-		if visuallineDB.LayerGroupID.Int64 != 0 {
-			visuallineDB.LayerGroupID.Int64 = int64(BackRepoLayerGroupid_atBckpTime_newID[uint(visuallineDB.LayerGroupID.Int64)])
-			visuallineDB.LayerGroupID.Valid = true
+		// reindexing VisualLayer field
+		if visuallineDB.VisualLayerID.Int64 != 0 {
+			visuallineDB.VisualLayerID.Int64 = int64(BackRepoVisualLayerid_atBckpTime_newID[uint(visuallineDB.VisualLayerID.Int64)])
+			visuallineDB.VisualLayerID.Valid = true
 		}
 
 		// update databse with new index encoding
