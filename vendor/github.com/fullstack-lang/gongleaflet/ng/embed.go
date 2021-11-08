@@ -6,6 +6,3 @@ import "embed"
 // and align go source and ng source of the gong stack
 //go:embed projects
 var Projects embed.FS
-
-//go:embed dist
-var Dist embed.FS

@@ -22,8 +22,6 @@ func attachVisualTrack(track gongleaflet_models.VisualTrackInterface,
 	}
 
 	visualTrack := new(gongleaflet_models.VisualTrack).Stage()
-	display := true
-	visualTrack.Display = display
 	visualTrack.VisualTrackInterface = track
 	visualTrack.DivIcon = divIcon
 	visualTrack.DisplayTrackHistory = displayTrackHistory

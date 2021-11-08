@@ -27,13 +27,6 @@ export class AppComponent {
   currTime: number = 0
 
   constructor(
-    private MessageService: gongfly.MessageService,
-    private LinerService: gongfly.LinerService,
-
-    private VisualLineService: gongleaflet.VisualLineService,
-    private VisualTrackService: gongleaflet.VisualTrackService,
-
-    private router: Router,
   ) {
   }
 
@@ -42,15 +35,5 @@ export class AppComponent {
 
   // callbak function that is attached to the generic engine
   engineUpdatedCallbackFunction = (updateDisplay: boolean): void => {
-
-    if (updateDisplay) {
-
-      this.MessageService.MessageServiceChanged.next("update")
-      this.LinerService.LinerServiceChanged.next("update")
-
-      this.VisualLineService.VisualLineServiceChanged.next("update")
-      this.VisualTrackService.VisualTrackServiceChanged.next("update")
-
-    }
   }
 }

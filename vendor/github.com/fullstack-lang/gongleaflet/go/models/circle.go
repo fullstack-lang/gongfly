@@ -17,10 +17,10 @@ type Circle struct {
 
 	// swagger:ignore
 	// access to the models instance that contains the original information
-	Circle VisualCircleInterface `gorm:"-"`
+	Circle CircleInterface `gorm:"-"`
 }
 
-type VisualCircleInterface interface {
+type CircleInterface interface {
 	GetLat() (lat float64)
 	GetLng() (lng float64)
 	GetRadius() (lng float64)

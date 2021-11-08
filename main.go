@@ -104,7 +104,7 @@ func main() {
 	gongfly_visuals.AttachVisualElementsToModelElements()
 
 	// create the target map
-	visualMap := new(gongleaflet_models.VisualMap).Stage()
+	visualMap := new(gongleaflet_models.MapOptions).Stage()
 	visualMap.Lat = gongfly_reference.Scenario1.Lat
 	visualMap.Lng = gongfly_reference.Scenario1.Lng
 	visualMap.ZoomLevel = gongfly_reference.Scenario1.ZoomLevel
@@ -153,7 +153,7 @@ func main() {
 	log.Print("Demoatc simulation is ready, waiting for client interactions (play/pause/...)")
 
 	// provide the static route for the angular pages
-	r.Use(static.Serve("/", EmbedFolder(gongfly_ng.DistNg, "ng/dist/ng")))
+	r.Use(static.Serve("/ng", EmbedFolder(gongfly_ng.Dist, "dist")))
 	r.NoRoute(func(c *gin.Context) {
 		fmt.Println(c.Request.URL.Path, "doesn't exists, redirect on /")
 		c.Redirect(http.StatusMovedPermanently, "/")

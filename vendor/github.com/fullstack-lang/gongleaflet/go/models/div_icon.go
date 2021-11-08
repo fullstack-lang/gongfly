@@ -18,8 +18,8 @@ type DivIconInterface interface {
 	GetSVG() (name string)
 }
 
-func (VisualIcon *DivIcon) UpdateVisualIcon() {
-	if VisualIcon.DivIconInterface != nil {
-		VisualIcon.Name = VisualIcon.DivIconInterface.GetIconName()
+func (divIcon *DivIcon) UpdateVisualIcon() {
+	if divIcon.DivIconInterface != nil {
+		divIcon.Name = divIcon.DivIconInterface.GetIconName()
 	}
 }

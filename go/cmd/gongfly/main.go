@@ -17,7 +17,7 @@ import (
 	gongfly_reference "github.com/fullstack-lang/gongfly/go/reference"
 	gonglfy_engine "github.com/fullstack-lang/gongfly/go/simulation"
 	gongfly_visuals "github.com/fullstack-lang/gongfly/go/visuals"
-	gongfly_ng "github.com/fullstack-lang/gongfly/ng"
+	gongfly_ng_dist "github.com/fullstack-lang/gongfly/ng/dist"
 
 	// demoatc gong stack
 	gongfly_controllers "github.com/fullstack-lang/gongfly/go/controllers"
@@ -122,7 +122,7 @@ func main() {
 	// load package to analyse
 	modelPkg := &gong_models.ModelPkg{}
 	if *diagrams {
-		gong_models.Walk("go/models", modelPkg)
+		gong_models.Walk("../../models", modelPkg)
 		modelPkg.SerializeToStage()
 	}
 
@@ -133,7 +133,7 @@ func main() {
 	// classdiagram can only be fully in memory when they are Unmarshalled
 	// for instance, the Name of diagrams or the Name of the Link
 	if *diagrams {
-		pkgelt.Unmarshall("go/diagrams")
+		pkgelt.Unmarshall("../../diagrams")
 	}
 	pkgelt.SerializeToStage()
 
@@ -153,7 +153,7 @@ func main() {
 	log.Print("Demoatc simulation is ready, waiting for client interactions (play/pause/...)")
 
 	// provide the static route for the angular pages
-	r.Use(static.Serve("/", EmbedFolder(gongfly_ng.Dist, "ng/dist")))
+	r.Use(static.Serve("/", EmbedFolder(gongfly_ng_dist.Ng, "ng")))
 	r.NoRoute(func(c *gin.Context) {
 		fmt.Println(c.Request.URL.Path, "doesn't exists, redirect on /")
 		c.Redirect(http.StatusMovedPermanently, "/")

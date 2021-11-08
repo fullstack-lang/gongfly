@@ -5,7 +5,7 @@
       "label": "02 - run gongfly",
       "type": "shell",
       "options": {
-        "cwd": "${workspaceFolder}"
+        "cwd": "${workspaceFolder}/go/cmd/gongfly"
       },
       "command": "go",
       "args": [
@@ -21,7 +21,7 @@
       "label": "02 - run gongfly w/o diagrams",
       "type": "shell",
       "options": {
-        "cwd": "${workspaceFolder}"
+        "cwd": "${workspaceFolder}/go/cmd/gongfly"
       },
       "command": "go",
       "args": [
@@ -161,6 +161,9 @@
     {
       "label": "00 - go build",
       "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/go/cmd/gongfly"
+      },
       "command": "go",
       "args": [
         "build"
