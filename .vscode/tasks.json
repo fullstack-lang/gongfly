@@ -85,10 +85,10 @@
       ]
     },
     {
-      "label": "00 - go get -u ./...",
+      "label": "00 - go mod vendor",
       "type": "shell",
       "group": "build",
-      "command": "go mod tidy; go get -u ./..."
+      "command": "go mod vendor"
     },
     {
       "label": "00 - update gong dependencies",

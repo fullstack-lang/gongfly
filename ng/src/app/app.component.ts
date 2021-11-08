@@ -5,9 +5,7 @@ import { Router, RouterState } from '@angular/router';
 import * as gongfly from 'gongfly'
 import { combineLatest, Observable, timer } from 'rxjs'
 
-import * as gongsim from 'gongsim'
 import * as gongleaflet from 'gongleaflet'
-import * as gongleafletspecific from 'gongleafletspecific'
 
 @Component({
   selector: 'app-root',
