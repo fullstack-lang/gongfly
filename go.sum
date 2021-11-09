@@ -82,6 +82,8 @@ github.com/fullstack-lang/gongleaflet v0.0.0-20211108124329-c5f2550c0a1a h1:G3db
 github.com/fullstack-lang/gongleaflet v0.0.0-20211108124329-c5f2550c0a1a/go.mod h1:/HkQfPZnVGv4ZPV2wtkebE9Ie7ZSrTezzFJU6N+OYoU=
 github.com/fullstack-lang/gongleaflet v0.0.0-20211108145023-b3b6d12d03b1 h1:ISN8q97a0i789ORC7BE5Hk6gnxU+4dvbgbfk78zsgI4=
 github.com/fullstack-lang/gongleaflet v0.0.0-20211108145023-b3b6d12d03b1/go.mod h1:PWpX1bCjj3MimVaCddSoYL6SGU3z+8leAb+8rxsKGmI=
+github.com/fullstack-lang/gongleaflet v0.0.0-20211109040634-9643302ab4e3 h1:Q8a+n4iDVsG+iMPjdgLEYfYvbdZ/p79ffwC2KHWy11I=
+github.com/fullstack-lang/gongleaflet v0.0.0-20211109040634-9643302ab4e3/go.mod h1:PWpX1bCjj3MimVaCddSoYL6SGU3z+8leAb+8rxsKGmI=
 github.com/fullstack-lang/gongsim v0.0.0-20211102174007-07c585e56501 h1:znMNezcRxAYxxVVl2z+/XqWqQPhqt4uTBkN4JCTAwT8=
 github.com/fullstack-lang/gongsim v0.0.0-20211102174007-07c585e56501/go.mod h1:0P85XlGR/USqCe4DWBT3aONX1R7GSewm+Xee8Ef9h+o=
 github.com/gin-contrib/cors v1.3.1 h1:doAsuITavI4IOcd0Y19U4B+O0dNWihRyX//nn4sEmgA=

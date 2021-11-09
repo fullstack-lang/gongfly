@@ -6,7 +6,7 @@ require (
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
 	github.com/fullstack-lang/gong v0.0.0-20211108105935-f54808108fd2
 	github.com/fullstack-lang/gongdoc v0.0.0-20211108142225-3022f5e38131
-	github.com/fullstack-lang/gongleaflet v0.0.0-20211108145023-b3b6d12d03b1
+	github.com/fullstack-lang/gongleaflet v0.0.0-20211109040634-9643302ab4e3
 	github.com/fullstack-lang/gongsim v0.0.0-20211102174007-07c585e56501
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/static v0.0.1
