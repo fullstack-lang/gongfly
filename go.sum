@@ -84,8 +84,12 @@ github.com/fullstack-lang/gongleaflet v0.0.0-20211108145023-b3b6d12d03b1 h1:ISN8
 github.com/fullstack-lang/gongleaflet v0.0.0-20211108145023-b3b6d12d03b1/go.mod h1:PWpX1bCjj3MimVaCddSoYL6SGU3z+8leAb+8rxsKGmI=
 github.com/fullstack-lang/gongleaflet v0.0.0-20211109040634-9643302ab4e3 h1:Q8a+n4iDVsG+iMPjdgLEYfYvbdZ/p79ffwC2KHWy11I=
 github.com/fullstack-lang/gongleaflet v0.0.0-20211109040634-9643302ab4e3/go.mod h1:PWpX1bCjj3MimVaCddSoYL6SGU3z+8leAb+8rxsKGmI=
+github.com/fullstack-lang/gongleaflet v0.0.0-20211109075100-545a188a8d59 h1:sAZw1QI4A4S9/Vhn5DK5Fe7hNvKH2NEdxNsAuy39DzE=
+github.com/fullstack-lang/gongleaflet v0.0.0-20211109075100-545a188a8d59/go.mod h1:PWpX1bCjj3MimVaCddSoYL6SGU3z+8leAb+8rxsKGmI=
 github.com/fullstack-lang/gongsim v0.0.0-20211102174007-07c585e56501 h1:znMNezcRxAYxxVVl2z+/XqWqQPhqt4uTBkN4JCTAwT8=
 github.com/fullstack-lang/gongsim v0.0.0-20211102174007-07c585e56501/go.mod h1:0P85XlGR/USqCe4DWBT3aONX1R7GSewm+Xee8Ef9h+o=
+github.com/fullstack-lang/gongsim v0.0.0-20211109073011-a66e054fa408 h1:GJD5735d5z+ZwF5/Gz0CntrubVvHyuSM8TyICDOEvIw=
+github.com/fullstack-lang/gongsim v0.0.0-20211109073011-a66e054fa408/go.mod h1:0P85XlGR/USqCe4DWBT3aONX1R7GSewm+Xee8Ef9h+o=
 github.com/gin-contrib/cors v1.3.1 h1:doAsuITavI4IOcd0Y19U4B+O0dNWihRyX//nn4sEmgA=
 github.com/gin-contrib/cors v1.3.1/go.mod h1:jjEJ4268OPZUcU7k9Pm653S7lXUGcqMADzFA61xsmDk=
 github.com/gin-contrib/sse v0.1.0 h1:Y/yl/+YNO8GZSjAhjMsSuLt29uWRFHdHYUb5lYOV9qE=

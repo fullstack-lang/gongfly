@@ -2,6 +2,10 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 // insertion point for imports
+import { CheckoutSchedulersTableComponent } from './checkoutschedulers-table/checkoutschedulers-table.component'
+import { CheckoutSchedulerDetailComponent } from './checkoutscheduler-detail/checkoutscheduler-detail.component'
+import { CheckoutSchedulerPresentationComponent } from './checkoutscheduler-presentation/checkoutscheduler-presentation.component'
+
 import { CirclesTableComponent } from './circles-table/circles-table.component'
 import { CircleDetailComponent } from './circle-detail/circle-detail.component'
 import { CirclePresentationComponent } from './circle-presentation/circle-presentation.component'
@@ -36,6 +40,13 @@ import { VisualTrackPresentationComponent } from './visualtrack-presentation/vis
 
 
 const routes: Routes = [ // insertion point for routes declarations
+	{ path: 'github_com_fullstack_lang_gongleaflet_go-checkoutschedulers', component: CheckoutSchedulersTableComponent, outlet: 'github_com_fullstack_lang_gongleaflet_go_table' },
+	{ path: 'github_com_fullstack_lang_gongleaflet_go-checkoutscheduler-adder', component: CheckoutSchedulerDetailComponent, outlet: 'github_com_fullstack_lang_gongleaflet_go_editor' },
+	{ path: 'github_com_fullstack_lang_gongleaflet_go-checkoutscheduler-adder/:id/:originStruct/:originStructFieldName', component: CheckoutSchedulerDetailComponent, outlet: 'github_com_fullstack_lang_gongleaflet_go_editor' },
+	{ path: 'github_com_fullstack_lang_gongleaflet_go-checkoutscheduler-detail/:id', component: CheckoutSchedulerDetailComponent, outlet: 'github_com_fullstack_lang_gongleaflet_go_editor' },
+	{ path: 'github_com_fullstack_lang_gongleaflet_go-checkoutscheduler-presentation/:id', component: CheckoutSchedulerPresentationComponent, outlet: 'github_com_fullstack_lang_gongleaflet_go_presentation' },
+	{ path: 'github_com_fullstack_lang_gongleaflet_go-checkoutscheduler-presentation-special/:id', component: CheckoutSchedulerPresentationComponent, outlet: 'github_com_fullstack_lang_gongleaflet_gocheckoutschedulerpres' },
+
 	{ path: 'github_com_fullstack_lang_gongleaflet_go-circles', component: CirclesTableComponent, outlet: 'github_com_fullstack_lang_gongleaflet_go_table' },
 	{ path: 'github_com_fullstack_lang_gongleaflet_go-circle-adder', component: CircleDetailComponent, outlet: 'github_com_fullstack_lang_gongleaflet_go_editor' },
 	{ path: 'github_com_fullstack_lang_gongleaflet_go-circle-adder/:id/:originStruct/:originStructFieldName', component: CircleDetailComponent, outlet: 'github_com_fullstack_lang_gongleaflet_go_editor' },

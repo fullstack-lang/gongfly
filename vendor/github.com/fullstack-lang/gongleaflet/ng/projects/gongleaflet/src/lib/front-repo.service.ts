@@ -4,6 +4,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
 
 // insertion point sub template for services imports 
+import { CheckoutSchedulerDB } from './checkoutscheduler-db'
+import { CheckoutSchedulerService } from './checkoutscheduler.service'
+
 import { CircleDB } from './circle-db'
 import { CircleService } from './circle.service'
 
@@ -31,6 +34,9 @@ import { VisualTrackService } from './visualtrack.service'
 
 // FrontRepo stores all instances in a front repository (design pattern repository)
 export class FrontRepo { // insertion point sub template 
+  CheckoutSchedulers_array = new Array<CheckoutSchedulerDB>(); // array of repo instances
+  CheckoutSchedulers = new Map<number, CheckoutSchedulerDB>(); // map of repo instances
+  CheckoutSchedulers_batch = new Map<number, CheckoutSchedulerDB>(); // same but only in last GET (for finding repo instances to delete)
   Circles_array = new Array<CircleDB>(); // array of repo instances
   Circles = new Map<number, CircleDB>(); // map of repo instances
   Circles_batch = new Map<number, CircleDB>(); // same but only in last GET (for finding repo instances to delete)
@@ -113,6 +119,7 @@ export class FrontRepoService {
 
   constructor(
     private http: HttpClient, // insertion point sub template 
+    private checkoutschedulerService: CheckoutSchedulerService,
     private circleService: CircleService,
     private diviconService: DivIconService,
     private layergroupService: LayerGroupService,
@@ -151,6 +158,7 @@ export class FrontRepoService {
 
   // typing of observable can be messy in typescript. Therefore, one force the type
   observableFrontRepo: [ // insertion point sub template 
+    Observable<CheckoutSchedulerDB[]>,
     Observable<CircleDB[]>,
     Observable<DivIconDB[]>,
     Observable<LayerGroupDB[]>,
@@ -160,6 +168,7 @@ export class FrontRepoService {
     Observable<VLineDB[]>,
     Observable<VisualTrackDB[]>,
   ] = [ // insertion point sub template 
+      this.checkoutschedulerService.getCheckoutSchedulers(),
       this.circleService.getCircles(),
       this.diviconService.getDivIcons(),
       this.layergroupService.getLayerGroups(),
@@ -183,6 +192,7 @@ export class FrontRepoService {
           this.observableFrontRepo
         ).subscribe(
           ([ // insertion point sub template for declarations 
+            checkoutschedulers_,
             circles_,
             divicons_,
             layergroups_,
@@ -194,6 +204,8 @@ export class FrontRepoService {
           ]) => {
             // Typing can be messy with many items. Therefore, type casting is necessary here
             // insertion point sub template for type casting 
+            var checkoutschedulers: CheckoutSchedulerDB[]
+            checkoutschedulers = checkoutschedulers_ as CheckoutSchedulerDB[]
             var circles: CircleDB[]
             circles = circles_ as CircleDB[]
             var divicons: DivIconDB[]
@@ -214,6 +226,39 @@ export class FrontRepoService {
             // 
             // First Step: init map of instances
             // insertion point sub template for init 
+            // init the array
+            FrontRepoSingloton.CheckoutSchedulers_array = checkoutschedulers
+
+            // clear the map that counts CheckoutScheduler in the GET
+            FrontRepoSingloton.CheckoutSchedulers_batch.clear()
+
+            checkoutschedulers.forEach(
+              checkoutscheduler => {
+                FrontRepoSingloton.CheckoutSchedulers.set(checkoutscheduler.ID, checkoutscheduler)
+                FrontRepoSingloton.CheckoutSchedulers_batch.set(checkoutscheduler.ID, checkoutscheduler)
+              }
+            )
+
+            // clear checkoutschedulers that are absent from the batch
+            FrontRepoSingloton.CheckoutSchedulers.forEach(
+              checkoutscheduler => {
+                if (FrontRepoSingloton.CheckoutSchedulers_batch.get(checkoutscheduler.ID) == undefined) {
+                  FrontRepoSingloton.CheckoutSchedulers.delete(checkoutscheduler.ID)
+                }
+              }
+            )
+
+            // sort CheckoutSchedulers_array array
+            FrontRepoSingloton.CheckoutSchedulers_array.sort((t1, t2) => {
+              if (t1.Name > t2.Name) {
+                return 1;
+              }
+              if (t1.Name < t2.Name) {
+                return -1;
+              }
+              return 0;
+            });
+
             // init the array
             FrontRepoSingloton.Circles_array = circles
 
@@ -482,6 +527,13 @@ export class FrontRepoService {
             // 
             // Second Step: redeem pointers between instances (thanks to maps in the First Step)
             // insertion point sub template for redeem 
+            checkoutschedulers.forEach(
+              checkoutscheduler => {
+                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
+
+                // insertion point for redeeming ONE-MANY associations
+              }
+            )
             circles.forEach(
               circle => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
@@ -610,6 +662,57 @@ export class FrontRepoService {
   }
 
   // insertion point for pull per struct 
+
+  // CheckoutSchedulerPull performs a GET on CheckoutScheduler of the stack and redeem association pointers 
+  CheckoutSchedulerPull(): Observable<FrontRepo> {
+    return new Observable<FrontRepo>(
+      (observer) => {
+        combineLatest([
+          this.checkoutschedulerService.getCheckoutSchedulers()
+        ]).subscribe(
+          ([ // insertion point sub template 
+            checkoutschedulers,
+          ]) => {
+            // init the array
+            FrontRepoSingloton.CheckoutSchedulers_array = checkoutschedulers
+
+            // clear the map that counts CheckoutScheduler in the GET
+            FrontRepoSingloton.CheckoutSchedulers_batch.clear()
+
+            // 
+            // First Step: init map of instances
+            // insertion point sub template 
+            checkoutschedulers.forEach(
+              checkoutscheduler => {
+                FrontRepoSingloton.CheckoutSchedulers.set(checkoutscheduler.ID, checkoutscheduler)
+                FrontRepoSingloton.CheckoutSchedulers_batch.set(checkoutscheduler.ID, checkoutscheduler)
+
+                // insertion point for redeeming ONE/ZERO-ONE associations
+
+                // insertion point for redeeming ONE-MANY associations
+              }
+            )
+
+            // clear checkoutschedulers that are absent from the GET
+            FrontRepoSingloton.CheckoutSchedulers.forEach(
+              checkoutscheduler => {
+                if (FrontRepoSingloton.CheckoutSchedulers_batch.get(checkoutscheduler.ID) == undefined) {
+                  FrontRepoSingloton.CheckoutSchedulers.delete(checkoutscheduler.ID)
+                }
+              }
+            )
+
+            // 
+            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
+            // insertion point sub template 
+
+            // hand over control flow to observer
+            observer.next(FrontRepoSingloton)
+          }
+        )
+      }
+    )
+  }
 
   // CirclePull performs a GET on Circle of the stack and redeem association pointers 
   CirclePull(): Observable<FrontRepo> {
@@ -1083,27 +1186,30 @@ export class FrontRepoService {
 }
 
 // insertion point for get unique ID per struct 
-export function getCircleUniqueID(id: number): number {
+export function getCheckoutSchedulerUniqueID(id: number): number {
   return 31 * id
 }
-export function getDivIconUniqueID(id: number): number {
+export function getCircleUniqueID(id: number): number {
   return 37 * id
 }
-export function getLayerGroupUniqueID(id: number): number {
+export function getDivIconUniqueID(id: number): number {
   return 41 * id
 }
-export function getLayerGroupUseUniqueID(id: number): number {
+export function getLayerGroupUniqueID(id: number): number {
   return 43 * id
 }
-export function getMapOptionsUniqueID(id: number): number {
+export function getLayerGroupUseUniqueID(id: number): number {
   return 47 * id
 }
-export function getMarkerUniqueID(id: number): number {
+export function getMapOptionsUniqueID(id: number): number {
   return 53 * id
 }
-export function getVLineUniqueID(id: number): number {
+export function getMarkerUniqueID(id: number): number {
   return 59 * id
 }
-export function getVisualTrackUniqueID(id: number): number {
+export function getVLineUniqueID(id: number): number {
   return 61 * id
+}
+export function getVisualTrackUniqueID(id: number): number {
+  return 67 * id
 }

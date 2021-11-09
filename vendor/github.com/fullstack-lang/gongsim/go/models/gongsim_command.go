@@ -150,7 +150,7 @@ func (gongsimCommand *GongsimCommand) checkoutScheduler() {
 	// The period shall not too short for performance sake but not too long because the end user needs a responsive application
 	//
 	// checkoutSchedulerPeriod is the period of the "checkout scheduler"
-	var CheckoutSchedulerPeriod = time.NewTicker(500 * time.Millisecond)
+	var CheckoutSchedulerPeriod = time.NewTicker(100 * time.Millisecond)
 	for {
 		select {
 		case t := <-CheckoutSchedulerPeriod.C:

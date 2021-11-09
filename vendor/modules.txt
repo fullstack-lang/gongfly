@@ -46,13 +46,13 @@ github.com/fullstack-lang/gongdoc/go/orm
 github.com/fullstack-lang/gongdoc/go/static
 github.com/fullstack-lang/gongdoc/go/walk
 github.com/fullstack-lang/gongdoc/ng
-# github.com/fullstack-lang/gongleaflet v0.0.0-20211109040634-9643302ab4e3
+# github.com/fullstack-lang/gongleaflet v0.0.0-20211109075100-545a188a8d59
 ## explicit
 github.com/fullstack-lang/gongleaflet/go/controllers
 github.com/fullstack-lang/gongleaflet/go/models
 github.com/fullstack-lang/gongleaflet/go/orm
 github.com/fullstack-lang/gongleaflet/ng
-# github.com/fullstack-lang/gongsim v0.0.0-20211102174007-07c585e56501
+# github.com/fullstack-lang/gongsim v0.0.0-20211109073011-a66e054fa408
 ## explicit
 github.com/fullstack-lang/gongsim/go/controllers
 github.com/fullstack-lang/gongsim/go/models

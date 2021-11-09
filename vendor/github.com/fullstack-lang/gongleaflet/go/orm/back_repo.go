@@ -19,6 +19,8 @@ import (
 // BackRepoStruct supports callback functions
 type BackRepoStruct struct {
 	// insertion point for per struct back repo declarations
+	BackRepoCheckoutScheduler BackRepoCheckoutSchedulerStruct
+
 	BackRepoCircle BackRepoCircleStruct
 
 	BackRepoDivIcon BackRepoDivIconStruct
@@ -64,6 +66,7 @@ func (backRepo *BackRepoStruct) IncrementPushFromFrontNb() uint {
 // Init the BackRepoStruct inner variables and link to the database
 func (backRepo *BackRepoStruct) init(db *gorm.DB) {
 	// insertion point for per struct back repo declarations
+	backRepo.BackRepoCheckoutScheduler.Init(db)
 	backRepo.BackRepoCircle.Init(db)
 	backRepo.BackRepoDivIcon.Init(db)
 	backRepo.BackRepoLayerGroup.Init(db)
@@ -79,6 +82,7 @@ func (backRepo *BackRepoStruct) init(db *gorm.DB) {
 // Commit the BackRepoStruct inner variables and link to the database
 func (backRepo *BackRepoStruct) Commit(stage *models.StageStruct) {
 	// insertion point for per struct back repo phase one commit
+	backRepo.BackRepoCheckoutScheduler.CommitPhaseOne(stage)
 	backRepo.BackRepoCircle.CommitPhaseOne(stage)
 	backRepo.BackRepoDivIcon.CommitPhaseOne(stage)
 	backRepo.BackRepoLayerGroup.CommitPhaseOne(stage)
@@ -89,6 +93,7 @@ func (backRepo *BackRepoStruct) Commit(stage *models.StageStruct) {
 	backRepo.BackRepoVisualTrack.CommitPhaseOne(stage)
 
 	// insertion point for per struct back repo phase two commit
+	backRepo.BackRepoCheckoutScheduler.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoCircle.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoDivIcon.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoLayerGroup.CommitPhaseTwo(backRepo)
@@ -104,6 +109,7 @@ func (backRepo *BackRepoStruct) Commit(stage *models.StageStruct) {
 // Checkout the database into the stage
 func (backRepo *BackRepoStruct) Checkout(stage *models.StageStruct) {
 	// insertion point for per struct back repo phase one commit
+	backRepo.BackRepoCheckoutScheduler.CheckoutPhaseOne()
 	backRepo.BackRepoCircle.CheckoutPhaseOne()
 	backRepo.BackRepoDivIcon.CheckoutPhaseOne()
 	backRepo.BackRepoLayerGroup.CheckoutPhaseOne()
@@ -114,6 +120,7 @@ func (backRepo *BackRepoStruct) Checkout(stage *models.StageStruct) {
 	backRepo.BackRepoVisualTrack.CheckoutPhaseOne()
 
 	// insertion point for per struct back repo phase two commit
+	backRepo.BackRepoCheckoutScheduler.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoCircle.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoDivIcon.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoLayerGroup.CheckoutPhaseTwo(backRepo)
@@ -139,6 +146,7 @@ func (backRepo *BackRepoStruct) Backup(stage *models.StageStruct, dirPath string
 	os.MkdirAll(dirPath, os.ModePerm)
 
 	// insertion point for per struct backup
+	backRepo.BackRepoCheckoutScheduler.Backup(dirPath)
 	backRepo.BackRepoCircle.Backup(dirPath)
 	backRepo.BackRepoDivIcon.Backup(dirPath)
 	backRepo.BackRepoLayerGroup.Backup(dirPath)
@@ -157,6 +165,7 @@ func (backRepo *BackRepoStruct) BackupXL(stage *models.StageStruct, dirPath stri
 	file := xlsx.NewFile()
 
 	// insertion point for per struct backup
+	backRepo.BackRepoCheckoutScheduler.BackupXL(file)
 	backRepo.BackRepoCircle.BackupXL(file)
 	backRepo.BackRepoDivIcon.BackupXL(file)
 	backRepo.BackRepoLayerGroup.BackupXL(file)
@@ -189,6 +198,7 @@ func (backRepo *BackRepoStruct) Restore(stage *models.StageStruct, dirPath strin
 	//
 
 	// insertion point for per struct backup
+	backRepo.BackRepoCheckoutScheduler.RestorePhaseOne(dirPath)
 	backRepo.BackRepoCircle.RestorePhaseOne(dirPath)
 	backRepo.BackRepoDivIcon.RestorePhaseOne(dirPath)
 	backRepo.BackRepoLayerGroup.RestorePhaseOne(dirPath)
@@ -203,6 +213,7 @@ func (backRepo *BackRepoStruct) Restore(stage *models.StageStruct, dirPath strin
 	//
 
 	// insertion point for per struct backup
+	backRepo.BackRepoCheckoutScheduler.RestorePhaseTwo()
 	backRepo.BackRepoCircle.RestorePhaseTwo()
 	backRepo.BackRepoDivIcon.RestorePhaseTwo()
 	backRepo.BackRepoLayerGroup.RestorePhaseTwo()
@@ -237,6 +248,7 @@ func (backRepo *BackRepoStruct) RestoreXL(stage *models.StageStruct, dirPath str
 	//
 
 	// insertion point for per struct backup
+	backRepo.BackRepoCheckoutScheduler.RestoreXLPhaseOne(file)
 	backRepo.BackRepoCircle.RestoreXLPhaseOne(file)
 	backRepo.BackRepoDivIcon.RestoreXLPhaseOne(file)
 	backRepo.BackRepoLayerGroup.RestoreXLPhaseOne(file)

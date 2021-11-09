@@ -12,6 +12,9 @@ var __member __void
 // StageStruct enables storage of staged instances
 // swagger:ignore
 type StageStruct struct { // insertion point for definition of arrays registering instances
+	CheckoutSchedulers           map[*CheckoutScheduler]struct{}
+	CheckoutSchedulers_mapString map[string]*CheckoutScheduler
+
 	Circles           map[*Circle]struct{}
 	Circles_mapString map[string]*Circle
 
@@ -58,6 +61,8 @@ type BackRepoInterface interface {
 	BackupXL(stage *StageStruct, dirPath string)
 	RestoreXL(stage *StageStruct, dirPath string)
 	// insertion point for Commit and Checkout signatures
+	CommitCheckoutScheduler(checkoutscheduler *CheckoutScheduler)
+	CheckoutCheckoutScheduler(checkoutscheduler *CheckoutScheduler)
 	CommitCircle(circle *Circle)
 	CheckoutCircle(circle *Circle)
 	CommitDivIcon(divicon *DivIcon)
@@ -80,6 +85,9 @@ type BackRepoInterface interface {
 
 // swagger:ignore instructs the gong compiler (gongc) to avoid this particular struct
 var Stage StageStruct = StageStruct{ // insertion point for array initiatialisation
+	CheckoutSchedulers:           make(map[*CheckoutScheduler]struct{}),
+	CheckoutSchedulers_mapString: make(map[string]*CheckoutScheduler),
+
 	Circles:           make(map[*Circle]struct{}),
 	Circles_mapString: make(map[string]*Circle),
 
@@ -148,6 +156,108 @@ func (stage *StageStruct) RestoreXL(dirPath string) {
 }
 
 // insertion point for cumulative sub template with model space calls
+func (stage *StageStruct) getCheckoutSchedulerOrderedStructWithNameField() []*CheckoutScheduler {
+	// have alphabetical order generation
+	checkoutschedulerOrdered := []*CheckoutScheduler{}
+	for checkoutscheduler := range stage.CheckoutSchedulers {
+		checkoutschedulerOrdered = append(checkoutschedulerOrdered, checkoutscheduler)
+	}
+	sort.Slice(checkoutschedulerOrdered[:], func(i, j int) bool {
+		return checkoutschedulerOrdered[i].Name < checkoutschedulerOrdered[j].Name
+	})
+	return checkoutschedulerOrdered
+}
+
+// Stage puts checkoutscheduler to the model stage
+func (checkoutscheduler *CheckoutScheduler) Stage() *CheckoutScheduler {
+	Stage.CheckoutSchedulers[checkoutscheduler] = __member
+	Stage.CheckoutSchedulers_mapString[checkoutscheduler.Name] = checkoutscheduler
+
+	return checkoutscheduler
+}
+
+// Unstage removes checkoutscheduler off the model stage
+func (checkoutscheduler *CheckoutScheduler) Unstage() *CheckoutScheduler {
+	delete(Stage.CheckoutSchedulers, checkoutscheduler)
+	delete(Stage.CheckoutSchedulers_mapString, checkoutscheduler.Name)
+	return checkoutscheduler
+}
+
+// commit checkoutscheduler to the back repo (if it is already staged)
+func (checkoutscheduler *CheckoutScheduler) Commit() *CheckoutScheduler {
+	if _, ok := Stage.CheckoutSchedulers[checkoutscheduler]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CommitCheckoutScheduler(checkoutscheduler)
+		}
+	}
+	return checkoutscheduler
+}
+
+// Checkout checkoutscheduler to the back repo (if it is already staged)
+func (checkoutscheduler *CheckoutScheduler) Checkout() *CheckoutScheduler {
+	if _, ok := Stage.CheckoutSchedulers[checkoutscheduler]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CheckoutCheckoutScheduler(checkoutscheduler)
+		}
+	}
+	return checkoutscheduler
+}
+
+//
+// Legacy, to be deleted
+//
+
+// StageCopy appends a copy of checkoutscheduler to the model stage
+func (checkoutscheduler *CheckoutScheduler) StageCopy() *CheckoutScheduler {
+	_checkoutscheduler := new(CheckoutScheduler)
+	*_checkoutscheduler = *checkoutscheduler
+	_checkoutscheduler.Stage()
+	return _checkoutscheduler
+}
+
+// StageAndCommit appends checkoutscheduler to the model stage and commit to the orm repo
+func (checkoutscheduler *CheckoutScheduler) StageAndCommit() *CheckoutScheduler {
+	checkoutscheduler.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMCheckoutScheduler(checkoutscheduler)
+	}
+	return checkoutscheduler
+}
+
+// DeleteStageAndCommit appends checkoutscheduler to the model stage and commit to the orm repo
+func (checkoutscheduler *CheckoutScheduler) DeleteStageAndCommit() *CheckoutScheduler {
+	checkoutscheduler.Unstage()
+	DeleteORMCheckoutScheduler(checkoutscheduler)
+	return checkoutscheduler
+}
+
+// StageCopyAndCommit appends a copy of checkoutscheduler to the model stage and commit to the orm repo
+func (checkoutscheduler *CheckoutScheduler) StageCopyAndCommit() *CheckoutScheduler {
+	_checkoutscheduler := new(CheckoutScheduler)
+	*_checkoutscheduler = *checkoutscheduler
+	_checkoutscheduler.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMCheckoutScheduler(checkoutscheduler)
+	}
+	return _checkoutscheduler
+}
+
+// CreateORMCheckoutScheduler enables dynamic staging of a CheckoutScheduler instance
+func CreateORMCheckoutScheduler(checkoutscheduler *CheckoutScheduler) {
+	checkoutscheduler.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMCheckoutScheduler(checkoutscheduler)
+	}
+}
+
+// DeleteORMCheckoutScheduler enables dynamic staging of a CheckoutScheduler instance
+func DeleteORMCheckoutScheduler(checkoutscheduler *CheckoutScheduler) {
+	checkoutscheduler.Unstage()
+	if Stage.AllModelsStructDeleteCallback != nil {
+		Stage.AllModelsStructDeleteCallback.DeleteORMCheckoutScheduler(checkoutscheduler)
+	}
+}
+
 func (stage *StageStruct) getCircleOrderedStructWithNameField() []*Circle {
 	// have alphabetical order generation
 	circleOrdered := []*Circle{}
@@ -966,6 +1076,7 @@ func DeleteORMVisualTrack(visualtrack *VisualTrack) {
 
 // swagger:ignore
 type AllModelsStructCreateInterface interface { // insertion point for Callbacks on creation
+	CreateORMCheckoutScheduler(CheckoutScheduler *CheckoutScheduler)
 	CreateORMCircle(Circle *Circle)
 	CreateORMDivIcon(DivIcon *DivIcon)
 	CreateORMLayerGroup(LayerGroup *LayerGroup)
@@ -977,6 +1088,7 @@ type AllModelsStructCreateInterface interface { // insertion point for Callbacks
 }
 
 type AllModelsStructDeleteInterface interface { // insertion point for Callbacks on deletion
+	DeleteORMCheckoutScheduler(CheckoutScheduler *CheckoutScheduler)
 	DeleteORMCircle(Circle *Circle)
 	DeleteORMDivIcon(DivIcon *DivIcon)
 	DeleteORMLayerGroup(LayerGroup *LayerGroup)
@@ -988,6 +1100,9 @@ type AllModelsStructDeleteInterface interface { // insertion point for Callbacks
 }
 
 func (stage *StageStruct) Reset() { // insertion point for array reset
+	stage.CheckoutSchedulers = make(map[*CheckoutScheduler]struct{})
+	stage.CheckoutSchedulers_mapString = make(map[string]*CheckoutScheduler)
+
 	stage.Circles = make(map[*Circle]struct{})
 	stage.Circles_mapString = make(map[string]*Circle)
 
@@ -1015,6 +1130,9 @@ func (stage *StageStruct) Reset() { // insertion point for array reset
 }
 
 func (stage *StageStruct) Nil() { // insertion point for array nil
+	stage.CheckoutSchedulers = nil
+	stage.CheckoutSchedulers_mapString = nil
+
 	stage.Circles = nil
 	stage.Circles_mapString = nil
 

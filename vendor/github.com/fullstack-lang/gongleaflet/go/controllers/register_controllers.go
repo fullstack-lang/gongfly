@@ -43,6 +43,13 @@ type ValidationError struct {
 func RegisterControllers(r *gin.Engine) {
 	v1 := r.Group("/api/github.com/fullstack-lang/gongleaflet/go")
 	{ // insertion point for registrations
+		v1.GET("/v1/checkoutschedulers", GetCheckoutSchedulers)
+		v1.GET("/v1/checkoutschedulers/:id", GetCheckoutScheduler)
+		v1.POST("/v1/checkoutschedulers", PostCheckoutScheduler)
+		v1.PATCH("/v1/checkoutschedulers/:id", UpdateCheckoutScheduler)
+		v1.PUT("/v1/checkoutschedulers/:id", UpdateCheckoutScheduler)
+		v1.DELETE("/v1/checkoutschedulers/:id", DeleteCheckoutScheduler)
+
 		v1.GET("/v1/circles", GetCircles)
 		v1.GET("/v1/circles/:id", GetCircle)
 		v1.POST("/v1/circles", PostCircle)

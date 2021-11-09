@@ -38,6 +38,11 @@ import { SplitterComponent } from './splitter/splitter.component'
 import { SidebarComponent } from './sidebar/sidebar.component';
 
 // insertion point for imports 
+import { CheckoutSchedulersTableComponent } from './checkoutschedulers-table/checkoutschedulers-table.component'
+import { CheckoutSchedulerSortingComponent } from './checkoutscheduler-sorting/checkoutscheduler-sorting.component'
+import { CheckoutSchedulerDetailComponent } from './checkoutscheduler-detail/checkoutscheduler-detail.component'
+import { CheckoutSchedulerPresentationComponent } from './checkoutscheduler-presentation/checkoutscheduler-presentation.component'
+
 import { CirclesTableComponent } from './circles-table/circles-table.component'
 import { CircleSortingComponent } from './circle-sorting/circle-sorting.component'
 import { CircleDetailComponent } from './circle-detail/circle-detail.component'
@@ -82,6 +87,11 @@ import { VisualTrackPresentationComponent } from './visualtrack-presentation/vis
 @NgModule({
 	declarations: [
 		// insertion point for declarations 
+		CheckoutSchedulersTableComponent,
+		CheckoutSchedulerSortingComponent,
+		CheckoutSchedulerDetailComponent,
+		CheckoutSchedulerPresentationComponent,
+
 		CirclesTableComponent,
 		CircleSortingComponent,
 		CircleDetailComponent,
@@ -161,6 +171,11 @@ import { VisualTrackPresentationComponent } from './visualtrack-presentation/vis
 	],
 	exports: [
 		// insertion point for declarations 
+		CheckoutSchedulersTableComponent,
+		CheckoutSchedulerSortingComponent,
+		CheckoutSchedulerDetailComponent,
+		CheckoutSchedulerPresentationComponent,
+
 		CirclesTableComponent,
 		CircleSortingComponent,
 		CircleDetailComponent,

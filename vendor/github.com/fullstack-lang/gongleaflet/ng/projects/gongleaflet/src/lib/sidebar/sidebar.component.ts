@@ -8,6 +8,8 @@ import { FrontRepoService, FrontRepo } from '../front-repo.service'
 import { CommitNbService } from '../commitnb.service'
 
 // insertion point for per struct import code
+import { CheckoutSchedulerService } from '../checkoutscheduler.service'
+import { getCheckoutSchedulerUniqueID } from '../front-repo.service'
 import { CircleService } from '../circle.service'
 import { getCircleUniqueID } from '../front-repo.service'
 import { DivIconService } from '../divicon.service'
@@ -159,6 +161,7 @@ export class SidebarComponent implements OnInit {
     private commitNbService: CommitNbService,
 
     // insertion point for per struct service declaration
+    private checkoutschedulerService: CheckoutSchedulerService,
     private circleService: CircleService,
     private diviconService: DivIconService,
     private layergroupService: LayerGroupService,
@@ -173,6 +176,14 @@ export class SidebarComponent implements OnInit {
     this.refresh()
 
     // insertion point for per struct observable for refresh trigger
+    // observable for changes in structs
+    this.checkoutschedulerService.CheckoutSchedulerServiceChanged.subscribe(
+      message => {
+        if (message == "post" || message == "update" || message == "delete") {
+          this.refresh()
+        }
+      }
+    )
     // observable for changes in structs
     this.circleService.CircleServiceChanged.subscribe(
       message => {
@@ -261,6 +272,50 @@ export class SidebarComponent implements OnInit {
       this.gongNodeTree = new Array<GongNode>();
       
       // insertion point for per struct tree construction
+      /**
+      * fill up the CheckoutScheduler part of the mat tree
+      */
+      let checkoutschedulerGongNodeStruct: GongNode = {
+        name: "CheckoutScheduler",
+        type: GongNodeType.STRUCT,
+        id: 0,
+        uniqueIdPerStack: 13 * nonInstanceNodeId,
+        structName: "CheckoutScheduler",
+        associationField: "",
+        associatedStructName: "",
+        children: new Array<GongNode>()
+      }
+      nonInstanceNodeId = nonInstanceNodeId + 1
+      this.gongNodeTree.push(checkoutschedulerGongNodeStruct)
+
+      this.frontRepo.CheckoutSchedulers_array.sort((t1, t2) => {
+        if (t1.Name > t2.Name) {
+          return 1;
+        }
+        if (t1.Name < t2.Name) {
+          return -1;
+        }
+        return 0;
+      });
+
+      this.frontRepo.CheckoutSchedulers_array.forEach(
+        checkoutschedulerDB => {
+          let checkoutschedulerGongNodeInstance: GongNode = {
+            name: checkoutschedulerDB.Name,
+            type: GongNodeType.INSTANCE,
+            id: checkoutschedulerDB.ID,
+            uniqueIdPerStack: getCheckoutSchedulerUniqueID(checkoutschedulerDB.ID),
+            structName: "CheckoutScheduler",
+            associationField: "",
+            associatedStructName: "",
+            children: new Array<GongNode>()
+          }
+          checkoutschedulerGongNodeStruct.children!.push(checkoutschedulerGongNodeInstance)
+
+          // insertion point for per field code
+        }
+      )
+
       /**
       * fill up the Circle part of the mat tree
       */
