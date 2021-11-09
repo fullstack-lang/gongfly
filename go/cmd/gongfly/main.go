@@ -17,7 +17,6 @@ import (
 	// for the scenario reference
 	gongfly_ng_dist "github.com/fullstack-lang/gongfly"
 	"github.com/fullstack-lang/gongfly/go/reference"
-	gongfly_reference "github.com/fullstack-lang/gongfly/go/reference"
 	gonglfy_engine "github.com/fullstack-lang/gongfly/go/simulation"
 	gongfly_visuals "github.com/fullstack-lang/gongfly/go/visuals"
 
@@ -111,29 +110,6 @@ func main() {
 
 	// attach visual elements
 	gongfly_visuals.AttachVisualElementsToModelElements(defaultLayer)
-
-	// create the target map
-	mapOptions := new(gongleaflet_models.MapOptions).Stage()
-	mapOptions.Name = "Whole France"
-	mapOptions.Lat = gongfly_reference.Scenario1.Lat
-	mapOptions.Lng = gongfly_reference.Scenario1.Lng
-	mapOptions.ZoomLevel = gongfly_reference.Scenario1.ZoomLevel
-
-	mapOptions.UrlTemplate = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-	mapOptions.Attribution = "osm"
-	mapOptions.MaxZoom = 18
-
-	defaultLayerGroupUse := new(gongleaflet_models.LayerGroupUse).Stage()
-	defaultLayerGroupUse.Name = "default"
-	defaultLayerGroupUse.LayerGroup = defaultLayer
-	defaultLayerGroupUse.Display = true
-	mapOptions.LayerGroupUses = append(mapOptions.LayerGroupUses, defaultLayerGroupUse)
-
-	_true := true
-	_false := false
-	mapOptions.ZoomControl = _false
-	mapOptions.AttributionControl = _true
-	mapOptions.ZoomSnap = 1
 
 	// load package to analyse
 	modelPkg := &gong_models.ModelPkg{}

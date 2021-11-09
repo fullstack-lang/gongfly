@@ -1,4 +1,4 @@
-package Gongfly
+package gongfly
 
 import "embed"
 
