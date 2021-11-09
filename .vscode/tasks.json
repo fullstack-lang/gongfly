@@ -5,7 +5,7 @@
       "label": "02 - run gongfly",
       "type": "shell",
       "options": {
-        "cwd": "${workspaceFolder}"
+        "cwd": "${workspaceFolder}/go/cmd/gongfly"
       },
       "command": "go",
       "args": [
@@ -21,12 +21,13 @@
       "label": "02 - run gongfly w/o diagrams",
       "type": "shell",
       "options": {
-        "cwd": "${workspaceFolder}"
+        "cwd": "${workspaceFolder}/go/cmd/gongfly"
       },
       "command": "go",
       "args": [
         "run",
-        "main.go"
+        "main.go",
+        "-diagrams=false"
       ],
       "group": "build"
     },
@@ -85,10 +86,10 @@
       ]
     },
     {
-      "label": "00 - go get -u ./...",
+      "label": "00 - go mod vendor",
       "type": "shell",
       "group": "build",
-      "command": "go mod tidy; go get -u ./..."
+      "command": "go mod vendor"
     },
     {
       "label": "00 - update gong dependencies",
@@ -105,7 +106,7 @@
       "group": "build"
     },
     {
-      "label": "00 - update gong dependency",
+      "label": "00 - go get -d github.com/fullstack-lang/gong@HEADy",
       "type": "shell",
       "command": "go",
       "args": [
@@ -116,7 +117,7 @@
       "group": "build"
     },
     {
-      "label": "00 - update gongdoc dependency",
+      "label": "00 - go get -d github.com/fullstack-lang/gongdoc@HEAD",
       "type": "shell",
       "command": "go",
       "args": [
@@ -127,7 +128,7 @@
       "group": "build"
     },
     {
-      "label": "00 - update gongsim dependency",
+      "label": "00 - go get -d github.com/fullstack-lang/gongsim@HEAD",
       "type": "shell",
       "command": "go",
       "args": [
@@ -138,13 +139,24 @@
       "group": "build"
     },
     {
-      "label": "00 - update gongleaflet dependency",
+      "label": "00 - go get -d github.com/fullstack-lang/gongleaflet@HEAD",
       "type": "shell",
       "command": "go",
       "args": [
         "get",
         "-d",
         "github.com/fullstack-lang/gongleaflet@HEAD",
+      ],
+      "group": "build"
+    },
+    {
+      "label": "00 - go get -d github.com/fullstack-lang/gongleaflet@thomaspeugeot/issue5",
+      "type": "shell",
+      "command": "go",
+      "args": [
+        "get",
+        "-d",
+        "github.com/fullstack-lang/gongleaflet@thomaspeugeot/issue5",
       ],
       "group": "build"
     },
@@ -161,6 +173,9 @@
     {
       "label": "00 - go build",
       "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/go/cmd/gongfly"
+      },
       "command": "go",
       "args": [
         "build"

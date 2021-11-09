@@ -1,6 +1,8 @@
-gongfly
+./gongfly
 __debug_bin
 go/.DS_Store
 .DS_Store
 go/controllers/gongflyapi.yml
 gongfly.exe
+main.go
+go/cmd/gongfly/gongfly

@@ -2,7 +2,6 @@ package simulation
 
 import (
 	"log"
-	"time"
 
 	"github.com/fullstack-lang/gongfly/go/icons"
 	"github.com/fullstack-lang/gongfly/go/models"
@@ -36,12 +35,6 @@ func (engineSpecific *Simulation) setInitialStateVectorOfAgentsAndSimulation() {
 	log.Printf("Sim end  \t\t\t%s\n", engine.EndTime)
 
 	engine.Speed = 60
-
-	// liner MDM
-
-	*reference.Sc1_AF_3577_MDM = reference.Sc1_AF_CDG_HYE_ref
-	reference.Sc1_AF_3577_MDM.QueueUpdateEvent(1 * time.Second)
-
 }
 
 // NewSimulation ...
@@ -82,8 +75,6 @@ func (engineSpecific *Simulation) CommitAgents(engine *gongsim_models.Engine) {
 			visualTrack := new(gongleaflet_models.VisualTrack).Stage()
 			visualTrack.Name = message.Content
 			visualTrack.VisualTrackInterface = message
-			display := true
-			visualTrack.Display = display
 			visualTrack.DivIcon = icons.Arrow
 			_false := false
 			visualTrack.DisplayTrackHistory = _false
@@ -124,12 +115,12 @@ func (engineSpecific *Simulation) CommitAgents(engine *gongsim_models.Engine) {
 	}
 
 	// update all visual lines
-	for visualLine := range gongleaflet_models.Stage.VisualLines {
+	for visualLine := range gongleaflet_models.Stage.VLines {
 		visualLine.UpdateLine()
 	}
 
 	// update all visual circles
-	for visualCircle := range gongleaflet_models.Stage.VisualCircles {
+	for visualCircle := range gongleaflet_models.Stage.Circles {
 		visualCircle.UpdateCircle()
 	}
 
@@ -175,7 +166,15 @@ func (simulation *Simulation) GetLastCommitNb() (commitNb uint) {
 		commitNb = models.Stage.BackRepo.GetLastCommitNb()
 	}
 
-	return commitNb
+	return
+}
+
+func (simulation *Simulation) GetLastCommitNbFromFront() (commitNb uint) {
+
+	if models.Stage.BackRepo != nil {
+		commitNb = models.Stage.BackRepo.GetLastPushFromFrontNb()
+	}
+	return
 }
 
 // CheckoutAgents checkout all staged agents to the back repo
