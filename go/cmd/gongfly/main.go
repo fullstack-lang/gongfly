@@ -15,11 +15,11 @@ import (
 	"github.com/gin-gonic/gin"
 
 	// for the scenario reference
+	gongfly_ng_dist "github.com/fullstack-lang/gongfly"
 	"github.com/fullstack-lang/gongfly/go/reference"
 	gongfly_reference "github.com/fullstack-lang/gongfly/go/reference"
 	gonglfy_engine "github.com/fullstack-lang/gongfly/go/simulation"
 	gongfly_visuals "github.com/fullstack-lang/gongfly/go/visuals"
-	gongfly_ng_dist "github.com/fullstack-lang/gongfly/ng/dist"
 
 	// demoatc gong stack
 	gongfly_controllers "github.com/fullstack-lang/gongfly/go/controllers"
@@ -169,7 +169,7 @@ func main() {
 	log.Print("Demoatc simulation is ready, waiting for client interactions (play/pause/...)")
 
 	// provide the static route for the angular pages
-	r.Use(static.Serve("/", EmbedFolder(gongfly_ng_dist.Ng, "ng")))
+	r.Use(static.Serve("/", EmbedFolder(gongfly_ng_dist.NgDistNg, "ng/dist/ng")))
 	r.NoRoute(func(c *gin.Context) {
 		fmt.Println(c.Request.URL.Path, "doesn't exists, redirect on /")
 		c.Redirect(http.StatusMovedPermanently, "/")

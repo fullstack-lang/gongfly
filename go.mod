@@ -20,4 +20,7 @@ require (
 	gorm.io/gorm v1.21.16
 )
 
-require github.com/ajstarks/svgo v0.0.0-20210923152817-c3b6e2f0c527 // indirect
+require (
+	github.com/ajstarks/svgo v0.0.0-20210923152817-c3b6e2f0c527 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
+)
