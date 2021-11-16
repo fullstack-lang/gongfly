@@ -53,7 +53,7 @@ github.com/fullstack-lang/gongleaflet/go/icons
 github.com/fullstack-lang/gongleaflet/go/models
 github.com/fullstack-lang/gongleaflet/go/orm
 github.com/fullstack-lang/gongleaflet/ng
-# github.com/fullstack-lang/gongsim v0.0.0-20211109073011-a66e054fa408
+# github.com/fullstack-lang/gongsim v0.0.0-20211114183041-134b3bb68dd6
 ## explicit
 github.com/fullstack-lang/gongsim/go/controllers
 github.com/fullstack-lang/gongsim/go/models
@@ -133,6 +133,7 @@ github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
 # github.com/mattn/go-isatty v0.0.14
+## explicit
 github.com/mattn/go-isatty
 # github.com/mattn/go-sqlite3 v1.14.8
 github.com/mattn/go-sqlite3

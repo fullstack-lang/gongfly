@@ -101,8 +101,11 @@ func main() {
 	simulation := gonglfy_engine.NewSimulation()
 	gongsim_models.EngineSingloton.Simulation = simulation
 
-	*reference.Sc1_AF_3577_MDM = reference.Sc1_AF_CDG_HYE_ref
+	// add sim event
 	reference.Sc1_AF_3577_MDM.QueueUpdateEvent(1 * time.Second)
+
+	// add sim event
+	reference.PropagationTestCase1.QueueUpdateEvent(1 * time.Second)
 
 	defaultLayer := new(gongleaflet_models.LayerGroup).Stage()
 	defaultLayer.Name = "default"

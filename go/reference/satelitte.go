@@ -6,7 +6,7 @@ import (
 	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
 )
 
-var PropagationTestCase1 = models.Satellite{
+var PropagationTestCase1_ref = models.Satellite{
 	Agent: gongsim_models.Agent{
 		TechName: "PropagationTestCase1",
 	},
@@ -29,4 +29,4 @@ var PropagationTestCase1 = models.Satellite{
 	TargetLocationLat:  TLN_LFTH_ref.Lat,
 	TargetLocationLng:  TLN_LFTH_ref.Lng,
 }
-var PropagationTestCase1_ = PropagationTestCase1.InitFromTLE().StageCopy().Register()
+var PropagationTestCase1 = PropagationTestCase1_ref.InitFromTLE().StageCopy().Register()

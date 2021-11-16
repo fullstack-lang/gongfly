@@ -3,12 +3,9 @@ package models
 import (
 	"fmt"
 	"log"
-	"math"
 	"time"
 
 	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
-
-	geo "github.com/kellydunn/golang-geo"
 
 	gosatellite "github.com/joshuaferrara/go-satellite"
 )
@@ -72,36 +69,42 @@ func (satellite *Satellite) FireNextEvent() {
 		checkStateEvent.SetFireTime(checkStateEvent.GetFireTime().Add(checkStateEvent.Period))
 		satellite.QueueEvent(checkStateEvent)
 
-		//
-		// Update Speed & Heading
-		//
-		// Change heading toward target location
-		satellitePoint := geo.NewPoint(satellite.Lat, satellite.Lng)
-		targetLocation := geo.NewPoint(satellite.TargetLocationLat, satellite.TargetLocationLng)
+		// get the time
+		// func Propagate(sat Satellite, year int, month int, day, hours, minutes, seconds int) (position, velocity Vector3) {
+		julianDay := gosatellite.JDay(checkStateEvent.GetFireTime().Year(),
+			int(checkStateEvent.GetFireTime().Month()),
+			checkStateEvent.GetFireTime().Day(),
+			checkStateEvent.GetFireTime().Hour(),
+			checkStateEvent.GetFireTime().Minute(),
+			checkStateEvent.GetFireTime().Second())
 
-		satellite.TargetHeading = satellitePoint.BearingTo(targetLocation)
-		satellite.TargetHeading = math.Mod(satellite.TargetHeading+360.0, 360.0)
+		thetaG := gosatellite.ThetaG_JD(julianDay)
 
-		maxNumberOfDegreesPerStep := satellite.MaxRotationalSpeed * checkStateEvent.Period.Seconds()
-		desiredRotation := satellite.TargetHeading - satellite.Heading
-		if math.Abs(desiredRotation) > maxNumberOfDegreesPerStep {
-			desiredRotation = desiredRotation * (maxNumberOfDegreesPerStep / math.Abs(desiredRotation))
-		}
-		newHeading := math.Mod(satellite.Heading+desiredRotation+360, 360.0)
+		position, velocity :=
+			gosatellite.Propagate(satellite.gosatellite,
+				checkStateEvent.GetFireTime().Year(),
+				int(checkStateEvent.GetFireTime().Month()),
+				checkStateEvent.GetFireTime().Day(),
+				checkStateEvent.GetFireTime().Hour(),
+				checkStateEvent.GetFireTime().Minute(),
+				checkStateEvent.GetFireTime().Second())
 
-		satellite.Heading = newHeading
-		// log.Printf("Heading %f, New heading %f ", satellite.Heading, newHeading)
+		// compute position in lat lng
+		computedAltitude, b, latLngRad := gosatellite.ECIToLLA(position, thetaG)
+		_ = computedAltitude
+		_ = b
+		_ = position
+		_ = velocity
 
-		// update state vector of the satellite
-		orig := geo.NewPoint(satellite.Lat, satellite.Lng)
-		elapsedTimeInHours := checkStateEvent.Period.Hours()
-		distance := satellite.Speed * elapsedTimeInHours // since speed is in km/h, the distance in km
-		nextPoint := orig.PointAtDistanceAndBearing(
-			distance,
-			satellite.Heading)
+		// convert
+		satellite.Level = computedAltitude * 3280.84
 
-		satellite.Lat = nextPoint.Lat()
-		satellite.Lng = nextPoint.Lng()
+		latLngDeg := gosatellite.LatLongDeg(latLngRad)
+		_ = latLngDeg
+
+		satellite.Lat = latLngDeg.Latitude
+		satellite.Lng = latLngDeg.Longitude
+
 		satellite.timestamp = checkStateEvent.GetFireTime()
 		satellite.Timestampstring = satellite.timestamp.String()
 
