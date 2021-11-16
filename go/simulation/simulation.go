@@ -34,7 +34,7 @@ func (engineSpecific *Simulation) setInitialStateVectorOfAgentsAndSimulation() {
 	engine.SetEndTime(engineSpecific.scenario.GetEnd())
 	log.Printf("Sim end  \t\t\t%s\n", engine.EndTime)
 
-	engine.Speed = 1
+	engine.Speed = 60
 }
 
 // NewSimulation ...

@@ -110,6 +110,10 @@ func main() {
 	reference.PropagationTestCase3.QueueUpdateEvent(1 * time.Second)
 	reference.PropagationTestCase4.QueueUpdateEvent(1 * time.Second)
 	reference.InternationalSpaceStation.QueueUpdateEvent(1 * time.Second)
+	reference.PropagationTestCase5.QueueUpdateEvent(1 * time.Second)
+	reference.PropagationTestCase6.QueueUpdateEvent(1 * time.Second)
+	reference.PropagationTestCase7.QueueUpdateEvent(1 * time.Second)
+	reference.PropagationTestCase8.QueueUpdateEvent(1 * time.Second)
 
 	defaultLayer := new(gongleaflet_models.LayerGroup).Stage()
 	defaultLayer.Name = "default"
