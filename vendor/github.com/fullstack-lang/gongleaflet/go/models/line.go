@@ -101,3 +101,15 @@ func (visualLine *VLine) UpdateLine() {
 
 	}
 }
+
+// attach visual line to line
+func AttachLine(
+	visualLineInterface LineInterface,
+	DashStyleEnum DashStyleEnum) (visualLine *VLine) {
+	visualLine = new(VLine).Stage()
+	visualLine.DashStyleEnum = DashStyleEnum
+	visualLine.LineInterface = visualLineInterface
+	visualLine.UpdateLine()
+
+	return
+}

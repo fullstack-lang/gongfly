@@ -49,6 +49,7 @@ func AutoMigrate(db *gorm.DB) {
 		&OrderDB{},
 		&RadarDB{},
 		&ReportDB{},
+		&SatelliteDB{},
 		&ScenarioDB{},
 	)
 
@@ -69,5 +70,6 @@ func ResetDB(db *gorm.DB) { // insertion point for reference to structs
 	db.Delete(&OrderDB{})
 	db.Delete(&RadarDB{})
 	db.Delete(&ReportDB{})
+	db.Delete(&SatelliteDB{})
 	db.Delete(&ScenarioDB{})
 }

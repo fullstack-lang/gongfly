@@ -3,9 +3,9 @@ package visuals
 import (
 	"log"
 
-	"github.com/fullstack-lang/gongfly/go/icons"
 	target_models "github.com/fullstack-lang/gongfly/go/models"
 
+	gongleaflet_icons "github.com/fullstack-lang/gongleaflet/go/icons"
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
 )
 
@@ -70,19 +70,22 @@ func attachCircle(
 func AttachVisualElementsToModelElements(layerGroup *gongleaflet_models.LayerGroup) {
 
 	for obj := range target_models.Stage.Messages {
-		attachVisualTrack(obj, icons.Arrow, gongleaflet_models.GREY, layerGroup, false, false)
+		attachVisualTrack(obj, gongleaflet_icons.Arrow, gongleaflet_models.GREY, layerGroup, false, false)
 	}
 	for obj := range target_models.Stage.Liners {
-		attachVisualTrack(obj, icons.Airplane, gongleaflet_models.GREY, layerGroup, true, true)
+		attachVisualTrack(obj, gongleaflet_icons.Airplane, gongleaflet_models.GREY, layerGroup, true, true)
+	}
+	for obj := range target_models.Stage.Satellites {
+		attachVisualTrack(obj, gongleaflet_icons.Satellite, gongleaflet_models.GREY, layerGroup, true, true)
 	}
 	for obj := range target_models.Stage.Radars {
 		attachMarker(obj,
 			gongleaflet_models.LIGHT_BROWN_8D6E63,
-			icons.Radar)
+			gongleaflet_icons.Radar)
 		attachCircle(obj, gongleaflet_models.FIVE_TWENTY)
 	}
 	for obj := range target_models.Stage.CivilianAirports {
-		attachMarker(obj, gongleaflet_models.BLUE, icons.Airport)
+		attachMarker(obj, gongleaflet_models.BLUE, gongleaflet_icons.Airport)
 	}
 	for obj := range target_models.Stage.OpsLines {
 		attachLine(obj, gongleaflet_models.FIVE_TWENTY)

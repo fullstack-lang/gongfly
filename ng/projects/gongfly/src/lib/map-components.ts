@@ -13,6 +13,8 @@
   import { RadarSortingComponent } from './radar-sorting/radar-sorting.component'
   import { ReportsTableComponent } from './reports-table/reports-table.component'
   import { ReportSortingComponent } from './report-sorting/report-sorting.component'
+  import { SatellitesTableComponent } from './satellites-table/satellites-table.component'
+  import { SatelliteSortingComponent } from './satellite-sorting/satellite-sorting.component'
   import { ScenariosTableComponent } from './scenarios-table/scenarios-table.component'
   import { ScenarioSortingComponent } from './scenario-sorting/scenario-sorting.component'
 
@@ -31,6 +33,8 @@
   export const MapOfRadarSortingComponents: Map<string, any> = new Map([["RadarSortingComponent", RadarSortingComponent],])
   export const MapOfReportsComponents: Map<string, any> = new Map([["ReportsTableComponent", ReportsTableComponent],])
   export const MapOfReportSortingComponents: Map<string, any> = new Map([["ReportSortingComponent", ReportSortingComponent],])
+  export const MapOfSatellitesComponents: Map<string, any> = new Map([["SatellitesTableComponent", SatellitesTableComponent],])
+  export const MapOfSatelliteSortingComponents: Map<string, any> = new Map([["SatelliteSortingComponent", SatelliteSortingComponent],])
   export const MapOfScenariosComponents: Map<string, any> = new Map([["ScenariosTableComponent", ScenariosTableComponent],])
   export const MapOfScenarioSortingComponents: Map<string, any> = new Map([["ScenarioSortingComponent", ScenarioSortingComponent],])
 
@@ -46,6 +50,7 @@ export const MapOfComponents: Map<string, any> =
       ["Order", MapOfOrdersComponents],
       ["Radar", MapOfRadarsComponents],
       ["Report", MapOfReportsComponents],
+      ["Satellite", MapOfSatellitesComponents],
       ["Scenario", MapOfScenariosComponents],
     ]
   )
@@ -62,6 +67,7 @@ export const MapOfSortingComponents: Map<string, any> =
       ["Order", MapOfOrderSortingComponents],
       ["Radar", MapOfRadarSortingComponents],
       ["Report", MapOfReportSortingComponents],
+      ["Satellite", MapOfSatelliteSortingComponents],
       ["Scenario", MapOfScenarioSortingComponents],
     ]
   )

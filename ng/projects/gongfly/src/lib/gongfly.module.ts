@@ -73,6 +73,11 @@ import { ReportSortingComponent } from './report-sorting/report-sorting.componen
 import { ReportDetailComponent } from './report-detail/report-detail.component'
 import { ReportPresentationComponent } from './report-presentation/report-presentation.component'
 
+import { SatellitesTableComponent } from './satellites-table/satellites-table.component'
+import { SatelliteSortingComponent } from './satellite-sorting/satellite-sorting.component'
+import { SatelliteDetailComponent } from './satellite-detail/satellite-detail.component'
+import { SatellitePresentationComponent } from './satellite-presentation/satellite-presentation.component'
+
 import { ScenariosTableComponent } from './scenarios-table/scenarios-table.component'
 import { ScenarioSortingComponent } from './scenario-sorting/scenario-sorting.component'
 import { ScenarioDetailComponent } from './scenario-detail/scenario-detail.component'
@@ -116,6 +121,11 @@ import { ScenarioPresentationComponent } from './scenario-presentation/scenario-
 		ReportSortingComponent,
 		ReportDetailComponent,
 		ReportPresentationComponent,
+
+		SatellitesTableComponent,
+		SatelliteSortingComponent,
+		SatelliteDetailComponent,
+		SatellitePresentationComponent,
 
 		ScenariosTableComponent,
 		ScenarioSortingComponent,
@@ -195,6 +205,11 @@ import { ScenarioPresentationComponent } from './scenario-presentation/scenario-
 		ReportSortingComponent,
 		ReportDetailComponent,
 		ReportPresentationComponent,
+
+		SatellitesTableComponent,
+		SatelliteSortingComponent,
+		SatelliteDetailComponent,
+		SatellitePresentationComponent,
 
 		ScenariosTableComponent,
 		ScenarioSortingComponent,

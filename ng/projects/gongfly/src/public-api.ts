@@ -63,6 +63,13 @@ export * from './lib/reports-table/reports-table.component'
 export * from './lib/report-db'
 export * from './lib/report.service'
 
+export * from './lib/satellite-detail/satellite-detail.component'
+export * from './lib/satellite-presentation/satellite-presentation.component'
+export * from './lib/satellite-sorting/satellite-sorting.component'
+export * from './lib/satellites-table/satellites-table.component'
+export * from './lib/satellite-db'
+export * from './lib/satellite.service'
+
 export * from './lib/scenario-detail/scenario-detail.component'
 export * from './lib/scenario-presentation/scenario-presentation.component'
 export * from './lib/scenario-sorting/scenario-sorting.component'

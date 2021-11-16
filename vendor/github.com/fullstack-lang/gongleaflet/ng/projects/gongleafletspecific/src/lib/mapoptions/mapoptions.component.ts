@@ -8,6 +8,7 @@ import 'leaflet-rotatedmarker'
 import * as gongleaflet from 'gongleaflet';
 import * as manageLeafletItems from './manage-leaflet-items'
 import { dotBlur } from '../../assets/icons/dot_blur'
+import { UserClickDB } from 'gongleaflet'
 
 export const DEFAULT_ICON_SIZE = 60
 
@@ -27,6 +28,10 @@ export class MapoptionsComponent implements OnInit {
   @Input() mapName: string = ""
   mapOptionsID: number = 0
   leafletMapOptions?: L.MapOptions // stangely, impossible to type without ?
+
+  // callback function called on user click 
+  @Input() userInterfactionCallbackFunction?: (lat: number, lng: number) => void
+
 
   // [leafletLayers]="rootOfLayerGroups" that is passed to one div in the html, ngx-asymetrix
   // https://github.com/Asymmetrik/ngx-leaflet#add-custom-layers-base-layers-markers-shapes-etc
@@ -77,6 +82,9 @@ export class MapoptionsComponent implements OnInit {
   // commitNb stores the number of commit on the backend
   commitNb: number = 0
 
+  // commitNb stores the number of commit on the frontend
+  commitFromFrontNb: number = 0
+
   DotLeafletDivIcon = manageLeafletItems.newIcon(
     'icon',
     'layer-',
@@ -85,13 +93,17 @@ export class MapoptionsComponent implements OnInit {
     '#004E92'
   );
 
+  clickNumber: number = 0
+
   constructor(
     public frontRepoService: gongleaflet.FrontRepoService,
     private visualTrackService: gongleaflet.VisualTrackService,
     private lineService: gongleaflet.VLineService,
     private markerService: gongleaflet.MarkerService,
     private layerGroupUseService: gongleaflet.LayerGroupUseService,
+    private userClickService: gongleaflet.UserClickService,
     private commitNbService: gongleaflet.CommitNbService,
+    private pushFromFrontService: gongleaflet.PushFromFrontNbService,
     private router: Router,
     public zone: NgZone
   ) {
@@ -108,6 +120,35 @@ export class MapoptionsComponent implements OnInit {
     setTimeout(() => {
       leafletMap.invalidateSize();
     }, 0);
+  }
+
+
+  onMapClick(e: L.LeafletMouseEvent) {
+
+    if (this.leafletMap) {
+      // let popup = new L.Popup()
+      // popup.setLatLng(e.latlng)
+      // popup.setContent("You clicked the map at " + e.latlng.toString())
+      // popup.openOn(this.leafletMap)
+
+      if (this.userInterfactionCallbackFunction) {
+        this.userInterfactionCallbackFunction(e.latlng.lat, e.latlng.lng)
+      }
+
+      let userClick = new UserClickDB
+      userClick.Name = "Click !" + this.clickNumber
+      this.clickNumber = this.clickNumber + 1
+      userClick.Lat = e.latlng.lat
+      userClick.Lng = e.latlng.lng
+
+      this.userClickService.postUserClick(userClick).subscribe(
+        (userClick) => {
+          console.log("user clicked")
+          this.userClickService.UserClickServiceChanged.next("post")
+        }
+      )
+
+    }
   }
 
   ngOnInit(): void {
@@ -142,6 +183,16 @@ export class MapoptionsComponent implements OnInit {
                 if (commitNb > this.commitNb) {
                   this.refreshMapWithMarkers()
                   this.commitNb = commitNb
+                }
+              }
+            )
+
+            this.pushFromFrontService.getPushFromFrontNb().subscribe(
+              pushFromFrontNb => {
+                // console.log("commit nb in the back " + commitNb + " local commit nb " + this.commitNb)
+                if (pushFromFrontNb > this.commitFromFrontNb) {
+                  this.refreshMapWithMarkers()
+                  this.commitFromFrontNb = pushFromFrontNb
                 }
               }
             )

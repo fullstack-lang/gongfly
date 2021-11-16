@@ -1,10 +1,8 @@
 <div id="atcmapid">
     <ng-container *ngIf="leafletMapOptions">
-        <div style="height:100%;width:100%;" 
-        leaflet 
-        [leafletOptions]="leafletMapOptions" 
-        (leafletMapReady)="onMapReady($event)"
-        [leafletLayers]="rootOfLayerGroups">
+        <div style="height:100%;width:100%;" leaflet [leafletOptions]="leafletMapOptions"
+            (leafletMapReady)="onMapReady($event)" (leafletClick)="onMapClick($event)"
+            [leafletLayers]="rootOfLayerGroups">
             <!-- <div ></div>
             <div [leafletLayers]="visualTracksHistory"></div> -->
         </div>

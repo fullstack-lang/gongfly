@@ -33,6 +33,9 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	Reports           map[*Report]struct{}
 	Reports_mapString map[string]*Report
 
+	Satellites           map[*Satellite]struct{}
+	Satellites_mapString map[string]*Satellite
+
 	Scenarios           map[*Scenario]struct{}
 	Scenarios_mapString map[string]*Scenario
 
@@ -72,6 +75,8 @@ type BackRepoInterface interface {
 	CheckoutRadar(radar *Radar)
 	CommitReport(report *Report)
 	CheckoutReport(report *Report)
+	CommitSatellite(satellite *Satellite)
+	CheckoutSatellite(satellite *Satellite)
 	CommitScenario(scenario *Scenario)
 	CheckoutScenario(scenario *Scenario)
 	GetLastCommitNb() uint
@@ -100,6 +105,9 @@ var Stage StageStruct = StageStruct{ // insertion point for array initiatialisat
 
 	Reports:           make(map[*Report]struct{}),
 	Reports_mapString: make(map[string]*Report),
+
+	Satellites:           make(map[*Satellite]struct{}),
+	Satellites_mapString: make(map[string]*Satellite),
 
 	Scenarios:           make(map[*Scenario]struct{}),
 	Scenarios_mapString: make(map[string]*Scenario),
@@ -862,6 +870,108 @@ func DeleteORMReport(report *Report) {
 	}
 }
 
+func (stage *StageStruct) getSatelliteOrderedStructWithNameField() []*Satellite {
+	// have alphabetical order generation
+	satelliteOrdered := []*Satellite{}
+	for satellite := range stage.Satellites {
+		satelliteOrdered = append(satelliteOrdered, satellite)
+	}
+	sort.Slice(satelliteOrdered[:], func(i, j int) bool {
+		return satelliteOrdered[i].Name < satelliteOrdered[j].Name
+	})
+	return satelliteOrdered
+}
+
+// Stage puts satellite to the model stage
+func (satellite *Satellite) Stage() *Satellite {
+	Stage.Satellites[satellite] = __member
+	Stage.Satellites_mapString[satellite.Name] = satellite
+
+	return satellite
+}
+
+// Unstage removes satellite off the model stage
+func (satellite *Satellite) Unstage() *Satellite {
+	delete(Stage.Satellites, satellite)
+	delete(Stage.Satellites_mapString, satellite.Name)
+	return satellite
+}
+
+// commit satellite to the back repo (if it is already staged)
+func (satellite *Satellite) Commit() *Satellite {
+	if _, ok := Stage.Satellites[satellite]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CommitSatellite(satellite)
+		}
+	}
+	return satellite
+}
+
+// Checkout satellite to the back repo (if it is already staged)
+func (satellite *Satellite) Checkout() *Satellite {
+	if _, ok := Stage.Satellites[satellite]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CheckoutSatellite(satellite)
+		}
+	}
+	return satellite
+}
+
+//
+// Legacy, to be deleted
+//
+
+// StageCopy appends a copy of satellite to the model stage
+func (satellite *Satellite) StageCopy() *Satellite {
+	_satellite := new(Satellite)
+	*_satellite = *satellite
+	_satellite.Stage()
+	return _satellite
+}
+
+// StageAndCommit appends satellite to the model stage and commit to the orm repo
+func (satellite *Satellite) StageAndCommit() *Satellite {
+	satellite.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMSatellite(satellite)
+	}
+	return satellite
+}
+
+// DeleteStageAndCommit appends satellite to the model stage and commit to the orm repo
+func (satellite *Satellite) DeleteStageAndCommit() *Satellite {
+	satellite.Unstage()
+	DeleteORMSatellite(satellite)
+	return satellite
+}
+
+// StageCopyAndCommit appends a copy of satellite to the model stage and commit to the orm repo
+func (satellite *Satellite) StageCopyAndCommit() *Satellite {
+	_satellite := new(Satellite)
+	*_satellite = *satellite
+	_satellite.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMSatellite(satellite)
+	}
+	return _satellite
+}
+
+// CreateORMSatellite enables dynamic staging of a Satellite instance
+func CreateORMSatellite(satellite *Satellite) {
+	satellite.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMSatellite(satellite)
+	}
+}
+
+// DeleteORMSatellite enables dynamic staging of a Satellite instance
+func DeleteORMSatellite(satellite *Satellite) {
+	satellite.Unstage()
+	if Stage.AllModelsStructDeleteCallback != nil {
+		Stage.AllModelsStructDeleteCallback.DeleteORMSatellite(satellite)
+	}
+}
+
 func (stage *StageStruct) getScenarioOrderedStructWithNameField() []*Scenario {
 	// have alphabetical order generation
 	scenarioOrdered := []*Scenario{}
@@ -973,6 +1083,7 @@ type AllModelsStructCreateInterface interface { // insertion point for Callbacks
 	CreateORMOrder(Order *Order)
 	CreateORMRadar(Radar *Radar)
 	CreateORMReport(Report *Report)
+	CreateORMSatellite(Satellite *Satellite)
 	CreateORMScenario(Scenario *Scenario)
 }
 
@@ -984,6 +1095,7 @@ type AllModelsStructDeleteInterface interface { // insertion point for Callbacks
 	DeleteORMOrder(Order *Order)
 	DeleteORMRadar(Radar *Radar)
 	DeleteORMReport(Report *Report)
+	DeleteORMSatellite(Satellite *Satellite)
 	DeleteORMScenario(Scenario *Scenario)
 }
 
@@ -1008,6 +1120,9 @@ func (stage *StageStruct) Reset() { // insertion point for array reset
 
 	stage.Reports = make(map[*Report]struct{})
 	stage.Reports_mapString = make(map[string]*Report)
+
+	stage.Satellites = make(map[*Satellite]struct{})
+	stage.Satellites_mapString = make(map[string]*Satellite)
 
 	stage.Scenarios = make(map[*Scenario]struct{})
 	stage.Scenarios_mapString = make(map[string]*Scenario)
@@ -1035,6 +1150,9 @@ func (stage *StageStruct) Nil() { // insertion point for array nil
 
 	stage.Reports = nil
 	stage.Reports_mapString = nil
+
+	stage.Satellites = nil
+	stage.Satellites_mapString = nil
 
 	stage.Scenarios = nil
 	stage.Scenarios_mapString = nil

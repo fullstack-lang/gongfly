@@ -25,6 +25,9 @@ import { RadarService } from './radar.service'
 import { ReportDB } from './report-db'
 import { ReportService } from './report.service'
 
+import { SatelliteDB } from './satellite-db'
+import { SatelliteService } from './satellite.service'
+
 import { ScenarioDB } from './scenario-db'
 import { ScenarioService } from './scenario.service'
 
@@ -52,6 +55,9 @@ export class FrontRepo { // insertion point sub template
   Reports_array = new Array<ReportDB>(); // array of repo instances
   Reports = new Map<number, ReportDB>(); // map of repo instances
   Reports_batch = new Map<number, ReportDB>(); // same but only in last GET (for finding repo instances to delete)
+  Satellites_array = new Array<SatelliteDB>(); // array of repo instances
+  Satellites = new Map<number, SatelliteDB>(); // map of repo instances
+  Satellites_batch = new Map<number, SatelliteDB>(); // same but only in last GET (for finding repo instances to delete)
   Scenarios_array = new Array<ScenarioDB>(); // array of repo instances
   Scenarios = new Map<number, ScenarioDB>(); // map of repo instances
   Scenarios_batch = new Map<number, ScenarioDB>(); // same but only in last GET (for finding repo instances to delete)
@@ -120,6 +126,7 @@ export class FrontRepoService {
     private orderService: OrderService,
     private radarService: RadarService,
     private reportService: ReportService,
+    private satelliteService: SatelliteService,
     private scenarioService: ScenarioService,
   ) { }
 
@@ -158,6 +165,7 @@ export class FrontRepoService {
     Observable<OrderDB[]>,
     Observable<RadarDB[]>,
     Observable<ReportDB[]>,
+    Observable<SatelliteDB[]>,
     Observable<ScenarioDB[]>,
   ] = [ // insertion point sub template 
       this.civilianairportService.getCivilianAirports(),
@@ -167,6 +175,7 @@ export class FrontRepoService {
       this.orderService.getOrders(),
       this.radarService.getRadars(),
       this.reportService.getReports(),
+      this.satelliteService.getSatellites(),
       this.scenarioService.getScenarios(),
     ];
 
@@ -190,6 +199,7 @@ export class FrontRepoService {
             orders_,
             radars_,
             reports_,
+            satellites_,
             scenarios_,
           ]) => {
             // Typing can be messy with many items. Therefore, type casting is necessary here
@@ -208,6 +218,8 @@ export class FrontRepoService {
             radars = radars_ as RadarDB[]
             var reports: ReportDB[]
             reports = reports_ as ReportDB[]
+            var satellites: SatelliteDB[]
+            satellites = satellites_ as SatelliteDB[]
             var scenarios: ScenarioDB[]
             scenarios = scenarios_ as ScenarioDB[]
 
@@ -446,6 +458,39 @@ export class FrontRepoService {
             });
 
             // init the array
+            FrontRepoSingloton.Satellites_array = satellites
+
+            // clear the map that counts Satellite in the GET
+            FrontRepoSingloton.Satellites_batch.clear()
+
+            satellites.forEach(
+              satellite => {
+                FrontRepoSingloton.Satellites.set(satellite.ID, satellite)
+                FrontRepoSingloton.Satellites_batch.set(satellite.ID, satellite)
+              }
+            )
+
+            // clear satellites that are absent from the batch
+            FrontRepoSingloton.Satellites.forEach(
+              satellite => {
+                if (FrontRepoSingloton.Satellites_batch.get(satellite.ID) == undefined) {
+                  FrontRepoSingloton.Satellites.delete(satellite.ID)
+                }
+              }
+            )
+
+            // sort Satellites_array array
+            FrontRepoSingloton.Satellites_array.sort((t1, t2) => {
+              if (t1.Name > t2.Name) {
+                return 1;
+              }
+              if (t1.Name < t2.Name) {
+                return -1;
+              }
+              return 0;
+            });
+
+            // init the array
             FrontRepoSingloton.Scenarios_array = scenarios
 
             // clear the map that counts Scenario in the GET
@@ -562,6 +607,13 @@ export class FrontRepoService {
                     report.OpsLine = _opsline
                   }
                 }
+
+                // insertion point for redeeming ONE-MANY associations
+              }
+            )
+            satellites.forEach(
+              satellite => {
+                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
 
                 // insertion point for redeeming ONE-MANY associations
               }
@@ -976,6 +1028,57 @@ export class FrontRepoService {
     )
   }
 
+  // SatellitePull performs a GET on Satellite of the stack and redeem association pointers 
+  SatellitePull(): Observable<FrontRepo> {
+    return new Observable<FrontRepo>(
+      (observer) => {
+        combineLatest([
+          this.satelliteService.getSatellites()
+        ]).subscribe(
+          ([ // insertion point sub template 
+            satellites,
+          ]) => {
+            // init the array
+            FrontRepoSingloton.Satellites_array = satellites
+
+            // clear the map that counts Satellite in the GET
+            FrontRepoSingloton.Satellites_batch.clear()
+
+            // 
+            // First Step: init map of instances
+            // insertion point sub template 
+            satellites.forEach(
+              satellite => {
+                FrontRepoSingloton.Satellites.set(satellite.ID, satellite)
+                FrontRepoSingloton.Satellites_batch.set(satellite.ID, satellite)
+
+                // insertion point for redeeming ONE/ZERO-ONE associations
+
+                // insertion point for redeeming ONE-MANY associations
+              }
+            )
+
+            // clear satellites that are absent from the GET
+            FrontRepoSingloton.Satellites.forEach(
+              satellite => {
+                if (FrontRepoSingloton.Satellites_batch.get(satellite.ID) == undefined) {
+                  FrontRepoSingloton.Satellites.delete(satellite.ID)
+                }
+              }
+            )
+
+            // 
+            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
+            // insertion point sub template 
+
+            // hand over control flow to observer
+            observer.next(FrontRepoSingloton)
+          }
+        )
+      }
+    )
+  }
+
   // ScenarioPull performs a GET on Scenario of the stack and redeem association pointers 
   ScenarioPull(): Observable<FrontRepo> {
     return new Observable<FrontRepo>(
@@ -1050,6 +1153,9 @@ export function getRadarUniqueID(id: number): number {
 export function getReportUniqueID(id: number): number {
   return 59 * id
 }
-export function getScenarioUniqueID(id: number): number {
+export function getSatelliteUniqueID(id: number): number {
   return 61 * id
+}
+export function getScenarioUniqueID(id: number): number {
+  return 67 * id
 }

@@ -22,6 +22,8 @@ import { RadarService } from '../radar.service'
 import { getRadarUniqueID } from '../front-repo.service'
 import { ReportService } from '../report.service'
 import { getReportUniqueID } from '../front-repo.service'
+import { SatelliteService } from '../satellite.service'
+import { getSatelliteUniqueID } from '../front-repo.service'
 import { ScenarioService } from '../scenario.service'
 import { getScenarioUniqueID } from '../front-repo.service'
 
@@ -166,6 +168,7 @@ export class SidebarComponent implements OnInit {
     private orderService: OrderService,
     private radarService: RadarService,
     private reportService: ReportService,
+    private satelliteService: SatelliteService,
     private scenarioService: ScenarioService,
   ) { }
 
@@ -223,6 +226,14 @@ export class SidebarComponent implements OnInit {
     )
     // observable for changes in structs
     this.reportService.ReportServiceChanged.subscribe(
+      message => {
+        if (message == "post" || message == "update" || message == "delete") {
+          this.refresh()
+        }
+      }
+    )
+    // observable for changes in structs
+    this.satelliteService.SatelliteServiceChanged.subscribe(
       message => {
         if (message == "post" || message == "update" || message == "delete") {
           this.refresh()
@@ -741,6 +752,50 @@ export class SidebarComponent implements OnInit {
             OpsLineGongNodeAssociation.children.push(reportGongNodeInstance_OpsLine)
           }
 
+        }
+      )
+
+      /**
+      * fill up the Satellite part of the mat tree
+      */
+      let satelliteGongNodeStruct: GongNode = {
+        name: "Satellite",
+        type: GongNodeType.STRUCT,
+        id: 0,
+        uniqueIdPerStack: 13 * nonInstanceNodeId,
+        structName: "Satellite",
+        associationField: "",
+        associatedStructName: "",
+        children: new Array<GongNode>()
+      }
+      nonInstanceNodeId = nonInstanceNodeId + 1
+      this.gongNodeTree.push(satelliteGongNodeStruct)
+
+      this.frontRepo.Satellites_array.sort((t1, t2) => {
+        if (t1.Name > t2.Name) {
+          return 1;
+        }
+        if (t1.Name < t2.Name) {
+          return -1;
+        }
+        return 0;
+      });
+
+      this.frontRepo.Satellites_array.forEach(
+        satelliteDB => {
+          let satelliteGongNodeInstance: GongNode = {
+            name: satelliteDB.Name,
+            type: GongNodeType.INSTANCE,
+            id: satelliteDB.ID,
+            uniqueIdPerStack: getSatelliteUniqueID(satelliteDB.ID),
+            structName: "Satellite",
+            associationField: "",
+            associatedStructName: "",
+            children: new Array<GongNode>()
+          }
+          satelliteGongNodeStruct.children!.push(satelliteGongNodeInstance)
+
+          // insertion point for per field code
         }
       )
 

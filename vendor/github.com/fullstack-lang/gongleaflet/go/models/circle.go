@@ -40,3 +40,15 @@ func (VisualCircle *Circle) UpdateCircle() {
 		VisualCircle.LayerGroup = DefaultLayerGroup
 	}
 }
+
+// attach visual circle to circle
+func AttachCircle(
+	visualCircleInterface CircleInterface,
+	DashStyleEnum DashStyleEnum) (circle *Circle) {
+	circle = new(Circle).Stage()
+	circle.DashStyleEnum = DashStyleEnum
+	circle.Circle = visualCircleInterface
+	circle.UpdateCircle()
+
+	return
+}

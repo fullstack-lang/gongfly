@@ -92,6 +92,13 @@ func RegisterControllers(r *gin.Engine) {
 		v1.PUT("/v1/reports/:id", UpdateReport)
 		v1.DELETE("/v1/reports/:id", DeleteReport)
 
+		v1.GET("/v1/satellites", GetSatellites)
+		v1.GET("/v1/satellites/:id", GetSatellite)
+		v1.POST("/v1/satellites", PostSatellite)
+		v1.PATCH("/v1/satellites/:id", UpdateSatellite)
+		v1.PUT("/v1/satellites/:id", UpdateSatellite)
+		v1.DELETE("/v1/satellites/:id", DeleteSatellite)
+
 		v1.GET("/v1/scenarios", GetScenarios)
 		v1.GET("/v1/scenarios/:id", GetScenario)
 		v1.POST("/v1/scenarios", PostScenario)
