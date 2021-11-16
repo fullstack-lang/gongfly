@@ -85,21 +85,6 @@ type SatelliteDB struct {
 	// Declation for basic field satelliteDB.Name {{BasicKind}} (to be completed)
 	Name_Data sql.NullString
 
-	// Declation for basic field satelliteDB.TargetHeading {{BasicKind}} (to be completed)
-	TargetHeading_Data sql.NullFloat64
-
-	// Declation for basic field satelliteDB.TargetLocationLat {{BasicKind}} (to be completed)
-	TargetLocationLat_Data sql.NullFloat64
-
-	// Declation for basic field satelliteDB.TargetLocationLng {{BasicKind}} (to be completed)
-	TargetLocationLng_Data sql.NullFloat64
-
-	// Declation for basic field satelliteDB.DistanceToTarget {{BasicKind}} (to be completed)
-	DistanceToTarget_Data sql.NullFloat64
-
-	// Declation for basic field satelliteDB.MaxRotationalSpeed {{BasicKind}} (to be completed)
-	MaxRotationalSpeed_Data sql.NullFloat64
-
 	// Declation for basic field satelliteDB.VerticalSpeed {{BasicKind}} (to be completed)
 	VerticalSpeed_Data sql.NullFloat64
 
@@ -144,19 +129,9 @@ type SatelliteWOP struct {
 
 	Name string `xlsx:"9"`
 
-	TargetHeading float64 `xlsx:"10"`
+	VerticalSpeed float64 `xlsx:"10"`
 
-	TargetLocationLat float64 `xlsx:"11"`
-
-	TargetLocationLng float64 `xlsx:"12"`
-
-	DistanceToTarget float64 `xlsx:"13"`
-
-	MaxRotationalSpeed float64 `xlsx:"14"`
-
-	VerticalSpeed float64 `xlsx:"15"`
-
-	Timestampstring string `xlsx:"16"`
+	Timestampstring string `xlsx:"11"`
 	// insertion for WOP pointer fields
 }
 
@@ -172,11 +147,6 @@ var Satellite_Fields = []string{
 	"Line2",
 	"TechName",
 	"Name",
-	"TargetHeading",
-	"TargetLocationLat",
-	"TargetLocationLng",
-	"DistanceToTarget",
-	"MaxRotationalSpeed",
 	"VerticalSpeed",
 	"Timestampstring",
 }
@@ -487,21 +457,6 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsFromSatellite(satellite *models.S
 	satelliteDB.Name_Data.String = satellite.Name
 	satelliteDB.Name_Data.Valid = true
 
-	satelliteDB.TargetHeading_Data.Float64 = satellite.TargetHeading
-	satelliteDB.TargetHeading_Data.Valid = true
-
-	satelliteDB.TargetLocationLat_Data.Float64 = satellite.TargetLocationLat
-	satelliteDB.TargetLocationLat_Data.Valid = true
-
-	satelliteDB.TargetLocationLng_Data.Float64 = satellite.TargetLocationLng
-	satelliteDB.TargetLocationLng_Data.Valid = true
-
-	satelliteDB.DistanceToTarget_Data.Float64 = satellite.DistanceToTarget
-	satelliteDB.DistanceToTarget_Data.Valid = true
-
-	satelliteDB.MaxRotationalSpeed_Data.Float64 = satellite.MaxRotationalSpeed
-	satelliteDB.MaxRotationalSpeed_Data.Valid = true
-
 	satelliteDB.VerticalSpeed_Data.Float64 = satellite.VerticalSpeed
 	satelliteDB.VerticalSpeed_Data.Valid = true
 
@@ -540,21 +495,6 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsFromSatelliteWOP(satellite *Satel
 	satelliteDB.Name_Data.String = satellite.Name
 	satelliteDB.Name_Data.Valid = true
 
-	satelliteDB.TargetHeading_Data.Float64 = satellite.TargetHeading
-	satelliteDB.TargetHeading_Data.Valid = true
-
-	satelliteDB.TargetLocationLat_Data.Float64 = satellite.TargetLocationLat
-	satelliteDB.TargetLocationLat_Data.Valid = true
-
-	satelliteDB.TargetLocationLng_Data.Float64 = satellite.TargetLocationLng
-	satelliteDB.TargetLocationLng_Data.Valid = true
-
-	satelliteDB.DistanceToTarget_Data.Float64 = satellite.DistanceToTarget
-	satelliteDB.DistanceToTarget_Data.Valid = true
-
-	satelliteDB.MaxRotationalSpeed_Data.Float64 = satellite.MaxRotationalSpeed
-	satelliteDB.MaxRotationalSpeed_Data.Valid = true
-
 	satelliteDB.VerticalSpeed_Data.Float64 = satellite.VerticalSpeed
 	satelliteDB.VerticalSpeed_Data.Valid = true
 
@@ -574,11 +514,6 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsToSatellite(satellite *models.Sat
 	satellite.Line2 = satelliteDB.Line2_Data.String
 	satellite.TechName = satelliteDB.TechName_Data.String
 	satellite.Name = satelliteDB.Name_Data.String
-	satellite.TargetHeading = satelliteDB.TargetHeading_Data.Float64
-	satellite.TargetLocationLat = satelliteDB.TargetLocationLat_Data.Float64
-	satellite.TargetLocationLng = satelliteDB.TargetLocationLng_Data.Float64
-	satellite.DistanceToTarget = satelliteDB.DistanceToTarget_Data.Float64
-	satellite.MaxRotationalSpeed = satelliteDB.MaxRotationalSpeed_Data.Float64
 	satellite.VerticalSpeed = satelliteDB.VerticalSpeed_Data.Float64
 	satellite.Timestampstring = satelliteDB.Timestampstring_Data.String
 }
@@ -596,11 +531,6 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsToSatelliteWOP(satellite *Satelli
 	satellite.Line2 = satelliteDB.Line2_Data.String
 	satellite.TechName = satelliteDB.TechName_Data.String
 	satellite.Name = satelliteDB.Name_Data.String
-	satellite.TargetHeading = satelliteDB.TargetHeading_Data.Float64
-	satellite.TargetLocationLat = satelliteDB.TargetLocationLat_Data.Float64
-	satellite.TargetLocationLng = satelliteDB.TargetLocationLng_Data.Float64
-	satellite.DistanceToTarget = satelliteDB.DistanceToTarget_Data.Float64
-	satellite.MaxRotationalSpeed = satelliteDB.MaxRotationalSpeed_Data.Float64
 	satellite.VerticalSpeed = satelliteDB.VerticalSpeed_Data.Float64
 	satellite.Timestampstring = satelliteDB.Timestampstring_Data.String
 }

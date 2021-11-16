@@ -18,11 +18,6 @@ export class SatelliteDB {
 	Line2: string = ""
 	TechName: string = ""
 	Name: string = ""
-	TargetHeading: number = 0
-	TargetLocationLat: number = 0
-	TargetLocationLng: number = 0
-	DistanceToTarget: number = 0
-	MaxRotationalSpeed: number = 0
 	VerticalSpeed: number = 0
 	Timestampstring: string = ""
 

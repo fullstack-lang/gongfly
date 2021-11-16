@@ -82,41 +82,6 @@
             </td>
         </ng-container>
         <!-- -->
-        <ng-container matColumnDef="TargetHeading">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> TargetHeading </th>
-            <td mat-cell *matCellDef="let Satellite">
-                {{Satellite.TargetHeading.toPrecision(5)}}
-            </td>
-        </ng-container>
-        <!-- -->
-        <ng-container matColumnDef="TargetLocationLat">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> TargetLocationLat </th>
-            <td mat-cell *matCellDef="let Satellite">
-                {{Satellite.TargetLocationLat.toPrecision(5)}}
-            </td>
-        </ng-container>
-        <!-- -->
-        <ng-container matColumnDef="TargetLocationLng">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> TargetLocationLng </th>
-            <td mat-cell *matCellDef="let Satellite">
-                {{Satellite.TargetLocationLng.toPrecision(5)}}
-            </td>
-        </ng-container>
-        <!-- -->
-        <ng-container matColumnDef="DistanceToTarget">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> DistanceToTarget </th>
-            <td mat-cell *matCellDef="let Satellite">
-                {{Satellite.DistanceToTarget.toPrecision(5)}}
-            </td>
-        </ng-container>
-        <!-- -->
-        <ng-container matColumnDef="MaxRotationalSpeed">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> MaxRotationalSpeed </th>
-            <td mat-cell *matCellDef="let Satellite">
-                {{Satellite.MaxRotationalSpeed.toPrecision(5)}}
-            </td>
-        </ng-container>
-        <!-- -->
         <ng-container matColumnDef="VerticalSpeed">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> VerticalSpeed </th>
             <td mat-cell *matCellDef="let Satellite">

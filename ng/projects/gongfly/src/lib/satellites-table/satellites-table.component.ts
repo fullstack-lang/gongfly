@@ -93,21 +93,6 @@ export class SatellitesTableComponent implements OnInit {
         case 'Name':
           return satelliteDB.Name;
 
-        case 'TargetHeading':
-          return satelliteDB.TargetHeading;
-
-        case 'TargetLocationLat':
-          return satelliteDB.TargetLocationLat;
-
-        case 'TargetLocationLng':
-          return satelliteDB.TargetLocationLng;
-
-        case 'DistanceToTarget':
-          return satelliteDB.DistanceToTarget;
-
-        case 'MaxRotationalSpeed':
-          return satelliteDB.MaxRotationalSpeed;
-
         case 'VerticalSpeed':
           return satelliteDB.VerticalSpeed;
 
@@ -137,11 +122,6 @@ export class SatellitesTableComponent implements OnInit {
       mergedContent += satelliteDB.Line2.toLowerCase()
       mergedContent += satelliteDB.TechName.toLowerCase()
       mergedContent += satelliteDB.Name.toLowerCase()
-      mergedContent += satelliteDB.TargetHeading.toString()
-      mergedContent += satelliteDB.TargetLocationLat.toString()
-      mergedContent += satelliteDB.TargetLocationLng.toString()
-      mergedContent += satelliteDB.DistanceToTarget.toString()
-      mergedContent += satelliteDB.MaxRotationalSpeed.toString()
       mergedContent += satelliteDB.VerticalSpeed.toString()
       mergedContent += satelliteDB.Timestampstring.toLowerCase()
 
@@ -203,11 +183,6 @@ export class SatellitesTableComponent implements OnInit {
         "Line2",
         "TechName",
         "Name",
-        "TargetHeading",
-        "TargetLocationLat",
-        "TargetLocationLng",
-        "DistanceToTarget",
-        "MaxRotationalSpeed",
         "VerticalSpeed",
         "Timestampstring",
       ]
@@ -222,11 +197,6 @@ export class SatellitesTableComponent implements OnInit {
         "Line2",
         "TechName",
         "Name",
-        "TargetHeading",
-        "TargetLocationLat",
-        "TargetLocationLng",
-        "DistanceToTarget",
-        "MaxRotationalSpeed",
         "VerticalSpeed",
         "Timestampstring",
       ]

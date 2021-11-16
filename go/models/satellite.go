@@ -25,18 +25,7 @@ type Satellite struct {
 	Name string
 
 	// the reference simulation
-	gosatellite gosatellite.Satellite
-
-	// Control of the satelitte
-	TargetHeading     float64
-	TargetLocationLat float64
-	TargetLocationLng float64
-	DistanceToTarget  float64
-
-	// Max rotational speed, in degrees/seconds
-	MaxRotationalSpeed float64
-
-	// Vertical Speed
+	gosatellite   gosatellite.Satellite
 	VerticalSpeed float64
 
 	// time stamps of the satellite

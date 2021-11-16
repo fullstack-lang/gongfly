@@ -2,14 +2,9 @@ package reference
 
 import (
 	"github.com/fullstack-lang/gongfly/go/models"
-
-	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
 )
 
 var PropagationTestCase1_ref = models.Satellite{
-	Agent: gongsim_models.Agent{
-		TechName: "PropagationTestCase1",
-	},
 
 	// from go-satellite test suite
 	Line1: "1 00005U 58002B   00179.78495062  .00000023  00000-0  28098-4 0  4753",
@@ -23,18 +18,10 @@ var PropagationTestCase1_ref = models.Satellite{
 		Speed:   900.0,
 		Heading: 90.0,
 	},
-	TargetHeading: 90.0,
-
-	MaxRotationalSpeed: 0.5, // degrees / seconds
-	TargetLocationLat:  TLN_LFTH_ref.Lat,
-	TargetLocationLng:  TLN_LFTH_ref.Lng,
 }
 var PropagationTestCase1 = PropagationTestCase1_ref.InitFromTLE().StageCopy().Register()
 
 var PropagationTestCase4_ref = models.Satellite{
-	Agent: gongsim_models.Agent{
-		TechName: "PropagationTestCase4",
-	},
 
 	// from go-satellite test suite
 	Line1: "1 04632U 70093B   04031.91070959 -.00000084  00000-0  10000-3 0  9955",
@@ -48,18 +35,10 @@ var PropagationTestCase4_ref = models.Satellite{
 		Speed:   900.0,
 		Heading: 90.0,
 	},
-	TargetHeading: 90.0,
-
-	MaxRotationalSpeed: 0.5, // degrees / seconds
-	TargetLocationLat:  TLN_LFTH_ref.Lat,
-	TargetLocationLng:  TLN_LFTH_ref.Lng,
 }
 var PropagationTestCase4 = PropagationTestCase4_ref.InitFromTLE().StageCopy().Register()
 
 var PropagationTestCase2_ref = models.Satellite{
-	Agent: gongsim_models.Agent{
-		TechName: "PropagationTestCase2",
-	},
 
 	// from go-satellite test suite
 	Line1: "1 06251U 62025E   06176.82412014  .00008885  00000-0  12808-3 0  3985",
@@ -73,18 +52,10 @@ var PropagationTestCase2_ref = models.Satellite{
 		Speed:   900.0,
 		Heading: 90.0,
 	},
-	TargetHeading: 90.0,
-
-	MaxRotationalSpeed: 0.5, // degrees / seconds
-	TargetLocationLat:  TLN_LFTH_ref.Lat,
-	TargetLocationLng:  TLN_LFTH_ref.Lng,
 }
 var PropagationTestCase2 = PropagationTestCase2_ref.InitFromTLE().StageCopy().Register()
 
 var PropagationTestCase3_ref = models.Satellite{
-	Agent: gongsim_models.Agent{
-		TechName: "PropagationTestCase3",
-	},
 
 	// from go-satellite test suite
 	Line1: "1 88888U          80275.98708465  .00073094  13844-3  66816-4 0    8",
@@ -98,10 +69,15 @@ var PropagationTestCase3_ref = models.Satellite{
 		Speed:   900.0,
 		Heading: 90.0,
 	},
-	TargetHeading: 90.0,
-
-	MaxRotationalSpeed: 0.5, // degrees / seconds
-	TargetLocationLat:  TLN_LFTH_ref.Lat,
-	TargetLocationLng:  TLN_LFTH_ref.Lng,
 }
 var PropagationTestCase3 = PropagationTestCase3_ref.InitFromTLE().StageCopy().Register()
+
+var InternationalSpaceStation_ref = models.Satellite{
+
+	// from go-satellite test suite
+	Line1: "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927",
+	Line2: "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537",
+
+	Name: "ISS",
+}
+var InternationalSpaceStation = InternationalSpaceStation_ref.InitFromTLE().StageCopy().Register()

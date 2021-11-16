@@ -20,4 +20,6 @@ var Scenario1 = (&models.Scenario{
 func init() {
 	Scenario1.SetStart(time.Date(2020, time.January, 1, 6, 0, 0, 0, time.UTC))
 	Scenario1.SetEnd(time.Date(2020, time.January, 1, 11, 0, 0, 0, time.UTC))
+	Scenario1.SetStart(time.Now().UTC())
+	Scenario1.SetEnd(time.Now().UTC().Add(24 * time.Hour))
 }
