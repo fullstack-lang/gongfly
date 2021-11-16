@@ -49,6 +49,8 @@ type Message struct {
 	Display bool
 }
 
+func (*Message) GetLayerGroupName() (name string) { return string(Aircraft_) }
+
 func (Message *Message) Register() (res *Message) {
 	gongsim_models.AppendToSingloton(Message)
 	res = Message

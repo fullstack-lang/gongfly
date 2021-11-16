@@ -145,3 +145,5 @@ func (liner *Liner) GetName() (name string)    { return liner.Name }
 // func (liner *Liner) GetColorEnum() ColorEnum { return GREY }
 
 func (liner *Liner) GetDisplay() bool { return true }
+
+func (*Liner) GetLayerGroupName() (name string) { return string(Aircraft_) }

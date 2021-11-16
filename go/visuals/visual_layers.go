@@ -10,6 +10,10 @@ var AircraftLayerGroup = (&gongleaflet_models.LayerGroup{
 	Name: string(models.Aircraft_),
 }).StageCopy()
 
+var SatelliteLayerGroup = (&gongleaflet_models.LayerGroup{
+	Name: string(models.Satellite_),
+}).StageCopy()
+
 var NetworkLayerGroup = (&gongleaflet_models.LayerGroup{
 	Name: string(models.Network_),
 }).StageCopy()

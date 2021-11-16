@@ -136,3 +136,5 @@ func (satellite *Satellite) GetName() (name string)    { return satellite.Name }
 // func (satellite *Satellite) GetColorEnum() ColorEnum { return GREY }
 
 func (satellite *Satellite) GetDisplay() bool { return true }
+
+func (*Satellite) GetLayerGroupName() (name string) { return string(Satellite_) }

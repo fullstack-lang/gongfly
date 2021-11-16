@@ -106,6 +106,9 @@ func main() {
 
 	// add sim event
 	reference.PropagationTestCase1.QueueUpdateEvent(1 * time.Second)
+	reference.PropagationTestCase2.QueueUpdateEvent(1 * time.Second)
+	reference.PropagationTestCase3.QueueUpdateEvent(1 * time.Second)
+	reference.PropagationTestCase4.QueueUpdateEvent(1 * time.Second)
 
 	defaultLayer := new(gongleaflet_models.LayerGroup).Stage()
 	defaultLayer.Name = "default"

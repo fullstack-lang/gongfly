@@ -12,10 +12,11 @@ type ConceptEnum string
 
 // available concepts that enable visual filters
 const (
-	Aircraft_ ConceptEnum = "Aircrafts"
-	Network_  ConceptEnum = "Networks"
-	Center_   ConceptEnum = "Centers"
-	System_   ConceptEnum = "Systems"
+	Aircraft_  ConceptEnum = "Aircrafts"
+	Satellite_ ConceptEnum = "Satellites"
+	Network_   ConceptEnum = "Networks"
+	Center_    ConceptEnum = "Centers"
+	System_    ConceptEnum = "Systems"
 )
 
 //
