@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
-	github.com/fullstack-lang/gong v0.0.0-20220214161310-d4c34ec6ea1a
+	github.com/fullstack-lang/gong v0.0.0-20220217095815-ef2bf8ebcee4
 	github.com/fullstack-lang/gongdoc v0.0.0-20220214105409-ca274e5c9098
 	github.com/fullstack-lang/gongleaflet v0.0.0-20220210073428-f83ccd33a1be
 	github.com/fullstack-lang/gongsim v0.0.0-20220217091636-4604a7b83119
