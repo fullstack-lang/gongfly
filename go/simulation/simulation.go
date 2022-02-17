@@ -163,7 +163,7 @@ func (simulation *Simulation) Reset(engine *gongsim_models.Engine) {
 func (simulation *Simulation) GetLastCommitNb() (commitNb uint) {
 
 	if models.Stage.BackRepo != nil {
-		commitNb = models.Stage.BackRepo.GetLastCommitNb()
+		commitNb = models.Stage.BackRepo.GetLastCommitFromBackNb()
 	}
 
 	return
