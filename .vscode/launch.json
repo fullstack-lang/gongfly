@@ -36,10 +36,6 @@
             "webRoot": "${workspaceFolder}/ng",
             "pathMappings": [
                 {
-                    "url": "webpack:///gongleaflet",
-                    "path": "/Users/thomaspeugeot/go/src/github.com/fullstack-lang/gongleaflet"
-                },
-                {
                     "url": "webpack:///projects",
                     "path": "${workspaceFolder}/ng/projects"
                 }
