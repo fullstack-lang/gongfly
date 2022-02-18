@@ -36,6 +36,10 @@
             "webRoot": "${workspaceFolder}/ng",
             "pathMappings": [
                 {
+                    "url": "webpack:///vendor",
+                    "path": "${workspaceFolder}/vendor"
+                },
+                {
                     "url": "webpack:///projects",
                     "path": "${workspaceFolder}/ng/projects"
                 }
@@ -94,8 +98,7 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}/go/cmd/gongfly",
-            "args": [
-            ]
+            "args": []
         },
         {
             "name": "go test",

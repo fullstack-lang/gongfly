@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "02 - run gongfly",
+      "label": "02 - run gongfly with diagrams",
       "type": "shell",
       "options": {
         "cwd": "${workspaceFolder}/go/cmd/gongfly"

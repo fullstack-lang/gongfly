@@ -37,6 +37,8 @@ import { GongsimModule } from 'gongsim'
 import { GongdocModule } from 'gongdoc'
 import { GongdocdiagramsModule } from 'gongdocdiagrams'
 
+import { GongModule } from 'gong'
+
 // Leaflet
 import { GongleafletModule } from 'gongleaflet'
 import { GongleafletspecificModule } from 'gongleafletspecific'
@@ -84,6 +86,9 @@ import { AppRoutingModule } from './app-routing.module';
     // gongleaflet stack
     GongleafletModule,
     GongleafletspecificModule,
+
+    //
+    GongModule,
 
     GongflyModule
   ],
