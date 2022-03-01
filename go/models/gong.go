@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"regexp"
 	"sort"
 	"strings"
 )
@@ -53,9 +54,12 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	BackRepo BackRepoInterface
 
 	// if set will be called before each commit to the back repo
-	OnInitCommitCallback OnInitCommitInterface
+	OnInitCommitCallback          OnInitCommitInterface
 	OnInitCommitFromFrontCallback OnInitCommitInterface
 	OnInitCommitFromBackCallback  OnInitCommitInterface
+
+	// store the number of instance per gongstruct
+	Map_GongStructName_InstancesNb map[string]int
 }
 
 type OnInitCommitInterface interface {
@@ -122,12 +126,25 @@ var Stage StageStruct = StageStruct{ // insertion point for array initiatialisat
 	Scenarios_mapString: make(map[string]*Scenario),
 
 	// end of insertion point
+	Map_GongStructName_InstancesNb: make(map[string]int),
 }
 
 func (stage *StageStruct) Commit() {
 	if stage.BackRepo != nil {
 		stage.BackRepo.Commit(stage)
 	}
+
+	// insertion point for computing the map of number of instances per gongstruct
+	stage.Map_GongStructName_InstancesNb["CivilianAirport"] = len(stage.CivilianAirports)
+	stage.Map_GongStructName_InstancesNb["Liner"] = len(stage.Liners)
+	stage.Map_GongStructName_InstancesNb["Message"] = len(stage.Messages)
+	stage.Map_GongStructName_InstancesNb["OpsLine"] = len(stage.OpsLines)
+	stage.Map_GongStructName_InstancesNb["Order"] = len(stage.Orders)
+	stage.Map_GongStructName_InstancesNb["Radar"] = len(stage.Radars)
+	stage.Map_GongStructName_InstancesNb["Report"] = len(stage.Reports)
+	stage.Map_GongStructName_InstancesNb["Satellite"] = len(stage.Satellites)
+	stage.Map_GongStructName_InstancesNb["Scenario"] = len(stage.Scenarios)
+
 }
 
 func (stage *StageStruct) Checkout() {
@@ -2091,25 +2108,14 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 func generatesIdentifier(gongStructName string, idx int, instanceName string) (identifier string) {
 
 	identifier = instanceName
-	identifier = strings.ReplaceAll(identifier, " ", "_")
-	identifier = strings.ReplaceAll(identifier, "%", "_")
-	identifier = strings.ReplaceAll(identifier, ".", "_")
-	identifier = strings.ReplaceAll(identifier, "&", "_")
-	identifier = strings.ReplaceAll(identifier, "!", "_")
-	identifier = strings.ReplaceAll(identifier, "@", "_")
-	identifier = strings.ReplaceAll(identifier, "&", "_")
-	identifier = strings.ReplaceAll(identifier, "'", "_")
-	identifier = strings.ReplaceAll(identifier, "(", "_")
-	identifier = strings.ReplaceAll(identifier, ")", "_")
-	identifier = strings.ReplaceAll(identifier, "-", "_")
-	identifier = strings.ReplaceAll(identifier, "à", "_")
-	identifier = strings.ReplaceAll(identifier, "ç", "_")
-	identifier = strings.ReplaceAll(identifier, "è", "_")
-	identifier = strings.ReplaceAll(identifier, "é", "_")
-	identifier = strings.ReplaceAll(identifier, "§", "_")
-	identifier = strings.ReplaceAll(identifier, "\"", "_")
+	// Make a Regex to say we only want letters and numbers
+	reg, err := regexp.Compile("[^a-zA-Z0-9]+")
+	if err != nil {
+		log.Fatal(err)
+	}
+	processedString := reg.ReplaceAllString(instanceName, "_")
 
-	identifier = fmt.Sprintf("__%s__%06d_%s", gongStructName, idx, identifier)
+	identifier = fmt.Sprintf("__%s__%06d_%s", gongStructName, idx, processedString)
 
 	return
 }

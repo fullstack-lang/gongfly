@@ -7,11 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SplitterComponent implements OnInit {
 
-  constructor() {
-    console.log("init")
-  }
+  constructor() { }
 
   ngOnInit(): void {
-    console.log("init")
   }
 }
