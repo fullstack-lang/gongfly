@@ -4,10 +4,10 @@ go 1.17
 
 require (
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
-	github.com/fullstack-lang/gong v0.0.0-20220217103641-2de44f273f2f
-	github.com/fullstack-lang/gongdoc v0.0.0-20220218011839-ad828d9f0878
-	github.com/fullstack-lang/gongleaflet v0.0.0-20220218003736-831124f35801
-	github.com/fullstack-lang/gongsim v0.0.0-20220217091636-4604a7b83119
+	github.com/fullstack-lang/gong v0.0.0-20220301170451-3f64c89ee656
+	github.com/fullstack-lang/gongdoc v0.0.0-20220301164556-7422c9fb2288
+	github.com/fullstack-lang/gongleaflet v0.0.0-20220301135521-a7dbb847c7ae
+	github.com/fullstack-lang/gongsim v0.0.0-20220303100932-5c2dbfac71a2
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.7.4
@@ -16,8 +16,8 @@ require (
 	github.com/lib/pq v1.10.3 // indirect
 	github.com/tealeg/xlsx/v3 v3.2.3
 	github.com/ziutek/mymysql v1.5.4 // indirect
-	gorm.io/driver/sqlite v1.1.6
-	gorm.io/gorm v1.21.16
+	gorm.io/driver/sqlite v1.1.6 // indirect
+	gorm.io/gorm v1.22.5
 )
 
 require (
@@ -25,6 +25,8 @@ require (
 	github.com/joshuaferrara/go-satellite v0.0.0-20210821043103-45fdd46b68be
 	github.com/mattn/go-isatty v0.0.14 // indirect
 )
+
+require github.com/glebarez/sqlite v1.3.5
 
 require (
 	github.com/ByteArena/poly2tri-go v0.0.0-20170716161910-d102ad91854f // indirect
@@ -35,6 +37,7 @@ require (
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/frankban/quicktest v1.13.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
+	github.com/glebarez/go-sqlite v1.14.7 // indirect
 	github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
@@ -43,17 +46,19 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/btree v1.0.1 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.2 // indirect
+	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
-	github.com/mattn/go-sqlite3 v1.14.8 // indirect
+	github.com/mattn/go-sqlite3 v1.14.10 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/rogpeppe/fastuuid v1.2.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/shabbyrobe/xmlwriter v0.0.0-20210324110748-440e98cf0c87 // indirect
@@ -70,4 +75,8 @@ require (
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	modernc.org/libc v1.14.3 // indirect
+	modernc.org/mathutil v1.4.1 // indirect
+	modernc.org/memory v1.0.5 // indirect
+	modernc.org/sqlite v1.14.5 // indirect
 )
