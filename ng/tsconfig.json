@@ -55,6 +55,9 @@
       "jointjs": [
         "./node_modules/jointjs"
       ],
+      "lodash": [
+        "./node_modules/lodash"
+      ],
       "@types/jointjs": [
         "./node_modules/@types/jointjs"
       ],

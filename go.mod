@@ -4,8 +4,8 @@ go 1.17
 
 require (
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
-	github.com/fullstack-lang/gong v0.0.0-20220301170451-3f64c89ee656
-	github.com/fullstack-lang/gongdoc v0.0.0-20220301164556-7422c9fb2288
+	github.com/fullstack-lang/gong v0.0.0-20220307010421-c56c498b6439
+	github.com/fullstack-lang/gongdoc v0.0.0-20220307004634-3e1172b2ac76
 	github.com/fullstack-lang/gongleaflet v0.0.0-20220303134524-12507777ef07
 	github.com/fullstack-lang/gongsim v0.0.0-20220303100932-5c2dbfac71a2
 	github.com/gin-contrib/cors v1.3.1
@@ -16,7 +16,6 @@ require (
 	github.com/lib/pq v1.10.3 // indirect
 	github.com/tealeg/xlsx/v3 v3.2.3
 	github.com/ziutek/mymysql v1.5.4 // indirect
-	gorm.io/driver/sqlite v1.1.6 // indirect
 	gorm.io/gorm v1.22.5
 )
 
@@ -53,7 +52,6 @@ require (
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
-	github.com/mattn/go-sqlite3 v1.14.10 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
