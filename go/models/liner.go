@@ -14,6 +14,8 @@ import (
 // Liner is a moving object
 // swagger:model liner
 type Liner struct {
+	Name string
+
 	MovingObject // concept
 
 	// Agent
@@ -21,8 +23,6 @@ type Liner struct {
 	gongsim_models.Agent
 
 	State LinerStateEnum
-
-	Name string
 
 	// Control of the aircraft
 	TargetHeading     float64
