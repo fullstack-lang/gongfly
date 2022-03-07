@@ -21,8 +21,9 @@ export class AppComponent {
   leaflet = 'Leaflet view'
   sim = 'Sim view'
   diagrams = 'Diagrams view'
+  meta_diagrams = 'Meta diagrams view'
   meta = 'Meta view'
-  views: string[] = [this.carto, this.data, this.leaflet, this.sim, this.diagrams, this.meta];
+  views: string[] = [this.carto, this.data, this.leaflet, this.sim, this.diagrams, this.meta_diagrams, this.meta];
 
   obsTimer: Observable<number> = timer(1000, 500) // due time 1', period
   currTime: number = 0
