@@ -10,6 +10,7 @@ export class LinerDB {
 	ID: number = 0
 
 	// insertion point for basic fields declarations
+	Name: string = ""
 	Lat: number = 0
 	Lng: number = 0
 	Heading: number = 0
@@ -17,7 +18,6 @@ export class LinerDB {
 	Speed: number = 0
 	TechName: string = ""
 	State: string = ""
-	Name: string = ""
 	TargetHeading: number = 0
 	TargetLocationLat: number = 0
 	TargetLocationLng: number = 0

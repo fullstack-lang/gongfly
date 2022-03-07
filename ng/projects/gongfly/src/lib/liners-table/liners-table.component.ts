@@ -66,6 +66,9 @@ export class LinersTableComponent implements OnInit {
           return linerDB.ID
 
         // insertion point for specific sorting accessor
+        case 'Name':
+          return linerDB.Name;
+
         case 'Lat':
           return linerDB.Lat;
 
@@ -86,9 +89,6 @@ export class LinersTableComponent implements OnInit {
 
         case 'State':
           return linerDB.State;
-
-        case 'Name':
-          return linerDB.Name;
 
         case 'TargetHeading':
           return linerDB.TargetHeading;
@@ -128,6 +128,7 @@ export class LinersTableComponent implements OnInit {
       let mergedContent = ""
 
       // insertion point for merging of fields
+      mergedContent += linerDB.Name.toLowerCase()
       mergedContent += linerDB.Lat.toString()
       mergedContent += linerDB.Lng.toString()
       mergedContent += linerDB.Heading.toString()
@@ -135,7 +136,6 @@ export class LinersTableComponent implements OnInit {
       mergedContent += linerDB.Speed.toString()
       mergedContent += linerDB.TechName.toLowerCase()
       mergedContent += linerDB.State.toLowerCase()
-      mergedContent += linerDB.Name.toLowerCase()
       mergedContent += linerDB.TargetHeading.toString()
       mergedContent += linerDB.TargetLocationLat.toString()
       mergedContent += linerDB.TargetLocationLng.toString()
@@ -196,6 +196,7 @@ export class LinersTableComponent implements OnInit {
     )
     if (this.mode == TableComponentMode.DISPLAY_MODE) {
       this.displayedColumns = ['ID', 'Edit', 'Delete', // insertion point for columns to display
+        "Name",
         "Lat",
         "Lng",
         "Heading",
@@ -203,7 +204,6 @@ export class LinersTableComponent implements OnInit {
         "Speed",
         "TechName",
         "State",
-        "Name",
         "TargetHeading",
         "TargetLocationLat",
         "TargetLocationLng",
@@ -215,6 +215,7 @@ export class LinersTableComponent implements OnInit {
       ]
     } else {
       this.displayedColumns = ['select', 'ID', // insertion point for columns to display
+        "Name",
         "Lat",
         "Lng",
         "Heading",
@@ -222,7 +223,6 @@ export class LinersTableComponent implements OnInit {
         "Speed",
         "TechName",
         "State",
-        "Name",
         "TargetHeading",
         "TargetLocationLat",
         "TargetLocationLng",

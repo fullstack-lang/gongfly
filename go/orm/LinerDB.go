@@ -62,6 +62,9 @@ type LinerDB struct {
 
 	// insertion for basic fields declaration
 
+	// Declation for basic field linerDB.Name {{BasicKind}} (to be completed)
+	Name_Data sql.NullString
+
 	// Declation for basic field linerDB.Lat {{BasicKind}} (to be completed)
 	Lat_Data sql.NullFloat64
 
@@ -82,9 +85,6 @@ type LinerDB struct {
 
 	// Declation for basic field linerDB.State {{BasicKind}} (to be completed)
 	State_Data sql.NullString
-
-	// Declation for basic field linerDB.Name {{BasicKind}} (to be completed)
-	Name_Data sql.NullString
 
 	// Declation for basic field linerDB.TargetHeading {{BasicKind}} (to be completed)
 	TargetHeading_Data sql.NullFloat64
@@ -127,21 +127,21 @@ type LinerWOP struct {
 
 	// insertion for WOP basic fields
 
-	Lat float64 `xlsx:"1"`
+	Name string `xlsx:"1"`
 
-	Lng float64 `xlsx:"2"`
+	Lat float64 `xlsx:"2"`
 
-	Heading float64 `xlsx:"3"`
+	Lng float64 `xlsx:"3"`
 
-	Level float64 `xlsx:"4"`
+	Heading float64 `xlsx:"4"`
 
-	Speed float64 `xlsx:"5"`
+	Level float64 `xlsx:"5"`
 
-	TechName string `xlsx:"6"`
+	Speed float64 `xlsx:"6"`
 
-	State models.LinerStateEnum `xlsx:"7"`
+	TechName string `xlsx:"7"`
 
-	Name string `xlsx:"8"`
+	State models.LinerStateEnum `xlsx:"8"`
 
 	TargetHeading float64 `xlsx:"9"`
 
@@ -162,6 +162,7 @@ type LinerWOP struct {
 var Liner_Fields = []string{
 	// insertion for WOP basic fields
 	"ID",
+	"Name",
 	"Lat",
 	"Lng",
 	"Heading",
@@ -169,7 +170,6 @@ var Liner_Fields = []string{
 	"Speed",
 	"TechName",
 	"State",
-	"Name",
 	"TargetHeading",
 	"TargetLocationLat",
 	"TargetLocationLng",
@@ -471,6 +471,9 @@ func (backRepo *BackRepoStruct) CheckoutLiner(liner *models.Liner) {
 func (linerDB *LinerDB) CopyBasicFieldsFromLiner(liner *models.Liner) {
 	// insertion point for fields commit
 
+	linerDB.Name_Data.String = liner.Name
+	linerDB.Name_Data.Valid = true
+
 	linerDB.Lat_Data.Float64 = liner.Lat
 	linerDB.Lat_Data.Valid = true
 
@@ -491,9 +494,6 @@ func (linerDB *LinerDB) CopyBasicFieldsFromLiner(liner *models.Liner) {
 
 	linerDB.State_Data.String = string(liner.State)
 	linerDB.State_Data.Valid = true
-
-	linerDB.Name_Data.String = liner.Name
-	linerDB.Name_Data.Valid = true
 
 	linerDB.TargetHeading_Data.Float64 = liner.TargetHeading
 	linerDB.TargetHeading_Data.Valid = true
@@ -521,6 +521,9 @@ func (linerDB *LinerDB) CopyBasicFieldsFromLiner(liner *models.Liner) {
 func (linerDB *LinerDB) CopyBasicFieldsFromLinerWOP(liner *LinerWOP) {
 	// insertion point for fields commit
 
+	linerDB.Name_Data.String = liner.Name
+	linerDB.Name_Data.Valid = true
+
 	linerDB.Lat_Data.Float64 = liner.Lat
 	linerDB.Lat_Data.Valid = true
 
@@ -541,9 +544,6 @@ func (linerDB *LinerDB) CopyBasicFieldsFromLinerWOP(liner *LinerWOP) {
 
 	linerDB.State_Data.String = string(liner.State)
 	linerDB.State_Data.Valid = true
-
-	linerDB.Name_Data.String = liner.Name
-	linerDB.Name_Data.Valid = true
 
 	linerDB.TargetHeading_Data.Float64 = liner.TargetHeading
 	linerDB.TargetHeading_Data.Valid = true
@@ -570,6 +570,7 @@ func (linerDB *LinerDB) CopyBasicFieldsFromLinerWOP(liner *LinerWOP) {
 // CopyBasicFieldsToLiner
 func (linerDB *LinerDB) CopyBasicFieldsToLiner(liner *models.Liner) {
 	// insertion point for checkout of basic fields (back repo to stage)
+	liner.Name = linerDB.Name_Data.String
 	liner.Lat = linerDB.Lat_Data.Float64
 	liner.Lng = linerDB.Lng_Data.Float64
 	liner.Heading = linerDB.Heading_Data.Float64
@@ -577,7 +578,6 @@ func (linerDB *LinerDB) CopyBasicFieldsToLiner(liner *models.Liner) {
 	liner.Speed = linerDB.Speed_Data.Float64
 	liner.TechName = linerDB.TechName_Data.String
 	liner.State = models.LinerStateEnum(linerDB.State_Data.String)
-	liner.Name = linerDB.Name_Data.String
 	liner.TargetHeading = linerDB.TargetHeading_Data.Float64
 	liner.TargetLocationLat = linerDB.TargetLocationLat_Data.Float64
 	liner.TargetLocationLng = linerDB.TargetLocationLng_Data.Float64
@@ -591,6 +591,7 @@ func (linerDB *LinerDB) CopyBasicFieldsToLiner(liner *models.Liner) {
 func (linerDB *LinerDB) CopyBasicFieldsToLinerWOP(liner *LinerWOP) {
 	liner.ID = int(linerDB.ID)
 	// insertion point for checkout of basic fields (back repo to stage)
+	liner.Name = linerDB.Name_Data.String
 	liner.Lat = linerDB.Lat_Data.Float64
 	liner.Lng = linerDB.Lng_Data.Float64
 	liner.Heading = linerDB.Heading_Data.Float64
@@ -598,7 +599,6 @@ func (linerDB *LinerDB) CopyBasicFieldsToLinerWOP(liner *LinerWOP) {
 	liner.Speed = linerDB.Speed_Data.Float64
 	liner.TechName = linerDB.TechName_Data.String
 	liner.State = models.LinerStateEnum(linerDB.State_Data.String)
-	liner.Name = linerDB.Name_Data.String
 	liner.TargetHeading = linerDB.TargetHeading_Data.Float64
 	liner.TargetLocationLat = linerDB.TargetLocationLat_Data.Float64
 	liner.TargetLocationLng = linerDB.TargetLocationLng_Data.Float64
