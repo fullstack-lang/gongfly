@@ -11,6 +11,6 @@ export interface OperationalLineStateEnumSelect {
 }
 
 export const OperationalLineStateEnumList: OperationalLineStateEnumSelect[] = [ // insertion point	
-	{ value: 'OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING', viewValue: '"OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING"' },
-	{ value: 'OPS_COM_LINK_OPERATIONAL_LINE_WORKING', viewValue: '"OPS_COM_LINK_OPERATIONAL_LINE_WORKING"' },
+	{ value: OperationalLineStateEnum.OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING, viewValue: "OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING" },
+	{ value: OperationalLineStateEnum.OPS_COM_LINK_OPERATIONAL_LINE_WORKING, viewValue: "OPS_COM_LINK_OPERATIONAL_LINE_WORKING" },
 ];

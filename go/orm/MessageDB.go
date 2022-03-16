@@ -497,7 +497,7 @@ func (messageDB *MessageDB) CopyBasicFieldsFromMessage(message *models.Message) 
 	messageDB.TechName_Data.String = message.TechName
 	messageDB.TechName_Data.Valid = true
 
-	messageDB.State_Data.String = string(message.State)
+	messageDB.State_Data.String = message.State.ToString()
 	messageDB.State_Data.Valid = true
 
 	messageDB.Name_Data.String = message.Name
@@ -559,7 +559,7 @@ func (messageDB *MessageDB) CopyBasicFieldsFromMessageWOP(message *MessageWOP) {
 	messageDB.TechName_Data.String = message.TechName
 	messageDB.TechName_Data.Valid = true
 
-	messageDB.State_Data.String = string(message.State)
+	messageDB.State_Data.String = message.State.ToString()
 	messageDB.State_Data.Valid = true
 
 	messageDB.Name_Data.String = message.Name
@@ -608,7 +608,7 @@ func (messageDB *MessageDB) CopyBasicFieldsToMessage(message *models.Message) {
 	message.Level = messageDB.Level_Data.Float64
 	message.Speed = messageDB.Speed_Data.Float64
 	message.TechName = messageDB.TechName_Data.String
-	message.State = models.MessageStateEnum(messageDB.State_Data.String)
+	message.State.FromString(messageDB.State_Data.String)
 	message.Name = messageDB.Name_Data.String
 	message.TargetLocationLat = messageDB.TargetLocationLat_Data.Float64
 	message.TargetLocationLng = messageDB.TargetLocationLng_Data.Float64
@@ -633,7 +633,7 @@ func (messageDB *MessageDB) CopyBasicFieldsToMessageWOP(message *MessageWOP) {
 	message.Level = messageDB.Level_Data.Float64
 	message.Speed = messageDB.Speed_Data.Float64
 	message.TechName = messageDB.TechName_Data.String
-	message.State = models.MessageStateEnum(messageDB.State_Data.String)
+	message.State.FromString(messageDB.State_Data.String)
 	message.Name = messageDB.Name_Data.String
 	message.TargetLocationLat = messageDB.TargetLocationLat_Data.Float64
 	message.TargetLocationLng = messageDB.TargetLocationLng_Data.Float64

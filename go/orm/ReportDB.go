@@ -440,7 +440,7 @@ func (reportDB *ReportDB) CopyBasicFieldsFromReport(report *models.Report) {
 	reportDB.Number_Data.Int64 = int64(report.Number)
 	reportDB.Number_Data.Valid = true
 
-	reportDB.Type_Data.String = string(report.Type)
+	reportDB.Type_Data.String = report.Type.ToString()
 	reportDB.Type_Data.Valid = true
 }
 
@@ -460,7 +460,7 @@ func (reportDB *ReportDB) CopyBasicFieldsFromReportWOP(report *ReportWOP) {
 	reportDB.Number_Data.Int64 = int64(report.Number)
 	reportDB.Number_Data.Valid = true
 
-	reportDB.Type_Data.String = string(report.Type)
+	reportDB.Type_Data.String = report.Type.ToString()
 	reportDB.Type_Data.Valid = true
 }
 
@@ -471,7 +471,7 @@ func (reportDB *ReportDB) CopyBasicFieldsToReport(report *models.Report) {
 	report.Duration = time.Duration(reportDB.Duration_Data.Int64)
 	report.ReportMessage = reportDB.ReportMessage_Data.String
 	report.Number = int(reportDB.Number_Data.Int64)
-	report.Type = models.ReportEnum(reportDB.Type_Data.String)
+	report.Type.FromString(reportDB.Type_Data.String)
 }
 
 // CopyBasicFieldsToReportWOP
@@ -482,7 +482,7 @@ func (reportDB *ReportDB) CopyBasicFieldsToReportWOP(report *ReportWOP) {
 	report.Duration = time.Duration(reportDB.Duration_Data.Int64)
 	report.ReportMessage = reportDB.ReportMessage_Data.String
 	report.Number = int(reportDB.Number_Data.Int64)
-	report.Type = models.ReportEnum(reportDB.Type_Data.String)
+	report.Type.FromString(reportDB.Type_Data.String)
 }
 
 // Backup generates a json file from a slice of all ReportDB instances in the backrepo

@@ -10,5 +10,5 @@ export interface ReportEnumSelect {
 }
 
 export const ReportEnumList: ReportEnumSelect[] = [ // insertion point	
-	{ value: 'TAKE_OFF_COMPLETED', viewValue: '"TAKE_OFF_COMPLETED"' },
+	{ value: ReportEnum.TAKE_OFF_COMPLETED, viewValue: "TAKE_OFF_COMPLETED" },
 ];

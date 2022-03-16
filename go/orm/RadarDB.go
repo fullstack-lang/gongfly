@@ -403,7 +403,7 @@ func (radarDB *RadarDB) CopyBasicFieldsFromRadar(radar *models.Radar) {
 	radarDB.TechName_Data.String = radar.TechName
 	radarDB.TechName_Data.Valid = true
 
-	radarDB.State_Data.String = string(radar.State)
+	radarDB.State_Data.String = radar.State.ToString()
 	radarDB.State_Data.Valid = true
 
 	radarDB.Name_Data.String = radar.Name
@@ -426,7 +426,7 @@ func (radarDB *RadarDB) CopyBasicFieldsFromRadarWOP(radar *RadarWOP) {
 	radarDB.TechName_Data.String = radar.TechName
 	radarDB.TechName_Data.Valid = true
 
-	radarDB.State_Data.String = string(radar.State)
+	radarDB.State_Data.String = radar.State.ToString()
 	radarDB.State_Data.Valid = true
 
 	radarDB.Name_Data.String = radar.Name
@@ -446,7 +446,7 @@ func (radarDB *RadarDB) CopyBasicFieldsFromRadarWOP(radar *RadarWOP) {
 func (radarDB *RadarDB) CopyBasicFieldsToRadar(radar *models.Radar) {
 	// insertion point for checkout of basic fields (back repo to stage)
 	radar.TechName = radarDB.TechName_Data.String
-	radar.State = models.RadarStateEnum(radarDB.State_Data.String)
+	radar.State.FromString(radarDB.State_Data.String)
 	radar.Name = radarDB.Name_Data.String
 	radar.Lat = radarDB.Lat_Data.Float64
 	radar.Lng = radarDB.Lng_Data.Float64
@@ -458,7 +458,7 @@ func (radarDB *RadarDB) CopyBasicFieldsToRadarWOP(radar *RadarWOP) {
 	radar.ID = int(radarDB.ID)
 	// insertion point for checkout of basic fields (back repo to stage)
 	radar.TechName = radarDB.TechName_Data.String
-	radar.State = models.RadarStateEnum(radarDB.State_Data.String)
+	radar.State.FromString(radarDB.State_Data.String)
 	radar.Name = radarDB.Name_Data.String
 	radar.Lat = radarDB.Lat_Data.Float64
 	radar.Lng = radarDB.Lng_Data.Float64

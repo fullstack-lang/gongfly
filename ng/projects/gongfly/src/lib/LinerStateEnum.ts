@@ -11,6 +11,6 @@ export interface LinerStateEnumSelect {
 }
 
 export const LinerStateEnumList: LinerStateEnumSelect[] = [ // insertion point	
-	{ value: 'EN_ROUTE_NOMINAL', viewValue: '"EN_ROUTE_NOMINAL"' },
-	{ value: 'LANDED', viewValue: '"LANDED"' },
+	{ value: LinerStateEnum.EN_ROUTE_NOMINAL, viewValue: "EN_ROUTE_NOMINAL" },
+	{ value: LinerStateEnum.LANDED, viewValue: "LANDED" },
 ];

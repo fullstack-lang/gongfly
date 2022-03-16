@@ -492,7 +492,7 @@ func (linerDB *LinerDB) CopyBasicFieldsFromLiner(liner *models.Liner) {
 	linerDB.TechName_Data.String = liner.TechName
 	linerDB.TechName_Data.Valid = true
 
-	linerDB.State_Data.String = string(liner.State)
+	linerDB.State_Data.String = liner.State.ToString()
 	linerDB.State_Data.Valid = true
 
 	linerDB.TargetHeading_Data.Float64 = liner.TargetHeading
@@ -542,7 +542,7 @@ func (linerDB *LinerDB) CopyBasicFieldsFromLinerWOP(liner *LinerWOP) {
 	linerDB.TechName_Data.String = liner.TechName
 	linerDB.TechName_Data.Valid = true
 
-	linerDB.State_Data.String = string(liner.State)
+	linerDB.State_Data.String = liner.State.ToString()
 	linerDB.State_Data.Valid = true
 
 	linerDB.TargetHeading_Data.Float64 = liner.TargetHeading
@@ -577,7 +577,7 @@ func (linerDB *LinerDB) CopyBasicFieldsToLiner(liner *models.Liner) {
 	liner.Level = linerDB.Level_Data.Float64
 	liner.Speed = linerDB.Speed_Data.Float64
 	liner.TechName = linerDB.TechName_Data.String
-	liner.State = models.LinerStateEnum(linerDB.State_Data.String)
+	liner.State.FromString(linerDB.State_Data.String)
 	liner.TargetHeading = linerDB.TargetHeading_Data.Float64
 	liner.TargetLocationLat = linerDB.TargetLocationLat_Data.Float64
 	liner.TargetLocationLng = linerDB.TargetLocationLng_Data.Float64
@@ -598,7 +598,7 @@ func (linerDB *LinerDB) CopyBasicFieldsToLinerWOP(liner *LinerWOP) {
 	liner.Level = linerDB.Level_Data.Float64
 	liner.Speed = linerDB.Speed_Data.Float64
 	liner.TechName = linerDB.TechName_Data.String
-	liner.State = models.LinerStateEnum(linerDB.State_Data.String)
+	liner.State.FromString(linerDB.State_Data.String)
 	liner.TargetHeading = linerDB.TargetHeading_Data.Float64
 	liner.TargetLocationLat = linerDB.TargetLocationLat_Data.Float64
 	liner.TargetLocationLng = linerDB.TargetLocationLng_Data.Float64

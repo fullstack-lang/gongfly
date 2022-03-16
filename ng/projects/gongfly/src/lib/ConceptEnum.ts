@@ -14,9 +14,9 @@ export interface ConceptEnumSelect {
 }
 
 export const ConceptEnumList: ConceptEnumSelect[] = [ // insertion point	
-	{ value: 'Aircraft_', viewValue: '"Aircrafts"' },
-	{ value: 'Center_', viewValue: '"Centers"' },
-	{ value: 'Network_', viewValue: '"Networks"' },
-	{ value: 'Satellite_', viewValue: '"Satellites"' },
-	{ value: 'System_', viewValue: '"Systems"' },
+	{ value: ConceptEnum.Aircraft_, viewValue: "Aircrafts" },
+	{ value: ConceptEnum.Center_, viewValue: "Centers" },
+	{ value: ConceptEnum.Network_, viewValue: "Networks" },
+	{ value: ConceptEnum.Satellite_, viewValue: "Satellites" },
+	{ value: ConceptEnum.System_, viewValue: "Systems" },
 ];

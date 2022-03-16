@@ -10,5 +10,5 @@ export interface RadarStateEnumSelect {
 }
 
 export const RadarStateEnumList: RadarStateEnumSelect[] = [ // insertion point	
-	{ value: 'WORKING', viewValue: '"WORKING"' },
+	{ value: RadarStateEnum.WORKING, viewValue: "WORKING" },
 ];

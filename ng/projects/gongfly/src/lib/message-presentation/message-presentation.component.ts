@@ -8,6 +8,8 @@ import { FrontRepoService, FrontRepo } from '../front-repo.service'
 
 import { Router, RouterState, ActivatedRoute } from '@angular/router';
 
+// insertion point for additional imports
+
 export interface messageDummyElement {
 }
 
@@ -21,11 +23,12 @@ const ELEMENT_DATA: messageDummyElement[] = [
 })
 export class MessagePresentationComponent implements OnInit {
 
-	// insertion point for declarations
+	// insertion point for additionnal time duration declarations
 	// fields from DurationSinceSimulationStart
 	DurationSinceSimulationStart_Hours: number = 0
 	DurationSinceSimulationStart_Minutes: number = 0
 	DurationSinceSimulationStart_Seconds: number = 0
+	// insertion point for additionnal enum int field declarations
 
 	displayedColumns: string[] = []
 	dataSource = ELEMENT_DATA
@@ -72,6 +75,7 @@ export class MessagePresentationComponent implements OnInit {
 				this.DurationSinceSimulationStart_Hours = Math.floor(this.message.DurationSinceSimulationStart / (3600 * 1000 * 1000 * 1000))
 				this.DurationSinceSimulationStart_Minutes = Math.floor(this.message.DurationSinceSimulationStart % (3600 * 1000 * 1000 * 1000) / (60 * 1000 * 1000 * 1000))
 				this.DurationSinceSimulationStart_Seconds = this.message.DurationSinceSimulationStart % (60 * 1000 * 1000 * 1000) / (1000 * 1000 * 1000)
+				// insertion point for recovery of enum tint
 			}
 		);
 	}

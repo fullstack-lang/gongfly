@@ -17,6 +17,8 @@ import { Router, RouterState } from '@angular/router';
 import { ReportDB } from '../report-db'
 import { ReportService } from '../report.service'
 
+// insertion point for additional imports
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -196,7 +198,7 @@ export class ReportsTableComponent implements OnInit {
 
         this.reports = this.frontRepo.Reports_array;
 
-        // insertion point for variables Recoveries
+        // insertion point for time duration Recoveries
         // compute strings for durations
         for (let report of this.reports) {
           report.Duration_string =
@@ -204,7 +206,8 @@ export class ReportsTableComponent implements OnInit {
             Math.floor(report.Duration % (3600 * 1000 * 1000 * 1000) / (60 * 1000 * 1000 * 1000)) + "M " +
             report.Duration % (60 * 1000 * 1000 * 1000) / (1000 * 1000 * 1000) + "S"
         }
-
+        // insertion point for enum int Recoveries
+        
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
           for (let report of this.reports) {

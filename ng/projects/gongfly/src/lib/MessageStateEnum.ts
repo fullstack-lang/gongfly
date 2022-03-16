@@ -11,6 +11,6 @@ export interface MessageStateEnumSelect {
 }
 
 export const MessageStateEnumList: MessageStateEnumSelect[] = [ // insertion point	
-	{ value: 'MESSAGE_ARRIVED', viewValue: '"MESSAGE_ARRIVED"' },
-	{ value: 'MESSAGE_EN_ROUTE', viewValue: '"MESSAGE_EN_ROUTE"' },
+	{ value: MessageStateEnum.MESSAGE_ARRIVED, viewValue: "MESSAGE_ARRIVED" },
+	{ value: MessageStateEnum.MESSAGE_EN_ROUTE, viewValue: "MESSAGE_EN_ROUTE" },
 ];

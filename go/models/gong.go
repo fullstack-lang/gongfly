@@ -1215,7 +1215,7 @@ const IdentifiersDecls = `
 	{{Identifier}} := (&models.{{GeneratedStructName}}{Name: "{{GeneratedFieldNameValue}}"}).Stage()`
 
 const StringInitStatement = `
-	{{Identifier}}.{{GeneratedFieldName}} = "{{GeneratedFieldNameValue}}"`
+	{{Identifier}}.{{GeneratedFieldName}} = ` + "`" + `{{GeneratedFieldNameValue}}` + "`"
 
 const NumberInitStatement = `
 	{{Identifier}}.{{GeneratedFieldName}} = {{GeneratedFieldNameValue}}`
@@ -1964,7 +1964,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 
 	}
 
-
 	// insertion initialization of objects to stage
 	for idx, civilianairport := range civilianairportOrdered {
 		var setPointerField string
@@ -2096,7 +2095,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		// Initialisation of values
 	}
 
-
 	res = strings.ReplaceAll(res, "{{Identifiers}}", identifiersDecl)
 	res = strings.ReplaceAll(res, "{{ValueInitializers}}", initializerStatements)
 	res = strings.ReplaceAll(res, "{{PointersInitializers}}", pointersInitializesStatements)
@@ -2119,3 +2117,194 @@ func generatesIdentifier(gongStructName string, idx int, instanceName string) (i
 
 	return
 }
+
+// insertion point of enum utility functions
+// Utility function for ConceptEnum
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (conceptenum ConceptEnum) ToString() (res string) {
+
+	// migration of former implementation of enum
+	switch conceptenum {
+	// insertion code per enum code
+	case Aircraft_:
+		res = "Aircrafts"
+	case Center_:
+		res = "Centers"
+	case Network_:
+		res = "Networks"
+	case Satellite_:
+		res = "Satellites"
+	case System_:
+		res = "Systems"
+	}
+	return
+}
+
+func (conceptenum *ConceptEnum) FromString(input string) {
+
+	switch input {
+	// insertion code per enum code
+	case "Aircrafts":
+		*conceptenum = Aircraft_
+	case "Centers":
+		*conceptenum = Center_
+	case "Networks":
+		*conceptenum = Network_
+	case "Satellites":
+		*conceptenum = Satellite_
+	case "Systems":
+		*conceptenum = System_
+	}
+}
+
+// Utility function for LinerStateEnum
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (linerstateenum LinerStateEnum) ToString() (res string) {
+
+	// migration of former implementation of enum
+	switch linerstateenum {
+	// insertion code per enum code
+	case EN_ROUTE_NOMINAL:
+		res = "EN_ROUTE_NOMINAL"
+	case LANDED:
+		res = "LANDED"
+	}
+	return
+}
+
+func (linerstateenum *LinerStateEnum) FromString(input string) {
+
+	switch input {
+	// insertion code per enum code
+	case "EN_ROUTE_NOMINAL":
+		*linerstateenum = EN_ROUTE_NOMINAL
+	case "LANDED":
+		*linerstateenum = LANDED
+	}
+}
+
+// Utility function for MessageStateEnum
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (messagestateenum MessageStateEnum) ToString() (res string) {
+
+	// migration of former implementation of enum
+	switch messagestateenum {
+	// insertion code per enum code
+	case MESSAGE_ARRIVED:
+		res = "MESSAGE_ARRIVED"
+	case MESSAGE_EN_ROUTE:
+		res = "MESSAGE_EN_ROUTE"
+	}
+	return
+}
+
+func (messagestateenum *MessageStateEnum) FromString(input string) {
+
+	switch input {
+	// insertion code per enum code
+	case "MESSAGE_ARRIVED":
+		*messagestateenum = MESSAGE_ARRIVED
+	case "MESSAGE_EN_ROUTE":
+		*messagestateenum = MESSAGE_EN_ROUTE
+	}
+}
+
+// Utility function for OperationalLineStateEnum
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (operationallinestateenum OperationalLineStateEnum) ToString() (res string) {
+
+	// migration of former implementation of enum
+	switch operationallinestateenum {
+	// insertion code per enum code
+	case OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING:
+		res = "OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING"
+	case OPS_COM_LINK_OPERATIONAL_LINE_WORKING:
+		res = "OPS_COM_LINK_OPERATIONAL_LINE_WORKING"
+	}
+	return
+}
+
+func (operationallinestateenum *OperationalLineStateEnum) FromString(input string) {
+
+	switch input {
+	// insertion code per enum code
+	case "OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING":
+		*operationallinestateenum = OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING
+	case "OPS_COM_LINK_OPERATIONAL_LINE_WORKING":
+		*operationallinestateenum = OPS_COM_LINK_OPERATIONAL_LINE_WORKING
+	}
+}
+
+// Utility function for OrderEnum
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (orderenum OrderEnum) ToString() (res string) {
+
+	// migration of former implementation of enum
+	switch orderenum {
+	// insertion code per enum code
+	case TAKE_OFF:
+		res = "TAKE_OFF"
+	}
+	return
+}
+
+func (orderenum *OrderEnum) FromString(input string) {
+
+	switch input {
+	// insertion code per enum code
+	case "TAKE_OFF":
+		*orderenum = TAKE_OFF
+	}
+}
+
+// Utility function for RadarStateEnum
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (radarstateenum RadarStateEnum) ToString() (res string) {
+
+	// migration of former implementation of enum
+	switch radarstateenum {
+	// insertion code per enum code
+	case WORKING:
+		res = "WORKING"
+	}
+	return
+}
+
+func (radarstateenum *RadarStateEnum) FromString(input string) {
+
+	switch input {
+	// insertion code per enum code
+	case "WORKING":
+		*radarstateenum = WORKING
+	}
+}
+
+// Utility function for ReportEnum
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (reportenum ReportEnum) ToString() (res string) {
+
+	// migration of former implementation of enum
+	switch reportenum {
+	// insertion code per enum code
+	case TAKE_OFF_COMPLETED:
+		res = "TAKE_OFF_COMPLETED"
+	}
+	return
+}
+
+func (reportenum *ReportEnum) FromString(input string) {
+
+	switch input {
+	// insertion code per enum code
+	case "TAKE_OFF_COMPLETED":
+		*reportenum = TAKE_OFF_COMPLETED
+	}
+}
+

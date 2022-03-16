@@ -17,6 +17,8 @@ import { Router, RouterState } from '@angular/router';
 import { RadarDB } from '../radar-db'
 import { RadarService } from '../radar.service'
 
+// insertion point for additional imports
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -187,8 +189,9 @@ export class RadarsTableComponent implements OnInit {
 
         this.radars = this.frontRepo.Radars_array;
 
-        // insertion point for variables Recoveries
-
+        // insertion point for time duration Recoveries
+        // insertion point for enum int Recoveries
+        
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
           for (let radar of this.radars) {

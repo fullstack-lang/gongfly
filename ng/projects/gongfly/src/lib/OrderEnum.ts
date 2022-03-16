@@ -10,5 +10,5 @@ export interface OrderEnumSelect {
 }
 
 export const OrderEnumList: OrderEnumSelect[] = [ // insertion point	
-	{ value: 'TAKE_OFF', viewValue: '"TAKE_OFF"' },
+	{ value: OrderEnum.TAKE_OFF, viewValue: "TAKE_OFF" },
 ];

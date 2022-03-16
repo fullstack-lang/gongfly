@@ -17,6 +17,8 @@ import { Router, RouterState } from '@angular/router';
 import { MessageDB } from '../message-db'
 import { MessageService } from '../message.service'
 
+// insertion point for additional imports
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -263,7 +265,7 @@ export class MessagesTableComponent implements OnInit {
 
         this.messages = this.frontRepo.Messages_array;
 
-        // insertion point for variables Recoveries
+        // insertion point for time duration Recoveries
         // compute strings for durations
         for (let message of this.messages) {
           message.DurationSinceSimulationStart_string =
@@ -271,7 +273,8 @@ export class MessagesTableComponent implements OnInit {
             Math.floor(message.DurationSinceSimulationStart % (3600 * 1000 * 1000 * 1000) / (60 * 1000 * 1000 * 1000)) + "M " +
             message.DurationSinceSimulationStart % (60 * 1000 * 1000 * 1000) / (1000 * 1000 * 1000) + "S"
         }
-
+        // insertion point for enum int Recoveries
+        
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
           for (let message of this.messages) {

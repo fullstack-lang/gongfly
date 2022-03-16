@@ -17,6 +17,8 @@ import { Router, RouterState } from '@angular/router';
 import { OrderDB } from '../order-db'
 import { OrderService } from '../order.service'
 
+// insertion point for additional imports
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -200,7 +202,7 @@ export class OrdersTableComponent implements OnInit {
 
         this.orders = this.frontRepo.Orders_array;
 
-        // insertion point for variables Recoveries
+        // insertion point for time duration Recoveries
         // compute strings for durations
         for (let order of this.orders) {
           order.Duration_string =
@@ -208,7 +210,8 @@ export class OrdersTableComponent implements OnInit {
             Math.floor(order.Duration % (3600 * 1000 * 1000 * 1000) / (60 * 1000 * 1000 * 1000)) + "M " +
             order.Duration % (60 * 1000 * 1000 * 1000) / (1000 * 1000 * 1000) + "S"
         }
-
+        // insertion point for enum int Recoveries
+        
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
           for (let order of this.orders) {

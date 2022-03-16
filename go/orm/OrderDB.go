@@ -435,7 +435,7 @@ func (orderDB *OrderDB) CopyBasicFieldsFromOrder(order *models.Order) {
 	orderDB.Number_Data.Int64 = int64(order.Number)
 	orderDB.Number_Data.Valid = true
 
-	orderDB.Type_Data.String = string(order.Type)
+	orderDB.Type_Data.String = order.Type.ToString()
 	orderDB.Type_Data.Valid = true
 
 	orderDB.TargetLat_Data.Float64 = order.TargetLat
@@ -461,7 +461,7 @@ func (orderDB *OrderDB) CopyBasicFieldsFromOrderWOP(order *OrderWOP) {
 	orderDB.Number_Data.Int64 = int64(order.Number)
 	orderDB.Number_Data.Valid = true
 
-	orderDB.Type_Data.String = string(order.Type)
+	orderDB.Type_Data.String = order.Type.ToString()
 	orderDB.Type_Data.Valid = true
 
 	orderDB.TargetLat_Data.Float64 = order.TargetLat
@@ -478,7 +478,7 @@ func (orderDB *OrderDB) CopyBasicFieldsToOrder(order *models.Order) {
 	order.Duration = time.Duration(orderDB.Duration_Data.Int64)
 	order.OrderMessage = orderDB.OrderMessage_Data.String
 	order.Number = int(orderDB.Number_Data.Int64)
-	order.Type = models.OrderEnum(orderDB.Type_Data.String)
+	order.Type.FromString(orderDB.Type_Data.String)
 	order.TargetLat = orderDB.TargetLat_Data.Float64
 	order.TargetLng = orderDB.TargetLng_Data.Float64
 }
@@ -491,7 +491,7 @@ func (orderDB *OrderDB) CopyBasicFieldsToOrderWOP(order *OrderWOP) {
 	order.Duration = time.Duration(orderDB.Duration_Data.Int64)
 	order.OrderMessage = orderDB.OrderMessage_Data.String
 	order.Number = int(orderDB.Number_Data.Int64)
-	order.Type = models.OrderEnum(orderDB.Type_Data.String)
+	order.Type.FromString(orderDB.Type_Data.String)
 	order.TargetLat = orderDB.TargetLat_Data.Float64
 	order.TargetLng = orderDB.TargetLng_Data.Float64
 }

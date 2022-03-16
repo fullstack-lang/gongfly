@@ -440,7 +440,7 @@ func (opslineDB *OpsLineDB) CopyBasicFieldsFromOpsLine(opsline *models.OpsLine) 
 	opslineDB.TechName_Data.String = opsline.TechName
 	opslineDB.TechName_Data.Valid = true
 
-	opslineDB.State_Data.String = string(opsline.State)
+	opslineDB.State_Data.String = opsline.State.ToString()
 	opslineDB.State_Data.Valid = true
 
 	opslineDB.Name_Data.String = opsline.Name
@@ -466,7 +466,7 @@ func (opslineDB *OpsLineDB) CopyBasicFieldsFromOpsLineWOP(opsline *OpsLineWOP) {
 	opslineDB.TechName_Data.String = opsline.TechName
 	opslineDB.TechName_Data.Valid = true
 
-	opslineDB.State_Data.String = string(opsline.State)
+	opslineDB.State_Data.String = opsline.State.ToString()
 	opslineDB.State_Data.Valid = true
 
 	opslineDB.Name_Data.String = opsline.Name
@@ -481,7 +481,7 @@ func (opslineDB *OpsLineDB) CopyBasicFieldsToOpsLine(opsline *models.OpsLine) {
 	opsline.IsTransmittingBackward = opslineDB.IsTransmittingBackward_Data.Bool
 	opsline.TransmissionMessageBackward = opslineDB.TransmissionMessageBackward_Data.String
 	opsline.TechName = opslineDB.TechName_Data.String
-	opsline.State = models.OperationalLineStateEnum(opslineDB.State_Data.String)
+	opsline.State.FromString(opslineDB.State_Data.String)
 	opsline.Name = opslineDB.Name_Data.String
 }
 
@@ -494,7 +494,7 @@ func (opslineDB *OpsLineDB) CopyBasicFieldsToOpsLineWOP(opsline *OpsLineWOP) {
 	opsline.IsTransmittingBackward = opslineDB.IsTransmittingBackward_Data.Bool
 	opsline.TransmissionMessageBackward = opslineDB.TransmissionMessageBackward_Data.String
 	opsline.TechName = opslineDB.TechName_Data.String
-	opsline.State = models.OperationalLineStateEnum(opslineDB.State_Data.String)
+	opsline.State.FromString(opslineDB.State_Data.String)
 	opsline.Name = opslineDB.Name_Data.String
 }
 
