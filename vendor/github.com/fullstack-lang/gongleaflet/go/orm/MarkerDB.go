@@ -431,7 +431,7 @@ func (markerDB *MarkerDB) CopyBasicFieldsFromMarker(marker *models.Marker) {
 	markerDB.Name_Data.String = marker.Name
 	markerDB.Name_Data.Valid = true
 
-	markerDB.ColorEnum_Data.String = string(marker.ColorEnum)
+	markerDB.ColorEnum_Data.String = marker.ColorEnum.ToString()
 	markerDB.ColorEnum_Data.Valid = true
 }
 
@@ -448,7 +448,7 @@ func (markerDB *MarkerDB) CopyBasicFieldsFromMarkerWOP(marker *MarkerWOP) {
 	markerDB.Name_Data.String = marker.Name
 	markerDB.Name_Data.Valid = true
 
-	markerDB.ColorEnum_Data.String = string(marker.ColorEnum)
+	markerDB.ColorEnum_Data.String = marker.ColorEnum.ToString()
 	markerDB.ColorEnum_Data.Valid = true
 }
 
@@ -458,7 +458,7 @@ func (markerDB *MarkerDB) CopyBasicFieldsToMarker(marker *models.Marker) {
 	marker.Lat = markerDB.Lat_Data.Float64
 	marker.Lng = markerDB.Lng_Data.Float64
 	marker.Name = markerDB.Name_Data.String
-	marker.ColorEnum = models.ColorEnum(markerDB.ColorEnum_Data.String)
+	marker.ColorEnum.FromString(markerDB.ColorEnum_Data.String)
 }
 
 // CopyBasicFieldsToMarkerWOP
@@ -468,7 +468,7 @@ func (markerDB *MarkerDB) CopyBasicFieldsToMarkerWOP(marker *MarkerWOP) {
 	marker.Lat = markerDB.Lat_Data.Float64
 	marker.Lng = markerDB.Lng_Data.Float64
 	marker.Name = markerDB.Name_Data.String
-	marker.ColorEnum = models.ColorEnum(markerDB.ColorEnum_Data.String)
+	marker.ColorEnum.FromString(markerDB.ColorEnum_Data.String)
 }
 
 // Backup generates a json file from a slice of all MarkerDB instances in the backrepo

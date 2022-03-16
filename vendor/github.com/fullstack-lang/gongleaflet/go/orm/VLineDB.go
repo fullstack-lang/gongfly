@@ -462,19 +462,19 @@ func (vlineDB *VLineDB) CopyBasicFieldsFromVLine(vline *models.VLine) {
 	vlineDB.Name_Data.String = vline.Name
 	vlineDB.Name_Data.Valid = true
 
-	vlineDB.ColorEnum_Data.String = string(vline.ColorEnum)
+	vlineDB.ColorEnum_Data.String = vline.ColorEnum.ToString()
 	vlineDB.ColorEnum_Data.Valid = true
 
-	vlineDB.DashStyleEnum_Data.String = string(vline.DashStyleEnum)
+	vlineDB.DashStyleEnum_Data.String = vline.DashStyleEnum.ToString()
 	vlineDB.DashStyleEnum_Data.Valid = true
 
-	vlineDB.IsTransmitting_Data.String = string(vline.IsTransmitting)
+	vlineDB.IsTransmitting_Data.String = vline.IsTransmitting.ToString()
 	vlineDB.IsTransmitting_Data.Valid = true
 
 	vlineDB.Message_Data.String = vline.Message
 	vlineDB.Message_Data.Valid = true
 
-	vlineDB.IsTransmittingBackward_Data.String = string(vline.IsTransmittingBackward)
+	vlineDB.IsTransmittingBackward_Data.String = vline.IsTransmittingBackward.ToString()
 	vlineDB.IsTransmittingBackward_Data.Valid = true
 
 	vlineDB.MessageBackward_Data.String = vline.MessageBackward
@@ -500,19 +500,19 @@ func (vlineDB *VLineDB) CopyBasicFieldsFromVLineWOP(vline *VLineWOP) {
 	vlineDB.Name_Data.String = vline.Name
 	vlineDB.Name_Data.Valid = true
 
-	vlineDB.ColorEnum_Data.String = string(vline.ColorEnum)
+	vlineDB.ColorEnum_Data.String = vline.ColorEnum.ToString()
 	vlineDB.ColorEnum_Data.Valid = true
 
-	vlineDB.DashStyleEnum_Data.String = string(vline.DashStyleEnum)
+	vlineDB.DashStyleEnum_Data.String = vline.DashStyleEnum.ToString()
 	vlineDB.DashStyleEnum_Data.Valid = true
 
-	vlineDB.IsTransmitting_Data.String = string(vline.IsTransmitting)
+	vlineDB.IsTransmitting_Data.String = vline.IsTransmitting.ToString()
 	vlineDB.IsTransmitting_Data.Valid = true
 
 	vlineDB.Message_Data.String = vline.Message
 	vlineDB.Message_Data.Valid = true
 
-	vlineDB.IsTransmittingBackward_Data.String = string(vline.IsTransmittingBackward)
+	vlineDB.IsTransmittingBackward_Data.String = vline.IsTransmittingBackward.ToString()
 	vlineDB.IsTransmittingBackward_Data.Valid = true
 
 	vlineDB.MessageBackward_Data.String = vline.MessageBackward
@@ -527,11 +527,11 @@ func (vlineDB *VLineDB) CopyBasicFieldsToVLine(vline *models.VLine) {
 	vline.EndLat = vlineDB.EndLat_Data.Float64
 	vline.EndLng = vlineDB.EndLng_Data.Float64
 	vline.Name = vlineDB.Name_Data.String
-	vline.ColorEnum = models.ColorEnum(vlineDB.ColorEnum_Data.String)
-	vline.DashStyleEnum = models.DashStyleEnum(vlineDB.DashStyleEnum_Data.String)
-	vline.IsTransmitting = models.TransmittingEnum(vlineDB.IsTransmitting_Data.String)
+	vline.ColorEnum.FromString(vlineDB.ColorEnum_Data.String)
+	vline.DashStyleEnum.FromString(vlineDB.DashStyleEnum_Data.String)
+	vline.IsTransmitting.FromString(vlineDB.IsTransmitting_Data.String)
 	vline.Message = vlineDB.Message_Data.String
-	vline.IsTransmittingBackward = models.TransmittingEnum(vlineDB.IsTransmittingBackward_Data.String)
+	vline.IsTransmittingBackward.FromString(vlineDB.IsTransmittingBackward_Data.String)
 	vline.MessageBackward = vlineDB.MessageBackward_Data.String
 }
 
@@ -544,11 +544,11 @@ func (vlineDB *VLineDB) CopyBasicFieldsToVLineWOP(vline *VLineWOP) {
 	vline.EndLat = vlineDB.EndLat_Data.Float64
 	vline.EndLng = vlineDB.EndLng_Data.Float64
 	vline.Name = vlineDB.Name_Data.String
-	vline.ColorEnum = models.ColorEnum(vlineDB.ColorEnum_Data.String)
-	vline.DashStyleEnum = models.DashStyleEnum(vlineDB.DashStyleEnum_Data.String)
-	vline.IsTransmitting = models.TransmittingEnum(vlineDB.IsTransmitting_Data.String)
+	vline.ColorEnum.FromString(vlineDB.ColorEnum_Data.String)
+	vline.DashStyleEnum.FromString(vlineDB.DashStyleEnum_Data.String)
+	vline.IsTransmitting.FromString(vlineDB.IsTransmitting_Data.String)
 	vline.Message = vlineDB.Message_Data.String
-	vline.IsTransmittingBackward = models.TransmittingEnum(vlineDB.IsTransmittingBackward_Data.String)
+	vline.IsTransmittingBackward.FromString(vlineDB.IsTransmittingBackward_Data.String)
 	vline.MessageBackward = vlineDB.MessageBackward_Data.String
 }
 

@@ -11,6 +11,6 @@ export interface DashStyleEnumSelect {
 }
 
 export const DashStyleEnumList: DashStyleEnumSelect[] = [ // insertion point	
-	{ value: 'FIVE_TEN', viewValue: '"FIVE_TEN"' },
-	{ value: 'FIVE_TWENTY', viewValue: '"FIVE_TWENTY"' },
+	{ value: DashStyleEnum.FIVE_TEN, viewValue: "FIVE_TEN" },
+	{ value: DashStyleEnum.FIVE_TWENTY, viewValue: "FIVE_TWENTY" },
 ];

@@ -481,7 +481,7 @@ func (visualtrackDB *VisualTrackDB) CopyBasicFieldsFromVisualTrack(visualtrack *
 	visualtrackDB.Name_Data.String = visualtrack.Name
 	visualtrackDB.Name_Data.Valid = true
 
-	visualtrackDB.ColorEnum_Data.String = string(visualtrack.ColorEnum)
+	visualtrackDB.ColorEnum_Data.String = visualtrack.ColorEnum.ToString()
 	visualtrackDB.ColorEnum_Data.Valid = true
 
 	visualtrackDB.DisplayTrackHistory_Data.Bool = visualtrack.DisplayTrackHistory
@@ -516,7 +516,7 @@ func (visualtrackDB *VisualTrackDB) CopyBasicFieldsFromVisualTrackWOP(visualtrac
 	visualtrackDB.Name_Data.String = visualtrack.Name
 	visualtrackDB.Name_Data.Valid = true
 
-	visualtrackDB.ColorEnum_Data.String = string(visualtrack.ColorEnum)
+	visualtrackDB.ColorEnum_Data.String = visualtrack.ColorEnum.ToString()
 	visualtrackDB.ColorEnum_Data.Valid = true
 
 	visualtrackDB.DisplayTrackHistory_Data.Bool = visualtrack.DisplayTrackHistory
@@ -536,7 +536,7 @@ func (visualtrackDB *VisualTrackDB) CopyBasicFieldsToVisualTrack(visualtrack *mo
 	visualtrack.Speed = visualtrackDB.Speed_Data.Float64
 	visualtrack.VerticalSpeed = visualtrackDB.VerticalSpeed_Data.Float64
 	visualtrack.Name = visualtrackDB.Name_Data.String
-	visualtrack.ColorEnum = models.ColorEnum(visualtrackDB.ColorEnum_Data.String)
+	visualtrack.ColorEnum.FromString(visualtrackDB.ColorEnum_Data.String)
 	visualtrack.DisplayTrackHistory = visualtrackDB.DisplayTrackHistory_Data.Bool
 	visualtrack.DisplayLevelAndSpeed = visualtrackDB.DisplayLevelAndSpeed_Data.Bool
 }
@@ -552,7 +552,7 @@ func (visualtrackDB *VisualTrackDB) CopyBasicFieldsToVisualTrackWOP(visualtrack 
 	visualtrack.Speed = visualtrackDB.Speed_Data.Float64
 	visualtrack.VerticalSpeed = visualtrackDB.VerticalSpeed_Data.Float64
 	visualtrack.Name = visualtrackDB.Name_Data.String
-	visualtrack.ColorEnum = models.ColorEnum(visualtrackDB.ColorEnum_Data.String)
+	visualtrack.ColorEnum.FromString(visualtrackDB.ColorEnum_Data.String)
 	visualtrack.DisplayTrackHistory = visualtrackDB.DisplayTrackHistory_Data.Bool
 	visualtrack.DisplayLevelAndSpeed = visualtrackDB.DisplayLevelAndSpeed_Data.Bool
 }

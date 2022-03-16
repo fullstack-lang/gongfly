@@ -429,10 +429,10 @@ func (circleDB *CircleDB) CopyBasicFieldsFromCircle(circle *models.Circle) {
 	circleDB.Radius_Data.Float64 = circle.Radius
 	circleDB.Radius_Data.Valid = true
 
-	circleDB.ColorEnum_Data.String = string(circle.ColorEnum)
+	circleDB.ColorEnum_Data.String = circle.ColorEnum.ToString()
 	circleDB.ColorEnum_Data.Valid = true
 
-	circleDB.DashStyleEnum_Data.String = string(circle.DashStyleEnum)
+	circleDB.DashStyleEnum_Data.String = circle.DashStyleEnum.ToString()
 	circleDB.DashStyleEnum_Data.Valid = true
 }
 
@@ -452,10 +452,10 @@ func (circleDB *CircleDB) CopyBasicFieldsFromCircleWOP(circle *CircleWOP) {
 	circleDB.Radius_Data.Float64 = circle.Radius
 	circleDB.Radius_Data.Valid = true
 
-	circleDB.ColorEnum_Data.String = string(circle.ColorEnum)
+	circleDB.ColorEnum_Data.String = circle.ColorEnum.ToString()
 	circleDB.ColorEnum_Data.Valid = true
 
-	circleDB.DashStyleEnum_Data.String = string(circle.DashStyleEnum)
+	circleDB.DashStyleEnum_Data.String = circle.DashStyleEnum.ToString()
 	circleDB.DashStyleEnum_Data.Valid = true
 }
 
@@ -466,8 +466,8 @@ func (circleDB *CircleDB) CopyBasicFieldsToCircle(circle *models.Circle) {
 	circle.Lng = circleDB.Lng_Data.Float64
 	circle.Name = circleDB.Name_Data.String
 	circle.Radius = circleDB.Radius_Data.Float64
-	circle.ColorEnum = models.ColorEnum(circleDB.ColorEnum_Data.String)
-	circle.DashStyleEnum = models.DashStyleEnum(circleDB.DashStyleEnum_Data.String)
+	circle.ColorEnum.FromString(circleDB.ColorEnum_Data.String)
+	circle.DashStyleEnum.FromString(circleDB.DashStyleEnum_Data.String)
 }
 
 // CopyBasicFieldsToCircleWOP
@@ -478,8 +478,8 @@ func (circleDB *CircleDB) CopyBasicFieldsToCircleWOP(circle *CircleWOP) {
 	circle.Lng = circleDB.Lng_Data.Float64
 	circle.Name = circleDB.Name_Data.String
 	circle.Radius = circleDB.Radius_Data.Float64
-	circle.ColorEnum = models.ColorEnum(circleDB.ColorEnum_Data.String)
-	circle.DashStyleEnum = models.DashStyleEnum(circleDB.DashStyleEnum_Data.String)
+	circle.ColorEnum.FromString(circleDB.ColorEnum_Data.String)
+	circle.DashStyleEnum.FromString(circleDB.DashStyleEnum_Data.String)
 }
 
 // Backup generates a json file from a slice of all CircleDB instances in the backrepo

@@ -17,6 +17,8 @@ import { Router, RouterState } from '@angular/router';
 import { VLineDB } from '../vline-db'
 import { VLineService } from '../vline.service'
 
+// insertion point for additional imports
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -225,8 +227,9 @@ export class VLinesTableComponent implements OnInit {
 
         this.vlines = this.frontRepo.VLines_array;
 
-        // insertion point for variables Recoveries
-
+        // insertion point for time duration Recoveries
+        // insertion point for enum int Recoveries
+        
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
           for (let vline of this.vlines) {

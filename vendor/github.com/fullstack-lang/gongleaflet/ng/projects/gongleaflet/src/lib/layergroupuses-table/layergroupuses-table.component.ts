@@ -17,6 +17,8 @@ import { Router, RouterState } from '@angular/router';
 import { LayerGroupUseDB } from '../layergroupuse-db'
 import { LayerGroupUseService } from '../layergroupuse.service'
 
+// insertion point for additional imports
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -179,8 +181,9 @@ export class LayerGroupUsesTableComponent implements OnInit {
 
         this.layergroupuses = this.frontRepo.LayerGroupUses_array;
 
-        // insertion point for variables Recoveries
-
+        // insertion point for time duration Recoveries
+        // insertion point for enum int Recoveries
+        
         // in case the component is called as a selection component
         if (this.mode == TableComponentMode.ONE_MANY_ASSOCIATION_MODE) {
           for (let layergroupuse of this.layergroupuses) {

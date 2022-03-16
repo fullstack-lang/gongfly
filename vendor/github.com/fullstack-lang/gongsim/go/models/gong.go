@@ -858,7 +858,7 @@ const IdentifiersDecls = `
 	{{Identifier}} := (&models.{{GeneratedStructName}}{Name: "{{GeneratedFieldNameValue}}"}).Stage()`
 
 const StringInitStatement = `
-	{{Identifier}}.{{GeneratedFieldName}} = "{{GeneratedFieldNameValue}}"`
+	{{Identifier}}.{{GeneratedFieldName}} = ` + "`" + `{{GeneratedFieldNameValue}}` + "`"
 
 const NumberInitStatement = `
 	{{Identifier}}.{{GeneratedFieldName}} = {{GeneratedFieldNameValue}}`
@@ -1205,7 +1205,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 
 	}
 
-
 	// insertion initialization of objects to stage
 	for idx, dummyagent := range dummyagentOrdered {
 		var setPointerField string
@@ -1275,7 +1274,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		// Initialisation of values
 	}
 
-
 	res = strings.ReplaceAll(res, "{{Identifiers}}", identifiersDecl)
 	res = strings.ReplaceAll(res, "{{ValueInitializers}}", initializerStatements)
 	res = strings.ReplaceAll(res, "{{PointersInitializers}}", pointersInitializesStatements)
@@ -1298,3 +1296,234 @@ func generatesIdentifier(gongStructName string, idx int, instanceName string) (i
 
 	return
 }
+
+// insertion point of enum utility functions
+// Utility function for ControlMode
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (controlmode ControlMode) ToString() (res string) {
+
+	// migration of former implementation of enum
+	switch controlmode {
+	// insertion code per enum code
+	case AUTONOMOUS:
+		res = "Autonomous"
+	case CLIENT_CONTROL:
+		res = "ClientControl"
+	}
+	return
+}
+
+func (controlmode *ControlMode) FromString(input string) {
+
+	switch input {
+	// insertion code per enum code
+	case "Autonomous":
+		*controlmode = AUTONOMOUS
+	case "ClientControl":
+		*controlmode = CLIENT_CONTROL
+	}
+}
+
+// Utility function for EngineDriverState
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (enginedriverstate EngineDriverState) ToInt() (res int) {
+
+	// migration of former implementation of enum
+	switch enginedriverstate {
+	// insertion code per enum code
+	case CHECKOUT_AGENT_STATES:
+		res = 1
+	case COMMIT_AGENT_STATES:
+		res = 0
+	case FIRE_ONE_EVENT:
+		res = 2
+	case RESET_SIMULATION:
+		res = 4
+	case SLEEP_100_MS:
+		res = 3
+	case UNKOWN:
+		res = 5
+	}
+	return
+}
+
+func (enginedriverstate *EngineDriverState) FromInt(input int) {
+
+	switch input {
+	// insertion code per enum code
+	case 1:
+		*enginedriverstate = CHECKOUT_AGENT_STATES
+	case 0:
+		*enginedriverstate = COMMIT_AGENT_STATES
+	case 2:
+		*enginedriverstate = FIRE_ONE_EVENT
+	case 4:
+		*enginedriverstate = RESET_SIMULATION
+	case 3:
+		*enginedriverstate = SLEEP_100_MS
+	case 5:
+		*enginedriverstate = UNKOWN
+	}
+}
+
+// Utility function for EngineRunMode
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (enginerunmode EngineRunMode) ToInt() (res int) {
+
+	// migration of former implementation of enum
+	switch enginerunmode {
+	// insertion code per enum code
+	case FULL_SPEED:
+		res = 1
+	case RELATIVE_SPEED:
+		res = 0
+	}
+	return
+}
+
+func (enginerunmode *EngineRunMode) FromInt(input int) {
+
+	switch input {
+	// insertion code per enum code
+	case 1:
+		*enginerunmode = FULL_SPEED
+	case 0:
+		*enginerunmode = RELATIVE_SPEED
+	}
+}
+
+// Utility function for EngineState
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (enginestate EngineState) ToString() (res string) {
+
+	// migration of former implementation of enum
+	switch enginestate {
+	// insertion code per enum code
+	case OVER:
+		res = "OVER"
+	case PAUSED:
+		res = "PAUSED"
+	case RUNNING:
+		res = "RUNNING"
+	}
+	return
+}
+
+func (enginestate *EngineState) FromString(input string) {
+
+	switch input {
+	// insertion code per enum code
+	case "OVER":
+		*enginestate = OVER
+	case "PAUSED":
+		*enginestate = PAUSED
+	case "RUNNING":
+		*enginestate = RUNNING
+	}
+}
+
+// Utility function for EngineStopMode
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (enginestopmode EngineStopMode) ToInt() (res int) {
+
+	// migration of former implementation of enum
+	switch enginestopmode {
+	// insertion code per enum code
+	case STATE_CHANGED:
+		res = 1
+	case TEN_MINUTES:
+		res = 0
+	}
+	return
+}
+
+func (enginestopmode *EngineStopMode) FromInt(input int) {
+
+	switch input {
+	// insertion code per enum code
+	case 1:
+		*enginestopmode = STATE_CHANGED
+	case 0:
+		*enginestopmode = TEN_MINUTES
+	}
+}
+
+// Utility function for GongsimCommandType
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (gongsimcommandtype GongsimCommandType) ToString() (res string) {
+
+	// migration of former implementation of enum
+	switch gongsimcommandtype {
+	// insertion code per enum code
+	case COMMAND_ADVANCE_10_MIN:
+		res = "ADVANCE_10_MIN"
+	case COMMAND_FIRE_EVENT_TILL_STATES_CHANGE:
+		res = "FIRE_EVENT_TILL_STATES_CHANGE"
+	case COMMAND_FIRE_NEXT_EVENT:
+		res = "FIRE_NEXT_EVENT"
+	case COMMAND_PAUSE:
+		res = "PAUSE"
+	case COMMAND_PLAY:
+		res = "PLAY"
+	case COMMAND_RESET:
+		res = "RESET"
+	}
+	return
+}
+
+func (gongsimcommandtype *GongsimCommandType) FromString(input string) {
+
+	switch input {
+	// insertion code per enum code
+	case "ADVANCE_10_MIN":
+		*gongsimcommandtype = COMMAND_ADVANCE_10_MIN
+	case "FIRE_EVENT_TILL_STATES_CHANGE":
+		*gongsimcommandtype = COMMAND_FIRE_EVENT_TILL_STATES_CHANGE
+	case "FIRE_NEXT_EVENT":
+		*gongsimcommandtype = COMMAND_FIRE_NEXT_EVENT
+	case "PAUSE":
+		*gongsimcommandtype = COMMAND_PAUSE
+	case "PLAY":
+		*gongsimcommandtype = COMMAND_PLAY
+	case "RESET":
+		*gongsimcommandtype = COMMAND_RESET
+	}
+}
+
+// Utility function for SpeedCommandType
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (speedcommandtype SpeedCommandType) ToString() (res string) {
+
+	// migration of former implementation of enum
+	switch speedcommandtype {
+	// insertion code per enum code
+	case COMMAND_DECREASE_SPEED_50_PERCENTS:
+		res = "COMMAND_DECREASE_SPEED_50_PERCENTS "
+	case COMMAND_INCREASE_SPEED_100_PERCENTS:
+		res = "INCREASE_SPEED_100_PERCENTS"
+	case COMMAND_SPEED_STEADY:
+		res = "COMMAND_SPEED_STEADY"
+	}
+	return
+}
+
+func (speedcommandtype *SpeedCommandType) FromString(input string) {
+
+	switch input {
+	// insertion code per enum code
+	case "COMMAND_DECREASE_SPEED_50_PERCENTS ":
+		*speedcommandtype = COMMAND_DECREASE_SPEED_50_PERCENTS
+	case "INCREASE_SPEED_100_PERCENTS":
+		*speedcommandtype = COMMAND_INCREASE_SPEED_100_PERCENTS
+	case "COMMAND_SPEED_STEADY":
+		*speedcommandtype = COMMAND_SPEED_STEADY
+	}
+}
+

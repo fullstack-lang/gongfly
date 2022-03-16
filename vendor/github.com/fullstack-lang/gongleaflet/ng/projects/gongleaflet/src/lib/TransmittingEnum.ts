@@ -11,6 +11,6 @@ export interface TransmittingEnumSelect {
 }
 
 export const TransmittingEnumList: TransmittingEnumSelect[] = [ // insertion point	
-	{ value: 'IS_NOT_TRANSMITTING', viewValue: '"IS_NOT_TRANSMITTING"' },
-	{ value: 'IS_TRANSMITTING', viewValue: '"IS_TRANSMITTING"' },
+	{ value: TransmittingEnum.IS_NOT_TRANSMITTING, viewValue: "IS_NOT_TRANSMITTING" },
+	{ value: TransmittingEnum.IS_TRANSMITTING, viewValue: "IS_TRANSMITTING" },
 ];
