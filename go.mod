@@ -4,10 +4,10 @@ go 1.17
 
 require (
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
-	github.com/fullstack-lang/gong v0.0.0-20220316065254-d573a93451c2
-	github.com/fullstack-lang/gongdoc v0.0.0-20220316065640-40776ca68c53
-	github.com/fullstack-lang/gongleaflet v0.0.0-20220316065537-dd5e65230742
-	github.com/fullstack-lang/gongsim v0.0.0-20220316065542-300d6a6c52b5
+	github.com/fullstack-lang/gong v0.0.0-20220320100309-f376680430cd
+	github.com/fullstack-lang/gongdoc v0.0.0-20220320094425-9d45a110ec3c
+	github.com/fullstack-lang/gongleaflet v0.0.0-20220320094426-5bc04bdb1972
+	github.com/fullstack-lang/gongsim v0.0.0-20220320094427-832fd2ee105a
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.7.4
