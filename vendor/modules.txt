@@ -45,7 +45,7 @@ github.com/fullstack-lang/gong/go/controllers
 github.com/fullstack-lang/gong/go/models
 github.com/fullstack-lang/gong/go/orm
 github.com/fullstack-lang/gong/ng
-# github.com/fullstack-lang/gongdoc v0.0.0-20220320094425-9d45a110ec3c
+# github.com/fullstack-lang/gongdoc v0.0.0-20220325104006-b061f982cca1
 ## explicit; go 1.17
 github.com/fullstack-lang/gongdoc/go/controllers
 github.com/fullstack-lang/gongdoc/go/models
