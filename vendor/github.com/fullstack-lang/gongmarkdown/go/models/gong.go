@@ -20,8 +20,14 @@ var __member __void
 // StageStruct enables storage of staged instances
 // swagger:ignore
 type StageStruct struct { // insertion point for definition of arrays registering instances
+	AnotherDummyDatas           map[*AnotherDummyData]struct{}
+	AnotherDummyDatas_mapString map[string]*AnotherDummyData
+
 	Cells           map[*Cell]struct{}
 	Cells_mapString map[string]*Cell
+
+	DummyDatas           map[*DummyData]struct{}
+	DummyDatas_mapString map[string]*DummyData
 
 	Elements           map[*Element]struct{}
 	Elements_mapString map[string]*Element
@@ -59,8 +65,12 @@ type BackRepoInterface interface {
 	BackupXL(stage *StageStruct, dirPath string)
 	RestoreXL(stage *StageStruct, dirPath string)
 	// insertion point for Commit and Checkout signatures
+	CommitAnotherDummyData(anotherdummydata *AnotherDummyData)
+	CheckoutAnotherDummyData(anotherdummydata *AnotherDummyData)
 	CommitCell(cell *Cell)
 	CheckoutCell(cell *Cell)
+	CommitDummyData(dummydata *DummyData)
+	CheckoutDummyData(dummydata *DummyData)
 	CommitElement(element *Element)
 	CheckoutElement(element *Element)
 	CommitMarkdownContent(markdowncontent *MarkdownContent)
@@ -73,8 +83,14 @@ type BackRepoInterface interface {
 
 // swagger:ignore instructs the gong compiler (gongc) to avoid this particular struct
 var Stage StageStruct = StageStruct{ // insertion point for array initiatialisation
+	AnotherDummyDatas:           make(map[*AnotherDummyData]struct{}),
+	AnotherDummyDatas_mapString: make(map[string]*AnotherDummyData),
+
 	Cells:           make(map[*Cell]struct{}),
 	Cells_mapString: make(map[string]*Cell),
+
+	DummyDatas:           make(map[*DummyData]struct{}),
+	DummyDatas_mapString: make(map[string]*DummyData),
 
 	Elements:           make(map[*Element]struct{}),
 	Elements_mapString: make(map[string]*Element),
@@ -95,7 +111,9 @@ func (stage *StageStruct) Commit() {
 	}
 
 	// insertion point for computing the map of number of instances per gongstruct
+	stage.Map_GongStructName_InstancesNb["AnotherDummyData"] = len(stage.AnotherDummyDatas)
 	stage.Map_GongStructName_InstancesNb["Cell"] = len(stage.Cells)
+	stage.Map_GongStructName_InstancesNb["DummyData"] = len(stage.DummyDatas)
 	stage.Map_GongStructName_InstancesNb["Element"] = len(stage.Elements)
 	stage.Map_GongStructName_InstancesNb["MarkdownContent"] = len(stage.MarkdownContents)
 	stage.Map_GongStructName_InstancesNb["Row"] = len(stage.Rows)
@@ -137,6 +155,108 @@ func (stage *StageStruct) RestoreXL(dirPath string) {
 }
 
 // insertion point for cumulative sub template with model space calls
+func (stage *StageStruct) getAnotherDummyDataOrderedStructWithNameField() []*AnotherDummyData {
+	// have alphabetical order generation
+	anotherdummydataOrdered := []*AnotherDummyData{}
+	for anotherdummydata := range stage.AnotherDummyDatas {
+		anotherdummydataOrdered = append(anotherdummydataOrdered, anotherdummydata)
+	}
+	sort.Slice(anotherdummydataOrdered[:], func(i, j int) bool {
+		return anotherdummydataOrdered[i].Name < anotherdummydataOrdered[j].Name
+	})
+	return anotherdummydataOrdered
+}
+
+// Stage puts anotherdummydata to the model stage
+func (anotherdummydata *AnotherDummyData) Stage() *AnotherDummyData {
+	Stage.AnotherDummyDatas[anotherdummydata] = __member
+	Stage.AnotherDummyDatas_mapString[anotherdummydata.Name] = anotherdummydata
+
+	return anotherdummydata
+}
+
+// Unstage removes anotherdummydata off the model stage
+func (anotherdummydata *AnotherDummyData) Unstage() *AnotherDummyData {
+	delete(Stage.AnotherDummyDatas, anotherdummydata)
+	delete(Stage.AnotherDummyDatas_mapString, anotherdummydata.Name)
+	return anotherdummydata
+}
+
+// commit anotherdummydata to the back repo (if it is already staged)
+func (anotherdummydata *AnotherDummyData) Commit() *AnotherDummyData {
+	if _, ok := Stage.AnotherDummyDatas[anotherdummydata]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CommitAnotherDummyData(anotherdummydata)
+		}
+	}
+	return anotherdummydata
+}
+
+// Checkout anotherdummydata to the back repo (if it is already staged)
+func (anotherdummydata *AnotherDummyData) Checkout() *AnotherDummyData {
+	if _, ok := Stage.AnotherDummyDatas[anotherdummydata]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CheckoutAnotherDummyData(anotherdummydata)
+		}
+	}
+	return anotherdummydata
+}
+
+//
+// Legacy, to be deleted
+//
+
+// StageCopy appends a copy of anotherdummydata to the model stage
+func (anotherdummydata *AnotherDummyData) StageCopy() *AnotherDummyData {
+	_anotherdummydata := new(AnotherDummyData)
+	*_anotherdummydata = *anotherdummydata
+	_anotherdummydata.Stage()
+	return _anotherdummydata
+}
+
+// StageAndCommit appends anotherdummydata to the model stage and commit to the orm repo
+func (anotherdummydata *AnotherDummyData) StageAndCommit() *AnotherDummyData {
+	anotherdummydata.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMAnotherDummyData(anotherdummydata)
+	}
+	return anotherdummydata
+}
+
+// DeleteStageAndCommit appends anotherdummydata to the model stage and commit to the orm repo
+func (anotherdummydata *AnotherDummyData) DeleteStageAndCommit() *AnotherDummyData {
+	anotherdummydata.Unstage()
+	DeleteORMAnotherDummyData(anotherdummydata)
+	return anotherdummydata
+}
+
+// StageCopyAndCommit appends a copy of anotherdummydata to the model stage and commit to the orm repo
+func (anotherdummydata *AnotherDummyData) StageCopyAndCommit() *AnotherDummyData {
+	_anotherdummydata := new(AnotherDummyData)
+	*_anotherdummydata = *anotherdummydata
+	_anotherdummydata.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMAnotherDummyData(anotherdummydata)
+	}
+	return _anotherdummydata
+}
+
+// CreateORMAnotherDummyData enables dynamic staging of a AnotherDummyData instance
+func CreateORMAnotherDummyData(anotherdummydata *AnotherDummyData) {
+	anotherdummydata.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMAnotherDummyData(anotherdummydata)
+	}
+}
+
+// DeleteORMAnotherDummyData enables dynamic staging of a AnotherDummyData instance
+func DeleteORMAnotherDummyData(anotherdummydata *AnotherDummyData) {
+	anotherdummydata.Unstage()
+	if Stage.AllModelsStructDeleteCallback != nil {
+		Stage.AllModelsStructDeleteCallback.DeleteORMAnotherDummyData(anotherdummydata)
+	}
+}
+
 func (stage *StageStruct) getCellOrderedStructWithNameField() []*Cell {
 	// have alphabetical order generation
 	cellOrdered := []*Cell{}
@@ -236,6 +356,108 @@ func DeleteORMCell(cell *Cell) {
 	cell.Unstage()
 	if Stage.AllModelsStructDeleteCallback != nil {
 		Stage.AllModelsStructDeleteCallback.DeleteORMCell(cell)
+	}
+}
+
+func (stage *StageStruct) getDummyDataOrderedStructWithNameField() []*DummyData {
+	// have alphabetical order generation
+	dummydataOrdered := []*DummyData{}
+	for dummydata := range stage.DummyDatas {
+		dummydataOrdered = append(dummydataOrdered, dummydata)
+	}
+	sort.Slice(dummydataOrdered[:], func(i, j int) bool {
+		return dummydataOrdered[i].Name < dummydataOrdered[j].Name
+	})
+	return dummydataOrdered
+}
+
+// Stage puts dummydata to the model stage
+func (dummydata *DummyData) Stage() *DummyData {
+	Stage.DummyDatas[dummydata] = __member
+	Stage.DummyDatas_mapString[dummydata.Name] = dummydata
+
+	return dummydata
+}
+
+// Unstage removes dummydata off the model stage
+func (dummydata *DummyData) Unstage() *DummyData {
+	delete(Stage.DummyDatas, dummydata)
+	delete(Stage.DummyDatas_mapString, dummydata.Name)
+	return dummydata
+}
+
+// commit dummydata to the back repo (if it is already staged)
+func (dummydata *DummyData) Commit() *DummyData {
+	if _, ok := Stage.DummyDatas[dummydata]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CommitDummyData(dummydata)
+		}
+	}
+	return dummydata
+}
+
+// Checkout dummydata to the back repo (if it is already staged)
+func (dummydata *DummyData) Checkout() *DummyData {
+	if _, ok := Stage.DummyDatas[dummydata]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CheckoutDummyData(dummydata)
+		}
+	}
+	return dummydata
+}
+
+//
+// Legacy, to be deleted
+//
+
+// StageCopy appends a copy of dummydata to the model stage
+func (dummydata *DummyData) StageCopy() *DummyData {
+	_dummydata := new(DummyData)
+	*_dummydata = *dummydata
+	_dummydata.Stage()
+	return _dummydata
+}
+
+// StageAndCommit appends dummydata to the model stage and commit to the orm repo
+func (dummydata *DummyData) StageAndCommit() *DummyData {
+	dummydata.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMDummyData(dummydata)
+	}
+	return dummydata
+}
+
+// DeleteStageAndCommit appends dummydata to the model stage and commit to the orm repo
+func (dummydata *DummyData) DeleteStageAndCommit() *DummyData {
+	dummydata.Unstage()
+	DeleteORMDummyData(dummydata)
+	return dummydata
+}
+
+// StageCopyAndCommit appends a copy of dummydata to the model stage and commit to the orm repo
+func (dummydata *DummyData) StageCopyAndCommit() *DummyData {
+	_dummydata := new(DummyData)
+	*_dummydata = *dummydata
+	_dummydata.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMDummyData(dummydata)
+	}
+	return _dummydata
+}
+
+// CreateORMDummyData enables dynamic staging of a DummyData instance
+func CreateORMDummyData(dummydata *DummyData) {
+	dummydata.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMDummyData(dummydata)
+	}
+}
+
+// DeleteORMDummyData enables dynamic staging of a DummyData instance
+func DeleteORMDummyData(dummydata *DummyData) {
+	dummydata.Unstage()
+	if Stage.AllModelsStructDeleteCallback != nil {
+		Stage.AllModelsStructDeleteCallback.DeleteORMDummyData(dummydata)
 	}
 }
 
@@ -547,22 +769,32 @@ func DeleteORMRow(row *Row) {
 
 // swagger:ignore
 type AllModelsStructCreateInterface interface { // insertion point for Callbacks on creation
+	CreateORMAnotherDummyData(AnotherDummyData *AnotherDummyData)
 	CreateORMCell(Cell *Cell)
+	CreateORMDummyData(DummyData *DummyData)
 	CreateORMElement(Element *Element)
 	CreateORMMarkdownContent(MarkdownContent *MarkdownContent)
 	CreateORMRow(Row *Row)
 }
 
 type AllModelsStructDeleteInterface interface { // insertion point for Callbacks on deletion
+	DeleteORMAnotherDummyData(AnotherDummyData *AnotherDummyData)
 	DeleteORMCell(Cell *Cell)
+	DeleteORMDummyData(DummyData *DummyData)
 	DeleteORMElement(Element *Element)
 	DeleteORMMarkdownContent(MarkdownContent *MarkdownContent)
 	DeleteORMRow(Row *Row)
 }
 
 func (stage *StageStruct) Reset() { // insertion point for array reset
+	stage.AnotherDummyDatas = make(map[*AnotherDummyData]struct{})
+	stage.AnotherDummyDatas_mapString = make(map[string]*AnotherDummyData)
+
 	stage.Cells = make(map[*Cell]struct{})
 	stage.Cells_mapString = make(map[string]*Cell)
+
+	stage.DummyDatas = make(map[*DummyData]struct{})
+	stage.DummyDatas_mapString = make(map[string]*DummyData)
 
 	stage.Elements = make(map[*Element]struct{})
 	stage.Elements_mapString = make(map[string]*Element)
@@ -576,8 +808,14 @@ func (stage *StageStruct) Reset() { // insertion point for array reset
 }
 
 func (stage *StageStruct) Nil() { // insertion point for array nil
+	stage.AnotherDummyDatas = nil
+	stage.AnotherDummyDatas_mapString = nil
+
 	stage.Cells = nil
 	stage.Cells_mapString = nil
+
+	stage.DummyDatas = nil
+	stage.DummyDatas_mapString = nil
 
 	stage.Elements = nil
 	stage.Elements_mapString = nil
@@ -664,6 +902,38 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	setValueField := ""
 
 	// insertion initialization of objects to stage
+	map_AnotherDummyData_Identifiers := make(map[*AnotherDummyData]string)
+	_ = map_AnotherDummyData_Identifiers
+
+	anotherdummydataOrdered := []*AnotherDummyData{}
+	for anotherdummydata := range stage.AnotherDummyDatas {
+		anotherdummydataOrdered = append(anotherdummydataOrdered, anotherdummydata)
+	}
+	sort.Slice(anotherdummydataOrdered[:], func(i, j int) bool {
+		return anotherdummydataOrdered[i].Name < anotherdummydataOrdered[j].Name
+	})
+	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of AnotherDummyData")
+	for idx, anotherdummydata := range anotherdummydataOrdered {
+
+		id = generatesIdentifier("AnotherDummyData", idx, anotherdummydata.Name)
+		map_AnotherDummyData_Identifiers[anotherdummydata] = id
+
+		decl = IdentifiersDecls
+		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
+		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "AnotherDummyData")
+		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", anotherdummydata.Name)
+		identifiersDecl += decl
+
+		initializerStatements += fmt.Sprintf("\n\n	// AnotherDummyData %s values setup", anotherdummydata.Name)
+		// Initialisation of values
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(anotherdummydata.Name))
+		initializerStatements += setValueField
+
+	}
+
 	map_Cell_Identifiers := make(map[*Cell]string)
 	_ = map_Cell_Identifiers
 
@@ -692,6 +962,74 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(cell.Name))
+		initializerStatements += setValueField
+
+	}
+
+	map_DummyData_Identifiers := make(map[*DummyData]string)
+	_ = map_DummyData_Identifiers
+
+	dummydataOrdered := []*DummyData{}
+	for dummydata := range stage.DummyDatas {
+		dummydataOrdered = append(dummydataOrdered, dummydata)
+	}
+	sort.Slice(dummydataOrdered[:], func(i, j int) bool {
+		return dummydataOrdered[i].Name < dummydataOrdered[j].Name
+	})
+	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of DummyData")
+	for idx, dummydata := range dummydataOrdered {
+
+		id = generatesIdentifier("DummyData", idx, dummydata.Name)
+		map_DummyData_Identifiers[dummydata] = id
+
+		decl = IdentifiersDecls
+		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
+		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "DummyData")
+		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", dummydata.Name)
+		identifiersDecl += decl
+
+		initializerStatements += fmt.Sprintf("\n\n	// DummyData %s values setup", dummydata.Name)
+		// Initialisation of values
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(dummydata.Name))
+		initializerStatements += setValueField
+
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "DummyString")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(dummydata.DummyString))
+		initializerStatements += setValueField
+
+		setValueField = NumberInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "DummyInt")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", dummydata.DummyInt))
+		initializerStatements += setValueField
+
+		setValueField = NumberInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "DummyFloat")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%f", dummydata.DummyFloat))
+		initializerStatements += setValueField
+
+		setValueField = NumberInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "DummyBool")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%t", dummydata.DummyBool))
+		initializerStatements += setValueField
+
+		setValueField = TimeInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "DummyTime")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", dummydata.DummyTime.String())
+		initializerStatements += setValueField
+
+		setValueField = NumberInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "DummyDuration")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", dummydata.DummyDuration))
 		initializerStatements += setValueField
 
 	}
@@ -813,6 +1151,16 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	}
 
 	// insertion initialization of objects to stage
+	for idx, anotherdummydata := range anotherdummydataOrdered {
+		var setPointerField string
+		_ = setPointerField
+
+		id = generatesIdentifier("AnotherDummyData", idx, anotherdummydata.Name)
+		map_AnotherDummyData_Identifiers[anotherdummydata] = id
+
+		// Initialisation of values
+	}
+
 	for idx, cell := range cellOrdered {
 		var setPointerField string
 		_ = setPointerField
@@ -821,6 +1169,24 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		map_Cell_Identifiers[cell] = id
 
 		// Initialisation of values
+	}
+
+	for idx, dummydata := range dummydataOrdered {
+		var setPointerField string
+		_ = setPointerField
+
+		id = generatesIdentifier("DummyData", idx, dummydata.Name)
+		map_DummyData_Identifiers[dummydata] = id
+
+		// Initialisation of values
+		if dummydata.DummyPointerToGongStruct != nil {
+			setPointerField = PointerFieldInitStatement
+			setPointerField = strings.ReplaceAll(setPointerField, "{{Identifier}}", id)
+			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldName}}", "DummyPointerToGongStruct")
+			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldNameValue}}", map_AnotherDummyData_Identifiers[dummydata.DummyPointerToGongStruct])
+			pointersInitializesStatements += setPointerField
+		}
+
 	}
 
 	for idx, element := range elementOrdered {

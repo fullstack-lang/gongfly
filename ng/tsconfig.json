@@ -11,7 +11,7 @@
     "target": "es2015",
     "module": "es2020",
     // "strict": true,
-    "strictBindCallApply": true,
+    "strictBindCallApply": false,
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
     "strictNullChecks": true,
@@ -43,6 +43,9 @@
       "@types/node": [
         "./node_modules/@types/node"
       ],
+      "@types/marked": [
+        "./node_modules/@types/marked"
+      ],
       "@asymmetrik/ngx-leaflet": [
         "./node_modules/@asymmetrik/ngx-leaflet"
       ],
@@ -70,6 +73,16 @@
       "tslib": [
         "./node_modules/tslib"
       ],
+      "marked": [
+        "./node_modules/marked"
+      ],
+      "ngx-markdown": [
+        "./node_modules/ngx-markdown"
+      ],
+      "prism": [
+        "./node_modules/prism"
+      ],
+      //
       //
       "gongfly": [
         "projects/gongfly/src/public-api.ts"
@@ -94,6 +107,12 @@
       ],
       "gongleafletspecific": [
         "../vendor/github.com/fullstack-lang/gongleaflet/ng/projects/gongleafletspecific/src/public-api.ts"
+      ],
+      "gongmarkdown": [
+        "../vendor/github.com/fullstack-lang/gongmarkdown/ng/projects/gongmarkdown/src/public-api.ts"
+      ],
+      "gongmarkdownspecific": [
+        "../vendor/github.com/fullstack-lang/gongmarkdown/ng/projects/gongmarkdownspecific/src/public-api.ts"
       ],
     }
   }

@@ -14,12 +14,26 @@ export * from './lib/commitnb.service'
 export * from './lib/push_from_front_nb.service'
 
 
+export * from './lib/anotherdummydata-detail/anotherdummydata-detail.component'
+export * from './lib/anotherdummydata-presentation/anotherdummydata-presentation.component'
+export * from './lib/anotherdummydata-sorting/anotherdummydata-sorting.component'
+export * from './lib/anotherdummydatas-table/anotherdummydatas-table.component'
+export * from './lib/anotherdummydata-db'
+export * from './lib/anotherdummydata.service'
+
 export * from './lib/cell-detail/cell-detail.component'
 export * from './lib/cell-presentation/cell-presentation.component'
 export * from './lib/cell-sorting/cell-sorting.component'
 export * from './lib/cells-table/cells-table.component'
 export * from './lib/cell-db'
 export * from './lib/cell.service'
+
+export * from './lib/dummydata-detail/dummydata-detail.component'
+export * from './lib/dummydata-presentation/dummydata-presentation.component'
+export * from './lib/dummydata-sorting/dummydata-sorting.component'
+export * from './lib/dummydatas-table/dummydatas-table.component'
+export * from './lib/dummydata-db'
+export * from './lib/dummydata.service'
 
 export * from './lib/element-detail/element-detail.component'
 export * from './lib/element-presentation/element-presentation.component'

@@ -8,8 +8,12 @@ import { FrontRepoService, FrontRepo } from '../front-repo.service'
 import { CommitNbService } from '../commitnb.service'
 
 // insertion point for per struct import code
+import { AnotherDummyDataService } from '../anotherdummydata.service'
+import { getAnotherDummyDataUniqueID } from '../front-repo.service'
 import { CellService } from '../cell.service'
 import { getCellUniqueID } from '../front-repo.service'
+import { DummyDataService } from '../dummydata.service'
+import { getDummyDataUniqueID } from '../front-repo.service'
 import { ElementService } from '../element.service'
 import { getElementUniqueID } from '../front-repo.service'
 import { MarkdownContentService } from '../markdowncontent.service'
@@ -151,7 +155,9 @@ export class SidebarComponent implements OnInit {
     private commitNbService: CommitNbService,
 
     // insertion point for per struct service declaration
+    private anotherdummydataService: AnotherDummyDataService,
     private cellService: CellService,
+    private dummydataService: DummyDataService,
     private elementService: ElementService,
     private markdowncontentService: MarkdownContentService,
     private rowService: RowService,
@@ -162,7 +168,23 @@ export class SidebarComponent implements OnInit {
 
     // insertion point for per struct observable for refresh trigger
     // observable for changes in structs
+    this.anotherdummydataService.AnotherDummyDataServiceChanged.subscribe(
+      message => {
+        if (message == "post" || message == "update" || message == "delete") {
+          this.refresh()
+        }
+      }
+    )
+    // observable for changes in structs
     this.cellService.CellServiceChanged.subscribe(
+      message => {
+        if (message == "post" || message == "update" || message == "delete") {
+          this.refresh()
+        }
+      }
+    )
+    // observable for changes in structs
+    this.dummydataService.DummyDataServiceChanged.subscribe(
       message => {
         if (message == "post" || message == "update" || message == "delete") {
           this.refresh()
@@ -218,6 +240,50 @@ export class SidebarComponent implements OnInit {
       
       // insertion point for per struct tree construction
       /**
+      * fill up the AnotherDummyData part of the mat tree
+      */
+      let anotherdummydataGongNodeStruct: GongNode = {
+        name: "AnotherDummyData",
+        type: GongNodeType.STRUCT,
+        id: 0,
+        uniqueIdPerStack: 13 * nonInstanceNodeId,
+        structName: "AnotherDummyData",
+        associationField: "",
+        associatedStructName: "",
+        children: new Array<GongNode>()
+      }
+      nonInstanceNodeId = nonInstanceNodeId + 1
+      this.gongNodeTree.push(anotherdummydataGongNodeStruct)
+
+      this.frontRepo.AnotherDummyDatas_array.sort((t1, t2) => {
+        if (t1.Name > t2.Name) {
+          return 1;
+        }
+        if (t1.Name < t2.Name) {
+          return -1;
+        }
+        return 0;
+      });
+
+      this.frontRepo.AnotherDummyDatas_array.forEach(
+        anotherdummydataDB => {
+          let anotherdummydataGongNodeInstance: GongNode = {
+            name: anotherdummydataDB.Name,
+            type: GongNodeType.INSTANCE,
+            id: anotherdummydataDB.ID,
+            uniqueIdPerStack: getAnotherDummyDataUniqueID(anotherdummydataDB.ID),
+            structName: "AnotherDummyData",
+            associationField: "",
+            associatedStructName: "",
+            children: new Array<GongNode>()
+          }
+          anotherdummydataGongNodeStruct.children!.push(anotherdummydataGongNodeInstance)
+
+          // insertion point for per field code
+        }
+      )
+
+      /**
       * fill up the Cell part of the mat tree
       */
       let cellGongNodeStruct: GongNode = {
@@ -258,6 +324,85 @@ export class SidebarComponent implements OnInit {
           cellGongNodeStruct.children!.push(cellGongNodeInstance)
 
           // insertion point for per field code
+        }
+      )
+
+      /**
+      * fill up the DummyData part of the mat tree
+      */
+      let dummydataGongNodeStruct: GongNode = {
+        name: "DummyData",
+        type: GongNodeType.STRUCT,
+        id: 0,
+        uniqueIdPerStack: 13 * nonInstanceNodeId,
+        structName: "DummyData",
+        associationField: "",
+        associatedStructName: "",
+        children: new Array<GongNode>()
+      }
+      nonInstanceNodeId = nonInstanceNodeId + 1
+      this.gongNodeTree.push(dummydataGongNodeStruct)
+
+      this.frontRepo.DummyDatas_array.sort((t1, t2) => {
+        if (t1.Name > t2.Name) {
+          return 1;
+        }
+        if (t1.Name < t2.Name) {
+          return -1;
+        }
+        return 0;
+      });
+
+      this.frontRepo.DummyDatas_array.forEach(
+        dummydataDB => {
+          let dummydataGongNodeInstance: GongNode = {
+            name: dummydataDB.Name,
+            type: GongNodeType.INSTANCE,
+            id: dummydataDB.ID,
+            uniqueIdPerStack: getDummyDataUniqueID(dummydataDB.ID),
+            structName: "DummyData",
+            associationField: "",
+            associatedStructName: "",
+            children: new Array<GongNode>()
+          }
+          dummydataGongNodeStruct.children!.push(dummydataGongNodeInstance)
+
+          // insertion point for per field code
+          /**
+          * let append a node for the association DummyPointerToGongStruct
+          */
+          let DummyPointerToGongStructGongNodeAssociation: GongNode = {
+            name: "(AnotherDummyData) DummyPointerToGongStruct",
+            type: GongNodeType.ONE__ZERO_ONE_ASSOCIATION,
+            id: dummydataDB.ID,
+            uniqueIdPerStack: 17 * nonInstanceNodeId,
+            structName: "DummyData",
+            associationField: "DummyPointerToGongStruct",
+            associatedStructName: "AnotherDummyData",
+            children: new Array<GongNode>()
+          }
+          nonInstanceNodeId = nonInstanceNodeId + 1
+          dummydataGongNodeInstance.children!.push(DummyPointerToGongStructGongNodeAssociation)
+
+          /**
+            * let append a node for the instance behind the asssociation DummyPointerToGongStruct
+            */
+          if (dummydataDB.DummyPointerToGongStruct != undefined) {
+            let dummydataGongNodeInstance_DummyPointerToGongStruct: GongNode = {
+              name: dummydataDB.DummyPointerToGongStruct.Name,
+              type: GongNodeType.INSTANCE,
+              id: dummydataDB.DummyPointerToGongStruct.ID,
+              uniqueIdPerStack: // godel numbering (thank you kurt)
+                3 * getDummyDataUniqueID(dummydataDB.ID)
+                + 5 * getAnotherDummyDataUniqueID(dummydataDB.DummyPointerToGongStruct.ID),
+              structName: "AnotherDummyData",
+              associationField: "",
+              associatedStructName: "",
+              children: new Array<GongNode>()
+            }
+            DummyPointerToGongStructGongNodeAssociation.children.push(dummydataGongNodeInstance_DummyPointerToGongStruct)
+          }
+
         }
       )
 

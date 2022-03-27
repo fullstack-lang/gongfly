@@ -43,6 +43,9 @@ import { GongModule } from 'gong'
 import { GongleafletModule } from 'gongleaflet'
 import { GongleafletspecificModule } from 'gongleafletspecific'
 
+import { GongmarkdownModule } from 'gongmarkdown'
+import { GongmarkdownspecificModule } from 'gongmarkdownspecific'
+
 import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
@@ -86,6 +89,10 @@ import { AppRoutingModule } from './app-routing.module';
     // gongleaflet stack
     GongleafletModule,
     GongleafletspecificModule,
+
+    // gongmarkdown stack
+    GongmarkdownModule,
+    GongmarkdownspecificModule,
 
     //
     GongModule,

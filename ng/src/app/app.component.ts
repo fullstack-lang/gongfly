@@ -23,7 +23,11 @@ export class AppComponent {
   diagrams = 'Diagrams view'
   meta_diagrams = 'Meta diagrams view'
   meta = 'Meta view'
-  views: string[] = [this.carto, this.data, this.leaflet, this.sim, this.diagrams, this.meta_diagrams, this.meta];
+  markdown = 'Markdonw view'
+  markdown_text = 'Markdonw text view'
+  markdown_data = 'Markdown data view'
+  views: string[] = [this.carto, this.data, this.leaflet, this.sim, this.diagrams,
+  this.meta_diagrams, this.meta, this.markdown, this.markdown_text, this.markdown_data];
 
   obsTimer: Observable<number> = timer(1000, 500) // due time 1', period
   currTime: number = 0
