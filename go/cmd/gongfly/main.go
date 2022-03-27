@@ -48,6 +48,12 @@ import (
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
 	gongleaflet_orm "github.com/fullstack-lang/gongleaflet/go/orm"
 	_ "github.com/fullstack-lang/gongleaflet/ng"
+
+	// for carto display
+	gongmarkdown_controllers "github.com/fullstack-lang/gongmarkdown/go/controllers"
+	gongmarkdown_models "github.com/fullstack-lang/gongmarkdown/go/models"
+	gongmarkdown_orm "github.com/fullstack-lang/gongmarkdown/go/orm"
+	_ "github.com/fullstack-lang/gongmarkdown/ng"
 )
 
 var (
@@ -97,6 +103,9 @@ func main() {
 	// add gongdoc database
 	gongleaflet_orm.AutoMigrate(db)
 
+	// add gongdoc database
+	gongmarkdown_orm.AutoMigrate(db)
+
 	// attach specific engine callback to the model
 	simulation := gonglfy_engine.NewSimulation()
 	gongsim_models.EngineSingloton.Simulation = simulation
@@ -136,7 +145,7 @@ func main() {
 	// classdiagram can only be fully in memory when they are Unmarshalled
 	// for instance, the Name of diagrams or the Name of the Link
 	if *diagrams {
-		pkgelt.Unmarshall("../../diagrams")
+		pkgelt.Unmarshall(modelPkg.PkgPath, "../../diagrams")
 	}
 	pkgelt.SerializeToStage()
 
@@ -145,6 +154,7 @@ func main() {
 	gongdoc_controllers.RegisterControllers(r)
 	gong_controllers.RegisterControllers(r)
 	gongleaflet_controllers.RegisterControllers(r)
+	gongmarkdown_controllers.RegisterControllers(r)
 
 	// put all to database
 	gongfly_models.Stage.Commit()
@@ -152,6 +162,7 @@ func main() {
 	gongdoc_models.Stage.Commit()
 	gong_models.Stage.Commit()
 	gongleaflet_models.Stage.Commit()
+	gongmarkdown_models.Stage.Commit()
 
 	log.Print("Demoatc simulation is ready, waiting for client interactions (play/pause/...)")
 

@@ -4,19 +4,19 @@ go 1.17
 
 require (
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
-	github.com/fullstack-lang/gong v0.0.0-20220320100309-f376680430cd
+	github.com/fullstack-lang/gong v0.0.0-20220325141857-b7ace1b6d715
 	github.com/fullstack-lang/gongdoc v0.0.0-20220325104006-b061f982cca1
 	github.com/fullstack-lang/gongleaflet v0.0.0-20220320094426-5bc04bdb1972
 	github.com/fullstack-lang/gongsim v0.0.0-20220320094427-832fd2ee105a
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/static v0.0.1
-	github.com/gin-gonic/gin v1.7.4
+	github.com/gin-gonic/gin v1.7.7
 	github.com/kellydunn/golang-geo v0.7.0
 	github.com/kylelemons/go-gypsy v1.0.0 // indirect
 	github.com/lib/pq v1.10.3 // indirect
-	github.com/tealeg/xlsx/v3 v3.2.3
+	github.com/tealeg/xlsx/v3 v3.2.4
 	github.com/ziutek/mymysql v1.5.4 // indirect
-	gorm.io/gorm v1.22.5
+	gorm.io/gorm v1.23.3
 )
 
 require (
@@ -25,7 +25,10 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 )
 
-require github.com/glebarez/sqlite v1.3.5
+require (
+	github.com/fullstack-lang/gongmarkdown v0.0.0-20220327191058-d26a814c2606
+	github.com/glebarez/sqlite v1.4.1
+)
 
 require (
 	github.com/ByteArena/poly2tri-go v0.0.0-20170716161910-d102ad91854f // indirect
@@ -36,7 +39,7 @@ require (
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/frankban/quicktest v1.13.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/glebarez/go-sqlite v1.14.7 // indirect
+	github.com/glebarez/go-sqlite v1.15.1 // indirect
 	github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
@@ -67,14 +70,14 @@ require (
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
 	golang.org/x/mod v0.5.1 // indirect
-	golang.org/x/sys v0.0.0-20211015200801-69063c4bb744 // indirect
+	golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	modernc.org/libc v1.14.3 // indirect
+	modernc.org/libc v1.14.12 // indirect
 	modernc.org/mathutil v1.4.1 // indirect
-	modernc.org/memory v1.0.5 // indirect
-	modernc.org/sqlite v1.14.5 // indirect
+	modernc.org/memory v1.0.7 // indirect
+	modernc.org/sqlite v1.15.2 // indirect
 )

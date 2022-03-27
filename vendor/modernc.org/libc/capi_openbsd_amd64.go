@@ -154,6 +154,7 @@ var CAPI = map[string]struct{}{
 	"backtrace":                        {},
 	"backtrace_symbols_fd":             {},
 	"bind":                             {},
+	"bsearch":                          {},
 	"bzero":                            {},
 	"calloc":                           {},
 	"ceil":                             {},

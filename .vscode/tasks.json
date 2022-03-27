@@ -86,9 +86,10 @@
       ]
     },
     {
-      "label": "00 - go mod vendor",
+      "label": "00 - update dependencies & go mod vendor",
       "type": "shell",
       "group": "build",
+      "dependsOn": "00 - update gong dependencies",
       "command": "go mod vendor"
     },
     {
@@ -102,6 +103,7 @@
         "github.com/fullstack-lang/gongdoc@HEAD",
         "github.com/fullstack-lang/gongsim@HEAD",
         "github.com/fullstack-lang/gongleaflet@HEAD",
+        "github.com/fullstack-lang/gongmarkdown@HEAD",
       ],
       "group": "build"
     },
