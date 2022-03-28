@@ -45,6 +45,10 @@ import { GongleafletspecificModule } from 'gongleafletspecific'
 
 import { AppRoutingModule } from './app-routing.module';
 
+import { MarkdownModule } from 'ngx-markdown'
+import { GongmarkdownModule } from 'gongmarkdown'
+import { GongmarkdownspecificModule } from 'gongmarkdownspecific'
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -89,6 +93,12 @@ import { AppRoutingModule } from './app-routing.module';
 
     //
     GongModule,
+
+    MarkdownModule.forRoot(),
+
+    // gongmarkdown stack
+    GongmarkdownModule,
+    GongmarkdownspecificModule,
 
     GongflyModule
   ],
