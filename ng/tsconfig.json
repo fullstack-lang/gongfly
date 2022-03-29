@@ -95,6 +95,15 @@
       "gongleafletspecific": [
         "../vendor/github.com/fullstack-lang/gongleaflet/ng/projects/gongleafletspecific/src/public-api.ts"
       ],
+      "gongmarkdown": [
+        "../vendor/github.com/fullstack-lang/gongmarkdown/ng/projects/gongmarkdown/src/public-api.ts"
+      ],
+      "gongmarkdownspecific": [
+        "../vendor/github.com/fullstack-lang/gongmarkdown/ng/projects/gongmarkdownspecific/src/public-api.ts"
+      ],
+      "ngx-markdown": [
+        "./node_modules/ngx-markdown"
+      ],
     }
   }
 }
