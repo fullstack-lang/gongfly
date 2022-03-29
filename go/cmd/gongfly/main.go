@@ -131,6 +131,24 @@ func main() {
 	// attach visual elements
 	gongfly_visuals.AttachVisualElementsToModelElements(defaultLayer)
 
+	// generate markdown elements
+	markdownContent := (&gongmarkdown_models.MarkdownContent{Name: "Dummy"}).Stage()
+	markdownContent.Name = "Dummy"
+
+	root := (&gongmarkdown_models.Element{Name: "Root"}).Stage()
+	root.Type = gongmarkdown_models.PARAGRAPH
+	markdownContent.Root = root
+
+	table := gongfly_models.GenerateTableOfSatellites()
+	root.SubElements = append(root.SubElements, table)
+
+	// fetch the document singloton
+	var singloton *gongmarkdown_models.MarkdownContent
+	for s := range gongmarkdown_models.Stage.MarkdownContents {
+		singloton = s
+	}
+	singloton.UpdateContent()
+
 	// load package to analyse
 	modelPkg := &gong_models.ModelPkg{}
 	if *diagrams {

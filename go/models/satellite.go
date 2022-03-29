@@ -8,6 +8,8 @@ import (
 	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
 
 	gosatellite "github.com/joshuaferrara/go-satellite"
+
+	gongmarkdown_models "github.com/fullstack-lang/gongmarkdown/go/models"
 )
 
 // Satellite is a moving object
@@ -127,3 +129,59 @@ func (satellite *Satellite) GetName() (name string)    { return satellite.Name }
 func (satellite *Satellite) GetDisplay() bool { return true }
 
 func (*Satellite) GetLayerGroupName() (name string) { return string(Satellite_) }
+
+func GenerateTableOfSatellites() (element *gongmarkdown_models.Element) {
+
+	element = (&gongmarkdown_models.Element{Name: "TableOfDummnies "}).Stage()
+	element.Type = gongmarkdown_models.TABLE
+
+	// fill up title cells
+	titleRow := (&gongmarkdown_models.Row{Name: "Title Row "}).Stage()
+	element.Rows = append(element.Rows, titleRow)
+
+	{
+		titleRow.Cells = append(titleRow.Cells, (&gongmarkdown_models.Cell{Name: "Satellite "}).Stage())
+	}
+	{
+		titleRow.Cells = append(titleRow.Cells, (&gongmarkdown_models.Cell{Name: "Line 1 "}).Stage())
+	}
+	{
+		titleRow.Cells = append(titleRow.Cells, (&gongmarkdown_models.Cell{Name: "Line 2 "}).Stage())
+	}
+	{
+		titleRow.Cells = append(titleRow.Cells, (&gongmarkdown_models.Cell{Name: "Lat "}).Stage())
+	}
+	{
+		titleRow.Cells = append(titleRow.Cells, (&gongmarkdown_models.Cell{Name: "Lng "}).Stage())
+	}
+	{
+		titleRow.Cells = append(titleRow.Cells, (&gongmarkdown_models.Cell{Name: "Heading "}).Stage())
+	}
+
+	for satellite := range Stage.Satellites {
+		// fill up title cells
+		row := (&gongmarkdown_models.Row{Name: "Date Row of " + satellite.Name}).Stage()
+		element.Rows = append(element.Rows, row)
+
+		{
+			row.Cells = append(row.Cells, (&gongmarkdown_models.Cell{Name: satellite.Name}).Stage())
+		}
+		{
+			row.Cells = append(row.Cells, (&gongmarkdown_models.Cell{Name: satellite.Line1}).Stage())
+		}
+		{
+			row.Cells = append(row.Cells, (&gongmarkdown_models.Cell{Name: satellite.Line2}).Stage())
+		}
+		{
+			row.Cells = append(row.Cells, (&gongmarkdown_models.Cell{Name: fmt.Sprintf("%f", satellite.Lat)}).Stage())
+		}
+		{
+			row.Cells = append(row.Cells, (&gongmarkdown_models.Cell{Name: fmt.Sprintf("%f", satellite.Lng)}).Stage())
+		}
+		{
+			row.Cells = append(row.Cells, (&gongmarkdown_models.Cell{Name: fmt.Sprintf("%f", satellite.Heading)}).Stage())
+		}
+	}
+
+	return
+}
