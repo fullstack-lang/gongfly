@@ -257,7 +257,7 @@ export class MessageDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.message.Name == undefined) {
+		if (this.message.Name == "") {
 			this.message.Name = event.value.Name
 		}
 	}

@@ -240,7 +240,7 @@ export class ScenarioDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.scenario.Name == undefined) {
+		if (this.scenario.Name == "") {
 			this.scenario.Name = event.value.Name
 		}
 	}

@@ -253,7 +253,7 @@ export class LinerDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.liner.Name == undefined) {
+		if (this.liner.Name == "") {
 			this.liner.Name = event.value.Name
 		}
 	}

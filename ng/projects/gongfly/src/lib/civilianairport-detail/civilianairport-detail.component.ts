@@ -240,7 +240,7 @@ export class CivilianAirportDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.civilianairport.Name == undefined) {
+		if (this.civilianairport.Name == "") {
 			this.civilianairport.Name = event.value.Name
 		}
 	}

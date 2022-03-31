@@ -240,7 +240,7 @@ export class SatelliteDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.satellite.Name == undefined) {
+		if (this.satellite.Name == "") {
 			this.satellite.Name = event.value.Name
 		}
 	}

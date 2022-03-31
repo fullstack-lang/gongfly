@@ -274,7 +274,7 @@ export class ReportDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.report.Name == undefined) {
+		if (this.report.Name == "") {
 			this.report.Name = event.value.Name
 		}
 	}

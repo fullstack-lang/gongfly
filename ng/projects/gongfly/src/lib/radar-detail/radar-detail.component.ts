@@ -243,7 +243,7 @@ export class RadarDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.radar.Name == undefined) {
+		if (this.radar.Name == "") {
 			this.radar.Name = event.value.Name
 		}
 	}

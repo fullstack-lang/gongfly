@@ -264,7 +264,7 @@ export class OrderDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.order.Name == undefined) {
+		if (this.order.Name == "") {
 			this.order.Name = event.value.Name
 		}
 	}

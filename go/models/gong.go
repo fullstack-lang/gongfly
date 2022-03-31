@@ -17,6 +17,14 @@ type __void struct{}
 // needed for creating set of instances in the stage
 var __member __void
 
+// GongStructInterface is the interface met by GongStructs
+// It allows runtime reflexion of instances (without the hassle of the "reflect" package)
+type GongStructInterface interface {
+	GetName() (res string)
+	GetFields() (res []string)
+	GetFieldStringValue(fieldName string) (res string)
+}
+
 // StageStruct enables storage of staged instances
 // swagger:ignore
 type StageStruct struct { // insertion point for definition of arrays registering instances
@@ -284,6 +292,32 @@ func DeleteORMCivilianAirport(civilianairport *CivilianAirport) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (civilianairport *CivilianAirport) GetName() (res string) {
+	return civilianairport.Name
+}
+
+func (civilianairport *CivilianAirport) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Lat", "Lng", "TechName", "Name",  }
+	return
+}
+
+func (civilianairport *CivilianAirport) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Lat":
+		res = fmt.Sprintf("%f", civilianairport.Lat)
+	case "Lng":
+		res = fmt.Sprintf("%f", civilianairport.Lng)
+	case "TechName":
+		res = civilianairport.TechName
+	case "Name":
+		res = civilianairport.Name
+	}
+	return
+}
+
 func (stage *StageStruct) getLinerOrderedStructWithNameField() []*Liner {
 	// have alphabetical order generation
 	linerOrdered := []*Liner{}
@@ -384,6 +418,58 @@ func DeleteORMLiner(liner *Liner) {
 	if Stage.AllModelsStructDeleteCallback != nil {
 		Stage.AllModelsStructDeleteCallback.DeleteORMLiner(liner)
 	}
+}
+
+// for satisfaction of GongStruct interface
+func (liner *Liner) GetName() (res string) {
+	return liner.Name
+}
+
+func (liner *Liner) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "Lat", "Lng", "Heading", "Level", "Speed", "TechName", "State", "TargetHeading", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "MaxRotationalSpeed", "VerticalSpeed", "Timestampstring", "ReporingLine",  }
+	return
+}
+
+func (liner *Liner) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = liner.Name
+	case "Lat":
+		res = fmt.Sprintf("%f", liner.Lat)
+	case "Lng":
+		res = fmt.Sprintf("%f", liner.Lng)
+	case "Heading":
+		res = fmt.Sprintf("%f", liner.Heading)
+	case "Level":
+		res = fmt.Sprintf("%f", liner.Level)
+	case "Speed":
+		res = fmt.Sprintf("%f", liner.Speed)
+	case "TechName":
+		res = liner.TechName
+	case "State":
+		res = liner.State.ToCodeString()
+	case "TargetHeading":
+		res = fmt.Sprintf("%f", liner.TargetHeading)
+	case "TargetLocationLat":
+		res = fmt.Sprintf("%f", liner.TargetLocationLat)
+	case "TargetLocationLng":
+		res = fmt.Sprintf("%f", liner.TargetLocationLng)
+	case "DistanceToTarget":
+		res = fmt.Sprintf("%f", liner.DistanceToTarget)
+	case "MaxRotationalSpeed":
+		res = fmt.Sprintf("%f", liner.MaxRotationalSpeed)
+	case "VerticalSpeed":
+		res = fmt.Sprintf("%f", liner.VerticalSpeed)
+	case "Timestampstring":
+		res = liner.Timestampstring
+	case "ReporingLine":
+		if liner.ReporingLine != nil {
+			res = liner.ReporingLine.Name
+		}
+	}
+	return
 }
 
 func (stage *StageStruct) getMessageOrderedStructWithNameField() []*Message {
@@ -488,6 +574,62 @@ func DeleteORMMessage(message *Message) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (message *Message) GetName() (res string) {
+	return message.Name
+}
+
+func (message *Message) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "TechName", "State", "Name", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "Timestampstring", "DurationSinceSimulationStart", "Timestampstartstring", "Source", "Destination", "Content", "About_string", "Display",  }
+	return
+}
+
+func (message *Message) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Lat":
+		res = fmt.Sprintf("%f", message.Lat)
+	case "Lng":
+		res = fmt.Sprintf("%f", message.Lng)
+	case "Heading":
+		res = fmt.Sprintf("%f", message.Heading)
+	case "Level":
+		res = fmt.Sprintf("%f", message.Level)
+	case "Speed":
+		res = fmt.Sprintf("%f", message.Speed)
+	case "TechName":
+		res = message.TechName
+	case "State":
+		res = message.State.ToCodeString()
+	case "Name":
+		res = message.Name
+	case "TargetLocationLat":
+		res = fmt.Sprintf("%f", message.TargetLocationLat)
+	case "TargetLocationLng":
+		res = fmt.Sprintf("%f", message.TargetLocationLng)
+	case "DistanceToTarget":
+		res = fmt.Sprintf("%f", message.DistanceToTarget)
+	case "Timestampstring":
+		res = message.Timestampstring
+	case "DurationSinceSimulationStart":
+		res = fmt.Sprintf("%d", message.DurationSinceSimulationStart)
+	case "Timestampstartstring":
+		res = message.Timestampstartstring
+	case "Source":
+		res = message.Source
+	case "Destination":
+		res = message.Destination
+	case "Content":
+		res = message.Content
+	case "About_string":
+		res = message.About_string
+	case "Display":
+		res = fmt.Sprintf("%t", message.Display)
+	}
+	return
+}
+
 func (stage *StageStruct) getOpsLineOrderedStructWithNameField() []*OpsLine {
 	// have alphabetical order generation
 	opslineOrdered := []*OpsLine{}
@@ -588,6 +730,42 @@ func DeleteORMOpsLine(opsline *OpsLine) {
 	if Stage.AllModelsStructDeleteCallback != nil {
 		Stage.AllModelsStructDeleteCallback.DeleteORMOpsLine(opsline)
 	}
+}
+
+// for satisfaction of GongStruct interface
+func (opsline *OpsLine) GetName() (res string) {
+	return opsline.Name
+}
+
+func (opsline *OpsLine) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"IsTransmitting", "TransmissionMessage", "IsTransmittingBackward", "TransmissionMessageBackward", "TechName", "Scenario", "State", "Name",  }
+	return
+}
+
+func (opsline *OpsLine) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "IsTransmitting":
+		res = fmt.Sprintf("%t", opsline.IsTransmitting)
+	case "TransmissionMessage":
+		res = opsline.TransmissionMessage
+	case "IsTransmittingBackward":
+		res = fmt.Sprintf("%t", opsline.IsTransmittingBackward)
+	case "TransmissionMessageBackward":
+		res = opsline.TransmissionMessageBackward
+	case "TechName":
+		res = opsline.TechName
+	case "Scenario":
+		if opsline.Scenario != nil {
+			res = opsline.Scenario.Name
+		}
+	case "State":
+		res = opsline.State.ToCodeString()
+	case "Name":
+		res = opsline.Name
+	}
+	return
 }
 
 func (stage *StageStruct) getOrderOrderedStructWithNameField() []*Order {
@@ -692,6 +870,42 @@ func DeleteORMOrder(order *Order) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (order *Order) GetName() (res string) {
+	return order.Name
+}
+
+func (order *Order) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "Duration", "OrderMessage", "Number", "Type", "Target", "TargetLat", "TargetLng",  }
+	return
+}
+
+func (order *Order) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = order.Name
+	case "Duration":
+		res = fmt.Sprintf("%d", order.Duration)
+	case "OrderMessage":
+		res = order.OrderMessage
+	case "Number":
+		res = fmt.Sprintf("%d", order.Number)
+	case "Type":
+		res = order.Type.ToCodeString()
+	case "Target":
+		if order.Target != nil {
+			res = order.Target.Name
+		}
+	case "TargetLat":
+		res = fmt.Sprintf("%f", order.TargetLat)
+	case "TargetLng":
+		res = fmt.Sprintf("%f", order.TargetLng)
+	}
+	return
+}
+
 func (stage *StageStruct) getRadarOrderedStructWithNameField() []*Radar {
 	// have alphabetical order generation
 	radarOrdered := []*Radar{}
@@ -792,6 +1006,36 @@ func DeleteORMRadar(radar *Radar) {
 	if Stage.AllModelsStructDeleteCallback != nil {
 		Stage.AllModelsStructDeleteCallback.DeleteORMRadar(radar)
 	}
+}
+
+// for satisfaction of GongStruct interface
+func (radar *Radar) GetName() (res string) {
+	return radar.Name
+}
+
+func (radar *Radar) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"TechName", "State", "Name", "Lat", "Lng", "Range",  }
+	return
+}
+
+func (radar *Radar) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "TechName":
+		res = radar.TechName
+	case "State":
+		res = radar.State.ToCodeString()
+	case "Name":
+		res = radar.Name
+	case "Lat":
+		res = fmt.Sprintf("%f", radar.Lat)
+	case "Lng":
+		res = fmt.Sprintf("%f", radar.Lng)
+	case "Range":
+		res = fmt.Sprintf("%f", radar.Range)
+	}
+	return
 }
 
 func (stage *StageStruct) getReportOrderedStructWithNameField() []*Report {
@@ -896,6 +1140,42 @@ func DeleteORMReport(report *Report) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (report *Report) GetName() (res string) {
+	return report.Name
+}
+
+func (report *Report) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "Duration", "ReportMessage", "Number", "Type", "About", "OpsLine",  }
+	return
+}
+
+func (report *Report) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = report.Name
+	case "Duration":
+		res = fmt.Sprintf("%d", report.Duration)
+	case "ReportMessage":
+		res = report.ReportMessage
+	case "Number":
+		res = fmt.Sprintf("%d", report.Number)
+	case "Type":
+		res = report.Type.ToCodeString()
+	case "About":
+		if report.About != nil {
+			res = report.About.Name
+		}
+	case "OpsLine":
+		if report.OpsLine != nil {
+			res = report.OpsLine.Name
+		}
+	}
+	return
+}
+
 func (stage *StageStruct) getSatelliteOrderedStructWithNameField() []*Satellite {
 	// have alphabetical order generation
 	satelliteOrdered := []*Satellite{}
@@ -998,6 +1278,46 @@ func DeleteORMSatellite(satellite *Satellite) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (satellite *Satellite) GetName() (res string) {
+	return satellite.Name
+}
+
+func (satellite *Satellite) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "Line1", "Line2", "TechName", "Name", "VerticalSpeed", "Timestampstring",  }
+	return
+}
+
+func (satellite *Satellite) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Lat":
+		res = fmt.Sprintf("%f", satellite.Lat)
+	case "Lng":
+		res = fmt.Sprintf("%f", satellite.Lng)
+	case "Heading":
+		res = fmt.Sprintf("%f", satellite.Heading)
+	case "Level":
+		res = fmt.Sprintf("%f", satellite.Level)
+	case "Speed":
+		res = fmt.Sprintf("%f", satellite.Speed)
+	case "Line1":
+		res = satellite.Line1
+	case "Line2":
+		res = satellite.Line2
+	case "TechName":
+		res = satellite.TechName
+	case "Name":
+		res = satellite.Name
+	case "VerticalSpeed":
+		res = fmt.Sprintf("%f", satellite.VerticalSpeed)
+	case "Timestampstring":
+		res = satellite.Timestampstring
+	}
+	return
+}
+
 func (stage *StageStruct) getScenarioOrderedStructWithNameField() []*Scenario {
 	// have alphabetical order generation
 	scenarioOrdered := []*Scenario{}
@@ -1098,6 +1418,34 @@ func DeleteORMScenario(scenario *Scenario) {
 	if Stage.AllModelsStructDeleteCallback != nil {
 		Stage.AllModelsStructDeleteCallback.DeleteORMScenario(scenario)
 	}
+}
+
+// for satisfaction of GongStruct interface
+func (scenario *Scenario) GetName() (res string) {
+	return scenario.Name
+}
+
+func (scenario *Scenario) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "Lat", "Lng", "ZoomLevel", "MessageVisualSpeed",  }
+	return
+}
+
+func (scenario *Scenario) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = scenario.Name
+	case "Lat":
+		res = fmt.Sprintf("%f", scenario.Lat)
+	case "Lng":
+		res = fmt.Sprintf("%f", scenario.Lng)
+	case "ZoomLevel":
+		res = fmt.Sprintf("%f", scenario.ZoomLevel)
+	case "MessageVisualSpeed":
+		res = fmt.Sprintf("%f", scenario.MessageVisualSpeed)
+	}
+	return
 }
 
 // swagger:ignore
@@ -1216,6 +1564,9 @@ const IdentifiersDecls = `
 
 const StringInitStatement = `
 	{{Identifier}}.{{GeneratedFieldName}} = ` + "`" + `{{GeneratedFieldNameValue}}` + "`"
+
+const StringEnumInitStatement = `
+	{{Identifier}}.{{GeneratedFieldName}} = {{GeneratedFieldNameValue}}`
 
 const NumberInitStatement = `
 	{{Identifier}}.{{GeneratedFieldName}} = {{GeneratedFieldNameValue}}`
@@ -1372,11 +1723,13 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(liner.TechName))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "State")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(liner.State))
-		initializerStatements += setValueField
+		if liner.State != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "State")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+liner.State.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 		setValueField = NumberInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1482,11 +1835,13 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(message.TechName))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "State")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(message.State))
-		initializerStatements += setValueField
+		if message.State != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "State")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+message.State.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1616,11 +1971,13 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(opsline.TechName))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "State")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(opsline.State))
-		initializerStatements += setValueField
+		if opsline.State != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "State")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+opsline.State.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1678,11 +2035,13 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", order.Number))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Type")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(order.Type))
-		initializerStatements += setValueField
+		if order.Type != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Type")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+order.Type.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 		setValueField = NumberInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1728,11 +2087,13 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(radar.TechName))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "State")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(radar.State))
-		initializerStatements += setValueField
+		if radar.State != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "State")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+radar.State.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1808,11 +2169,13 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", report.Number))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Type")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(report.Type))
-		initializerStatements += setValueField
+		if report.Type != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Type")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+report.Type.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 	}
 
@@ -2158,6 +2521,24 @@ func (conceptenum *ConceptEnum) FromString(input string) {
 	}
 }
 
+func (conceptenum *ConceptEnum) ToCodeString() (res string) {
+
+	switch *conceptenum {
+	// insertion code per enum code
+	case Aircraft_:
+		res = "Aircraft_"
+	case Center_:
+		res = "Center_"
+	case Network_:
+		res = "Network_"
+	case Satellite_:
+		res = "Satellite_"
+	case System_:
+		res = "System_"
+	}
+	return
+}
+
 // Utility function for LinerStateEnum
 // if enum values are string, it is stored with the value
 // if enum values are int, they are stored with the code of the value
@@ -2183,6 +2564,18 @@ func (linerstateenum *LinerStateEnum) FromString(input string) {
 	case "LANDED":
 		*linerstateenum = LANDED
 	}
+}
+
+func (linerstateenum *LinerStateEnum) ToCodeString() (res string) {
+
+	switch *linerstateenum {
+	// insertion code per enum code
+	case EN_ROUTE_NOMINAL:
+		res = "EN_ROUTE_NOMINAL"
+	case LANDED:
+		res = "LANDED"
+	}
+	return
 }
 
 // Utility function for MessageStateEnum
@@ -2212,6 +2605,18 @@ func (messagestateenum *MessageStateEnum) FromString(input string) {
 	}
 }
 
+func (messagestateenum *MessageStateEnum) ToCodeString() (res string) {
+
+	switch *messagestateenum {
+	// insertion code per enum code
+	case MESSAGE_ARRIVED:
+		res = "MESSAGE_ARRIVED"
+	case MESSAGE_EN_ROUTE:
+		res = "MESSAGE_EN_ROUTE"
+	}
+	return
+}
+
 // Utility function for OperationalLineStateEnum
 // if enum values are string, it is stored with the value
 // if enum values are int, they are stored with the code of the value
@@ -2239,6 +2644,18 @@ func (operationallinestateenum *OperationalLineStateEnum) FromString(input strin
 	}
 }
 
+func (operationallinestateenum *OperationalLineStateEnum) ToCodeString() (res string) {
+
+	switch *operationallinestateenum {
+	// insertion code per enum code
+	case OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING:
+		res = "OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING"
+	case OPS_COM_LINK_OPERATIONAL_LINE_WORKING:
+		res = "OPS_COM_LINK_OPERATIONAL_LINE_WORKING"
+	}
+	return
+}
+
 // Utility function for OrderEnum
 // if enum values are string, it is stored with the value
 // if enum values are int, they are stored with the code of the value
@@ -2260,6 +2677,16 @@ func (orderenum *OrderEnum) FromString(input string) {
 	case "TAKE_OFF":
 		*orderenum = TAKE_OFF
 	}
+}
+
+func (orderenum *OrderEnum) ToCodeString() (res string) {
+
+	switch *orderenum {
+	// insertion code per enum code
+	case TAKE_OFF:
+		res = "TAKE_OFF"
+	}
+	return
 }
 
 // Utility function for RadarStateEnum
@@ -2285,6 +2712,16 @@ func (radarstateenum *RadarStateEnum) FromString(input string) {
 	}
 }
 
+func (radarstateenum *RadarStateEnum) ToCodeString() (res string) {
+
+	switch *radarstateenum {
+	// insertion code per enum code
+	case WORKING:
+		res = "WORKING"
+	}
+	return
+}
+
 // Utility function for ReportEnum
 // if enum values are string, it is stored with the value
 // if enum values are int, they are stored with the code of the value
@@ -2306,5 +2743,15 @@ func (reportenum *ReportEnum) FromString(input string) {
 	case "TAKE_OFF_COMPLETED":
 		*reportenum = TAKE_OFF_COMPLETED
 	}
+}
+
+func (reportenum *ReportEnum) ToCodeString() (res string) {
+
+	switch *reportenum {
+	// insertion code per enum code
+	case TAKE_OFF_COMPLETED:
+		res = "TAKE_OFF_COMPLETED"
+	}
+	return
 }
 

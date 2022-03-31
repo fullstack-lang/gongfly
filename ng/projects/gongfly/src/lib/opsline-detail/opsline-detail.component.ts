@@ -259,7 +259,7 @@ export class OpsLineDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.opsline.Name == undefined) {
+		if (this.opsline.Name == "") {
 			this.opsline.Name = event.value.Name
 		}
 	}
