@@ -63,6 +63,9 @@ import (
 	gongng2charts_models "github.com/fullstack-lang/gongng2charts/go/models"
 	gongng2charts_orm "github.com/fullstack-lang/gongng2charts/go/orm"
 	_ "github.com/fullstack-lang/gongng2charts/ng"
+
+	// for the scheduler
+	"github.com/fullstack-lang/gongfly/go/gongfly2gongng2charts"
 )
 
 var (
@@ -179,6 +182,7 @@ func main() {
 	gongng2charts_models.Stage.Commit()
 
 	go gongfly2markdown.GenerateDocumentationSchedulerSingloton.CheckoutScheduler()
+	go gongfly2gongng2charts.GenerateChartSchedulerSingloton.CheckoutScheduler()
 
 	log.Print("Demoatc simulation is ready, waiting for client interactions (play/pause/...)")
 
