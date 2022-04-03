@@ -427,7 +427,7 @@ func (liner *Liner) GetName() (res string) {
 
 func (liner *Liner) GetFields() (res []string) {
 	// list of fields 
-	res = []string{"Name", "Lat", "Lng", "Heading", "Level", "Speed", "TechName", "State", "TargetHeading", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "MaxRotationalSpeed", "VerticalSpeed", "Timestampstring", "ReporingLine",  }
+	res = []string{"Name", "Lat", "Lng", "Heading", "Lserl", "Speed", "TechName", "State", "TargetHeading", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "MaxRotationalSpeed", "VerticalSpeed", "Timestampstring", "ReporingLine",  }
 	return
 }
 

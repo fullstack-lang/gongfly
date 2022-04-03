@@ -7,7 +7,7 @@ require (
 	github.com/fullstack-lang/gong v0.0.0-20220403043705-06ef38d4806f
 	github.com/fullstack-lang/gongdoc v0.0.0-20220331055915-22a537b70a1e
 	github.com/fullstack-lang/gongleaflet v0.0.0-20220331055927-2cb87e192008
-	github.com/fullstack-lang/gongsim v0.0.0-20220331055938-1f1d5cd97877
+	github.com/fullstack-lang/gongsim v0.0.0-20220403054326-9db5ba0727e1
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.7.7

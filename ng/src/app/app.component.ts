@@ -32,9 +32,12 @@ export class AppComponent {
   markdown_text = 'Markdonw text view'
   markdown_data = 'Markdown data view'
 
+  charts = 'Charts view'
+  charts_data = 'Charts data view'
+
   views: string[] = [this.carto, this.data, this.leaflet, this.sim, this.diagrams, this.meta_diagrams, this.meta,
 
-  this.markdown, this.markdown_text, this.markdown_data];
+  this.markdown, this.markdown_text, this.markdown_data, this.charts, this.charts_data];
 
   obsTimer: Observable<number> = timer(1000, 500) // due time 1', period
   currTime: number = 0

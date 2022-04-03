@@ -72,7 +72,7 @@ github.com/fullstack-lang/gongng2charts/go/controllers
 github.com/fullstack-lang/gongng2charts/go/models
 github.com/fullstack-lang/gongng2charts/go/orm
 github.com/fullstack-lang/gongng2charts/ng
-# github.com/fullstack-lang/gongsim v0.0.0-20220331055938-1f1d5cd97877
+# github.com/fullstack-lang/gongsim v0.0.0-20220403054326-9db5ba0727e1
 ## explicit; go 1.17
 github.com/fullstack-lang/gongsim/go/controllers
 github.com/fullstack-lang/gongsim/go/models
