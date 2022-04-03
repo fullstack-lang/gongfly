@@ -262,7 +262,7 @@ export class RowDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.row.Name == undefined) {
+		if (this.row.Name == "") {
 			this.row.Name = event.value.Name
 		}
 	}

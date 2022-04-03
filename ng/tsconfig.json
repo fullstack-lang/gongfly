@@ -104,6 +104,18 @@
       "ngx-markdown": [
         "./node_modules/ngx-markdown"
       ],
+      "gongng2charts": [
+        "../vendor/github.com/fullstack-lang/gongng2charts/ng/projects/gongng2charts/src/public-api.ts"
+      ],
+      "gongng2chartsspecific": [
+        "../vendor/github.com/fullstack-lang/gongng2charts/ng/projects/gongng2chartsspecific/src/public-api.ts"
+      ],
+      "ng2-charts": [
+        "./node_modules/ng2-charts"
+      ],
+      "chart.js": [
+        "./node_modules/chart.js"
+      ],
     }
   }
 }

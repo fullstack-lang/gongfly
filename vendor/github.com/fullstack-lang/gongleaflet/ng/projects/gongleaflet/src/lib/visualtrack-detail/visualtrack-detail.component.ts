@@ -269,7 +269,7 @@ export class VisualTrackDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.visualtrack.Name == undefined) {
+		if (this.visualtrack.Name == "") {
 			this.visualtrack.Name = event.value.Name
 		}
 	}

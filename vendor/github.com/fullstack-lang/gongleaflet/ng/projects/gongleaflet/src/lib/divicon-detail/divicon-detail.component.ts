@@ -240,7 +240,7 @@ export class DivIconDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.divicon.Name == undefined) {
+		if (this.divicon.Name == "") {
 			this.divicon.Name = event.value.Name
 		}
 	}

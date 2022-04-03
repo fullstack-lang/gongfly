@@ -49,11 +49,17 @@ import (
 	gongleaflet_orm "github.com/fullstack-lang/gongleaflet/go/orm"
 	_ "github.com/fullstack-lang/gongleaflet/ng"
 
-	// for carto display
+	// for document display
 	gongmarkdown_controllers "github.com/fullstack-lang/gongmarkdown/go/controllers"
 	gongmarkdown_models "github.com/fullstack-lang/gongmarkdown/go/models"
 	gongmarkdown_orm "github.com/fullstack-lang/gongmarkdown/go/orm"
 	_ "github.com/fullstack-lang/gongmarkdown/ng"
+
+	// for graph display
+	gongng2charts_controllers "github.com/fullstack-lang/gongng2charts/go/controllers"
+	gongng2charts_models "github.com/fullstack-lang/gongng2charts/go/models"
+	gongng2charts_orm "github.com/fullstack-lang/gongng2charts/go/orm"
+	_ "github.com/fullstack-lang/gongng2charts/ng"
 )
 
 var (
@@ -103,8 +109,11 @@ func main() {
 	// add gongdoc database
 	gongleaflet_orm.AutoMigrate(db)
 
-	// add gongdoc database
+	// add document database
 	gongmarkdown_orm.AutoMigrate(db)
+
+	// add graph database
+	gongng2charts_orm.AutoMigrate(db)
 
 	// attach specific engine callback to the model
 	simulation := gonglfy_engine.NewSimulation()
@@ -173,6 +182,7 @@ func main() {
 	gong_controllers.RegisterControllers(r)
 	gongleaflet_controllers.RegisterControllers(r)
 	gongmarkdown_controllers.RegisterControllers(r)
+	gongng2charts_controllers.RegisterControllers(r)
 
 	// put all to database
 	gongfly_models.Stage.Commit()
@@ -181,6 +191,7 @@ func main() {
 	gong_models.Stage.Commit()
 	gongleaflet_models.Stage.Commit()
 	gongmarkdown_models.Stage.Commit()
+	gongng2charts_models.Stage.Commit()
 
 	log.Print("Demoatc simulation is ready, waiting for client interactions (play/pause/...)")
 

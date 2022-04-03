@@ -17,6 +17,14 @@ type __void struct{}
 // needed for creating set of instances in the stage
 var __member __void
 
+// GongStructInterface is the interface met by GongStructs
+// It allows runtime reflexion of instances (without the hassle of the "reflect" package)
+type GongStructInterface interface {
+	GetName() (res string)
+	GetFields() (res []string)
+	GetFieldStringValue(fieldName string) (res string)
+}
+
 // StageStruct enables storage of staged instances
 // swagger:ignore
 type StageStruct struct { // insertion point for definition of arrays registering instances
@@ -257,6 +265,32 @@ func DeleteORMDummyAgent(dummyagent *DummyAgent) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (dummyagent *DummyAgent) GetName() (res string) {
+	return dummyagent.Name
+}
+
+func (dummyagent *DummyAgent) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"TechName", "Engine", "Name",  }
+	return
+}
+
+func (dummyagent *DummyAgent) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "TechName":
+		res = dummyagent.TechName
+	case "Engine":
+		if dummyagent.Engine != nil {
+			res = dummyagent.Engine.Name
+		}
+	case "Name":
+		res = dummyagent.Name
+	}
+	return
+}
+
 func (stage *StageStruct) getEngineOrderedStructWithNameField() []*Engine {
 	// have alphabetical order generation
 	engineOrdered := []*Engine{}
@@ -357,6 +391,40 @@ func DeleteORMEngine(engine *Engine) {
 	if Stage.AllModelsStructDeleteCallback != nil {
 		Stage.AllModelsStructDeleteCallback.DeleteORMEngine(engine)
 	}
+}
+
+// for satisfaction of GongStruct interface
+func (engine *Engine) GetName() (res string) {
+	return engine.Name
+}
+
+func (engine *Engine) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "EndTime", "CurrentTime", "SecondsSinceStart", "Fired", "ControlMode", "State", "Speed",  }
+	return
+}
+
+func (engine *Engine) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = engine.Name
+	case "EndTime":
+		res = engine.EndTime
+	case "CurrentTime":
+		res = engine.CurrentTime
+	case "SecondsSinceStart":
+		res = fmt.Sprintf("%f", engine.SecondsSinceStart)
+	case "Fired":
+		res = fmt.Sprintf("%d", engine.Fired)
+	case "ControlMode":
+		res = engine.ControlMode.ToCodeString()
+	case "State":
+		res = engine.State.ToCodeString()
+	case "Speed":
+		res = fmt.Sprintf("%f", engine.Speed)
+	}
+	return
 }
 
 func (stage *StageStruct) getEventOrderedStructWithNameField() []*Event {
@@ -461,6 +529,28 @@ func DeleteORMEvent(event *Event) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (event *Event) GetName() (res string) {
+	return event.Name
+}
+
+func (event *Event) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "Duration",  }
+	return
+}
+
+func (event *Event) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = event.Name
+	case "Duration":
+		res = fmt.Sprintf("%d", event.Duration)
+	}
+	return
+}
+
 func (stage *StageStruct) getGongsimCommandOrderedStructWithNameField() []*GongsimCommand {
 	// have alphabetical order generation
 	gongsimcommandOrdered := []*GongsimCommand{}
@@ -561,6 +651,34 @@ func DeleteORMGongsimCommand(gongsimcommand *GongsimCommand) {
 	if Stage.AllModelsStructDeleteCallback != nil {
 		Stage.AllModelsStructDeleteCallback.DeleteORMGongsimCommand(gongsimcommand)
 	}
+}
+
+// for satisfaction of GongStruct interface
+func (gongsimcommand *GongsimCommand) GetName() (res string) {
+	return gongsimcommand.Name
+}
+
+func (gongsimcommand *GongsimCommand) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "Command", "CommandDate", "SpeedCommandType", "DateSpeedCommand",  }
+	return
+}
+
+func (gongsimcommand *GongsimCommand) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = gongsimcommand.Name
+	case "Command":
+		res = gongsimcommand.Command.ToCodeString()
+	case "CommandDate":
+		res = gongsimcommand.CommandDate
+	case "SpeedCommandType":
+		res = gongsimcommand.SpeedCommandType.ToCodeString()
+	case "DateSpeedCommand":
+		res = gongsimcommand.DateSpeedCommand
+	}
+	return
 }
 
 func (stage *StageStruct) getGongsimStatusOrderedStructWithNameField() []*GongsimStatus {
@@ -665,6 +783,34 @@ func DeleteORMGongsimStatus(gongsimstatus *GongsimStatus) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (gongsimstatus *GongsimStatus) GetName() (res string) {
+	return gongsimstatus.Name
+}
+
+func (gongsimstatus *GongsimStatus) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "CurrentCommand", "CompletionDate", "CurrentSpeedCommand", "SpeedCommandCompletionDate",  }
+	return
+}
+
+func (gongsimstatus *GongsimStatus) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = gongsimstatus.Name
+	case "CurrentCommand":
+		res = gongsimstatus.CurrentCommand.ToCodeString()
+	case "CompletionDate":
+		res = gongsimstatus.CompletionDate
+	case "CurrentSpeedCommand":
+		res = gongsimstatus.CurrentSpeedCommand.ToCodeString()
+	case "SpeedCommandCompletionDate":
+		res = gongsimstatus.SpeedCommandCompletionDate
+	}
+	return
+}
+
 func (stage *StageStruct) getUpdateStateOrderedStructWithNameField() []*UpdateState {
 	// have alphabetical order generation
 	updatestateOrdered := []*UpdateState{}
@@ -767,6 +913,30 @@ func DeleteORMUpdateState(updatestate *UpdateState) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (updatestate *UpdateState) GetName() (res string) {
+	return updatestate.Name
+}
+
+func (updatestate *UpdateState) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "Duration", "Period",  }
+	return
+}
+
+func (updatestate *UpdateState) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = updatestate.Name
+	case "Duration":
+		res = fmt.Sprintf("%d", updatestate.Duration)
+	case "Period":
+		res = fmt.Sprintf("%d", updatestate.Period)
+	}
+	return
+}
+
 // swagger:ignore
 type AllModelsStructCreateInterface interface { // insertion point for Callbacks on creation
 	CreateORMDummyAgent(DummyAgent *DummyAgent)
@@ -859,6 +1029,9 @@ const IdentifiersDecls = `
 
 const StringInitStatement = `
 	{{Identifier}}.{{GeneratedFieldName}} = ` + "`" + `{{GeneratedFieldNameValue}}` + "`"
+
+const StringEnumInitStatement = `
+	{{Identifier}}.{{GeneratedFieldName}} = {{GeneratedFieldNameValue}}`
 
 const NumberInitStatement = `
 	{{Identifier}}.{{GeneratedFieldName}} = {{GeneratedFieldNameValue}}`
@@ -991,17 +1164,21 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", engine.Fired))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "ControlMode")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(engine.ControlMode))
-		initializerStatements += setValueField
+		if engine.ControlMode != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "ControlMode")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+engine.ControlMode.ToCodeString())
+			initializerStatements += setValueField
+		}
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "State")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(engine.State))
-		initializerStatements += setValueField
+		if engine.State != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "State")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+engine.State.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 		setValueField = NumberInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1079,11 +1256,13 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimcommand.Name))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Command")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimcommand.Command))
-		initializerStatements += setValueField
+		if gongsimcommand.Command != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Command")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+gongsimcommand.Command.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1091,11 +1270,13 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimcommand.CommandDate))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "SpeedCommandType")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimcommand.SpeedCommandType))
-		initializerStatements += setValueField
+		if gongsimcommand.SpeedCommandType != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "SpeedCommandType")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+gongsimcommand.SpeedCommandType.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1135,11 +1316,13 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimstatus.Name))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CurrentCommand")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimstatus.CurrentCommand))
-		initializerStatements += setValueField
+		if gongsimstatus.CurrentCommand != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CurrentCommand")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+gongsimstatus.CurrentCommand.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1147,11 +1330,13 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimstatus.CompletionDate))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CurrentSpeedCommand")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimstatus.CurrentSpeedCommand))
-		initializerStatements += setValueField
+		if gongsimstatus.CurrentSpeedCommand != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CurrentSpeedCommand")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+gongsimstatus.CurrentSpeedCommand.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1325,6 +1510,18 @@ func (controlmode *ControlMode) FromString(input string) {
 	}
 }
 
+func (controlmode *ControlMode) ToCodeString() (res string) {
+
+	switch *controlmode {
+	// insertion code per enum code
+	case AUTONOMOUS:
+		res = "AUTONOMOUS"
+	case CLIENT_CONTROL:
+		res = "CLIENT_CONTROL"
+	}
+	return
+}
+
 // Utility function for EngineDriverState
 // if enum values are string, it is stored with the value
 // if enum values are int, they are stored with the code of the value
@@ -1368,6 +1565,26 @@ func (enginedriverstate *EngineDriverState) FromInt(input int) {
 	}
 }
 
+func (enginedriverstate *EngineDriverState) ToCodeString() (res string) {
+
+	switch *enginedriverstate {
+	// insertion code per enum code
+	case CHECKOUT_AGENT_STATES:
+		res = "CHECKOUT_AGENT_STATES"
+	case COMMIT_AGENT_STATES:
+		res = "COMMIT_AGENT_STATES"
+	case FIRE_ONE_EVENT:
+		res = "FIRE_ONE_EVENT"
+	case RESET_SIMULATION:
+		res = "RESET_SIMULATION"
+	case SLEEP_100_MS:
+		res = "SLEEP_100_MS"
+	case UNKOWN:
+		res = "UNKOWN"
+	}
+	return
+}
+
 // Utility function for EngineRunMode
 // if enum values are string, it is stored with the value
 // if enum values are int, they are stored with the code of the value
@@ -1393,6 +1610,18 @@ func (enginerunmode *EngineRunMode) FromInt(input int) {
 	case 0:
 		*enginerunmode = RELATIVE_SPEED
 	}
+}
+
+func (enginerunmode *EngineRunMode) ToCodeString() (res string) {
+
+	switch *enginerunmode {
+	// insertion code per enum code
+	case FULL_SPEED:
+		res = "FULL_SPEED"
+	case RELATIVE_SPEED:
+		res = "RELATIVE_SPEED"
+	}
+	return
 }
 
 // Utility function for EngineState
@@ -1426,6 +1655,20 @@ func (enginestate *EngineState) FromString(input string) {
 	}
 }
 
+func (enginestate *EngineState) ToCodeString() (res string) {
+
+	switch *enginestate {
+	// insertion code per enum code
+	case OVER:
+		res = "OVER"
+	case PAUSED:
+		res = "PAUSED"
+	case RUNNING:
+		res = "RUNNING"
+	}
+	return
+}
+
 // Utility function for EngineStopMode
 // if enum values are string, it is stored with the value
 // if enum values are int, they are stored with the code of the value
@@ -1451,6 +1694,18 @@ func (enginestopmode *EngineStopMode) FromInt(input int) {
 	case 0:
 		*enginestopmode = TEN_MINUTES
 	}
+}
+
+func (enginestopmode *EngineStopMode) ToCodeString() (res string) {
+
+	switch *enginestopmode {
+	// insertion code per enum code
+	case STATE_CHANGED:
+		res = "STATE_CHANGED"
+	case TEN_MINUTES:
+		res = "TEN_MINUTES"
+	}
+	return
 }
 
 // Utility function for GongsimCommandType
@@ -1496,6 +1751,26 @@ func (gongsimcommandtype *GongsimCommandType) FromString(input string) {
 	}
 }
 
+func (gongsimcommandtype *GongsimCommandType) ToCodeString() (res string) {
+
+	switch *gongsimcommandtype {
+	// insertion code per enum code
+	case COMMAND_ADVANCE_10_MIN:
+		res = "COMMAND_ADVANCE_10_MIN"
+	case COMMAND_FIRE_EVENT_TILL_STATES_CHANGE:
+		res = "COMMAND_FIRE_EVENT_TILL_STATES_CHANGE"
+	case COMMAND_FIRE_NEXT_EVENT:
+		res = "COMMAND_FIRE_NEXT_EVENT"
+	case COMMAND_PAUSE:
+		res = "COMMAND_PAUSE"
+	case COMMAND_PLAY:
+		res = "COMMAND_PLAY"
+	case COMMAND_RESET:
+		res = "COMMAND_RESET"
+	}
+	return
+}
+
 // Utility function for SpeedCommandType
 // if enum values are string, it is stored with the value
 // if enum values are int, they are stored with the code of the value
@@ -1525,5 +1800,19 @@ func (speedcommandtype *SpeedCommandType) FromString(input string) {
 	case "COMMAND_SPEED_STEADY":
 		*speedcommandtype = COMMAND_SPEED_STEADY
 	}
+}
+
+func (speedcommandtype *SpeedCommandType) ToCodeString() (res string) {
+
+	switch *speedcommandtype {
+	// insertion code per enum code
+	case COMMAND_DECREASE_SPEED_50_PERCENTS:
+		res = "COMMAND_DECREASE_SPEED_50_PERCENTS"
+	case COMMAND_INCREASE_SPEED_100_PERCENTS:
+		res = "COMMAND_INCREASE_SPEED_100_PERCENTS"
+	case COMMAND_SPEED_STEADY:
+		res = "COMMAND_SPEED_STEADY"
+	}
+	return
 }
 

@@ -104,6 +104,7 @@
         "github.com/fullstack-lang/gongsim@HEAD",
         "github.com/fullstack-lang/gongleaflet@HEAD",
         "github.com/fullstack-lang/gongmarkdown@HEAD",
+        "github.com/fullstack-lang/gongng2charts@HEAD",
       ],
       "group": "build"
     },

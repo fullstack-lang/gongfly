@@ -262,7 +262,7 @@ export class CellDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.cell.Name == undefined) {
+		if (this.cell.Name == "") {
 			this.cell.Name = event.value.Name
 		}
 	}

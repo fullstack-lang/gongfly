@@ -38,10 +38,20 @@ import { SplitterComponent } from './splitter/splitter.component'
 import { SidebarComponent } from './sidebar/sidebar.component';
 
 // insertion point for imports 
+import { AnotherDummyDatasTableComponent } from './anotherdummydatas-table/anotherdummydatas-table.component'
+import { AnotherDummyDataSortingComponent } from './anotherdummydata-sorting/anotherdummydata-sorting.component'
+import { AnotherDummyDataDetailComponent } from './anotherdummydata-detail/anotherdummydata-detail.component'
+import { AnotherDummyDataPresentationComponent } from './anotherdummydata-presentation/anotherdummydata-presentation.component'
+
 import { CellsTableComponent } from './cells-table/cells-table.component'
 import { CellSortingComponent } from './cell-sorting/cell-sorting.component'
 import { CellDetailComponent } from './cell-detail/cell-detail.component'
 import { CellPresentationComponent } from './cell-presentation/cell-presentation.component'
+
+import { DummyDatasTableComponent } from './dummydatas-table/dummydatas-table.component'
+import { DummyDataSortingComponent } from './dummydata-sorting/dummydata-sorting.component'
+import { DummyDataDetailComponent } from './dummydata-detail/dummydata-detail.component'
+import { DummyDataPresentationComponent } from './dummydata-presentation/dummydata-presentation.component'
 
 import { ElementsTableComponent } from './elements-table/elements-table.component'
 import { ElementSortingComponent } from './element-sorting/element-sorting.component'
@@ -62,10 +72,20 @@ import { RowPresentationComponent } from './row-presentation/row-presentation.co
 @NgModule({
 	declarations: [
 		// insertion point for declarations 
+		AnotherDummyDatasTableComponent,
+		AnotherDummyDataSortingComponent,
+		AnotherDummyDataDetailComponent,
+		AnotherDummyDataPresentationComponent,
+
 		CellsTableComponent,
 		CellSortingComponent,
 		CellDetailComponent,
 		CellPresentationComponent,
+
+		DummyDatasTableComponent,
+		DummyDataSortingComponent,
+		DummyDataDetailComponent,
+		DummyDataPresentationComponent,
 
 		ElementsTableComponent,
 		ElementSortingComponent,
@@ -121,10 +141,20 @@ import { RowPresentationComponent } from './row-presentation/row-presentation.co
 	],
 	exports: [
 		// insertion point for declarations 
+		AnotherDummyDatasTableComponent,
+		AnotherDummyDataSortingComponent,
+		AnotherDummyDataDetailComponent,
+		AnotherDummyDataPresentationComponent,
+
 		CellsTableComponent,
 		CellSortingComponent,
 		CellDetailComponent,
 		CellPresentationComponent,
+
+		DummyDatasTableComponent,
+		DummyDataSortingComponent,
+		DummyDataDetailComponent,
+		DummyDataPresentationComponent,
 
 		ElementsTableComponent,
 		ElementSortingComponent,

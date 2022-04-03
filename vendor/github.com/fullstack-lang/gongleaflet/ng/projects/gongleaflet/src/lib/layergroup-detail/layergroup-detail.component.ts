@@ -240,7 +240,7 @@ export class LayerGroupDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.layergroup.Name == undefined) {
+		if (this.layergroup.Name == "") {
 			this.layergroup.Name = event.value.Name
 		}
 	}
