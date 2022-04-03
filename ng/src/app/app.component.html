@@ -13,7 +13,8 @@
         </lib-engine-control>
     </as-split-area>
     <as-split-area size="89">
-        <app-mapoptions mapName="Whole France"></app-mapoptions>
+        <app-mapoptions mapName="Whole France">
+        </app-mapoptions>
     </as-split-area>
 </as-split>
 
@@ -44,7 +45,8 @@
         </mat-radio-group>
     </as-split-area>
     <as-split-area size="95">
-        <app-gongleaflet-splitter></app-gongleaflet-splitter>
+        <app-gongleaflet-splitter>
+        </app-gongleaflet-splitter>
     </as-split-area>
 </as-split>
 
@@ -119,7 +121,8 @@
         </mat-radio-group>
     </as-split-area>
     <as-split-area [size]=95>
-        <lib-gongmarkdownspecific-markdown></lib-gongmarkdownspecific-markdown>
+        <lib-gongmarkdownspecific-markdown>
+        </lib-gongmarkdownspecific-markdown>
     </as-split-area>
 </as-split>
 
@@ -133,7 +136,8 @@
         </mat-radio-group>
     </as-split-area>
     <as-split-area [size]=95>
-        <lib-gongmarkdownspecific-textarea></lib-gongmarkdownspecific-textarea>
+        <lib-gongmarkdownspecific-textarea>
+        </lib-gongmarkdownspecific-textarea>
     </as-split-area>
 </as-split>
 
@@ -147,6 +151,38 @@
         </mat-radio-group>
     </as-split-area>
     <as-split-area [size]=95>
-        <app-gongmarkdown-splitter></app-gongmarkdown-splitter>
+        <app-gongmarkdown-splitter>
+        </app-gongmarkdown-splitter>
+    </as-split-area>
+</as-split>
+
+
+<as-split *ngIf="view==charts" direction="vertical">
+    <as-split-area [size]=05>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <mat-radio-group aria-label="Select an option" [(ngModel)]="view">
+            <mat-radio-button *ngFor="let view of views" [value]="view">
+                {{view}}&nbsp;&nbsp;&nbsp;
+            </mat-radio-button>
+        </mat-radio-group>
+    </as-split-area>
+    <as-split-area [size]=95>
+        <lib-gongng2charts-chart chartName="LatLng">
+        </lib-gongng2charts-chart>
+    </as-split-area>
+</as-split>
+
+<as-split *ngIf="view==charts_data" direction="vertical">
+    <as-split-area [size]=05>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <mat-radio-group aria-label="Select an option" [(ngModel)]="view">
+            <mat-radio-button *ngFor="let view of views" [value]="view">
+                {{view}}&nbsp;&nbsp;&nbsp;
+            </mat-radio-button>
+        </mat-radio-group>
+    </as-split-area>
+    <as-split-area [size]=95>
+        <app-gongng2charts-splitter>
+        </app-gongng2charts-splitter>
     </as-split-area>
 </as-split>

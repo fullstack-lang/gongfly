@@ -43,12 +43,26 @@ type ValidationError struct {
 func RegisterControllers(r *gin.Engine) {
 	v1 := r.Group("/api/github.com/fullstack-lang/gongmarkdown/go")
 	{ // insertion point for registrations
+		v1.GET("/v1/anotherdummydatas", GetAnotherDummyDatas)
+		v1.GET("/v1/anotherdummydatas/:id", GetAnotherDummyData)
+		v1.POST("/v1/anotherdummydatas", PostAnotherDummyData)
+		v1.PATCH("/v1/anotherdummydatas/:id", UpdateAnotherDummyData)
+		v1.PUT("/v1/anotherdummydatas/:id", UpdateAnotherDummyData)
+		v1.DELETE("/v1/anotherdummydatas/:id", DeleteAnotherDummyData)
+
 		v1.GET("/v1/cells", GetCells)
 		v1.GET("/v1/cells/:id", GetCell)
 		v1.POST("/v1/cells", PostCell)
 		v1.PATCH("/v1/cells/:id", UpdateCell)
 		v1.PUT("/v1/cells/:id", UpdateCell)
 		v1.DELETE("/v1/cells/:id", DeleteCell)
+
+		v1.GET("/v1/dummydatas", GetDummyDatas)
+		v1.GET("/v1/dummydatas/:id", GetDummyData)
+		v1.POST("/v1/dummydatas", PostDummyData)
+		v1.PATCH("/v1/dummydatas/:id", UpdateDummyData)
+		v1.PUT("/v1/dummydatas/:id", UpdateDummyData)
+		v1.DELETE("/v1/dummydatas/:id", DeleteDummyData)
 
 		v1.GET("/v1/elements", GetElements)
 		v1.GET("/v1/elements/:id", GetElement)

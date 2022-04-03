@@ -49,11 +49,23 @@ import (
 	gongleaflet_orm "github.com/fullstack-lang/gongleaflet/go/orm"
 	_ "github.com/fullstack-lang/gongleaflet/ng"
 
-	// for carto display
+	// for document display
 	gongmarkdown_controllers "github.com/fullstack-lang/gongmarkdown/go/controllers"
 	gongmarkdown_models "github.com/fullstack-lang/gongmarkdown/go/models"
 	gongmarkdown_orm "github.com/fullstack-lang/gongmarkdown/go/orm"
 	_ "github.com/fullstack-lang/gongmarkdown/ng"
+
+	// for the scheduler
+	"github.com/fullstack-lang/gongfly/go/gongfly2markdown"
+
+	// for graph display
+	gongng2charts_controllers "github.com/fullstack-lang/gongng2charts/go/controllers"
+	gongng2charts_models "github.com/fullstack-lang/gongng2charts/go/models"
+	gongng2charts_orm "github.com/fullstack-lang/gongng2charts/go/orm"
+	_ "github.com/fullstack-lang/gongng2charts/ng"
+
+	// for the scheduler
+	"github.com/fullstack-lang/gongfly/go/gongfly2gongng2charts"
 )
 
 var (
@@ -103,8 +115,11 @@ func main() {
 	// add gongdoc database
 	gongleaflet_orm.AutoMigrate(db)
 
-	// add gongdoc database
+	// add document database
 	gongmarkdown_orm.AutoMigrate(db)
+
+	// add graph database
+	gongng2charts_orm.AutoMigrate(db)
 
 	// attach specific engine callback to the model
 	simulation := gonglfy_engine.NewSimulation()
@@ -131,24 +146,6 @@ func main() {
 	// attach visual elements
 	gongfly_visuals.AttachVisualElementsToModelElements(defaultLayer)
 
-	// generate markdown elements
-	markdownContent := (&gongmarkdown_models.MarkdownContent{Name: "Dummy"}).Stage()
-	markdownContent.Name = "Dummy"
-
-	root := (&gongmarkdown_models.Element{Name: "Root"}).Stage()
-	root.Type = gongmarkdown_models.PARAGRAPH
-	markdownContent.Root = root
-
-	table := gongfly_models.GenerateTableOfSatellites()
-	root.SubElements = append(root.SubElements, table)
-
-	// fetch the document singloton
-	var singloton *gongmarkdown_models.MarkdownContent
-	for s := range gongmarkdown_models.Stage.MarkdownContents {
-		singloton = s
-	}
-	singloton.UpdateContent()
-
 	// load package to analyse
 	modelPkg := &gong_models.ModelPkg{}
 	if *diagrams {
@@ -173,6 +170,7 @@ func main() {
 	gong_controllers.RegisterControllers(r)
 	gongleaflet_controllers.RegisterControllers(r)
 	gongmarkdown_controllers.RegisterControllers(r)
+	gongng2charts_controllers.RegisterControllers(r)
 
 	// put all to database
 	gongfly_models.Stage.Commit()
@@ -181,6 +179,10 @@ func main() {
 	gong_models.Stage.Commit()
 	gongleaflet_models.Stage.Commit()
 	gongmarkdown_models.Stage.Commit()
+	gongng2charts_models.Stage.Commit()
+
+	go gongfly2markdown.GenerateDocumentationSchedulerSingloton.CheckoutScheduler()
+	go gongfly2gongng2charts.GenerateChartSchedulerSingloton.CheckoutScheduler()
 
 	log.Print("Demoatc simulation is ready, waiting for client interactions (play/pause/...)")
 

@@ -263,7 +263,7 @@ export class MarkerDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.marker.Name == undefined) {
+		if (this.marker.Name == "") {
 			this.marker.Name = event.value.Name
 		}
 	}

@@ -240,7 +240,7 @@ export class UserClickDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.userclick.Name == undefined) {
+		if (this.userclick.Name == "") {
 			this.userclick.Name = event.value.Name
 		}
 	}

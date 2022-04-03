@@ -259,7 +259,7 @@ export class VLineDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.vline.Name == undefined) {
+		if (this.vline.Name == "") {
 			this.vline.Name = event.value.Name
 		}
 	}

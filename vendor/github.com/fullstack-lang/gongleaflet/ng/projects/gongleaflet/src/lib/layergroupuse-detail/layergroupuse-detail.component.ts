@@ -275,7 +275,7 @@ export class LayerGroupUseDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.layergroupuse.Name == undefined) {
+		if (this.layergroupuse.Name == "") {
 			this.layergroupuse.Name = event.value.Name
 		}
 	}

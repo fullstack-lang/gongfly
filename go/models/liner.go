@@ -40,6 +40,12 @@ type Liner struct {
 	timestamp       time.Time
 	Timestampstring string
 
+	// history of lat positions at each event
+	latPositions []float64
+	lngPositions []float64
+
+	updateEventNb int
+
 	ReporingLine *OpsLine
 }
 
@@ -67,6 +73,8 @@ func (liner *Liner) FireNextEvent() {
 	switch event.(type) {
 	case *gongsim_models.UpdateState:
 		checkStateEvent := event.(*gongsim_models.UpdateState)
+
+		liner.updateEventNb++
 
 		// post next event
 		checkStateEvent.SetFireTime(checkStateEvent.GetFireTime().Add(checkStateEvent.Period))
@@ -113,7 +121,14 @@ func (liner *Liner) FireNextEvent() {
 			liner.Heading)
 
 		liner.Lat = nextPoint.Lat()
+
 		liner.Lng = nextPoint.Lng()
+
+		if liner.updateEventNb%20 == 0 {
+			liner.latPositions = append(liner.latPositions, liner.Lat)
+			liner.lngPositions = append(liner.lngPositions, liner.Lng)
+		}
+
 		liner.timestamp = checkStateEvent.GetFireTime()
 		liner.Timestampstring = liner.timestamp.String()
 
@@ -146,3 +161,11 @@ func (liner *Liner) GetLevel() float64         { return liner.Level }
 func (liner *Liner) GetDisplay() bool { return true }
 
 func (*Liner) GetLayerGroupName() (name string) { return string(Aircraft_) }
+
+func (liner *Liner) GetLatPositions() []float64 {
+	return liner.latPositions
+}
+
+func (liner *Liner) GetLngPositions() []float64 {
+	return liner.lngPositions
+}

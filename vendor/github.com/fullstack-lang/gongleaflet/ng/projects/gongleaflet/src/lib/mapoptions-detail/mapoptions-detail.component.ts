@@ -246,7 +246,7 @@ export class MapOptionsDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.mapoptions.Name == undefined) {
+		if (this.mapoptions.Name == "") {
 			this.mapoptions.Name = event.value.Name
 		}
 	}

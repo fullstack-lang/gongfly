@@ -240,7 +240,7 @@ export class CheckoutSchedulerDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.checkoutscheduler.Name == undefined) {
+		if (this.checkoutscheduler.Name == "") {
 			this.checkoutscheduler.Name = event.value.Name
 		}
 	}

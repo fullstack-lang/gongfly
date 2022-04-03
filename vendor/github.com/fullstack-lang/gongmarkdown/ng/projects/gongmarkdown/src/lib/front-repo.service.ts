@@ -4,8 +4,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
 
 // insertion point sub template for services imports 
+import { AnotherDummyDataDB } from './anotherdummydata-db'
+import { AnotherDummyDataService } from './anotherdummydata.service'
+
 import { CellDB } from './cell-db'
 import { CellService } from './cell.service'
+
+import { DummyDataDB } from './dummydata-db'
+import { DummyDataService } from './dummydata.service'
 
 import { ElementDB } from './element-db'
 import { ElementService } from './element.service'
@@ -19,9 +25,15 @@ import { RowService } from './row.service'
 
 // FrontRepo stores all instances in a front repository (design pattern repository)
 export class FrontRepo { // insertion point sub template 
+  AnotherDummyDatas_array = new Array<AnotherDummyDataDB>(); // array of repo instances
+  AnotherDummyDatas = new Map<number, AnotherDummyDataDB>(); // map of repo instances
+  AnotherDummyDatas_batch = new Map<number, AnotherDummyDataDB>(); // same but only in last GET (for finding repo instances to delete)
   Cells_array = new Array<CellDB>(); // array of repo instances
   Cells = new Map<number, CellDB>(); // map of repo instances
   Cells_batch = new Map<number, CellDB>(); // same but only in last GET (for finding repo instances to delete)
+  DummyDatas_array = new Array<DummyDataDB>(); // array of repo instances
+  DummyDatas = new Map<number, DummyDataDB>(); // map of repo instances
+  DummyDatas_batch = new Map<number, DummyDataDB>(); // same but only in last GET (for finding repo instances to delete)
   Elements_array = new Array<ElementDB>(); // array of repo instances
   Elements = new Map<number, ElementDB>(); // map of repo instances
   Elements_batch = new Map<number, ElementDB>(); // same but only in last GET (for finding repo instances to delete)
@@ -89,7 +101,9 @@ export class FrontRepoService {
 
   constructor(
     private http: HttpClient, // insertion point sub template 
+    private anotherdummydataService: AnotherDummyDataService,
     private cellService: CellService,
+    private dummydataService: DummyDataService,
     private elementService: ElementService,
     private markdowncontentService: MarkdownContentService,
     private rowService: RowService,
@@ -123,12 +137,16 @@ export class FrontRepoService {
 
   // typing of observable can be messy in typescript. Therefore, one force the type
   observableFrontRepo: [ // insertion point sub template 
+    Observable<AnotherDummyDataDB[]>,
     Observable<CellDB[]>,
+    Observable<DummyDataDB[]>,
     Observable<ElementDB[]>,
     Observable<MarkdownContentDB[]>,
     Observable<RowDB[]>,
   ] = [ // insertion point sub template 
+      this.anotherdummydataService.getAnotherDummyDatas(),
       this.cellService.getCells(),
+      this.dummydataService.getDummyDatas(),
       this.elementService.getElements(),
       this.markdowncontentService.getMarkdownContents(),
       this.rowService.getRows(),
@@ -147,15 +165,21 @@ export class FrontRepoService {
           this.observableFrontRepo
         ).subscribe(
           ([ // insertion point sub template for declarations 
+            anotherdummydatas_,
             cells_,
+            dummydatas_,
             elements_,
             markdowncontents_,
             rows_,
           ]) => {
             // Typing can be messy with many items. Therefore, type casting is necessary here
             // insertion point sub template for type casting 
+            var anotherdummydatas: AnotherDummyDataDB[]
+            anotherdummydatas = anotherdummydatas_ as AnotherDummyDataDB[]
             var cells: CellDB[]
             cells = cells_ as CellDB[]
+            var dummydatas: DummyDataDB[]
+            dummydatas = dummydatas_ as DummyDataDB[]
             var elements: ElementDB[]
             elements = elements_ as ElementDB[]
             var markdowncontents: MarkdownContentDB[]
@@ -166,6 +190,39 @@ export class FrontRepoService {
             // 
             // First Step: init map of instances
             // insertion point sub template for init 
+            // init the array
+            FrontRepoSingloton.AnotherDummyDatas_array = anotherdummydatas
+
+            // clear the map that counts AnotherDummyData in the GET
+            FrontRepoSingloton.AnotherDummyDatas_batch.clear()
+
+            anotherdummydatas.forEach(
+              anotherdummydata => {
+                FrontRepoSingloton.AnotherDummyDatas.set(anotherdummydata.ID, anotherdummydata)
+                FrontRepoSingloton.AnotherDummyDatas_batch.set(anotherdummydata.ID, anotherdummydata)
+              }
+            )
+
+            // clear anotherdummydatas that are absent from the batch
+            FrontRepoSingloton.AnotherDummyDatas.forEach(
+              anotherdummydata => {
+                if (FrontRepoSingloton.AnotherDummyDatas_batch.get(anotherdummydata.ID) == undefined) {
+                  FrontRepoSingloton.AnotherDummyDatas.delete(anotherdummydata.ID)
+                }
+              }
+            )
+
+            // sort AnotherDummyDatas_array array
+            FrontRepoSingloton.AnotherDummyDatas_array.sort((t1, t2) => {
+              if (t1.Name > t2.Name) {
+                return 1;
+              }
+              if (t1.Name < t2.Name) {
+                return -1;
+              }
+              return 0;
+            });
+
             // init the array
             FrontRepoSingloton.Cells_array = cells
 
@@ -190,6 +247,39 @@ export class FrontRepoService {
 
             // sort Cells_array array
             FrontRepoSingloton.Cells_array.sort((t1, t2) => {
+              if (t1.Name > t2.Name) {
+                return 1;
+              }
+              if (t1.Name < t2.Name) {
+                return -1;
+              }
+              return 0;
+            });
+
+            // init the array
+            FrontRepoSingloton.DummyDatas_array = dummydatas
+
+            // clear the map that counts DummyData in the GET
+            FrontRepoSingloton.DummyDatas_batch.clear()
+
+            dummydatas.forEach(
+              dummydata => {
+                FrontRepoSingloton.DummyDatas.set(dummydata.ID, dummydata)
+                FrontRepoSingloton.DummyDatas_batch.set(dummydata.ID, dummydata)
+              }
+            )
+
+            // clear dummydatas that are absent from the batch
+            FrontRepoSingloton.DummyDatas.forEach(
+              dummydata => {
+                if (FrontRepoSingloton.DummyDatas_batch.get(dummydata.ID) == undefined) {
+                  FrontRepoSingloton.DummyDatas.delete(dummydata.ID)
+                }
+              }
+            )
+
+            // sort DummyDatas_array array
+            FrontRepoSingloton.DummyDatas_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -302,6 +392,13 @@ export class FrontRepoService {
             // 
             // Second Step: redeem pointers between instances (thanks to maps in the First Step)
             // insertion point sub template for redeem 
+            anotherdummydatas.forEach(
+              anotherdummydata => {
+                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
+
+                // insertion point for redeeming ONE-MANY associations
+              }
+            )
             cells.forEach(
               cell => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
@@ -320,6 +417,20 @@ export class FrontRepoService {
                     }
                   }
                 }
+              }
+            )
+            dummydatas.forEach(
+              dummydata => {
+                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
+                // insertion point for pointer field DummyPointerToGongStruct redeeming
+                {
+                  let _anotherdummydata = FrontRepoSingloton.AnotherDummyDatas.get(dummydata.DummyPointerToGongStructID.Int64)
+                  if (_anotherdummydata) {
+                    dummydata.DummyPointerToGongStruct = _anotherdummydata
+                  }
+                }
+
+                // insertion point for redeeming ONE-MANY associations
               }
             )
             elements.forEach(
@@ -387,6 +498,57 @@ export class FrontRepoService {
 
   // insertion point for pull per struct 
 
+  // AnotherDummyDataPull performs a GET on AnotherDummyData of the stack and redeem association pointers 
+  AnotherDummyDataPull(): Observable<FrontRepo> {
+    return new Observable<FrontRepo>(
+      (observer) => {
+        combineLatest([
+          this.anotherdummydataService.getAnotherDummyDatas()
+        ]).subscribe(
+          ([ // insertion point sub template 
+            anotherdummydatas,
+          ]) => {
+            // init the array
+            FrontRepoSingloton.AnotherDummyDatas_array = anotherdummydatas
+
+            // clear the map that counts AnotherDummyData in the GET
+            FrontRepoSingloton.AnotherDummyDatas_batch.clear()
+
+            // 
+            // First Step: init map of instances
+            // insertion point sub template 
+            anotherdummydatas.forEach(
+              anotherdummydata => {
+                FrontRepoSingloton.AnotherDummyDatas.set(anotherdummydata.ID, anotherdummydata)
+                FrontRepoSingloton.AnotherDummyDatas_batch.set(anotherdummydata.ID, anotherdummydata)
+
+                // insertion point for redeeming ONE/ZERO-ONE associations
+
+                // insertion point for redeeming ONE-MANY associations
+              }
+            )
+
+            // clear anotherdummydatas that are absent from the GET
+            FrontRepoSingloton.AnotherDummyDatas.forEach(
+              anotherdummydata => {
+                if (FrontRepoSingloton.AnotherDummyDatas_batch.get(anotherdummydata.ID) == undefined) {
+                  FrontRepoSingloton.AnotherDummyDatas.delete(anotherdummydata.ID)
+                }
+              }
+            )
+
+            // 
+            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
+            // insertion point sub template 
+
+            // hand over control flow to observer
+            observer.next(FrontRepoSingloton)
+          }
+        )
+      }
+    )
+  }
+
   // CellPull performs a GET on Cell of the stack and redeem association pointers 
   CellPull(): Observable<FrontRepo> {
     return new Observable<FrontRepo>(
@@ -435,6 +597,64 @@ export class FrontRepoService {
               cell => {
                 if (FrontRepoSingloton.Cells_batch.get(cell.ID) == undefined) {
                   FrontRepoSingloton.Cells.delete(cell.ID)
+                }
+              }
+            )
+
+            // 
+            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
+            // insertion point sub template 
+
+            // hand over control flow to observer
+            observer.next(FrontRepoSingloton)
+          }
+        )
+      }
+    )
+  }
+
+  // DummyDataPull performs a GET on DummyData of the stack and redeem association pointers 
+  DummyDataPull(): Observable<FrontRepo> {
+    return new Observable<FrontRepo>(
+      (observer) => {
+        combineLatest([
+          this.dummydataService.getDummyDatas()
+        ]).subscribe(
+          ([ // insertion point sub template 
+            dummydatas,
+          ]) => {
+            // init the array
+            FrontRepoSingloton.DummyDatas_array = dummydatas
+
+            // clear the map that counts DummyData in the GET
+            FrontRepoSingloton.DummyDatas_batch.clear()
+
+            // 
+            // First Step: init map of instances
+            // insertion point sub template 
+            dummydatas.forEach(
+              dummydata => {
+                FrontRepoSingloton.DummyDatas.set(dummydata.ID, dummydata)
+                FrontRepoSingloton.DummyDatas_batch.set(dummydata.ID, dummydata)
+
+                // insertion point for redeeming ONE/ZERO-ONE associations
+                // insertion point for pointer field DummyPointerToGongStruct redeeming
+                {
+                  let _anotherdummydata = FrontRepoSingloton.AnotherDummyDatas.get(dummydata.DummyPointerToGongStructID.Int64)
+                  if (_anotherdummydata) {
+                    dummydata.DummyPointerToGongStruct = _anotherdummydata
+                  }
+                }
+
+                // insertion point for redeeming ONE-MANY associations
+              }
+            )
+
+            // clear dummydatas that are absent from the GET
+            FrontRepoSingloton.DummyDatas.forEach(
+              dummydata => {
+                if (FrontRepoSingloton.DummyDatas_batch.get(dummydata.ID) == undefined) {
+                  FrontRepoSingloton.DummyDatas.delete(dummydata.ID)
                 }
               }
             )
@@ -639,15 +859,21 @@ export class FrontRepoService {
 }
 
 // insertion point for get unique ID per struct 
-export function getCellUniqueID(id: number): number {
+export function getAnotherDummyDataUniqueID(id: number): number {
   return 31 * id
 }
-export function getElementUniqueID(id: number): number {
+export function getCellUniqueID(id: number): number {
   return 37 * id
 }
-export function getMarkdownContentUniqueID(id: number): number {
+export function getDummyDataUniqueID(id: number): number {
   return 41 * id
 }
-export function getRowUniqueID(id: number): number {
+export function getElementUniqueID(id: number): number {
   return 43 * id
+}
+export function getMarkdownContentUniqueID(id: number): number {
+  return 47 * id
+}
+export function getRowUniqueID(id: number): number {
+  return 53 * id
 }

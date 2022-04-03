@@ -17,6 +17,14 @@ type __void struct{}
 // needed for creating set of instances in the stage
 var __member __void
 
+// GongStructInterface is the interface met by GongStructs
+// It allows runtime reflexion of instances (without the hassle of the "reflect" package)
+type GongStructInterface interface {
+	GetName() (res string)
+	GetFields() (res []string)
+	GetFieldStringValue(fieldName string) (res string)
+}
+
 // StageStruct enables storage of staged instances
 // swagger:ignore
 type StageStruct struct { // insertion point for definition of arrays registering instances
@@ -293,6 +301,28 @@ func DeleteORMCheckoutScheduler(checkoutscheduler *CheckoutScheduler) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (checkoutscheduler *CheckoutScheduler) GetName() (res string) {
+	return checkoutscheduler.Name
+}
+
+func (checkoutscheduler *CheckoutScheduler) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "NbUpdatesFromFront",  }
+	return
+}
+
+func (checkoutscheduler *CheckoutScheduler) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = checkoutscheduler.Name
+	case "NbUpdatesFromFront":
+		res = fmt.Sprintf("%d", checkoutscheduler.NbUpdatesFromFront)
+	}
+	return
+}
+
 func (stage *StageStruct) getCircleOrderedStructWithNameField() []*Circle {
 	// have alphabetical order generation
 	circleOrdered := []*Circle{}
@@ -393,6 +423,40 @@ func DeleteORMCircle(circle *Circle) {
 	if Stage.AllModelsStructDeleteCallback != nil {
 		Stage.AllModelsStructDeleteCallback.DeleteORMCircle(circle)
 	}
+}
+
+// for satisfaction of GongStruct interface
+func (circle *Circle) GetName() (res string) {
+	return circle.Name
+}
+
+func (circle *Circle) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Lat", "Lng", "Name", "Radius", "ColorEnum", "DashStyleEnum", "LayerGroup",  }
+	return
+}
+
+func (circle *Circle) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Lat":
+		res = fmt.Sprintf("%f", circle.Lat)
+	case "Lng":
+		res = fmt.Sprintf("%f", circle.Lng)
+	case "Name":
+		res = circle.Name
+	case "Radius":
+		res = fmt.Sprintf("%f", circle.Radius)
+	case "ColorEnum":
+		res = circle.ColorEnum.ToCodeString()
+	case "DashStyleEnum":
+		res = circle.DashStyleEnum.ToCodeString()
+	case "LayerGroup":
+		if circle.LayerGroup != nil {
+			res = circle.LayerGroup.Name
+		}
+	}
+	return
 }
 
 func (stage *StageStruct) getDivIconOrderedStructWithNameField() []*DivIcon {
@@ -497,6 +561,28 @@ func DeleteORMDivIcon(divicon *DivIcon) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (divicon *DivIcon) GetName() (res string) {
+	return divicon.Name
+}
+
+func (divicon *DivIcon) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "SVG",  }
+	return
+}
+
+func (divicon *DivIcon) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = divicon.Name
+	case "SVG":
+		res = divicon.SVG
+	}
+	return
+}
+
 func (stage *StageStruct) getLayerGroupOrderedStructWithNameField() []*LayerGroup {
 	// have alphabetical order generation
 	layergroupOrdered := []*LayerGroup{}
@@ -597,6 +683,28 @@ func DeleteORMLayerGroup(layergroup *LayerGroup) {
 	if Stage.AllModelsStructDeleteCallback != nil {
 		Stage.AllModelsStructDeleteCallback.DeleteORMLayerGroup(layergroup)
 	}
+}
+
+// for satisfaction of GongStruct interface
+func (layergroup *LayerGroup) GetName() (res string) {
+	return layergroup.Name
+}
+
+func (layergroup *LayerGroup) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "DisplayName",  }
+	return
+}
+
+func (layergroup *LayerGroup) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = layergroup.Name
+	case "DisplayName":
+		res = layergroup.DisplayName
+	}
+	return
 }
 
 func (stage *StageStruct) getLayerGroupUseOrderedStructWithNameField() []*LayerGroupUse {
@@ -701,6 +809,32 @@ func DeleteORMLayerGroupUse(layergroupuse *LayerGroupUse) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (layergroupuse *LayerGroupUse) GetName() (res string) {
+	return layergroupuse.Name
+}
+
+func (layergroupuse *LayerGroupUse) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "Display", "LayerGroup",  }
+	return
+}
+
+func (layergroupuse *LayerGroupUse) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = layergroupuse.Name
+	case "Display":
+		res = fmt.Sprintf("%t", layergroupuse.Display)
+	case "LayerGroup":
+		if layergroupuse.LayerGroup != nil {
+			res = layergroupuse.LayerGroup.Name
+		}
+	}
+	return
+}
+
 func (stage *StageStruct) getMapOptionsOrderedStructWithNameField() []*MapOptions {
 	// have alphabetical order generation
 	mapoptionsOrdered := []*MapOptions{}
@@ -801,6 +935,51 @@ func DeleteORMMapOptions(mapoptions *MapOptions) {
 	if Stage.AllModelsStructDeleteCallback != nil {
 		Stage.AllModelsStructDeleteCallback.DeleteORMMapOptions(mapoptions)
 	}
+}
+
+// for satisfaction of GongStruct interface
+func (mapoptions *MapOptions) GetName() (res string) {
+	return mapoptions.Name
+}
+
+func (mapoptions *MapOptions) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Lat", "Lng", "Name", "ZoomLevel", "UrlTemplate", "Attribution", "MaxZoom", "ZoomControl", "AttributionControl", "ZoomSnap", "LayerGroupUses",  }
+	return
+}
+
+func (mapoptions *MapOptions) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Lat":
+		res = fmt.Sprintf("%f", mapoptions.Lat)
+	case "Lng":
+		res = fmt.Sprintf("%f", mapoptions.Lng)
+	case "Name":
+		res = mapoptions.Name
+	case "ZoomLevel":
+		res = fmt.Sprintf("%f", mapoptions.ZoomLevel)
+	case "UrlTemplate":
+		res = mapoptions.UrlTemplate
+	case "Attribution":
+		res = mapoptions.Attribution
+	case "MaxZoom":
+		res = fmt.Sprintf("%d", mapoptions.MaxZoom)
+	case "ZoomControl":
+		res = fmt.Sprintf("%t", mapoptions.ZoomControl)
+	case "AttributionControl":
+		res = fmt.Sprintf("%t", mapoptions.AttributionControl)
+	case "ZoomSnap":
+		res = fmt.Sprintf("%d", mapoptions.ZoomSnap)
+	case "LayerGroupUses":
+		for idx, __instance__ := range mapoptions.LayerGroupUses {
+			if idx > 0 {
+				res += "\n"
+			}
+			res += __instance__.Name
+		}
+	}
+	return
 }
 
 func (stage *StageStruct) getMarkerOrderedStructWithNameField() []*Marker {
@@ -905,6 +1084,40 @@ func DeleteORMMarker(marker *Marker) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (marker *Marker) GetName() (res string) {
+	return marker.Name
+}
+
+func (marker *Marker) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Lat", "Lng", "Name", "ColorEnum", "LayerGroup", "DivIcon",  }
+	return
+}
+
+func (marker *Marker) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Lat":
+		res = fmt.Sprintf("%f", marker.Lat)
+	case "Lng":
+		res = fmt.Sprintf("%f", marker.Lng)
+	case "Name":
+		res = marker.Name
+	case "ColorEnum":
+		res = marker.ColorEnum.ToCodeString()
+	case "LayerGroup":
+		if marker.LayerGroup != nil {
+			res = marker.LayerGroup.Name
+		}
+	case "DivIcon":
+		if marker.DivIcon != nil {
+			res = marker.DivIcon.Name
+		}
+	}
+	return
+}
+
 func (stage *StageStruct) getUserClickOrderedStructWithNameField() []*UserClick {
 	// have alphabetical order generation
 	userclickOrdered := []*UserClick{}
@@ -1005,6 +1218,32 @@ func DeleteORMUserClick(userclick *UserClick) {
 	if Stage.AllModelsStructDeleteCallback != nil {
 		Stage.AllModelsStructDeleteCallback.DeleteORMUserClick(userclick)
 	}
+}
+
+// for satisfaction of GongStruct interface
+func (userclick *UserClick) GetName() (res string) {
+	return userclick.Name
+}
+
+func (userclick *UserClick) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Name", "Lat", "Lng", "TimeOfClick",  }
+	return
+}
+
+func (userclick *UserClick) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Name":
+		res = userclick.Name
+	case "Lat":
+		res = fmt.Sprintf("%f", userclick.Lat)
+	case "Lng":
+		res = fmt.Sprintf("%f", userclick.Lng)
+	case "TimeOfClick":
+		res = userclick.TimeOfClick.String()
+	}
+	return
 }
 
 func (stage *StageStruct) getVLineOrderedStructWithNameField() []*VLine {
@@ -1109,6 +1348,50 @@ func DeleteORMVLine(vline *VLine) {
 	}
 }
 
+// for satisfaction of GongStruct interface
+func (vline *VLine) GetName() (res string) {
+	return vline.Name
+}
+
+func (vline *VLine) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"StartLat", "StartLng", "EndLat", "EndLng", "Name", "ColorEnum", "DashStyleEnum", "LayerGroup", "IsTransmitting", "Message", "IsTransmittingBackward", "MessageBackward",  }
+	return
+}
+
+func (vline *VLine) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "StartLat":
+		res = fmt.Sprintf("%f", vline.StartLat)
+	case "StartLng":
+		res = fmt.Sprintf("%f", vline.StartLng)
+	case "EndLat":
+		res = fmt.Sprintf("%f", vline.EndLat)
+	case "EndLng":
+		res = fmt.Sprintf("%f", vline.EndLng)
+	case "Name":
+		res = vline.Name
+	case "ColorEnum":
+		res = vline.ColorEnum.ToCodeString()
+	case "DashStyleEnum":
+		res = vline.DashStyleEnum.ToCodeString()
+	case "LayerGroup":
+		if vline.LayerGroup != nil {
+			res = vline.LayerGroup.Name
+		}
+	case "IsTransmitting":
+		res = vline.IsTransmitting.ToCodeString()
+	case "Message":
+		res = vline.Message
+	case "IsTransmittingBackward":
+		res = vline.IsTransmittingBackward.ToCodeString()
+	case "MessageBackward":
+		res = vline.MessageBackward
+	}
+	return
+}
+
 func (stage *StageStruct) getVisualTrackOrderedStructWithNameField() []*VisualTrack {
 	// have alphabetical order generation
 	visualtrackOrdered := []*VisualTrack{}
@@ -1209,6 +1492,52 @@ func DeleteORMVisualTrack(visualtrack *VisualTrack) {
 	if Stage.AllModelsStructDeleteCallback != nil {
 		Stage.AllModelsStructDeleteCallback.DeleteORMVisualTrack(visualtrack)
 	}
+}
+
+// for satisfaction of GongStruct interface
+func (visualtrack *VisualTrack) GetName() (res string) {
+	return visualtrack.Name
+}
+
+func (visualtrack *VisualTrack) GetFields() (res []string) {
+	// list of fields 
+	res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "VerticalSpeed", "Name", "ColorEnum", "LayerGroup", "DivIcon", "DisplayTrackHistory", "DisplayLevelAndSpeed",  }
+	return
+}
+
+func (visualtrack *VisualTrack) GetFieldStringValue(fieldName string) (res string) {
+	switch fieldName {
+	// string value of fields
+	case "Lat":
+		res = fmt.Sprintf("%f", visualtrack.Lat)
+	case "Lng":
+		res = fmt.Sprintf("%f", visualtrack.Lng)
+	case "Heading":
+		res = fmt.Sprintf("%f", visualtrack.Heading)
+	case "Level":
+		res = fmt.Sprintf("%f", visualtrack.Level)
+	case "Speed":
+		res = fmt.Sprintf("%f", visualtrack.Speed)
+	case "VerticalSpeed":
+		res = fmt.Sprintf("%f", visualtrack.VerticalSpeed)
+	case "Name":
+		res = visualtrack.Name
+	case "ColorEnum":
+		res = visualtrack.ColorEnum.ToCodeString()
+	case "LayerGroup":
+		if visualtrack.LayerGroup != nil {
+			res = visualtrack.LayerGroup.Name
+		}
+	case "DivIcon":
+		if visualtrack.DivIcon != nil {
+			res = visualtrack.DivIcon.Name
+		}
+	case "DisplayTrackHistory":
+		res = fmt.Sprintf("%t", visualtrack.DisplayTrackHistory)
+	case "DisplayLevelAndSpeed":
+		res = fmt.Sprintf("%t", visualtrack.DisplayLevelAndSpeed)
+	}
+	return
 }
 
 // swagger:ignore
@@ -1336,6 +1665,9 @@ const IdentifiersDecls = `
 const StringInitStatement = `
 	{{Identifier}}.{{GeneratedFieldName}} = ` + "`" + `{{GeneratedFieldNameValue}}` + "`"
 
+const StringEnumInitStatement = `
+	{{Identifier}}.{{GeneratedFieldName}} = {{GeneratedFieldNameValue}}`
+
 const NumberInitStatement = `
 	{{Identifier}}.{{GeneratedFieldName}} = {{GeneratedFieldNameValue}}`
 
@@ -1461,17 +1793,21 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%f", circle.Radius))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "ColorEnum")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(circle.ColorEnum))
-		initializerStatements += setValueField
+		if circle.ColorEnum != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "ColorEnum")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+circle.ColorEnum.ToCodeString())
+			initializerStatements += setValueField
+		}
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "DashStyleEnum")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(circle.DashStyleEnum))
-		initializerStatements += setValueField
+		if circle.DashStyleEnum != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "DashStyleEnum")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+circle.DashStyleEnum.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 	}
 
@@ -1717,11 +2053,13 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(marker.Name))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "ColorEnum")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(marker.ColorEnum))
-		initializerStatements += setValueField
+		if marker.ColorEnum != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "ColorEnum")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+marker.ColorEnum.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 	}
 
@@ -1829,23 +2167,29 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(vline.Name))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "ColorEnum")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(vline.ColorEnum))
-		initializerStatements += setValueField
+		if vline.ColorEnum != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "ColorEnum")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+vline.ColorEnum.ToCodeString())
+			initializerStatements += setValueField
+		}
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "DashStyleEnum")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(vline.DashStyleEnum))
-		initializerStatements += setValueField
+		if vline.DashStyleEnum != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "DashStyleEnum")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+vline.DashStyleEnum.ToCodeString())
+			initializerStatements += setValueField
+		}
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "IsTransmitting")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(vline.IsTransmitting))
-		initializerStatements += setValueField
+		if vline.IsTransmitting != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "IsTransmitting")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+vline.IsTransmitting.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1853,11 +2197,13 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(vline.Message))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "IsTransmittingBackward")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(vline.IsTransmittingBackward))
-		initializerStatements += setValueField
+		if vline.IsTransmittingBackward != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "IsTransmittingBackward")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+vline.IsTransmittingBackward.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1933,11 +2279,13 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(visualtrack.Name))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "ColorEnum")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(visualtrack.ColorEnum))
-		initializerStatements += setValueField
+		if visualtrack.ColorEnum != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "ColorEnum")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+visualtrack.ColorEnum.ToCodeString())
+			initializerStatements += setValueField
+		}
 
 		setValueField = NumberInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -2185,6 +2533,26 @@ func (colorenum *ColorEnum) FromString(input string) {
 	}
 }
 
+func (colorenum *ColorEnum) ToCodeString() (res string) {
+
+	switch *colorenum {
+	// insertion code per enum code
+	case BLUE:
+		res = "BLUE"
+	case GREEN:
+		res = "GREEN"
+	case GREY:
+		res = "GREY"
+	case LIGHT_BROWN_8D6E63:
+		res = "LIGHT_BROWN_8D6E63"
+	case NONE:
+		res = "NONE"
+	case RED:
+		res = "RED"
+	}
+	return
+}
+
 // Utility function for DashStyleEnum
 // if enum values are string, it is stored with the value
 // if enum values are int, they are stored with the code of the value
@@ -2210,6 +2578,18 @@ func (dashstyleenum *DashStyleEnum) FromString(input string) {
 	case "FIVE_TWENTY":
 		*dashstyleenum = FIVE_TWENTY
 	}
+}
+
+func (dashstyleenum *DashStyleEnum) ToCodeString() (res string) {
+
+	switch *dashstyleenum {
+	// insertion code per enum code
+	case FIVE_TEN:
+		res = "FIVE_TEN"
+	case FIVE_TWENTY:
+		res = "FIVE_TWENTY"
+	}
+	return
 }
 
 // Utility function for Start_To_End_Enum
@@ -2239,6 +2619,18 @@ func (start_to_end_enum *Start_To_End_Enum) FromString(input string) {
 	}
 }
 
+func (start_to_end_enum *Start_To_End_Enum) ToCodeString() (res string) {
+
+	switch *start_to_end_enum {
+	// insertion code per enum code
+	case BACKWARD_END_TO_START:
+		res = "BACKWARD_END_TO_START"
+	case FORWARD_START_TO_END:
+		res = "FORWARD_START_TO_END"
+	}
+	return
+}
+
 // Utility function for TransmittingEnum
 // if enum values are string, it is stored with the value
 // if enum values are int, they are stored with the code of the value
@@ -2264,5 +2656,17 @@ func (transmittingenum *TransmittingEnum) FromString(input string) {
 	case "IS_TRANSMITTING":
 		*transmittingenum = IS_TRANSMITTING
 	}
+}
+
+func (transmittingenum *TransmittingEnum) ToCodeString() (res string) {
+
+	switch *transmittingenum {
+	// insertion code per enum code
+	case IS_NOT_TRANSMITTING:
+		res = "IS_NOT_TRANSMITTING"
+	case IS_TRANSMITTING:
+		res = "IS_TRANSMITTING"
+	}
+	return
 }
 

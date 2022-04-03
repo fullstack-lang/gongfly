@@ -250,7 +250,7 @@ export class MarkdownContentDetailComponent implements OnInit {
 	}
 
 	fillUpNameIfEmpty(event: { value: { Name: string; }; }) {
-		if (this.markdowncontent.Name == undefined) {
+		if (this.markdowncontent.Name == "") {
 			this.markdowncontent.Name = event.value.Name
 		}
 	}
