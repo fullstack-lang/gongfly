@@ -1,10 +1,11 @@
-package bebop2markdown
+package gongfly2markdown
 
 import (
-	bebop_models "bebop/go/models"
 	"sort"
 	"strings"
 	"time"
+
+	gongfly_models "github.com/fullstack-lang/gongfly/go/models"
 
 	gongmarkdown_models "github.com/fullstack-lang/gongmarkdown/go/models"
 )
@@ -36,16 +37,16 @@ func (generateDocumentationScheduler *GenerateDocumentationScheduler) CheckoutSc
 
 			_ = t
 
-			if bebop_models.Stage.BackRepo != nil {
-				newPushFromFront := bebop_models.Stage.BackRepo.GetLastPushFromFrontNb()
+			if gongfly_models.Stage.BackRepo != nil {
+				newPushFromFront := gongfly_models.Stage.BackRepo.GetLastPushFromFrontNb()
 				if lastPushFromFront < newPushFromFront {
 
 					GenerateDocumentationSchedulerSingloton.GenerateDocumentation()
 					lastPushFromFront = newPushFromFront
 				}
 			}
-			if bebop_models.Stage.BackRepo != nil {
-				newPushFromBack := bebop_models.Stage.BackRepo.GetLastCommitFromBackNb()
+			if gongfly_models.Stage.BackRepo != nil {
+				newPushFromBack := gongfly_models.Stage.BackRepo.GetLastCommitFromBackNb()
 				if lastPushFromBack < newPushFromBack {
 
 					GenerateDocumentationSchedulerSingloton.GenerateDocumentation()
@@ -71,65 +72,81 @@ func (GenerateDocumentationScheduler *GenerateDocumentationScheduler) GenerateDo
 	root.Type = gongmarkdown_models.PARAGRAPH
 	markdownContent.Root = root
 
-	// generate documentation
-	groupTable := []bebop_models.GongStructInterface{}
+	{
+		// generate documentation
+		satelliteTable := []gongfly_models.GongStructInterface{}
 
-	for group := range bebop_models.Stage.Groups {
-		groupTable = append(groupTable, group)
+		for satellite := range gongfly_models.Stage.Satellites {
+			satelliteTable = append(satelliteTable, satellite)
+		}
+
+		sort.Slice(satelliteTable[:], func(i, j int) bool {
+			return satelliteTable[i].GetName() < satelliteTable[j].GetName()
+		})
+
+		// only display Name
+		satelliteFieldsToDisplay := []FieldHeadOfTable{
+			{
+				FieldName: "Name",
+				TableHead: "Satellite",
+			},
+			{
+				FieldName: "Line1",
+				TableHead: "Line 1",
+			},
+			{
+				FieldName: "Line2",
+				TableHead: "Line 2",
+			},
+			{
+				FieldName: "Lat",
+				TableHead: "Latitute",
+			},
+			{
+				FieldName: "Lng",
+				TableHead: "Longitude",
+			},
+		}
+
+		root.SubElements = append(root.SubElements,
+			GongStructSlice2MarkdownTable(satelliteTable, satelliteFieldsToDisplay))
 	}
 
-	sort.Slice(groupTable[:], func(i, j int) bool {
-		return groupTable[i].GetName() < groupTable[j].GetName()
-	})
+	{
+		// table of deploiements
+		linersTable := []gongfly_models.GongStructInterface{}
 
-	// only display Name
-	groupFieldsToDisplay := []FieldHeadOfTable{
-		{
-			FieldName: "Name",
-			TableHead: "Groupe",
-		},
-		{
-			FieldName: "Centres",
-			TableHead: "Liste ordonée des centres",
-		},
+		for liner := range gongfly_models.Stage.Liners {
+			linersTable = append(linersTable, liner)
+		}
+
+		sort.Slice(linersTable[:], func(i, j int) bool {
+			return linersTable[i].GetName() < linersTable[j].GetName()
+		})
+
+		// only display Name
+		linerFieldsToDisplay := []FieldHeadOfTable{
+			{
+				FieldName: "Name",
+				TableHead: "Name of liner",
+			},
+			{
+				FieldName: "Lat",
+				TableHead: "Latitute",
+			},
+			{
+				FieldName: "Lng",
+				TableHead: "Longitude",
+			},
+			{
+				FieldName: "Timestampstring",
+				TableHead: "Time",
+			},
+		}
+
+		root.SubElements = append(root.SubElements,
+			GongStructSlice2MarkdownTable(linersTable, linerFieldsToDisplay))
 	}
-
-	root.SubElements = append(root.SubElements,
-		GongStructSlice2MarkdownTable(groupTable, groupFieldsToDisplay))
-
-	// table of deploiements
-	deploiementsTable := []bebop_models.GongStructInterface{}
-
-	for deploiement := range bebop_models.Stage.Deploiements {
-		deploiementsTable = append(deploiementsTable, deploiement)
-	}
-
-	sort.Slice(deploiementsTable[:], func(i, j int) bool {
-		return deploiementsTable[i].GetName() < deploiementsTable[j].GetName()
-	})
-
-	// only display Name
-	deploiementFieldsToDisplay := []FieldHeadOfTable{
-		{
-			FieldName: "Name",
-			TableHead: "Déploiement",
-		},
-		{
-			FieldName: "Commentaire",
-			TableHead: "Description du déploiement",
-		},
-		{
-			FieldName: "DatesAuto",
-			TableHead: "Dates calculées",
-		},
-		{
-			FieldName: "Csds",
-			TableHead: "Liste des CSD",
-		},
-	}
-
-	root.SubElements = append(root.SubElements,
-		GongStructSlice2MarkdownTable(deploiementsTable, deploiementFieldsToDisplay))
 
 	markdownContent.UpdateContent()
 
@@ -145,7 +162,7 @@ type FieldHeadOfTable struct {
 	TableHead string
 }
 
-func GongStructSlice2MarkdownTable(gongStructInstances []bebop_models.GongStructInterface, fieldsToDisplay []FieldHeadOfTable) (element *gongmarkdown_models.Element) {
+func GongStructSlice2MarkdownTable(gongStructInstances []gongfly_models.GongStructInterface, fieldsToDisplay []FieldHeadOfTable) (element *gongmarkdown_models.Element) {
 
 	if len(gongStructInstances) == 0 {
 		return

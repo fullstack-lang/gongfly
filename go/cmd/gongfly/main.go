@@ -55,6 +55,9 @@ import (
 	gongmarkdown_orm "github.com/fullstack-lang/gongmarkdown/go/orm"
 	_ "github.com/fullstack-lang/gongmarkdown/ng"
 
+	// for the scheduler
+	"github.com/fullstack-lang/gongfly/go/gongfly2markdown"
+
 	// for graph display
 	gongng2charts_controllers "github.com/fullstack-lang/gongng2charts/go/controllers"
 	gongng2charts_models "github.com/fullstack-lang/gongng2charts/go/models"
@@ -140,24 +143,6 @@ func main() {
 	// attach visual elements
 	gongfly_visuals.AttachVisualElementsToModelElements(defaultLayer)
 
-	// generate markdown elements
-	markdownContent := (&gongmarkdown_models.MarkdownContent{Name: "Dummy"}).Stage()
-	markdownContent.Name = "Dummy"
-
-	root := (&gongmarkdown_models.Element{Name: "Root"}).Stage()
-	root.Type = gongmarkdown_models.PARAGRAPH
-	markdownContent.Root = root
-
-	table := gongfly_models.GenerateTableOfSatellites()
-	root.SubElements = append(root.SubElements, table)
-
-	// fetch the document singloton
-	var singloton *gongmarkdown_models.MarkdownContent
-	for s := range gongmarkdown_models.Stage.MarkdownContents {
-		singloton = s
-	}
-	singloton.UpdateContent()
-
 	// load package to analyse
 	modelPkg := &gong_models.ModelPkg{}
 	if *diagrams {
@@ -192,6 +177,8 @@ func main() {
 	gongleaflet_models.Stage.Commit()
 	gongmarkdown_models.Stage.Commit()
 	gongng2charts_models.Stage.Commit()
+
+	go gongfly2markdown.GenerateDocumentationSchedulerSingloton.CheckoutScheduler()
 
 	log.Print("Demoatc simulation is ready, waiting for client interactions (play/pause/...)")
 
