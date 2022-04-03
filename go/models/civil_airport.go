@@ -36,6 +36,5 @@ func (civilianAirport *CivilianAirport) FireNextEvent() {
 }
 
 // functions to satisty the visual interface for center
-func (civilianAirport *CivilianAirport) GetLat() float64        { return civilianAirport.Lat }
-func (civilianAirport *CivilianAirport) GetLng() float64        { return civilianAirport.Lng }
-func (civilianAirport *CivilianAirport) GetName() (name string) { return civilianAirport.Name }
+func (civilianAirport *CivilianAirport) GetLat() float64 { return civilianAirport.Lat }
+func (civilianAirport *CivilianAirport) GetLng() float64 { return civilianAirport.Lng }

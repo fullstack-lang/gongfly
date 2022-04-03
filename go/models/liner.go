@@ -139,7 +139,6 @@ func (liner *Liner) GetSpeed() float64 {
 }
 func (liner *Liner) GetVerticalSpeed() float64 { return liner.VerticalSpeed }
 func (liner *Liner) GetLevel() float64         { return liner.Level }
-func (liner *Liner) GetName() (name string)    { return liner.Name }
 
 // specific
 // func (liner *Liner) GetColorEnum() ColorEnum { return GREY }

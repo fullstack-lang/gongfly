@@ -126,7 +126,6 @@ func (message *Message) GetSpeed() float64 {
 }
 func (message *Message) GetVerticalSpeed() float64 { return 0 }
 func (message *Message) GetLevel() float64         { return 0 }
-func (message *Message) GetName() (name string)    { return message.Name }
 
 func (message *Message) GetDisplay() bool           { return message.Display }
 func (message *Message) GetVisualLayerName() string { return "" }

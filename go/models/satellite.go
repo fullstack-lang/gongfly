@@ -121,7 +121,6 @@ func (satellite *Satellite) GetSpeed() float64 {
 }
 func (satellite *Satellite) GetVerticalSpeed() float64 { return satellite.VerticalSpeed }
 func (satellite *Satellite) GetLevel() float64         { return satellite.Level }
-func (satellite *Satellite) GetName() (name string)    { return satellite.Name }
 
 // specific
 // func (satellite *Satellite) GetColorEnum() ColorEnum { return GREY }

@@ -66,9 +66,8 @@ func (radar *Radar) FireNextEvent() {
 }
 
 // functions to satisty the visual interface for center
-func (radar *Radar) GetLat() float64        { return radar.Lat }
-func (radar *Radar) GetLng() float64        { return radar.Lng }
-func (radar *Radar) GetName() (name string) { return radar.Name }
+func (radar *Radar) GetLat() float64 { return radar.Lat }
+func (radar *Radar) GetLng() float64 { return radar.Lng }
 
 // functions to satisty the visual interface for circle
 func (radar *Radar) GetRadius() float64 { return radar.Range }

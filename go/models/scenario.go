@@ -37,5 +37,4 @@ func (scenario *Scenario) SetEnd(time time.Time) {
 func (scenario *Scenario) GetLat() float64 { return scenario.Lat }
 func (scenario *Scenario) GetLng() float64 { return scenario.Lng }
 
-func (scenario *Scenario) GetName() (name string) { return scenario.Name }
-func (scenario *Scenario) GetZoomLevel() float64  { return scenario.ZoomLevel }
+func (scenario *Scenario) GetZoomLevel() float64 { return scenario.ZoomLevel }

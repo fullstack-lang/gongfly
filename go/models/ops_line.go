@@ -169,11 +169,10 @@ func (opsLine *OpsLine) FireNextEvent() {
 }
 
 // functions to satisty the visual interface for center
-func (link *OpsLine) GetStartLat() float64   { return link.Authority.GetLat() }
-func (link *OpsLine) GetStartLng() float64   { return link.Authority.GetLng() }
-func (link *OpsLine) GetEndLat() float64     { return link.Subordonate.GetLat() }
-func (link *OpsLine) GetEndLng() float64     { return link.Subordonate.GetLng() }
-func (link *OpsLine) GetName() (name string) { return link.Name }
+func (link *OpsLine) GetStartLat() float64 { return link.Authority.GetLat() }
+func (link *OpsLine) GetStartLng() float64 { return link.Authority.GetLng() }
+func (link *OpsLine) GetEndLat() float64   { return link.Subordonate.GetLat() }
+func (link *OpsLine) GetEndLng() float64   { return link.Subordonate.GetLng() }
 
 func (link *OpsLine) GetIsTransmittingOverride() bool { return link.IsTransmitting }
 func (link *OpsLine) GetMessageOverride() string      { return link.TransmissionMessage }
