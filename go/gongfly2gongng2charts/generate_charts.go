@@ -75,36 +75,53 @@ func (GenerateDocumentationScheduler *GenerateChartScheduler) GenerateDocumentat
 		return
 	}
 
-	// Create root element
-	chartConfig := (&gongng2charts_models.ChartConfiguration{Name: "LatLng"}).Stage()
+	{
+		// Create root element
+		chartConfig := (&gongng2charts_models.ChartConfiguration{Name: "Lat"}).Stage()
 
-	chartConfig.ChartType = gongng2charts_models.LINE
+		chartConfig.ChartType = gongng2charts_models.LINE
 
-	for idx_dataset := 0; idx_dataset < NbDatasets; idx_dataset = idx_dataset + 1 {
-		dataset := (&gongng2charts_models.Dataset{Name: fmt.Sprintf("Dataset %d", 0)}).Stage()
+		dataset := (&gongng2charts_models.Dataset{Name: "Dataset Lat"}).Stage()
 		chartConfig.Datasets = append(chartConfig.Datasets, dataset)
 
 		for idx := 0; idx < len(liner.GetLatPositions()); idx = idx + 1 {
 			var datapoint *gongng2charts_models.DataPoint
-			if idx_dataset == 0 {
-				dataset.Name = "Lat"
-				datapoint = (&gongng2charts_models.DataPoint{Name: fmt.Sprintf("Lat %d", idx)}).Stage()
-				datapoint.Value = liner.GetLatPositions()[idx]
-			}
-			if idx_dataset == 1 {
-				dataset.Name = "Lng"
-				datapoint = (&gongng2charts_models.DataPoint{Name: fmt.Sprintf("Lng %d", idx)}).Stage()
-				datapoint.Value = liner.GetLngPositions()[idx]
-			}
+			dataset.Name = "Lat"
+			datapoint = (&gongng2charts_models.DataPoint{Name: fmt.Sprintf("Lat %d", idx)}).Stage()
+			datapoint.Value = liner.GetLatPositions()[idx]
 			dataset.DataPoints = append(dataset.DataPoints, datapoint)
+
+			dataset.Label = fmt.Sprintf("Latitudes")
 		}
 
-		dataset.Label = fmt.Sprintf("set %d", idx_dataset)
+		for idx := 0; idx < len(liner.GetLatPositions()); idx = idx + 1 {
+			label := (&gongng2charts_models.Label{Name: fmt.Sprintf("Datapoint %d", idx)}).Stage()
+			chartConfig.Labels = append(chartConfig.Labels, label)
+		}
 	}
+	{
+		// Create root element
+		chartConfig := (&gongng2charts_models.ChartConfiguration{Name: "Lng"}).Stage()
 
-	for idx := 0; idx < len(liner.GetLatPositions()); idx = idx + 1 {
-		label := (&gongng2charts_models.Label{Name: fmt.Sprintf("Month %d", idx)}).Stage()
-		chartConfig.Labels = append(chartConfig.Labels, label)
+		chartConfig.ChartType = gongng2charts_models.LINE
+
+		dataset := (&gongng2charts_models.Dataset{Name: "Dataset Lng"}).Stage()
+		chartConfig.Datasets = append(chartConfig.Datasets, dataset)
+
+		for idx := 0; idx < len(liner.GetLngPositions()); idx = idx + 1 {
+			var datapoint *gongng2charts_models.DataPoint
+			dataset.Name = "Lng"
+			datapoint = (&gongng2charts_models.DataPoint{Name: fmt.Sprintf("Lng %d", idx)}).Stage()
+			datapoint.Value = liner.GetLngPositions()[idx]
+			dataset.DataPoints = append(dataset.DataPoints, datapoint)
+
+			dataset.Label = fmt.Sprintf("Lngitudes")
+		}
+
+		for idx := 0; idx < len(liner.GetLatPositions()); idx = idx + 1 {
+			label := (&gongng2charts_models.Label{Name: fmt.Sprintf("Datapoint %d", idx)}).Stage()
+			chartConfig.Labels = append(chartConfig.Labels, label)
+		}
 	}
 
 	gongng2charts_models.Stage.Commit()
