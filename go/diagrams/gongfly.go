@@ -12,8 +12,8 @@ var gongfly uml.Classdiagram = uml.Classdiagram{
 		{
 			Struct: &(models.Liner{}),
 			Position: &uml.Position{
-				X: 100.000000,
-				Y: 140.000000,
+				X: 20.000000,
+				Y: 80.000000,
 			},
 			Width:  240.000000,
 			Heigth: 273.000000,
@@ -68,20 +68,20 @@ var gongfly uml.Classdiagram = uml.Classdiagram{
 		{
 			Struct: &(models.Message{}),
 			Position: &uml.Position{
-				X: 700.000000,
-				Y: 180.000000,
+				X: 540.000000,
+				Y: 110.000000,
 			},
 			Width:  240.000000,
-			Heigth: 63.000000,
+			Heigth: 48.000000,
 		},
 		{
 			Struct: &(models.MovingObject{}),
 			Position: &uml.Position{
-				X: 390.000000,
-				Y: 230.000000,
+				X: 320.000000,
+				Y: 220.000000,
 			},
 			Width:  240.000000,
-			Heigth: 138.000000,
+			Heigth: 123.000000,
 			Fields: []*uml.Field{
 				{
 					Field: models.MovingObject{}.Heading,
@@ -103,11 +103,11 @@ var gongfly uml.Classdiagram = uml.Classdiagram{
 		{
 			Struct: &(models.Scenario{}),
 			Position: &uml.Position{
-				X: 390.000000,
-				Y: 60.000000,
+				X: 290.000000,
+				Y: 70.000000,
 			},
 			Width:  240.000000,
-			Heigth: 138.000000,
+			Heigth: 123.000000,
 			Fields: []*uml.Field{
 				{
 					Field: models.Scenario{}.Lat,
