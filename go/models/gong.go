@@ -298,8 +298,8 @@ func (civilianairport *CivilianAirport) GetName() (res string) {
 }
 
 func (civilianairport *CivilianAirport) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Lat", "Lng", "TechName", "Name",  }
+	// list of fields
+	res = []string{"Lat", "Lng", "TechName", "Name"}
 	return
 }
 
@@ -426,8 +426,8 @@ func (liner *Liner) GetName() (res string) {
 }
 
 func (liner *Liner) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "Lat", "Lng", "Heading", "Level", "Speed", "TechName", "State", "TargetHeading", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "MaxRotationalSpeed", "VerticalSpeed", "Timestampstring", "ReporingLine",  }
+	// list of fields
+	res = []string{"Name", "Lat", "Lng", "Heading", "Level", "Speed", "TechName", "State", "TargetHeading", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "MaxRotationalSpeed", "VerticalSpeed", "Timestampstring", "ReporingLine"}
 	return
 }
 
@@ -580,8 +580,8 @@ func (message *Message) GetName() (res string) {
 }
 
 func (message *Message) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "TechName", "State", "Name", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "Timestampstring", "DurationSinceSimulationStart", "Timestampstartstring", "Source", "Destination", "Content", "About_string", "Display",  }
+	// list of fields
+	res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "TechName", "State", "Name", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "Timestampstring", "DurationSinceSimulationStart", "Timestampstartstring", "Source", "Destination", "Content", "About_string", "Display"}
 	return
 }
 
@@ -738,8 +738,8 @@ func (opsline *OpsLine) GetName() (res string) {
 }
 
 func (opsline *OpsLine) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"IsTransmitting", "TransmissionMessage", "IsTransmittingBackward", "TransmissionMessageBackward", "TechName", "Scenario", "State", "Name",  }
+	// list of fields
+	res = []string{"IsTransmitting", "TransmissionMessage", "IsTransmittingBackward", "TransmissionMessageBackward", "TechName", "Scenario", "State", "Name"}
 	return
 }
 
@@ -876,8 +876,8 @@ func (order *Order) GetName() (res string) {
 }
 
 func (order *Order) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "Duration", "OrderMessage", "Number", "Type", "Target", "TargetLat", "TargetLng",  }
+	// list of fields
+	res = []string{"Name", "Duration", "OrderMessage", "Number", "Type", "Target", "TargetLat", "TargetLng"}
 	return
 }
 
@@ -1014,8 +1014,8 @@ func (radar *Radar) GetName() (res string) {
 }
 
 func (radar *Radar) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"TechName", "State", "Name", "Lat", "Lng", "Range",  }
+	// list of fields
+	res = []string{"TechName", "State", "Name", "Lat", "Lng", "Range"}
 	return
 }
 
@@ -1146,8 +1146,8 @@ func (report *Report) GetName() (res string) {
 }
 
 func (report *Report) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "Duration", "ReportMessage", "Number", "Type", "About", "OpsLine",  }
+	// list of fields
+	res = []string{"Name", "Duration", "ReportMessage", "Number", "Type", "About", "OpsLine"}
 	return
 }
 
@@ -1284,8 +1284,8 @@ func (satellite *Satellite) GetName() (res string) {
 }
 
 func (satellite *Satellite) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "Line1", "Line2", "TechName", "Name", "VerticalSpeed", "Timestampstring",  }
+	// list of fields
+	res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "Line1", "Line2", "TechName", "Name", "VerticalSpeed", "Timestampstring"}
 	return
 }
 
@@ -1426,8 +1426,8 @@ func (scenario *Scenario) GetName() (res string) {
 }
 
 func (scenario *Scenario) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "Lat", "Lng", "ZoomLevel", "MessageVisualSpeed",  }
+	// list of fields
+	res = []string{"Name", "Lat", "Lng", "ZoomLevel", "MessageVisualSpeed"}
 	return
 }
 
@@ -2480,6 +2480,122 @@ func generatesIdentifier(gongStructName string, idx int, instanceName string) (i
 
 	return
 }
+
+// insertion point of functions that provide maps for reverse associations
+// generate function for reverse association maps of CivilianAirport
+// generate function for reverse association maps of Liner
+func (stageStruct *StageStruct) CreateReverseMap_Liner_ReporingLine() (res map[*OpsLine][]*Liner) {
+	res = make(map[*OpsLine][]*Liner)
+
+	for liner := range stageStruct.Liners {
+		if liner.ReporingLine != nil {
+			opsline_ := liner.ReporingLine
+			var liners []*Liner
+			_, ok := res[opsline_]
+			if ok {
+				liners = res[opsline_]
+			} else {
+				liners = make([]*Liner, 0)
+			}
+			liners = append(liners, liner)
+			res[opsline_] = liners
+		}
+	}
+
+	return
+}
+
+// generate function for reverse association maps of Message
+// generate function for reverse association maps of OpsLine
+func (stageStruct *StageStruct) CreateReverseMap_OpsLine_Scenario() (res map[*Scenario][]*OpsLine) {
+	res = make(map[*Scenario][]*OpsLine)
+
+	for opsline := range stageStruct.OpsLines {
+		if opsline.Scenario != nil {
+			scenario_ := opsline.Scenario
+			var opslines []*OpsLine
+			_, ok := res[scenario_]
+			if ok {
+				opslines = res[scenario_]
+			} else {
+				opslines = make([]*OpsLine, 0)
+			}
+			opslines = append(opslines, opsline)
+			res[scenario_] = opslines
+		}
+	}
+
+	return
+}
+
+// generate function for reverse association maps of Order
+func (stageStruct *StageStruct) CreateReverseMap_Order_Target() (res map[*Liner][]*Order) {
+	res = make(map[*Liner][]*Order)
+
+	for order := range stageStruct.Orders {
+		if order.Target != nil {
+			liner_ := order.Target
+			var orders []*Order
+			_, ok := res[liner_]
+			if ok {
+				orders = res[liner_]
+			} else {
+				orders = make([]*Order, 0)
+			}
+			orders = append(orders, order)
+			res[liner_] = orders
+		}
+	}
+
+	return
+}
+
+// generate function for reverse association maps of Radar
+// generate function for reverse association maps of Report
+func (stageStruct *StageStruct) CreateReverseMap_Report_About() (res map[*Liner][]*Report) {
+	res = make(map[*Liner][]*Report)
+
+	for report := range stageStruct.Reports {
+		if report.About != nil {
+			liner_ := report.About
+			var reports []*Report
+			_, ok := res[liner_]
+			if ok {
+				reports = res[liner_]
+			} else {
+				reports = make([]*Report, 0)
+			}
+			reports = append(reports, report)
+			res[liner_] = reports
+		}
+	}
+
+	return
+}
+
+func (stageStruct *StageStruct) CreateReverseMap_Report_OpsLine() (res map[*OpsLine][]*Report) {
+	res = make(map[*OpsLine][]*Report)
+
+	for report := range stageStruct.Reports {
+		if report.OpsLine != nil {
+			opsline_ := report.OpsLine
+			var reports []*Report
+			_, ok := res[opsline_]
+			if ok {
+				reports = res[opsline_]
+			} else {
+				reports = make([]*Report, 0)
+			}
+			reports = append(reports, report)
+			res[opsline_] = reports
+		}
+	}
+
+	return
+}
+
+// generate function for reverse association maps of Satellite
+// generate function for reverse association maps of Scenario
 
 // insertion point of enum utility functions
 // Utility function for ConceptEnum
