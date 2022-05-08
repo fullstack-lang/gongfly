@@ -91,7 +91,7 @@ export class DummyDatasTableComponent implements OnInit {
           return dummydataDB.DummyEnumInt_string!;
 
         case 'DummyTime':
-          return dummydataDB.DummyTime.getDate();
+          return (new Date(dummydataDB.DummyTime)).getTime()
 
         case 'DummyDuration':
           return dummydataDB.DummyDuration;

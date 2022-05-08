@@ -78,7 +78,7 @@ export class UserClicksTableComponent implements OnInit {
           return userclickDB.Lng;
 
         case 'TimeOfClick':
-          return userclickDB.TimeOfClick.getDate();
+          return (new Date(userclickDB.TimeOfClick)).getTime()
 
         default:
           console.assert(false, "Unknown field")

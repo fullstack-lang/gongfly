@@ -271,8 +271,8 @@ func (anotherdummydata *AnotherDummyData) GetName() (res string) {
 }
 
 func (anotherdummydata *AnotherDummyData) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name",  }
+	// list of fields
+	res = []string{"Name"}
 	return
 }
 
@@ -393,8 +393,8 @@ func (cell *Cell) GetName() (res string) {
 }
 
 func (cell *Cell) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name",  }
+	// list of fields
+	res = []string{"Name"}
 	return
 }
 
@@ -515,8 +515,8 @@ func (dummydata *DummyData) GetName() (res string) {
 }
 
 func (dummydata *DummyData) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "DummyString", "DummyInt", "DummyFloat", "DummyBool", "DummyEnumString", "DummyEnumInt", "DummyTime", "DummyDuration", "DummyPointerToGongStruct",  }
+	// list of fields
+	res = []string{"Name", "DummyString", "DummyInt", "DummyFloat", "DummyBool", "DummyEnumString", "DummyEnumInt", "DummyTime", "DummyDuration", "DummyPointerToGongStruct"}
 	return
 }
 
@@ -657,8 +657,8 @@ func (element *Element) GetName() (res string) {
 }
 
 func (element *Element) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "Content", "Type", "SubElements", "Rows",  }
+	// list of fields
+	res = []string{"Name", "Content", "Type", "SubElements", "Rows"}
 	return
 }
 
@@ -797,8 +797,8 @@ func (markdowncontent *MarkdownContent) GetName() (res string) {
 }
 
 func (markdowncontent *MarkdownContent) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "Content", "Root",  }
+	// list of fields
+	res = []string{"Name", "Content", "Root"}
 	return
 }
 
@@ -925,8 +925,8 @@ func (row *Row) GetName() (res string) {
 }
 
 func (row *Row) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "Cells",  }
+	// list of fields
+	res = []string{"Name", "Cells"}
 	return
 }
 
@@ -1466,6 +1466,92 @@ func generatesIdentifier(gongStructName string, idx int, instanceName string) (i
 
 	return
 }
+
+// insertion point of functions that provide maps for reverse associations
+// generate function for reverse association maps of AnotherDummyData
+// generate function for reverse association maps of Cell
+// generate function for reverse association maps of DummyData
+func (stageStruct *StageStruct) CreateReverseMap_DummyData_DummyPointerToGongStruct() (res map[*AnotherDummyData][]*DummyData) {
+	res = make(map[*AnotherDummyData][]*DummyData)
+
+	for dummydata := range stageStruct.DummyDatas {
+		if dummydata.DummyPointerToGongStruct != nil {
+			anotherdummydata_ := dummydata.DummyPointerToGongStruct
+			var dummydatas []*DummyData
+			_, ok := res[anotherdummydata_]
+			if ok {
+				dummydatas = res[anotherdummydata_]
+			} else {
+				dummydatas = make([]*DummyData, 0)
+			}
+			dummydatas = append(dummydatas, dummydata)
+			res[anotherdummydata_] = dummydatas
+		}
+	}
+
+	return
+}
+
+// generate function for reverse association maps of Element
+func (stageStruct *StageStruct) CreateReverseMap_Element_SubElements() (res map[*Element]*Element) {
+	res = make(map[*Element]*Element)
+
+	for element := range stageStruct.Elements {
+		for _, element_ := range element.SubElements {
+			res[element_] = element
+		}
+	}
+
+	return
+}
+
+func (stageStruct *StageStruct) CreateReverseMap_Element_Rows() (res map[*Row]*Element) {
+	res = make(map[*Row]*Element)
+
+	for element := range stageStruct.Elements {
+		for _, row_ := range element.Rows {
+			res[row_] = element
+		}
+	}
+
+	return
+}
+
+// generate function for reverse association maps of MarkdownContent
+func (stageStruct *StageStruct) CreateReverseMap_MarkdownContent_Root() (res map[*Element][]*MarkdownContent) {
+	res = make(map[*Element][]*MarkdownContent)
+
+	for markdowncontent := range stageStruct.MarkdownContents {
+		if markdowncontent.Root != nil {
+			element_ := markdowncontent.Root
+			var markdowncontents []*MarkdownContent
+			_, ok := res[element_]
+			if ok {
+				markdowncontents = res[element_]
+			} else {
+				markdowncontents = make([]*MarkdownContent, 0)
+			}
+			markdowncontents = append(markdowncontents, markdowncontent)
+			res[element_] = markdowncontents
+		}
+	}
+
+	return
+}
+
+// generate function for reverse association maps of Row
+func (stageStruct *StageStruct) CreateReverseMap_Row_Cells() (res map[*Cell]*Row) {
+	res = make(map[*Cell]*Row)
+
+	for row := range stageStruct.Rows {
+		for _, cell_ := range row.Cells {
+			res[cell_] = row
+		}
+	}
+
+	return
+}
+
 
 // insertion point of enum utility functions
 // Utility function for DummnyTypeInt

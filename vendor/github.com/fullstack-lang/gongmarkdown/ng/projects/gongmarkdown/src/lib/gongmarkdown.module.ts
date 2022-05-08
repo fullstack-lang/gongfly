@@ -36,6 +36,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { SplitterComponent } from './splitter/splitter.component'
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { GongstructSelectionService } from './gongstruct-selection.service'
 
 // insertion point for imports 
 import { AnotherDummyDatasTableComponent } from './anotherdummydatas-table/anotherdummydatas-table.component'
@@ -177,6 +178,7 @@ import { RowPresentationComponent } from './row-presentation/row-presentation.co
 
 	],
 	providers: [
+		GongstructSelectionService,
 		{
 			provide: MatDialogRef,
 			useValue: {}

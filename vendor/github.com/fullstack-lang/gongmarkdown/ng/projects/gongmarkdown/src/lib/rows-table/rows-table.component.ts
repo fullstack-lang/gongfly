@@ -72,7 +72,11 @@ export class RowsTableComponent implements OnInit {
           return rowDB.Name;
 
         case 'Element_Rows':
-          return this.frontRepo.Elements.get(rowDB.Element_RowsDBID.Int64)!.Name;
+          if (this.frontRepo.Elements.get(rowDB.Element_RowsDBID.Int64) != undefined) {
+            return this.frontRepo.Elements.get(rowDB.Element_RowsDBID.Int64)!.Name
+          } else {
+            return ""
+          }
 
         default:
           console.assert(false, "Unknown field")

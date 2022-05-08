@@ -271,8 +271,8 @@ func (dummyagent *DummyAgent) GetName() (res string) {
 }
 
 func (dummyagent *DummyAgent) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"TechName", "Engine", "Name",  }
+	// list of fields
+	res = []string{"TechName", "Engine", "Name"}
 	return
 }
 
@@ -399,8 +399,8 @@ func (engine *Engine) GetName() (res string) {
 }
 
 func (engine *Engine) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "EndTime", "CurrentTime", "SecondsSinceStart", "Fired", "ControlMode", "State", "Speed",  }
+	// list of fields
+	res = []string{"Name", "EndTime", "CurrentTime", "SecondsSinceStart", "Fired", "ControlMode", "State", "Speed"}
 	return
 }
 
@@ -535,8 +535,8 @@ func (event *Event) GetName() (res string) {
 }
 
 func (event *Event) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "Duration",  }
+	// list of fields
+	res = []string{"Name", "Duration"}
 	return
 }
 
@@ -659,8 +659,8 @@ func (gongsimcommand *GongsimCommand) GetName() (res string) {
 }
 
 func (gongsimcommand *GongsimCommand) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "Command", "CommandDate", "SpeedCommandType", "DateSpeedCommand",  }
+	// list of fields
+	res = []string{"Name", "Command", "CommandDate", "SpeedCommandType", "DateSpeedCommand"}
 	return
 }
 
@@ -789,8 +789,8 @@ func (gongsimstatus *GongsimStatus) GetName() (res string) {
 }
 
 func (gongsimstatus *GongsimStatus) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "CurrentCommand", "CompletionDate", "CurrentSpeedCommand", "SpeedCommandCompletionDate",  }
+	// list of fields
+	res = []string{"Name", "CurrentCommand", "CompletionDate", "CurrentSpeedCommand", "SpeedCommandCompletionDate"}
 	return
 }
 
@@ -919,8 +919,8 @@ func (updatestate *UpdateState) GetName() (res string) {
 }
 
 func (updatestate *UpdateState) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "Duration", "Period",  }
+	// list of fields
+	res = []string{"Name", "Duration", "Period"}
 	return
 }
 
@@ -1481,6 +1481,35 @@ func generatesIdentifier(gongStructName string, idx int, instanceName string) (i
 
 	return
 }
+
+// insertion point of functions that provide maps for reverse associations
+// generate function for reverse association maps of DummyAgent
+func (stageStruct *StageStruct) CreateReverseMap_DummyAgent_Engine() (res map[*Engine][]*DummyAgent) {
+	res = make(map[*Engine][]*DummyAgent)
+
+	for dummyagent := range stageStruct.DummyAgents {
+		if dummyagent.Engine != nil {
+			engine_ := dummyagent.Engine
+			var dummyagents []*DummyAgent
+			_, ok := res[engine_]
+			if ok {
+				dummyagents = res[engine_]
+			} else {
+				dummyagents = make([]*DummyAgent, 0)
+			}
+			dummyagents = append(dummyagents, dummyagent)
+			res[engine_] = dummyagents
+		}
+	}
+
+	return
+}
+
+// generate function for reverse association maps of Engine
+// generate function for reverse association maps of Event
+// generate function for reverse association maps of GongsimCommand
+// generate function for reverse association maps of GongsimStatus
+// generate function for reverse association maps of UpdateState
 
 // insertion point of enum utility functions
 // Utility function for ControlMode

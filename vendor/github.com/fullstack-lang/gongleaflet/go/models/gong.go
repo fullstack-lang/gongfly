@@ -307,8 +307,8 @@ func (checkoutscheduler *CheckoutScheduler) GetName() (res string) {
 }
 
 func (checkoutscheduler *CheckoutScheduler) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "NbUpdatesFromFront",  }
+	// list of fields
+	res = []string{"Name", "NbUpdatesFromFront"}
 	return
 }
 
@@ -431,8 +431,8 @@ func (circle *Circle) GetName() (res string) {
 }
 
 func (circle *Circle) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Lat", "Lng", "Name", "Radius", "ColorEnum", "DashStyleEnum", "LayerGroup",  }
+	// list of fields
+	res = []string{"Lat", "Lng", "Name", "Radius", "ColorEnum", "DashStyleEnum", "LayerGroup"}
 	return
 }
 
@@ -567,8 +567,8 @@ func (divicon *DivIcon) GetName() (res string) {
 }
 
 func (divicon *DivIcon) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "SVG",  }
+	// list of fields
+	res = []string{"Name", "SVG"}
 	return
 }
 
@@ -691,8 +691,8 @@ func (layergroup *LayerGroup) GetName() (res string) {
 }
 
 func (layergroup *LayerGroup) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "DisplayName",  }
+	// list of fields
+	res = []string{"Name", "DisplayName"}
 	return
 }
 
@@ -815,8 +815,8 @@ func (layergroupuse *LayerGroupUse) GetName() (res string) {
 }
 
 func (layergroupuse *LayerGroupUse) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "Display", "LayerGroup",  }
+	// list of fields
+	res = []string{"Name", "Display", "LayerGroup"}
 	return
 }
 
@@ -943,8 +943,8 @@ func (mapoptions *MapOptions) GetName() (res string) {
 }
 
 func (mapoptions *MapOptions) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Lat", "Lng", "Name", "ZoomLevel", "UrlTemplate", "Attribution", "MaxZoom", "ZoomControl", "AttributionControl", "ZoomSnap", "LayerGroupUses",  }
+	// list of fields
+	res = []string{"Lat", "Lng", "Name", "ZoomLevel", "UrlTemplate", "Attribution", "MaxZoom", "ZoomControl", "AttributionControl", "ZoomSnap", "LayerGroupUses"}
 	return
 }
 
@@ -1090,8 +1090,8 @@ func (marker *Marker) GetName() (res string) {
 }
 
 func (marker *Marker) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Lat", "Lng", "Name", "ColorEnum", "LayerGroup", "DivIcon",  }
+	// list of fields
+	res = []string{"Lat", "Lng", "Name", "ColorEnum", "LayerGroup", "DivIcon"}
 	return
 }
 
@@ -1226,8 +1226,8 @@ func (userclick *UserClick) GetName() (res string) {
 }
 
 func (userclick *UserClick) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Name", "Lat", "Lng", "TimeOfClick",  }
+	// list of fields
+	res = []string{"Name", "Lat", "Lng", "TimeOfClick"}
 	return
 }
 
@@ -1354,8 +1354,8 @@ func (vline *VLine) GetName() (res string) {
 }
 
 func (vline *VLine) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"StartLat", "StartLng", "EndLat", "EndLng", "Name", "ColorEnum", "DashStyleEnum", "LayerGroup", "IsTransmitting", "Message", "IsTransmittingBackward", "MessageBackward",  }
+	// list of fields
+	res = []string{"StartLat", "StartLng", "EndLat", "EndLng", "Name", "ColorEnum", "DashStyleEnum", "LayerGroup", "IsTransmitting", "Message", "IsTransmittingBackward", "MessageBackward"}
 	return
 }
 
@@ -1500,8 +1500,8 @@ func (visualtrack *VisualTrack) GetName() (res string) {
 }
 
 func (visualtrack *VisualTrack) GetFields() (res []string) {
-	// list of fields 
-	res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "VerticalSpeed", "Name", "ColorEnum", "LayerGroup", "DivIcon", "DisplayTrackHistory", "DisplayLevelAndSpeed",  }
+	// list of fields
+	res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "VerticalSpeed", "Name", "ColorEnum", "LayerGroup", "DivIcon", "DisplayTrackHistory", "DisplayLevelAndSpeed"}
 	return
 }
 
@@ -2488,6 +2488,177 @@ func generatesIdentifier(gongStructName string, idx int, instanceName string) (i
 
 	return
 }
+
+// insertion point of functions that provide maps for reverse associations
+// generate function for reverse association maps of CheckoutScheduler
+// generate function for reverse association maps of Circle
+func (stageStruct *StageStruct) CreateReverseMap_Circle_LayerGroup() (res map[*LayerGroup][]*Circle) {
+	res = make(map[*LayerGroup][]*Circle)
+
+	for circle := range stageStruct.Circles {
+		if circle.LayerGroup != nil {
+			layergroup_ := circle.LayerGroup
+			var circles []*Circle
+			_, ok := res[layergroup_]
+			if ok {
+				circles = res[layergroup_]
+			} else {
+				circles = make([]*Circle, 0)
+			}
+			circles = append(circles, circle)
+			res[layergroup_] = circles
+		}
+	}
+
+	return
+}
+
+// generate function for reverse association maps of DivIcon
+// generate function for reverse association maps of LayerGroup
+// generate function for reverse association maps of LayerGroupUse
+func (stageStruct *StageStruct) CreateReverseMap_LayerGroupUse_LayerGroup() (res map[*LayerGroup][]*LayerGroupUse) {
+	res = make(map[*LayerGroup][]*LayerGroupUse)
+
+	for layergroupuse := range stageStruct.LayerGroupUses {
+		if layergroupuse.LayerGroup != nil {
+			layergroup_ := layergroupuse.LayerGroup
+			var layergroupuses []*LayerGroupUse
+			_, ok := res[layergroup_]
+			if ok {
+				layergroupuses = res[layergroup_]
+			} else {
+				layergroupuses = make([]*LayerGroupUse, 0)
+			}
+			layergroupuses = append(layergroupuses, layergroupuse)
+			res[layergroup_] = layergroupuses
+		}
+	}
+
+	return
+}
+
+// generate function for reverse association maps of MapOptions
+func (stageStruct *StageStruct) CreateReverseMap_MapOptions_LayerGroupUses() (res map[*LayerGroupUse]*MapOptions) {
+	res = make(map[*LayerGroupUse]*MapOptions)
+
+	for mapoptions := range stageStruct.MapOptionss {
+		for _, layergroupuse_ := range mapoptions.LayerGroupUses {
+			res[layergroupuse_] = mapoptions
+		}
+	}
+
+	return
+}
+
+// generate function for reverse association maps of Marker
+func (stageStruct *StageStruct) CreateReverseMap_Marker_LayerGroup() (res map[*LayerGroup][]*Marker) {
+	res = make(map[*LayerGroup][]*Marker)
+
+	for marker := range stageStruct.Markers {
+		if marker.LayerGroup != nil {
+			layergroup_ := marker.LayerGroup
+			var markers []*Marker
+			_, ok := res[layergroup_]
+			if ok {
+				markers = res[layergroup_]
+			} else {
+				markers = make([]*Marker, 0)
+			}
+			markers = append(markers, marker)
+			res[layergroup_] = markers
+		}
+	}
+
+	return
+}
+
+func (stageStruct *StageStruct) CreateReverseMap_Marker_DivIcon() (res map[*DivIcon][]*Marker) {
+	res = make(map[*DivIcon][]*Marker)
+
+	for marker := range stageStruct.Markers {
+		if marker.DivIcon != nil {
+			divicon_ := marker.DivIcon
+			var markers []*Marker
+			_, ok := res[divicon_]
+			if ok {
+				markers = res[divicon_]
+			} else {
+				markers = make([]*Marker, 0)
+			}
+			markers = append(markers, marker)
+			res[divicon_] = markers
+		}
+	}
+
+	return
+}
+
+// generate function for reverse association maps of UserClick
+// generate function for reverse association maps of VLine
+func (stageStruct *StageStruct) CreateReverseMap_VLine_LayerGroup() (res map[*LayerGroup][]*VLine) {
+	res = make(map[*LayerGroup][]*VLine)
+
+	for vline := range stageStruct.VLines {
+		if vline.LayerGroup != nil {
+			layergroup_ := vline.LayerGroup
+			var vlines []*VLine
+			_, ok := res[layergroup_]
+			if ok {
+				vlines = res[layergroup_]
+			} else {
+				vlines = make([]*VLine, 0)
+			}
+			vlines = append(vlines, vline)
+			res[layergroup_] = vlines
+		}
+	}
+
+	return
+}
+
+// generate function for reverse association maps of VisualTrack
+func (stageStruct *StageStruct) CreateReverseMap_VisualTrack_LayerGroup() (res map[*LayerGroup][]*VisualTrack) {
+	res = make(map[*LayerGroup][]*VisualTrack)
+
+	for visualtrack := range stageStruct.VisualTracks {
+		if visualtrack.LayerGroup != nil {
+			layergroup_ := visualtrack.LayerGroup
+			var visualtracks []*VisualTrack
+			_, ok := res[layergroup_]
+			if ok {
+				visualtracks = res[layergroup_]
+			} else {
+				visualtracks = make([]*VisualTrack, 0)
+			}
+			visualtracks = append(visualtracks, visualtrack)
+			res[layergroup_] = visualtracks
+		}
+	}
+
+	return
+}
+
+func (stageStruct *StageStruct) CreateReverseMap_VisualTrack_DivIcon() (res map[*DivIcon][]*VisualTrack) {
+	res = make(map[*DivIcon][]*VisualTrack)
+
+	for visualtrack := range stageStruct.VisualTracks {
+		if visualtrack.DivIcon != nil {
+			divicon_ := visualtrack.DivIcon
+			var visualtracks []*VisualTrack
+			_, ok := res[divicon_]
+			if ok {
+				visualtracks = res[divicon_]
+			} else {
+				visualtracks = make([]*VisualTrack, 0)
+			}
+			visualtracks = append(visualtracks, visualtrack)
+			res[divicon_] = visualtracks
+		}
+	}
+
+	return
+}
+
 
 // insertion point of enum utility functions
 // Utility function for ColorEnum

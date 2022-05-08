@@ -430,7 +430,7 @@ import { {{EnumName}}List } from '../{{EnumName}}'`,
 `,
 	NgTableTSTimeFieldSorting: `
         case '{{FieldName}}':
-          return {{structname}}DB.{{FieldName}}.getDate();
+          return (new Date({{structname}}DB.{{FieldName}})).getTime()
 `,
 	NgTableTSPointerToStructSorting: `
         case '{{FieldName}}':
@@ -438,7 +438,11 @@ import { {{EnumName}}List } from '../{{EnumName}}'`,
 `,
 	NgTableTSSliceOfPointerToStructSorting: `
         case '{{AssocStructName}}_{{FieldName}}':
-          return this.frontRepo.{{AssocStructName}}s.get({{structname}}DB.{{AssocStructName}}_{{FieldName}}DBID.Int64)!.Name;
+          if (this.frontRepo.{{AssocStructName}}s.get({{structname}}DB.{{AssocStructName}}_{{FieldName}}DBID.Int64) != undefined) {
+            return this.frontRepo.{{AssocStructName}}s.get({{structname}}DB.{{AssocStructName}}_{{FieldName}}DBID.Int64)!.Name
+          } else {
+            return ""
+          }
 `,
 
 	NgTableTSNonNumberFieldFiltering: `

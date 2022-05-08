@@ -72,7 +72,11 @@ export class CellsTableComponent implements OnInit {
           return cellDB.Name;
 
         case 'Row_Cells':
-          return this.frontRepo.Rows.get(cellDB.Row_CellsDBID.Int64)!.Name;
+          if (this.frontRepo.Rows.get(cellDB.Row_CellsDBID.Int64) != undefined) {
+            return this.frontRepo.Rows.get(cellDB.Row_CellsDBID.Int64)!.Name
+          } else {
+            return ""
+          }
 
         default:
           console.assert(false, "Unknown field")

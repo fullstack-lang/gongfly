@@ -78,7 +78,11 @@ export class ElementsTableComponent implements OnInit {
           return elementDB.Type;
 
         case 'Element_SubElements':
-          return this.frontRepo.Elements.get(elementDB.Element_SubElementsDBID.Int64)!.Name;
+          if (this.frontRepo.Elements.get(elementDB.Element_SubElementsDBID.Int64) != undefined) {
+            return this.frontRepo.Elements.get(elementDB.Element_SubElementsDBID.Int64)!.Name
+          } else {
+            return ""
+          }
 
         default:
           console.assert(false, "Unknown field")

@@ -78,7 +78,11 @@ export class LayerGroupUsesTableComponent implements OnInit {
           return (layergroupuseDB.LayerGroup ? layergroupuseDB.LayerGroup.Name : '');
 
         case 'MapOptions_LayerGroupUses':
-          return this.frontRepo.MapOptionss.get(layergroupuseDB.MapOptions_LayerGroupUsesDBID.Int64)!.Name;
+          if (this.frontRepo.MapOptionss.get(layergroupuseDB.MapOptions_LayerGroupUsesDBID.Int64) != undefined) {
+            return this.frontRepo.MapOptionss.get(layergroupuseDB.MapOptions_LayerGroupUsesDBID.Int64)!.Name
+          } else {
+            return ""
+          }
 
         default:
           console.assert(false, "Unknown field")
