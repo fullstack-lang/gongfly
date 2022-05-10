@@ -24,7 +24,7 @@ export class AppComponent {
 
   sim = 'Sim view'
 
-  diagrams = 'Diagrams view'
+  diagrams = 'UML view'
   meta_diagrams = 'Meta diagrams view'
 
   meta = 'Meta view'
