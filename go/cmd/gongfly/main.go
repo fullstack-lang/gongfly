@@ -129,15 +129,15 @@ func main() {
 	reference.Sc1_AF_3577_MDM.QueueUpdateEvent(1 * time.Second)
 
 	// add sim event
-	reference.PropagationTestCase1.QueueUpdateEvent(1 * time.Second)
-	reference.PropagationTestCase2.QueueUpdateEvent(1 * time.Second)
-	reference.PropagationTestCase3.QueueUpdateEvent(1 * time.Second)
-	reference.PropagationTestCase4.QueueUpdateEvent(1 * time.Second)
-	reference.InternationalSpaceStation.QueueUpdateEvent(1 * time.Second)
-	reference.PropagationTestCase5.QueueUpdateEvent(1 * time.Second)
-	reference.PropagationTestCase6.QueueUpdateEvent(1 * time.Second)
-	reference.PropagationTestCase7.QueueUpdateEvent(1 * time.Second)
-	reference.PropagationTestCase8.QueueUpdateEvent(1 * time.Second)
+	reference.Sat1.QueueUpdateEvent(1 * time.Second)
+	reference.Sat3.QueueUpdateEvent(1 * time.Second)
+	reference.Sat4.QueueUpdateEvent(1 * time.Second)
+	reference.Sat2.QueueUpdateEvent(1 * time.Second)
+	reference.ISS.QueueUpdateEvent(1 * time.Second)
+	reference.Sat5.QueueUpdateEvent(1 * time.Second)
+	reference.Sat6.QueueUpdateEvent(1 * time.Second)
+	reference.Sat7.QueueUpdateEvent(1 * time.Second)
+	reference.Sat8.QueueUpdateEvent(1 * time.Second)
 
 	defaultLayer := new(gongleaflet_models.LayerGroup).Stage()
 	defaultLayer.Name = "default"

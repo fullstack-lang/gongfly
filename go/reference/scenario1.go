@@ -9,7 +9,7 @@ import (
 var Scenario1 = (&models.Scenario{
 	Name: "Scénario 1",
 
-	ZoomLevel: 7,
+	ZoomLevel: 6,
 
 	Lat: (CDG_LFPG.Lat + TLN_LFTH_ref.Lat) / 2.0,
 	Lng: CDG_LFPG.Lng,

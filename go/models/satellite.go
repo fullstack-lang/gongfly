@@ -13,16 +13,16 @@ import (
 // Satellite is a moving object
 // swagger:model satellite
 type Satellite struct {
-	MovingObject // concept
+	Name string
 
 	Line1 string
 	Line2 string
 
+	MovingObject // concept
+
 	// Agent
 	// swagger:ignore
 	gongsim_models.Agent
-
-	Name string
 
 	// the reference simulation
 	gosatellite   gosatellite.Satellite

@@ -83,13 +83,13 @@ var gongfly uml.Classdiagram = uml.Classdiagram{
 				Y: 40.000000,
 			},
 			Width:  240.000000,
-			Heigth: 168.000000,
+			Heigth: 153.000000,
 			Links: []*uml.Link{
 				{
 					Field: models.OpsLine{}.Scenario,
 					Middlevertice: &uml.Vertice{
-						X: 575.000000,
-						Y: 509.000000,
+						X: 565.000000,
+						Y: 479.000000,
 					},
 					TargetMultiplicity: "0..1",
 					SourceMultiplicity: "*",
@@ -120,23 +120,34 @@ var gongfly uml.Classdiagram = uml.Classdiagram{
 			},
 		},
 		{
-			Struct: &(models.Scenario{}),
+			Struct: &(models.Satellite{}),
 			Position: &uml.Position{
-				X: 30.000000,
-				Y: 450.000000,
+				X: 20.000000,
+				Y: 310.000000,
 			},
 			Width:  240.000000,
-			Heigth: 138.000000,
+			Heigth: 108.000000,
 			Fields: []*uml.Field{
 				{
-					Field: models.Scenario{}.Lat,
+					Field: models.Satellite{}.Line1,
 				},
 				{
-					Field: models.Scenario{}.Lng,
+					Field: models.Satellite{}.Line2,
 				},
 				{
-					Field: models.Scenario{}.MessageVisualSpeed,
+					Field: models.Satellite{}.Name,
 				},
+			},
+		},
+		{
+			Struct: &(models.Scenario{}),
+			Position: &uml.Position{
+				X: 20.000000,
+				Y: 440.000000,
+			},
+			Width:  240.000000,
+			Heigth: 78.000000,
+			Fields: []*uml.Field{
 				{
 					Field: models.Scenario{}.Name,
 				},
