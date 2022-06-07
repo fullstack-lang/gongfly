@@ -68,6 +68,15 @@ export class SatellitesTableComponent implements OnInit {
           return satelliteDB.ID
 
         // insertion point for specific sorting accessor
+        case 'Name':
+          return satelliteDB.Name;
+
+        case 'Line1':
+          return satelliteDB.Line1;
+
+        case 'Line2':
+          return satelliteDB.Line2;
+
         case 'Lat':
           return satelliteDB.Lat;
 
@@ -83,17 +92,8 @@ export class SatellitesTableComponent implements OnInit {
         case 'Speed':
           return satelliteDB.Speed;
 
-        case 'Line1':
-          return satelliteDB.Line1;
-
-        case 'Line2':
-          return satelliteDB.Line2;
-
         case 'TechName':
           return satelliteDB.TechName;
-
-        case 'Name':
-          return satelliteDB.Name;
 
         case 'VerticalSpeed':
           return satelliteDB.VerticalSpeed;
@@ -115,15 +115,15 @@ export class SatellitesTableComponent implements OnInit {
       let mergedContent = ""
 
       // insertion point for merging of fields
+      mergedContent += satelliteDB.Name.toLowerCase()
+      mergedContent += satelliteDB.Line1.toLowerCase()
+      mergedContent += satelliteDB.Line2.toLowerCase()
       mergedContent += satelliteDB.Lat.toString()
       mergedContent += satelliteDB.Lng.toString()
       mergedContent += satelliteDB.Heading.toString()
       mergedContent += satelliteDB.Level.toString()
       mergedContent += satelliteDB.Speed.toString()
-      mergedContent += satelliteDB.Line1.toLowerCase()
-      mergedContent += satelliteDB.Line2.toLowerCase()
       mergedContent += satelliteDB.TechName.toLowerCase()
-      mergedContent += satelliteDB.Name.toLowerCase()
       mergedContent += satelliteDB.VerticalSpeed.toString()
       mergedContent += satelliteDB.Timestampstring.toLowerCase()
 
@@ -176,29 +176,29 @@ export class SatellitesTableComponent implements OnInit {
     )
     if (this.mode == TableComponentMode.DISPLAY_MODE) {
       this.displayedColumns = ['ID', 'Edit', 'Delete', // insertion point for columns to display
+        "Name",
+        "Line1",
+        "Line2",
         "Lat",
         "Lng",
         "Heading",
         "Level",
         "Speed",
-        "Line1",
-        "Line2",
         "TechName",
-        "Name",
         "VerticalSpeed",
         "Timestampstring",
       ]
     } else {
       this.displayedColumns = ['select', 'ID', // insertion point for columns to display
+        "Name",
+        "Line1",
+        "Line2",
         "Lat",
         "Lng",
         "Heading",
         "Level",
         "Speed",
-        "Line1",
-        "Line2",
         "TechName",
-        "Name",
         "VerticalSpeed",
         "Timestampstring",
       ]

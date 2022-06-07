@@ -370,7 +370,7 @@ func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseOne() (Error error) {
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	messageInstancesToBeRemovedFromTheStage := make(map[*models.Message]struct{})
+	messageInstancesToBeRemovedFromTheStage := make(map[*models.Message]any)
 	for key, value := range models.Stage.Messages {
 		messageInstancesToBeRemovedFromTheStage[key] = value
 	}

@@ -1,6 +1,6 @@
 module github.com/fullstack-lang/gongfly
 
-go 1.17
+go 1.18
 
 require (
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect

@@ -9,15 +9,15 @@ export class SatelliteDB {
 	ID: number = 0
 
 	// insertion point for basic fields declarations
+	Name: string = ""
+	Line1: string = ""
+	Line2: string = ""
 	Lat: number = 0
 	Lng: number = 0
 	Heading: number = 0
 	Level: number = 0
 	Speed: number = 0
-	Line1: string = ""
-	Line2: string = ""
 	TechName: string = ""
-	Name: string = ""
 	VerticalSpeed: number = 0
 	Timestampstring: string = ""
 

@@ -58,6 +58,15 @@ type SatelliteDB struct {
 
 	// insertion for basic fields declaration
 
+	// Declation for basic field satelliteDB.Name {{BasicKind}} (to be completed)
+	Name_Data sql.NullString
+
+	// Declation for basic field satelliteDB.Line1 {{BasicKind}} (to be completed)
+	Line1_Data sql.NullString
+
+	// Declation for basic field satelliteDB.Line2 {{BasicKind}} (to be completed)
+	Line2_Data sql.NullString
+
 	// Declation for basic field satelliteDB.Lat {{BasicKind}} (to be completed)
 	Lat_Data sql.NullFloat64
 
@@ -73,17 +82,8 @@ type SatelliteDB struct {
 	// Declation for basic field satelliteDB.Speed {{BasicKind}} (to be completed)
 	Speed_Data sql.NullFloat64
 
-	// Declation for basic field satelliteDB.Line1 {{BasicKind}} (to be completed)
-	Line1_Data sql.NullString
-
-	// Declation for basic field satelliteDB.Line2 {{BasicKind}} (to be completed)
-	Line2_Data sql.NullString
-
 	// Declation for basic field satelliteDB.TechName {{BasicKind}} (to be completed)
 	TechName_Data sql.NullString
-
-	// Declation for basic field satelliteDB.Name {{BasicKind}} (to be completed)
-	Name_Data sql.NullString
 
 	// Declation for basic field satelliteDB.VerticalSpeed {{BasicKind}} (to be completed)
 	VerticalSpeed_Data sql.NullFloat64
@@ -111,23 +111,23 @@ type SatelliteWOP struct {
 
 	// insertion for WOP basic fields
 
-	Lat float64 `xlsx:"1"`
+	Name string `xlsx:"1"`
 
-	Lng float64 `xlsx:"2"`
+	Line1 string `xlsx:"2"`
 
-	Heading float64 `xlsx:"3"`
+	Line2 string `xlsx:"3"`
 
-	Level float64 `xlsx:"4"`
+	Lat float64 `xlsx:"4"`
 
-	Speed float64 `xlsx:"5"`
+	Lng float64 `xlsx:"5"`
 
-	Line1 string `xlsx:"6"`
+	Heading float64 `xlsx:"6"`
 
-	Line2 string `xlsx:"7"`
+	Level float64 `xlsx:"7"`
 
-	TechName string `xlsx:"8"`
+	Speed float64 `xlsx:"8"`
 
-	Name string `xlsx:"9"`
+	TechName string `xlsx:"9"`
 
 	VerticalSpeed float64 `xlsx:"10"`
 
@@ -138,15 +138,15 @@ type SatelliteWOP struct {
 var Satellite_Fields = []string{
 	// insertion for WOP basic fields
 	"ID",
+	"Name",
+	"Line1",
+	"Line2",
 	"Lat",
 	"Lng",
 	"Heading",
 	"Level",
 	"Speed",
-	"Line1",
-	"Line2",
 	"TechName",
-	"Name",
 	"VerticalSpeed",
 	"Timestampstring",
 }
@@ -321,7 +321,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseOne() (Error erro
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	satelliteInstancesToBeRemovedFromTheStage := make(map[*models.Satellite]struct{})
+	satelliteInstancesToBeRemovedFromTheStage := make(map[*models.Satellite]any)
 	for key, value := range models.Stage.Satellites {
 		satelliteInstancesToBeRemovedFromTheStage[key] = value
 	}
@@ -430,6 +430,15 @@ func (backRepo *BackRepoStruct) CheckoutSatellite(satellite *models.Satellite) {
 func (satelliteDB *SatelliteDB) CopyBasicFieldsFromSatellite(satellite *models.Satellite) {
 	// insertion point for fields commit
 
+	satelliteDB.Name_Data.String = satellite.Name
+	satelliteDB.Name_Data.Valid = true
+
+	satelliteDB.Line1_Data.String = satellite.Line1
+	satelliteDB.Line1_Data.Valid = true
+
+	satelliteDB.Line2_Data.String = satellite.Line2
+	satelliteDB.Line2_Data.Valid = true
+
 	satelliteDB.Lat_Data.Float64 = satellite.Lat
 	satelliteDB.Lat_Data.Valid = true
 
@@ -445,17 +454,8 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsFromSatellite(satellite *models.S
 	satelliteDB.Speed_Data.Float64 = satellite.Speed
 	satelliteDB.Speed_Data.Valid = true
 
-	satelliteDB.Line1_Data.String = satellite.Line1
-	satelliteDB.Line1_Data.Valid = true
-
-	satelliteDB.Line2_Data.String = satellite.Line2
-	satelliteDB.Line2_Data.Valid = true
-
 	satelliteDB.TechName_Data.String = satellite.TechName
 	satelliteDB.TechName_Data.Valid = true
-
-	satelliteDB.Name_Data.String = satellite.Name
-	satelliteDB.Name_Data.Valid = true
 
 	satelliteDB.VerticalSpeed_Data.Float64 = satellite.VerticalSpeed
 	satelliteDB.VerticalSpeed_Data.Valid = true
@@ -468,6 +468,15 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsFromSatellite(satellite *models.S
 func (satelliteDB *SatelliteDB) CopyBasicFieldsFromSatelliteWOP(satellite *SatelliteWOP) {
 	// insertion point for fields commit
 
+	satelliteDB.Name_Data.String = satellite.Name
+	satelliteDB.Name_Data.Valid = true
+
+	satelliteDB.Line1_Data.String = satellite.Line1
+	satelliteDB.Line1_Data.Valid = true
+
+	satelliteDB.Line2_Data.String = satellite.Line2
+	satelliteDB.Line2_Data.Valid = true
+
 	satelliteDB.Lat_Data.Float64 = satellite.Lat
 	satelliteDB.Lat_Data.Valid = true
 
@@ -483,17 +492,8 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsFromSatelliteWOP(satellite *Satel
 	satelliteDB.Speed_Data.Float64 = satellite.Speed
 	satelliteDB.Speed_Data.Valid = true
 
-	satelliteDB.Line1_Data.String = satellite.Line1
-	satelliteDB.Line1_Data.Valid = true
-
-	satelliteDB.Line2_Data.String = satellite.Line2
-	satelliteDB.Line2_Data.Valid = true
-
 	satelliteDB.TechName_Data.String = satellite.TechName
 	satelliteDB.TechName_Data.Valid = true
-
-	satelliteDB.Name_Data.String = satellite.Name
-	satelliteDB.Name_Data.Valid = true
 
 	satelliteDB.VerticalSpeed_Data.Float64 = satellite.VerticalSpeed
 	satelliteDB.VerticalSpeed_Data.Valid = true
@@ -505,15 +505,15 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsFromSatelliteWOP(satellite *Satel
 // CopyBasicFieldsToSatellite
 func (satelliteDB *SatelliteDB) CopyBasicFieldsToSatellite(satellite *models.Satellite) {
 	// insertion point for checkout of basic fields (back repo to stage)
+	satellite.Name = satelliteDB.Name_Data.String
+	satellite.Line1 = satelliteDB.Line1_Data.String
+	satellite.Line2 = satelliteDB.Line2_Data.String
 	satellite.Lat = satelliteDB.Lat_Data.Float64
 	satellite.Lng = satelliteDB.Lng_Data.Float64
 	satellite.Heading = satelliteDB.Heading_Data.Float64
 	satellite.Level = satelliteDB.Level_Data.Float64
 	satellite.Speed = satelliteDB.Speed_Data.Float64
-	satellite.Line1 = satelliteDB.Line1_Data.String
-	satellite.Line2 = satelliteDB.Line2_Data.String
 	satellite.TechName = satelliteDB.TechName_Data.String
-	satellite.Name = satelliteDB.Name_Data.String
 	satellite.VerticalSpeed = satelliteDB.VerticalSpeed_Data.Float64
 	satellite.Timestampstring = satelliteDB.Timestampstring_Data.String
 }
@@ -522,15 +522,15 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsToSatellite(satellite *models.Sat
 func (satelliteDB *SatelliteDB) CopyBasicFieldsToSatelliteWOP(satellite *SatelliteWOP) {
 	satellite.ID = int(satelliteDB.ID)
 	// insertion point for checkout of basic fields (back repo to stage)
+	satellite.Name = satelliteDB.Name_Data.String
+	satellite.Line1 = satelliteDB.Line1_Data.String
+	satellite.Line2 = satelliteDB.Line2_Data.String
 	satellite.Lat = satelliteDB.Lat_Data.Float64
 	satellite.Lng = satelliteDB.Lng_Data.Float64
 	satellite.Heading = satelliteDB.Heading_Data.Float64
 	satellite.Level = satelliteDB.Level_Data.Float64
 	satellite.Speed = satelliteDB.Speed_Data.Float64
-	satellite.Line1 = satelliteDB.Line1_Data.String
-	satellite.Line2 = satelliteDB.Line2_Data.String
 	satellite.TechName = satelliteDB.TechName_Data.String
-	satellite.Name = satelliteDB.Name_Data.String
 	satellite.VerticalSpeed = satelliteDB.VerticalSpeed_Data.Float64
 	satellite.Timestampstring = satelliteDB.Timestampstring_Data.String
 }

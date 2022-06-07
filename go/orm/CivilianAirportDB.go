@@ -279,7 +279,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseOne()
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	civilianairportInstancesToBeRemovedFromTheStage := make(map[*models.CivilianAirport]struct{})
+	civilianairportInstancesToBeRemovedFromTheStage := make(map[*models.CivilianAirport]any)
 	for key, value := range models.Stage.CivilianAirports {
 		civilianairportInstancesToBeRemovedFromTheStage[key] = value
 	}

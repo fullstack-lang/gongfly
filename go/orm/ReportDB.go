@@ -311,7 +311,7 @@ func (backRepoReport *BackRepoReportStruct) CheckoutPhaseOne() (Error error) {
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	reportInstancesToBeRemovedFromTheStage := make(map[*models.Report]struct{})
+	reportInstancesToBeRemovedFromTheStage := make(map[*models.Report]any)
 	for key, value := range models.Stage.Reports {
 		reportInstancesToBeRemovedFromTheStage[key] = value
 	}

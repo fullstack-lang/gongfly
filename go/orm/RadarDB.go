@@ -291,7 +291,7 @@ func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseOne() (Error error) {
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	radarInstancesToBeRemovedFromTheStage := make(map[*models.Radar]struct{})
+	radarInstancesToBeRemovedFromTheStage := make(map[*models.Radar]any)
 	for key, value := range models.Stage.Radars {
 		radarInstancesToBeRemovedFromTheStage[key] = value
 	}

@@ -12,7 +12,7 @@ import (
 )
 
 // swagger:ignore
-type __void struct{}
+type __void any
 
 // needed for creating set of instances in the stage
 var __member __void
@@ -28,31 +28,31 @@ type GongStructInterface interface {
 // StageStruct enables storage of staged instances
 // swagger:ignore
 type StageStruct struct { // insertion point for definition of arrays registering instances
-	CivilianAirports           map[*CivilianAirport]struct{}
+	CivilianAirports           map[*CivilianAirport]any
 	CivilianAirports_mapString map[string]*CivilianAirport
 
-	Liners           map[*Liner]struct{}
+	Liners           map[*Liner]any
 	Liners_mapString map[string]*Liner
 
-	Messages           map[*Message]struct{}
+	Messages           map[*Message]any
 	Messages_mapString map[string]*Message
 
-	OpsLines           map[*OpsLine]struct{}
+	OpsLines           map[*OpsLine]any
 	OpsLines_mapString map[string]*OpsLine
 
-	Orders           map[*Order]struct{}
+	Orders           map[*Order]any
 	Orders_mapString map[string]*Order
 
-	Radars           map[*Radar]struct{}
+	Radars           map[*Radar]any
 	Radars_mapString map[string]*Radar
 
-	Reports           map[*Report]struct{}
+	Reports           map[*Report]any
 	Reports_mapString map[string]*Report
 
-	Satellites           map[*Satellite]struct{}
+	Satellites           map[*Satellite]any
 	Satellites_mapString map[string]*Satellite
 
-	Scenarios           map[*Scenario]struct{}
+	Scenarios           map[*Scenario]any
 	Scenarios_mapString map[string]*Scenario
 
 	AllModelsStructCreateCallback AllModelsStructCreateInterface
@@ -106,31 +106,31 @@ type BackRepoInterface interface {
 
 // swagger:ignore instructs the gong compiler (gongc) to avoid this particular struct
 var Stage StageStruct = StageStruct{ // insertion point for array initiatialisation
-	CivilianAirports:           make(map[*CivilianAirport]struct{}),
+	CivilianAirports:           make(map[*CivilianAirport]any),
 	CivilianAirports_mapString: make(map[string]*CivilianAirport),
 
-	Liners:           make(map[*Liner]struct{}),
+	Liners:           make(map[*Liner]any),
 	Liners_mapString: make(map[string]*Liner),
 
-	Messages:           make(map[*Message]struct{}),
+	Messages:           make(map[*Message]any),
 	Messages_mapString: make(map[string]*Message),
 
-	OpsLines:           make(map[*OpsLine]struct{}),
+	OpsLines:           make(map[*OpsLine]any),
 	OpsLines_mapString: make(map[string]*OpsLine),
 
-	Orders:           make(map[*Order]struct{}),
+	Orders:           make(map[*Order]any),
 	Orders_mapString: make(map[string]*Order),
 
-	Radars:           make(map[*Radar]struct{}),
+	Radars:           make(map[*Radar]any),
 	Radars_mapString: make(map[string]*Radar),
 
-	Reports:           make(map[*Report]struct{}),
+	Reports:           make(map[*Report]any),
 	Reports_mapString: make(map[string]*Report),
 
-	Satellites:           make(map[*Satellite]struct{}),
+	Satellites:           make(map[*Satellite]any),
 	Satellites_mapString: make(map[string]*Satellite),
 
-	Scenarios:           make(map[*Scenario]struct{}),
+	Scenarios:           make(map[*Scenario]any),
 	Scenarios_mapString: make(map[string]*Scenario),
 
 	// end of insertion point
@@ -1285,13 +1285,19 @@ func (satellite *Satellite) GetName() (res string) {
 
 func (satellite *Satellite) GetFields() (res []string) {
 	// list of fields
-	res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "Line1", "Line2", "TechName", "Name", "VerticalSpeed", "Timestampstring"}
+	res = []string{"Name", "Line1", "Line2", "Lat", "Lng", "Heading", "Level", "Speed", "TechName", "VerticalSpeed", "Timestampstring"}
 	return
 }
 
 func (satellite *Satellite) GetFieldStringValue(fieldName string) (res string) {
 	switch fieldName {
 	// string value of fields
+	case "Name":
+		res = satellite.Name
+	case "Line1":
+		res = satellite.Line1
+	case "Line2":
+		res = satellite.Line2
 	case "Lat":
 		res = fmt.Sprintf("%f", satellite.Lat)
 	case "Lng":
@@ -1302,14 +1308,8 @@ func (satellite *Satellite) GetFieldStringValue(fieldName string) (res string) {
 		res = fmt.Sprintf("%f", satellite.Level)
 	case "Speed":
 		res = fmt.Sprintf("%f", satellite.Speed)
-	case "Line1":
-		res = satellite.Line1
-	case "Line2":
-		res = satellite.Line2
 	case "TechName":
 		res = satellite.TechName
-	case "Name":
-		res = satellite.Name
 	case "VerticalSpeed":
 		res = fmt.Sprintf("%f", satellite.VerticalSpeed)
 	case "Timestampstring":
@@ -1474,31 +1474,31 @@ type AllModelsStructDeleteInterface interface { // insertion point for Callbacks
 }
 
 func (stage *StageStruct) Reset() { // insertion point for array reset
-	stage.CivilianAirports = make(map[*CivilianAirport]struct{})
+	stage.CivilianAirports = make(map[*CivilianAirport]any)
 	stage.CivilianAirports_mapString = make(map[string]*CivilianAirport)
 
-	stage.Liners = make(map[*Liner]struct{})
+	stage.Liners = make(map[*Liner]any)
 	stage.Liners_mapString = make(map[string]*Liner)
 
-	stage.Messages = make(map[*Message]struct{})
+	stage.Messages = make(map[*Message]any)
 	stage.Messages_mapString = make(map[string]*Message)
 
-	stage.OpsLines = make(map[*OpsLine]struct{})
+	stage.OpsLines = make(map[*OpsLine]any)
 	stage.OpsLines_mapString = make(map[string]*OpsLine)
 
-	stage.Orders = make(map[*Order]struct{})
+	stage.Orders = make(map[*Order]any)
 	stage.Orders_mapString = make(map[string]*Order)
 
-	stage.Radars = make(map[*Radar]struct{})
+	stage.Radars = make(map[*Radar]any)
 	stage.Radars_mapString = make(map[string]*Radar)
 
-	stage.Reports = make(map[*Report]struct{})
+	stage.Reports = make(map[*Report]any)
 	stage.Reports_mapString = make(map[string]*Report)
 
-	stage.Satellites = make(map[*Satellite]struct{})
+	stage.Satellites = make(map[*Satellite]any)
 	stage.Satellites_mapString = make(map[string]*Satellite)
 
-	stage.Scenarios = make(map[*Scenario]struct{})
+	stage.Scenarios = make(map[*Scenario]any)
 	stage.Scenarios_mapString = make(map[string]*Scenario)
 
 }
@@ -2203,6 +2203,24 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 
 		initializerStatements += fmt.Sprintf("\n\n	// Satellite %s values setup", satellite.Name)
 		// Initialisation of values
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(satellite.Name))
+		initializerStatements += setValueField
+
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Line1")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(satellite.Line1))
+		initializerStatements += setValueField
+
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Line2")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(satellite.Line2))
+		initializerStatements += setValueField
+
 		setValueField = NumberInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Lat")
@@ -2235,26 +2253,8 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Line1")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(satellite.Line1))
-		initializerStatements += setValueField
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Line2")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(satellite.Line2))
-		initializerStatements += setValueField
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "TechName")
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(satellite.TechName))
-		initializerStatements += setValueField
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(satellite.Name))
 		initializerStatements += setValueField
 
 		setValueField = NumberInitStatement
@@ -2482,7 +2482,9 @@ func generatesIdentifier(gongStructName string, idx int, instanceName string) (i
 }
 
 // insertion point of functions that provide maps for reverse associations
+
 // generate function for reverse association maps of CivilianAirport
+
 // generate function for reverse association maps of Liner
 func (stageStruct *StageStruct) CreateReverseMap_Liner_ReporingLine() (res map[*OpsLine][]*Liner) {
 	res = make(map[*OpsLine][]*Liner)
@@ -2506,6 +2508,7 @@ func (stageStruct *StageStruct) CreateReverseMap_Liner_ReporingLine() (res map[*
 }
 
 // generate function for reverse association maps of Message
+
 // generate function for reverse association maps of OpsLine
 func (stageStruct *StageStruct) CreateReverseMap_OpsLine_Scenario() (res map[*Scenario][]*OpsLine) {
 	res = make(map[*Scenario][]*OpsLine)
@@ -2551,6 +2554,7 @@ func (stageStruct *StageStruct) CreateReverseMap_Order_Target() (res map[*Liner]
 }
 
 // generate function for reverse association maps of Radar
+
 // generate function for reverse association maps of Report
 func (stageStruct *StageStruct) CreateReverseMap_Report_About() (res map[*Liner][]*Report) {
 	res = make(map[*Liner][]*Report)
@@ -2572,7 +2576,6 @@ func (stageStruct *StageStruct) CreateReverseMap_Report_About() (res map[*Liner]
 
 	return
 }
-
 func (stageStruct *StageStruct) CreateReverseMap_Report_OpsLine() (res map[*OpsLine][]*Report) {
 	res = make(map[*OpsLine][]*Report)
 
@@ -2595,7 +2598,98 @@ func (stageStruct *StageStruct) CreateReverseMap_Report_OpsLine() (res map[*OpsL
 }
 
 // generate function for reverse association maps of Satellite
+
 // generate function for reverse association maps of Scenario
+
+type GongstructSet interface {
+	map[any]any |
+		// insertion point for generic types
+		map[*CivilianAirport]any |
+		map[*Liner]any |
+		map[*Message]any |
+		map[*OpsLine]any |
+		map[*Order]any |
+		map[*Radar]any |
+		map[*Report]any |
+		map[*Satellite]any |
+		map[*Scenario]any |
+		map[*any]any // because go does not support an extra "|" at the end of type specifications
+}
+
+type GongstructMapString interface {
+	map[any]any |
+		// insertion point for generic types
+		map[string]*CivilianAirport |
+		map[string]*Liner |
+		map[string]*Message |
+		map[string]*OpsLine |
+		map[string]*Order |
+		map[string]*Radar |
+		map[string]*Report |
+		map[string]*Satellite |
+		map[string]*Scenario |
+		map[*any]any // because go does not support an extra "|" at the end of type specifications
+}
+
+// GongGetSet returns the set staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GongGetSet[Type GongstructSet]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case map[*CivilianAirport]any:
+		return any(&Stage.CivilianAirports).(*Type)
+	case map[*Liner]any:
+		return any(&Stage.Liners).(*Type)
+	case map[*Message]any:
+		return any(&Stage.Messages).(*Type)
+	case map[*OpsLine]any:
+		return any(&Stage.OpsLines).(*Type)
+	case map[*Order]any:
+		return any(&Stage.Orders).(*Type)
+	case map[*Radar]any:
+		return any(&Stage.Radars).(*Type)
+	case map[*Report]any:
+		return any(&Stage.Reports).(*Type)
+	case map[*Satellite]any:
+		return any(&Stage.Satellites).(*Type)
+	case map[*Scenario]any:
+		return any(&Stage.Scenarios).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GongGetMap returns the map of staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GongGetMap[Type GongstructMapString]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case map[string]*CivilianAirport:
+		return any(&Stage.CivilianAirports_mapString).(*Type)
+	case map[string]*Liner:
+		return any(&Stage.Liners_mapString).(*Type)
+	case map[string]*Message:
+		return any(&Stage.Messages_mapString).(*Type)
+	case map[string]*OpsLine:
+		return any(&Stage.OpsLines_mapString).(*Type)
+	case map[string]*Order:
+		return any(&Stage.Orders_mapString).(*Type)
+	case map[string]*Radar:
+		return any(&Stage.Radars_mapString).(*Type)
+	case map[string]*Report:
+		return any(&Stage.Reports_mapString).(*Type)
+	case map[string]*Satellite:
+		return any(&Stage.Satellites_mapString).(*Type)
+	case map[string]*Scenario:
+		return any(&Stage.Scenarios_mapString).(*Type)
+	default:
+		return nil
+	}
+}
 
 // insertion point of enum utility functions
 // Utility function for ConceptEnum
