@@ -2601,6 +2601,15 @@ func (stageStruct *StageStruct) CreateReverseMap_Report_OpsLine() (res map[*OpsL
 
 // generate function for reverse association maps of Scenario
 
+// Gongstruct is the type paramter for generated generic function that allows 
+// - access to staged instances
+// - navigation between staged instances by going backward association links between gongstruct
+// - full refactoring of Gongstruct identifiers / fields
+type Gongstruct interface {
+	// insertion point for generic types
+	CivilianAirport | Liner | Message | OpsLine | Order | Radar | Report | Satellite | Scenario
+}
+
 type GongstructSet interface {
 	map[any]any |
 		// insertion point for generic types
@@ -2690,6 +2699,333 @@ func GongGetMap[Type GongstructMapString]() *Type {
 		return nil
 	}
 }
+
+// GetGongstructInstancesSet returns the set staged GongstructType instances
+// it is usefull because it allows refactoring of gongstruct identifier
+func GetGongstructInstancesSet[Type Gongstruct]() *map[*Type]any {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case CivilianAirport:
+		return any(&Stage.CivilianAirports).(*map[*Type]any)
+	case Liner:
+		return any(&Stage.Liners).(*map[*Type]any)
+	case Message:
+		return any(&Stage.Messages).(*map[*Type]any)
+	case OpsLine:
+		return any(&Stage.OpsLines).(*map[*Type]any)
+	case Order:
+		return any(&Stage.Orders).(*map[*Type]any)
+	case Radar:
+		return any(&Stage.Radars).(*map[*Type]any)
+	case Report:
+		return any(&Stage.Reports).(*map[*Type]any)
+	case Satellite:
+		return any(&Stage.Satellites).(*map[*Type]any)
+	case Scenario:
+		return any(&Stage.Scenarios).(*map[*Type]any)
+	default:
+		return nil
+	}
+}
+
+// GetGongstructInstancesMap returns the map of staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GetGongstructInstancesMap[Type Gongstruct]() *map[string]*Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case CivilianAirport:
+		return any(&Stage.CivilianAirports_mapString).(*map[string]*Type)
+	case Liner:
+		return any(&Stage.Liners_mapString).(*map[string]*Type)
+	case Message:
+		return any(&Stage.Messages_mapString).(*map[string]*Type)
+	case OpsLine:
+		return any(&Stage.OpsLines_mapString).(*map[string]*Type)
+	case Order:
+		return any(&Stage.Orders_mapString).(*map[string]*Type)
+	case Radar:
+		return any(&Stage.Radars_mapString).(*map[string]*Type)
+	case Report:
+		return any(&Stage.Reports_mapString).(*map[string]*Type)
+	case Satellite:
+		return any(&Stage.Satellites_mapString).(*map[string]*Type)
+	case Scenario:
+		return any(&Stage.Scenarios_mapString).(*map[string]*Type)
+	default:
+		return nil
+	}
+}
+
+// GetAssociationName is a generic function that returns an instance of Type
+// where each association is filled with an instance whose name is the name of the association
+//
+// This function can be handy for generating navigation function that are refactorable
+func GetAssociationName[Type Gongstruct]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for instance with special fields
+	case CivilianAirport:
+		return any(&CivilianAirport{
+			// Initialisation of associations
+		}).(*Type)
+	case Liner:
+		return any(&Liner{
+			// Initialisation of associations
+			// field is initialized with an instance of OpsLine with the name of the field
+			ReporingLine: &OpsLine{Name: "ReporingLine"},
+		}).(*Type)
+	case Message:
+		return any(&Message{
+			// Initialisation of associations
+		}).(*Type)
+	case OpsLine:
+		return any(&OpsLine{
+			// Initialisation of associations
+			// field is initialized with an instance of Scenario with the name of the field
+			Scenario: &Scenario{Name: "Scenario"},
+		}).(*Type)
+	case Order:
+		return any(&Order{
+			// Initialisation of associations
+			// field is initialized with an instance of Liner with the name of the field
+			Target: &Liner{Name: "Target"},
+		}).(*Type)
+	case Radar:
+		return any(&Radar{
+			// Initialisation of associations
+		}).(*Type)
+	case Report:
+		return any(&Report{
+			// Initialisation of associations
+			// field is initialized with an instance of Liner with the name of the field
+			About: &Liner{Name: "About"},
+			// field is initialized with an instance of OpsLine with the name of the field
+			OpsLine: &OpsLine{Name: "OpsLine"},
+		}).(*Type)
+	case Satellite:
+		return any(&Satellite{
+			// Initialisation of associations
+		}).(*Type)
+	case Scenario:
+		return any(&Scenario{
+			// Initialisation of associations
+		}).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GetPointerReverseMap allows backtrack navigation of any Start.Fieldname
+// associations (0..1) that is a pointer from one staged Gongstruct (type Start)
+// instances to another (type End)
+//
+// The function provides a map with keys as instances of End and values to arrays of *Start
+// the map is construed by iterating over all Start instances and populationg keys with End instances
+// and values with slice of Start instances
+func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*Start {
+	var ret Start
+
+	switch any(ret).(type) {
+	// insertion point of functions that provide maps for reverse associations
+	// reverse maps of direct associations of CivilianAirport
+	case CivilianAirport:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Liner
+	case Liner:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "ReporingLine":
+			res := make(map[*OpsLine][]*Liner)
+			for liner := range Stage.Liners {
+				if liner.ReporingLine != nil {
+					opsline_ := liner.ReporingLine
+					var liners []*Liner
+					_, ok := res[opsline_]
+					if ok {
+						liners = res[opsline_]
+					} else {
+						liners = make([]*Liner, 0)
+					}
+					liners = append(liners, liner)
+					res[opsline_] = liners
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	// reverse maps of direct associations of Message
+	case Message:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of OpsLine
+	case OpsLine:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "Scenario":
+			res := make(map[*Scenario][]*OpsLine)
+			for opsline := range Stage.OpsLines {
+				if opsline.Scenario != nil {
+					scenario_ := opsline.Scenario
+					var opslines []*OpsLine
+					_, ok := res[scenario_]
+					if ok {
+						opslines = res[scenario_]
+					} else {
+						opslines = make([]*OpsLine, 0)
+					}
+					opslines = append(opslines, opsline)
+					res[scenario_] = opslines
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	// reverse maps of direct associations of Order
+	case Order:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "Target":
+			res := make(map[*Liner][]*Order)
+			for order := range Stage.Orders {
+				if order.Target != nil {
+					liner_ := order.Target
+					var orders []*Order
+					_, ok := res[liner_]
+					if ok {
+						orders = res[liner_]
+					} else {
+						orders = make([]*Order, 0)
+					}
+					orders = append(orders, order)
+					res[liner_] = orders
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	// reverse maps of direct associations of Radar
+	case Radar:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Report
+	case Report:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "About":
+			res := make(map[*Liner][]*Report)
+			for report := range Stage.Reports {
+				if report.About != nil {
+					liner_ := report.About
+					var reports []*Report
+					_, ok := res[liner_]
+					if ok {
+						reports = res[liner_]
+					} else {
+						reports = make([]*Report, 0)
+					}
+					reports = append(reports, report)
+					res[liner_] = reports
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		case "OpsLine":
+			res := make(map[*OpsLine][]*Report)
+			for report := range Stage.Reports {
+				if report.OpsLine != nil {
+					opsline_ := report.OpsLine
+					var reports []*Report
+					_, ok := res[opsline_]
+					if ok {
+						reports = res[opsline_]
+					} else {
+						reports = make([]*Report, 0)
+					}
+					reports = append(reports, report)
+					res[opsline_] = reports
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	// reverse maps of direct associations of Satellite
+	case Satellite:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Scenario
+	case Scenario:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	}
+	return nil
+}
+
+// GetSliceOfPointersReverseMap allows backtrack navigation of any Start.Fieldname
+// associations (0..N) between one staged Gongstruct instances and many others
+//
+// The function provides a map with keys as instances of End and values to *Start instances
+// the map is construed by iterating over all Start instances and populating keys with End instances
+// and values with the Start instances
+func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string) map[*End]*Start {
+	var ret Start
+
+	switch any(ret).(type) {
+	// insertion point of functions that provide maps for reverse associations
+	// reverse maps of direct associations of CivilianAirport
+	case CivilianAirport:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Liner
+	case Liner:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Message
+	case Message:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of OpsLine
+	case OpsLine:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Order
+	case Order:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Radar
+	case Radar:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Report
+	case Report:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Satellite
+	case Satellite:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Scenario
+	case Scenario:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	}
+	return nil
+}
+
 
 // insertion point of enum utility functions
 // Utility function for ConceptEnum
