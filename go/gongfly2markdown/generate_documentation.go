@@ -76,9 +76,9 @@ func (GenerateDocumentationScheduler *GenerateDocumentationScheduler) GenerateDo
 		// generate documentation
 		satelliteTable := []gongfly_models.GongStructInterface{}
 
-		for satellite := range gongfly_models.Stage.Satellites {
-			satelliteTable = append(satelliteTable, satellite)
-		}
+		// for satellite := range *gongfly_models.GetGongstructInstancesSet[models.Satellite]() {
+		// 	satelliteTable = append(satelliteTable, satellite)
+		// }
 
 		sort.Slice(satelliteTable[:], func(i, j int) bool {
 			return satelliteTable[i].GetName() < satelliteTable[j].GetName()
@@ -116,9 +116,9 @@ func (GenerateDocumentationScheduler *GenerateDocumentationScheduler) GenerateDo
 		// table of deploiements
 		linersTable := []gongfly_models.GongStructInterface{}
 
-		for liner := range gongfly_models.Stage.Liners {
-			linersTable = append(linersTable, liner)
-		}
+		// for liner := range gongfly_models.Stage.Liners {
+		// 	linersTable = append(linersTable, liner)
+		// }
 
 		sort.Slice(linersTable[:], func(i, j int) bool {
 			return linersTable[i].GetName() < linersTable[j].GetName()

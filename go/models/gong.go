@@ -297,27 +297,6 @@ func (civilianairport *CivilianAirport) GetName() (res string) {
 	return civilianairport.Name
 }
 
-func (civilianairport *CivilianAirport) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Lat", "Lng", "TechName", "Name"}
-	return
-}
-
-func (civilianairport *CivilianAirport) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Lat":
-		res = fmt.Sprintf("%f", civilianairport.Lat)
-	case "Lng":
-		res = fmt.Sprintf("%f", civilianairport.Lng)
-	case "TechName":
-		res = civilianairport.TechName
-	case "Name":
-		res = civilianairport.Name
-	}
-	return
-}
-
 func (stage *StageStruct) getLinerOrderedStructWithNameField() []*Liner {
 	// have alphabetical order generation
 	linerOrdered := []*Liner{}
@@ -423,53 +402,6 @@ func DeleteORMLiner(liner *Liner) {
 // for satisfaction of GongStruct interface
 func (liner *Liner) GetName() (res string) {
 	return liner.Name
-}
-
-func (liner *Liner) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Lat", "Lng", "Heading", "Level", "Speed", "TechName", "State", "TargetHeading", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "MaxRotationalSpeed", "VerticalSpeed", "Timestampstring", "ReporingLine"}
-	return
-}
-
-func (liner *Liner) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = liner.Name
-	case "Lat":
-		res = fmt.Sprintf("%f", liner.Lat)
-	case "Lng":
-		res = fmt.Sprintf("%f", liner.Lng)
-	case "Heading":
-		res = fmt.Sprintf("%f", liner.Heading)
-	case "Level":
-		res = fmt.Sprintf("%f", liner.Level)
-	case "Speed":
-		res = fmt.Sprintf("%f", liner.Speed)
-	case "TechName":
-		res = liner.TechName
-	case "State":
-		res = liner.State.ToCodeString()
-	case "TargetHeading":
-		res = fmt.Sprintf("%f", liner.TargetHeading)
-	case "TargetLocationLat":
-		res = fmt.Sprintf("%f", liner.TargetLocationLat)
-	case "TargetLocationLng":
-		res = fmt.Sprintf("%f", liner.TargetLocationLng)
-	case "DistanceToTarget":
-		res = fmt.Sprintf("%f", liner.DistanceToTarget)
-	case "MaxRotationalSpeed":
-		res = fmt.Sprintf("%f", liner.MaxRotationalSpeed)
-	case "VerticalSpeed":
-		res = fmt.Sprintf("%f", liner.VerticalSpeed)
-	case "Timestampstring":
-		res = liner.Timestampstring
-	case "ReporingLine":
-		if liner.ReporingLine != nil {
-			res = liner.ReporingLine.Name
-		}
-	}
-	return
 }
 
 func (stage *StageStruct) getMessageOrderedStructWithNameField() []*Message {
@@ -579,57 +511,6 @@ func (message *Message) GetName() (res string) {
 	return message.Name
 }
 
-func (message *Message) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "TechName", "State", "Name", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "Timestampstring", "DurationSinceSimulationStart", "Timestampstartstring", "Source", "Destination", "Content", "About_string", "Display"}
-	return
-}
-
-func (message *Message) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Lat":
-		res = fmt.Sprintf("%f", message.Lat)
-	case "Lng":
-		res = fmt.Sprintf("%f", message.Lng)
-	case "Heading":
-		res = fmt.Sprintf("%f", message.Heading)
-	case "Level":
-		res = fmt.Sprintf("%f", message.Level)
-	case "Speed":
-		res = fmt.Sprintf("%f", message.Speed)
-	case "TechName":
-		res = message.TechName
-	case "State":
-		res = message.State.ToCodeString()
-	case "Name":
-		res = message.Name
-	case "TargetLocationLat":
-		res = fmt.Sprintf("%f", message.TargetLocationLat)
-	case "TargetLocationLng":
-		res = fmt.Sprintf("%f", message.TargetLocationLng)
-	case "DistanceToTarget":
-		res = fmt.Sprintf("%f", message.DistanceToTarget)
-	case "Timestampstring":
-		res = message.Timestampstring
-	case "DurationSinceSimulationStart":
-		res = fmt.Sprintf("%d", message.DurationSinceSimulationStart)
-	case "Timestampstartstring":
-		res = message.Timestampstartstring
-	case "Source":
-		res = message.Source
-	case "Destination":
-		res = message.Destination
-	case "Content":
-		res = message.Content
-	case "About_string":
-		res = message.About_string
-	case "Display":
-		res = fmt.Sprintf("%t", message.Display)
-	}
-	return
-}
-
 func (stage *StageStruct) getOpsLineOrderedStructWithNameField() []*OpsLine {
 	// have alphabetical order generation
 	opslineOrdered := []*OpsLine{}
@@ -735,37 +616,6 @@ func DeleteORMOpsLine(opsline *OpsLine) {
 // for satisfaction of GongStruct interface
 func (opsline *OpsLine) GetName() (res string) {
 	return opsline.Name
-}
-
-func (opsline *OpsLine) GetFields() (res []string) {
-	// list of fields
-	res = []string{"IsTransmitting", "TransmissionMessage", "IsTransmittingBackward", "TransmissionMessageBackward", "TechName", "Scenario", "State", "Name"}
-	return
-}
-
-func (opsline *OpsLine) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "IsTransmitting":
-		res = fmt.Sprintf("%t", opsline.IsTransmitting)
-	case "TransmissionMessage":
-		res = opsline.TransmissionMessage
-	case "IsTransmittingBackward":
-		res = fmt.Sprintf("%t", opsline.IsTransmittingBackward)
-	case "TransmissionMessageBackward":
-		res = opsline.TransmissionMessageBackward
-	case "TechName":
-		res = opsline.TechName
-	case "Scenario":
-		if opsline.Scenario != nil {
-			res = opsline.Scenario.Name
-		}
-	case "State":
-		res = opsline.State.ToCodeString()
-	case "Name":
-		res = opsline.Name
-	}
-	return
 }
 
 func (stage *StageStruct) getOrderOrderedStructWithNameField() []*Order {
@@ -875,37 +725,6 @@ func (order *Order) GetName() (res string) {
 	return order.Name
 }
 
-func (order *Order) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Duration", "OrderMessage", "Number", "Type", "Target", "TargetLat", "TargetLng"}
-	return
-}
-
-func (order *Order) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = order.Name
-	case "Duration":
-		res = fmt.Sprintf("%d", order.Duration)
-	case "OrderMessage":
-		res = order.OrderMessage
-	case "Number":
-		res = fmt.Sprintf("%d", order.Number)
-	case "Type":
-		res = order.Type.ToCodeString()
-	case "Target":
-		if order.Target != nil {
-			res = order.Target.Name
-		}
-	case "TargetLat":
-		res = fmt.Sprintf("%f", order.TargetLat)
-	case "TargetLng":
-		res = fmt.Sprintf("%f", order.TargetLng)
-	}
-	return
-}
-
 func (stage *StageStruct) getRadarOrderedStructWithNameField() []*Radar {
 	// have alphabetical order generation
 	radarOrdered := []*Radar{}
@@ -1011,31 +830,6 @@ func DeleteORMRadar(radar *Radar) {
 // for satisfaction of GongStruct interface
 func (radar *Radar) GetName() (res string) {
 	return radar.Name
-}
-
-func (radar *Radar) GetFields() (res []string) {
-	// list of fields
-	res = []string{"TechName", "State", "Name", "Lat", "Lng", "Range"}
-	return
-}
-
-func (radar *Radar) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "TechName":
-		res = radar.TechName
-	case "State":
-		res = radar.State.ToCodeString()
-	case "Name":
-		res = radar.Name
-	case "Lat":
-		res = fmt.Sprintf("%f", radar.Lat)
-	case "Lng":
-		res = fmt.Sprintf("%f", radar.Lng)
-	case "Range":
-		res = fmt.Sprintf("%f", radar.Range)
-	}
-	return
 }
 
 func (stage *StageStruct) getReportOrderedStructWithNameField() []*Report {
@@ -1145,37 +939,6 @@ func (report *Report) GetName() (res string) {
 	return report.Name
 }
 
-func (report *Report) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Duration", "ReportMessage", "Number", "Type", "About", "OpsLine"}
-	return
-}
-
-func (report *Report) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = report.Name
-	case "Duration":
-		res = fmt.Sprintf("%d", report.Duration)
-	case "ReportMessage":
-		res = report.ReportMessage
-	case "Number":
-		res = fmt.Sprintf("%d", report.Number)
-	case "Type":
-		res = report.Type.ToCodeString()
-	case "About":
-		if report.About != nil {
-			res = report.About.Name
-		}
-	case "OpsLine":
-		if report.OpsLine != nil {
-			res = report.OpsLine.Name
-		}
-	}
-	return
-}
-
 func (stage *StageStruct) getSatelliteOrderedStructWithNameField() []*Satellite {
 	// have alphabetical order generation
 	satelliteOrdered := []*Satellite{}
@@ -1283,41 +1046,6 @@ func (satellite *Satellite) GetName() (res string) {
 	return satellite.Name
 }
 
-func (satellite *Satellite) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Line1", "Line2", "Lat", "Lng", "Heading", "Level", "Speed", "TechName", "VerticalSpeed", "Timestampstring"}
-	return
-}
-
-func (satellite *Satellite) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = satellite.Name
-	case "Line1":
-		res = satellite.Line1
-	case "Line2":
-		res = satellite.Line2
-	case "Lat":
-		res = fmt.Sprintf("%f", satellite.Lat)
-	case "Lng":
-		res = fmt.Sprintf("%f", satellite.Lng)
-	case "Heading":
-		res = fmt.Sprintf("%f", satellite.Heading)
-	case "Level":
-		res = fmt.Sprintf("%f", satellite.Level)
-	case "Speed":
-		res = fmt.Sprintf("%f", satellite.Speed)
-	case "TechName":
-		res = satellite.TechName
-	case "VerticalSpeed":
-		res = fmt.Sprintf("%f", satellite.VerticalSpeed)
-	case "Timestampstring":
-		res = satellite.Timestampstring
-	}
-	return
-}
-
 func (stage *StageStruct) getScenarioOrderedStructWithNameField() []*Scenario {
 	// have alphabetical order generation
 	scenarioOrdered := []*Scenario{}
@@ -1423,29 +1151,6 @@ func DeleteORMScenario(scenario *Scenario) {
 // for satisfaction of GongStruct interface
 func (scenario *Scenario) GetName() (res string) {
 	return scenario.Name
-}
-
-func (scenario *Scenario) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Lat", "Lng", "ZoomLevel", "MessageVisualSpeed"}
-	return
-}
-
-func (scenario *Scenario) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = scenario.Name
-	case "Lat":
-		res = fmt.Sprintf("%f", scenario.Lat)
-	case "Lng":
-		res = fmt.Sprintf("%f", scenario.Lng)
-	case "ZoomLevel":
-		res = fmt.Sprintf("%f", scenario.ZoomLevel)
-	case "MessageVisualSpeed":
-		res = fmt.Sprintf("%f", scenario.MessageVisualSpeed)
-	}
-	return
 }
 
 // swagger:ignore
@@ -1617,7 +1322,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(civilianairportOrdered[:], func(i, j int) bool {
 		return civilianairportOrdered[i].Name < civilianairportOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of CivilianAirport")
+	identifiersDecl += "\n\n	// Declarations of staged instances of CivilianAirport"
 	for idx, civilianairport := range civilianairportOrdered {
 
 		id = generatesIdentifier("CivilianAirport", idx, civilianairport.Name)
@@ -1667,7 +1372,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(linerOrdered[:], func(i, j int) bool {
 		return linerOrdered[i].Name < linerOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Liner")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Liner"
 	for idx, liner := range linerOrdered {
 
 		id = generatesIdentifier("Liner", idx, liner.Name)
@@ -1785,7 +1490,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(messageOrdered[:], func(i, j int) bool {
 		return messageOrdered[i].Name < messageOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Message")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Message"
 	for idx, message := range messageOrdered {
 
 		id = generatesIdentifier("Message", idx, message.Name)
@@ -1927,7 +1632,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(opslineOrdered[:], func(i, j int) bool {
 		return opslineOrdered[i].Name < opslineOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of OpsLine")
+	identifiersDecl += "\n\n	// Declarations of staged instances of OpsLine"
 	for idx, opsline := range opslineOrdered {
 
 		id = generatesIdentifier("OpsLine", idx, opsline.Name)
@@ -1997,7 +1702,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(orderOrdered[:], func(i, j int) bool {
 		return orderOrdered[i].Name < orderOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Order")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Order"
 	for idx, order := range orderOrdered {
 
 		id = generatesIdentifier("Order", idx, order.Name)
@@ -2067,7 +1772,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(radarOrdered[:], func(i, j int) bool {
 		return radarOrdered[i].Name < radarOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Radar")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Radar"
 	for idx, radar := range radarOrdered {
 
 		id = generatesIdentifier("Radar", idx, radar.Name)
@@ -2131,7 +1836,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(reportOrdered[:], func(i, j int) bool {
 		return reportOrdered[i].Name < reportOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Report")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Report"
 	for idx, report := range reportOrdered {
 
 		id = generatesIdentifier("Report", idx, report.Name)
@@ -2189,7 +1894,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(satelliteOrdered[:], func(i, j int) bool {
 		return satelliteOrdered[i].Name < satelliteOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Satellite")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Satellite"
 	for idx, satellite := range satelliteOrdered {
 
 		id = generatesIdentifier("Satellite", idx, satellite.Name)
@@ -2281,7 +1986,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(scenarioOrdered[:], func(i, j int) bool {
 		return scenarioOrdered[i].Name < scenarioOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Scenario")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Scenario"
 	for idx, scenario := range scenarioOrdered {
 
 		id = generatesIdentifier("Scenario", idx, scenario.Name)
@@ -2601,7 +2306,7 @@ func (stageStruct *StageStruct) CreateReverseMap_Report_OpsLine() (res map[*OpsL
 
 // generate function for reverse association maps of Scenario
 
-// Gongstruct is the type paramter for generated generic function that allows 
+// Gongstruct is the type paramter for generated generic function that allows
 // - access to staged instances
 // - navigation between staged instances by going backward association links between gongstruct
 // - full refactoring of Gongstruct identifiers / fields
@@ -3026,6 +2731,293 @@ func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string) map[*
 	return nil
 }
 
+// GetGongstructName returns the name of the Gongstruct
+// this can be usefull if one want program robust to refactoring
+func GetGongstructName[Type Gongstruct]() (res string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case CivilianAirport:
+		res = "CivilianAirport"
+	case Liner:
+		res = "Liner"
+	case Message:
+		res = "Message"
+	case OpsLine:
+		res = "OpsLine"
+	case Order:
+		res = "Order"
+	case Radar:
+		res = "Radar"
+	case Report:
+		res = "Report"
+	case Satellite:
+		res = "Satellite"
+	case Scenario:
+		res = "Scenario"
+	}
+	return res
+}
+
+// GetFields return the array of the fields
+func GetFields[Type Gongstruct]() (res []string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case CivilianAirport:
+		res = []string{"Lat", "Lng", "TechName", "Name"}
+	case Liner:
+		res = []string{"Name", "Lat", "Lng", "Heading", "Level", "Speed", "TechName", "State", "TargetHeading", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "MaxRotationalSpeed", "VerticalSpeed", "Timestampstring", "ReporingLine"}
+	case Message:
+		res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "TechName", "State", "Name", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "Timestampstring", "DurationSinceSimulationStart", "Timestampstartstring", "Source", "Destination", "Content", "About_string", "Display"}
+	case OpsLine:
+		res = []string{"IsTransmitting", "TransmissionMessage", "IsTransmittingBackward", "TransmissionMessageBackward", "TechName", "Scenario", "State", "Name"}
+	case Order:
+		res = []string{"Name", "Duration", "OrderMessage", "Number", "Type", "Target", "TargetLat", "TargetLng"}
+	case Radar:
+		res = []string{"TechName", "State", "Name", "Lat", "Lng", "Range"}
+	case Report:
+		res = []string{"Name", "Duration", "ReportMessage", "Number", "Type", "About", "OpsLine"}
+	case Satellite:
+		res = []string{"Name", "Line1", "Line2", "Lat", "Lng", "Heading", "Level", "Speed", "TechName", "VerticalSpeed", "Timestampstring"}
+	case Scenario:
+		res = []string{"Name", "Lat", "Lng", "ZoomLevel", "MessageVisualSpeed"}
+	}
+	return
+}
+
+func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res string) {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct field value
+	case CivilianAirport:
+		switch fieldName {
+		// string value of fields
+		case "Lat":
+			res = fmt.Sprintf("%f", any(instance).(CivilianAirport).Lat)
+		case "Lng":
+			res = fmt.Sprintf("%f", any(instance).(CivilianAirport).Lng)
+		case "TechName":
+			res = any(instance).(CivilianAirport).TechName
+		case "Name":
+			res = any(instance).(CivilianAirport).Name
+		}
+	case Liner:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(Liner).Name
+		case "Lat":
+			res = fmt.Sprintf("%f", any(instance).(Liner).Lat)
+		case "Lng":
+			res = fmt.Sprintf("%f", any(instance).(Liner).Lng)
+		case "Heading":
+			res = fmt.Sprintf("%f", any(instance).(Liner).Heading)
+		case "Level":
+			res = fmt.Sprintf("%f", any(instance).(Liner).Level)
+		case "Speed":
+			res = fmt.Sprintf("%f", any(instance).(Liner).Speed)
+		case "TechName":
+			res = any(instance).(Liner).TechName
+		case "State":
+			enum := any(instance).(Liner).State
+			res = enum.ToCodeString()
+		case "TargetHeading":
+			res = fmt.Sprintf("%f", any(instance).(Liner).TargetHeading)
+		case "TargetLocationLat":
+			res = fmt.Sprintf("%f", any(instance).(Liner).TargetLocationLat)
+		case "TargetLocationLng":
+			res = fmt.Sprintf("%f", any(instance).(Liner).TargetLocationLng)
+		case "DistanceToTarget":
+			res = fmt.Sprintf("%f", any(instance).(Liner).DistanceToTarget)
+		case "MaxRotationalSpeed":
+			res = fmt.Sprintf("%f", any(instance).(Liner).MaxRotationalSpeed)
+		case "VerticalSpeed":
+			res = fmt.Sprintf("%f", any(instance).(Liner).VerticalSpeed)
+		case "Timestampstring":
+			res = any(instance).(Liner).Timestampstring
+		case "ReporingLine":
+			if any(instance).(Liner).ReporingLine != nil {
+				res = any(instance).(Liner).ReporingLine.Name
+			}
+		}
+	case Message:
+		switch fieldName {
+		// string value of fields
+		case "Lat":
+			res = fmt.Sprintf("%f", any(instance).(Message).Lat)
+		case "Lng":
+			res = fmt.Sprintf("%f", any(instance).(Message).Lng)
+		case "Heading":
+			res = fmt.Sprintf("%f", any(instance).(Message).Heading)
+		case "Level":
+			res = fmt.Sprintf("%f", any(instance).(Message).Level)
+		case "Speed":
+			res = fmt.Sprintf("%f", any(instance).(Message).Speed)
+		case "TechName":
+			res = any(instance).(Message).TechName
+		case "State":
+			enum := any(instance).(Message).State
+			res = enum.ToCodeString()
+		case "Name":
+			res = any(instance).(Message).Name
+		case "TargetLocationLat":
+			res = fmt.Sprintf("%f", any(instance).(Message).TargetLocationLat)
+		case "TargetLocationLng":
+			res = fmt.Sprintf("%f", any(instance).(Message).TargetLocationLng)
+		case "DistanceToTarget":
+			res = fmt.Sprintf("%f", any(instance).(Message).DistanceToTarget)
+		case "Timestampstring":
+			res = any(instance).(Message).Timestampstring
+		case "DurationSinceSimulationStart":
+			res = fmt.Sprintf("%d", any(instance).(Message).DurationSinceSimulationStart)
+		case "Timestampstartstring":
+			res = any(instance).(Message).Timestampstartstring
+		case "Source":
+			res = any(instance).(Message).Source
+		case "Destination":
+			res = any(instance).(Message).Destination
+		case "Content":
+			res = any(instance).(Message).Content
+		case "About_string":
+			res = any(instance).(Message).About_string
+		case "Display":
+			res = fmt.Sprintf("%t", any(instance).(Message).Display)
+		}
+	case OpsLine:
+		switch fieldName {
+		// string value of fields
+		case "IsTransmitting":
+			res = fmt.Sprintf("%t", any(instance).(OpsLine).IsTransmitting)
+		case "TransmissionMessage":
+			res = any(instance).(OpsLine).TransmissionMessage
+		case "IsTransmittingBackward":
+			res = fmt.Sprintf("%t", any(instance).(OpsLine).IsTransmittingBackward)
+		case "TransmissionMessageBackward":
+			res = any(instance).(OpsLine).TransmissionMessageBackward
+		case "TechName":
+			res = any(instance).(OpsLine).TechName
+		case "Scenario":
+			if any(instance).(OpsLine).Scenario != nil {
+				res = any(instance).(OpsLine).Scenario.Name
+			}
+		case "State":
+			enum := any(instance).(OpsLine).State
+			res = enum.ToCodeString()
+		case "Name":
+			res = any(instance).(OpsLine).Name
+		}
+	case Order:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(Order).Name
+		case "Duration":
+			res = fmt.Sprintf("%d", any(instance).(Order).Duration)
+		case "OrderMessage":
+			res = any(instance).(Order).OrderMessage
+		case "Number":
+			res = fmt.Sprintf("%d", any(instance).(Order).Number)
+		case "Type":
+			enum := any(instance).(Order).Type
+			res = enum.ToCodeString()
+		case "Target":
+			if any(instance).(Order).Target != nil {
+				res = any(instance).(Order).Target.Name
+			}
+		case "TargetLat":
+			res = fmt.Sprintf("%f", any(instance).(Order).TargetLat)
+		case "TargetLng":
+			res = fmt.Sprintf("%f", any(instance).(Order).TargetLng)
+		}
+	case Radar:
+		switch fieldName {
+		// string value of fields
+		case "TechName":
+			res = any(instance).(Radar).TechName
+		case "State":
+			enum := any(instance).(Radar).State
+			res = enum.ToCodeString()
+		case "Name":
+			res = any(instance).(Radar).Name
+		case "Lat":
+			res = fmt.Sprintf("%f", any(instance).(Radar).Lat)
+		case "Lng":
+			res = fmt.Sprintf("%f", any(instance).(Radar).Lng)
+		case "Range":
+			res = fmt.Sprintf("%f", any(instance).(Radar).Range)
+		}
+	case Report:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(Report).Name
+		case "Duration":
+			res = fmt.Sprintf("%d", any(instance).(Report).Duration)
+		case "ReportMessage":
+			res = any(instance).(Report).ReportMessage
+		case "Number":
+			res = fmt.Sprintf("%d", any(instance).(Report).Number)
+		case "Type":
+			enum := any(instance).(Report).Type
+			res = enum.ToCodeString()
+		case "About":
+			if any(instance).(Report).About != nil {
+				res = any(instance).(Report).About.Name
+			}
+		case "OpsLine":
+			if any(instance).(Report).OpsLine != nil {
+				res = any(instance).(Report).OpsLine.Name
+			}
+		}
+	case Satellite:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(Satellite).Name
+		case "Line1":
+			res = any(instance).(Satellite).Line1
+		case "Line2":
+			res = any(instance).(Satellite).Line2
+		case "Lat":
+			res = fmt.Sprintf("%f", any(instance).(Satellite).Lat)
+		case "Lng":
+			res = fmt.Sprintf("%f", any(instance).(Satellite).Lng)
+		case "Heading":
+			res = fmt.Sprintf("%f", any(instance).(Satellite).Heading)
+		case "Level":
+			res = fmt.Sprintf("%f", any(instance).(Satellite).Level)
+		case "Speed":
+			res = fmt.Sprintf("%f", any(instance).(Satellite).Speed)
+		case "TechName":
+			res = any(instance).(Satellite).TechName
+		case "VerticalSpeed":
+			res = fmt.Sprintf("%f", any(instance).(Satellite).VerticalSpeed)
+		case "Timestampstring":
+			res = any(instance).(Satellite).Timestampstring
+		}
+	case Scenario:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(Scenario).Name
+		case "Lat":
+			res = fmt.Sprintf("%f", any(instance).(Scenario).Lat)
+		case "Lng":
+			res = fmt.Sprintf("%f", any(instance).(Scenario).Lng)
+		case "ZoomLevel":
+			res = fmt.Sprintf("%f", any(instance).(Scenario).ZoomLevel)
+		case "MessageVisualSpeed":
+			res = fmt.Sprintf("%f", any(instance).(Scenario).MessageVisualSpeed)
+		}
+	}
+	return
+}
 
 // insertion point of enum utility functions
 // Utility function for ConceptEnum
