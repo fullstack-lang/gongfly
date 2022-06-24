@@ -62,49 +62,46 @@ type LinerDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field linerDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field linerDB.Lat {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.Lat
 	Lat_Data sql.NullFloat64
 
-	// Declation for basic field linerDB.Lng {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.Lng
 	Lng_Data sql.NullFloat64
 
-	// Declation for basic field linerDB.Heading {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.Heading
 	Heading_Data sql.NullFloat64
 
-	// Declation for basic field linerDB.Level {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.Level
 	Level_Data sql.NullFloat64
 
-	// Declation for basic field linerDB.Speed {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.Speed
 	Speed_Data sql.NullFloat64
 
-	// Declation for basic field linerDB.TechName {{BasicKind}} (to be completed)
-	TechName_Data sql.NullString
-
-	// Declation for basic field linerDB.State {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.State
 	State_Data sql.NullString
 
-	// Declation for basic field linerDB.TargetHeading {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.TargetHeading
 	TargetHeading_Data sql.NullFloat64
 
-	// Declation for basic field linerDB.TargetLocationLat {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.TargetLocationLat
 	TargetLocationLat_Data sql.NullFloat64
 
-	// Declation for basic field linerDB.TargetLocationLng {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.TargetLocationLng
 	TargetLocationLng_Data sql.NullFloat64
 
-	// Declation for basic field linerDB.DistanceToTarget {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.DistanceToTarget
 	DistanceToTarget_Data sql.NullFloat64
 
-	// Declation for basic field linerDB.MaxRotationalSpeed {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.MaxRotationalSpeed
 	MaxRotationalSpeed_Data sql.NullFloat64
 
-	// Declation for basic field linerDB.VerticalSpeed {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.VerticalSpeed
 	VerticalSpeed_Data sql.NullFloat64
 
-	// Declation for basic field linerDB.Timestampstring {{BasicKind}} (to be completed)
+	// Declation for basic field linerDB.Timestampstring
 	Timestampstring_Data sql.NullString
 	// encoding of pointers
 	LinerPointersEnconding
@@ -139,23 +136,21 @@ type LinerWOP struct {
 
 	Speed float64 `xlsx:"6"`
 
-	TechName string `xlsx:"7"`
+	State models.LinerStateEnum `xlsx:"7"`
 
-	State models.LinerStateEnum `xlsx:"8"`
+	TargetHeading float64 `xlsx:"8"`
 
-	TargetHeading float64 `xlsx:"9"`
+	TargetLocationLat float64 `xlsx:"9"`
 
-	TargetLocationLat float64 `xlsx:"10"`
+	TargetLocationLng float64 `xlsx:"10"`
 
-	TargetLocationLng float64 `xlsx:"11"`
+	DistanceToTarget float64 `xlsx:"11"`
 
-	DistanceToTarget float64 `xlsx:"12"`
+	MaxRotationalSpeed float64 `xlsx:"12"`
 
-	MaxRotationalSpeed float64 `xlsx:"13"`
+	VerticalSpeed float64 `xlsx:"13"`
 
-	VerticalSpeed float64 `xlsx:"14"`
-
-	Timestampstring string `xlsx:"15"`
+	Timestampstring string `xlsx:"14"`
 	// insertion for WOP pointer fields
 }
 
@@ -168,7 +163,6 @@ var Liner_Fields = []string{
 	"Heading",
 	"Level",
 	"Speed",
-	"TechName",
 	"State",
 	"TargetHeading",
 	"TargetLocationLat",
@@ -489,9 +483,6 @@ func (linerDB *LinerDB) CopyBasicFieldsFromLiner(liner *models.Liner) {
 	linerDB.Speed_Data.Float64 = liner.Speed
 	linerDB.Speed_Data.Valid = true
 
-	linerDB.TechName_Data.String = liner.TechName
-	linerDB.TechName_Data.Valid = true
-
 	linerDB.State_Data.String = liner.State.ToString()
 	linerDB.State_Data.Valid = true
 
@@ -539,9 +530,6 @@ func (linerDB *LinerDB) CopyBasicFieldsFromLinerWOP(liner *LinerWOP) {
 	linerDB.Speed_Data.Float64 = liner.Speed
 	linerDB.Speed_Data.Valid = true
 
-	linerDB.TechName_Data.String = liner.TechName
-	linerDB.TechName_Data.Valid = true
-
 	linerDB.State_Data.String = liner.State.ToString()
 	linerDB.State_Data.Valid = true
 
@@ -576,7 +564,6 @@ func (linerDB *LinerDB) CopyBasicFieldsToLiner(liner *models.Liner) {
 	liner.Heading = linerDB.Heading_Data.Float64
 	liner.Level = linerDB.Level_Data.Float64
 	liner.Speed = linerDB.Speed_Data.Float64
-	liner.TechName = linerDB.TechName_Data.String
 	liner.State.FromString(linerDB.State_Data.String)
 	liner.TargetHeading = linerDB.TargetHeading_Data.Float64
 	liner.TargetLocationLat = linerDB.TargetLocationLat_Data.Float64
@@ -597,7 +584,6 @@ func (linerDB *LinerDB) CopyBasicFieldsToLinerWOP(liner *LinerWOP) {
 	liner.Heading = linerDB.Heading_Data.Float64
 	liner.Level = linerDB.Level_Data.Float64
 	liner.Speed = linerDB.Speed_Data.Float64
-	liner.TechName = linerDB.TechName_Data.String
 	liner.State.FromString(linerDB.State_Data.String)
 	liner.TargetHeading = linerDB.TargetHeading_Data.Float64
 	liner.TargetLocationLat = linerDB.TargetLocationLat_Data.Float64

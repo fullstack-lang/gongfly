@@ -40,14 +40,8 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	OpsLines           map[*OpsLine]any
 	OpsLines_mapString map[string]*OpsLine
 
-	Orders           map[*Order]any
-	Orders_mapString map[string]*Order
-
 	Radars           map[*Radar]any
 	Radars_mapString map[string]*Radar
-
-	Reports           map[*Report]any
-	Reports_mapString map[string]*Report
 
 	Satellites           map[*Satellite]any
 	Satellites_mapString map[string]*Satellite
@@ -90,12 +84,8 @@ type BackRepoInterface interface {
 	CheckoutMessage(message *Message)
 	CommitOpsLine(opsline *OpsLine)
 	CheckoutOpsLine(opsline *OpsLine)
-	CommitOrder(order *Order)
-	CheckoutOrder(order *Order)
 	CommitRadar(radar *Radar)
 	CheckoutRadar(radar *Radar)
-	CommitReport(report *Report)
-	CheckoutReport(report *Report)
 	CommitSatellite(satellite *Satellite)
 	CheckoutSatellite(satellite *Satellite)
 	CommitScenario(scenario *Scenario)
@@ -118,14 +108,8 @@ var Stage StageStruct = StageStruct{ // insertion point for array initiatialisat
 	OpsLines:           make(map[*OpsLine]any),
 	OpsLines_mapString: make(map[string]*OpsLine),
 
-	Orders:           make(map[*Order]any),
-	Orders_mapString: make(map[string]*Order),
-
 	Radars:           make(map[*Radar]any),
 	Radars_mapString: make(map[string]*Radar),
-
-	Reports:           make(map[*Report]any),
-	Reports_mapString: make(map[string]*Report),
 
 	Satellites:           make(map[*Satellite]any),
 	Satellites_mapString: make(map[string]*Satellite),
@@ -147,9 +131,7 @@ func (stage *StageStruct) Commit() {
 	stage.Map_GongStructName_InstancesNb["Liner"] = len(stage.Liners)
 	stage.Map_GongStructName_InstancesNb["Message"] = len(stage.Messages)
 	stage.Map_GongStructName_InstancesNb["OpsLine"] = len(stage.OpsLines)
-	stage.Map_GongStructName_InstancesNb["Order"] = len(stage.Orders)
 	stage.Map_GongStructName_InstancesNb["Radar"] = len(stage.Radars)
-	stage.Map_GongStructName_InstancesNb["Report"] = len(stage.Reports)
 	stage.Map_GongStructName_InstancesNb["Satellite"] = len(stage.Satellites)
 	stage.Map_GongStructName_InstancesNb["Scenario"] = len(stage.Scenarios)
 
@@ -618,113 +600,6 @@ func (opsline *OpsLine) GetName() (res string) {
 	return opsline.Name
 }
 
-func (stage *StageStruct) getOrderOrderedStructWithNameField() []*Order {
-	// have alphabetical order generation
-	orderOrdered := []*Order{}
-	for order := range stage.Orders {
-		orderOrdered = append(orderOrdered, order)
-	}
-	sort.Slice(orderOrdered[:], func(i, j int) bool {
-		return orderOrdered[i].Name < orderOrdered[j].Name
-	})
-	return orderOrdered
-}
-
-// Stage puts order to the model stage
-func (order *Order) Stage() *Order {
-	Stage.Orders[order] = __member
-	Stage.Orders_mapString[order.Name] = order
-
-	return order
-}
-
-// Unstage removes order off the model stage
-func (order *Order) Unstage() *Order {
-	delete(Stage.Orders, order)
-	delete(Stage.Orders_mapString, order.Name)
-	return order
-}
-
-// commit order to the back repo (if it is already staged)
-func (order *Order) Commit() *Order {
-	if _, ok := Stage.Orders[order]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitOrder(order)
-		}
-	}
-	return order
-}
-
-// Checkout order to the back repo (if it is already staged)
-func (order *Order) Checkout() *Order {
-	if _, ok := Stage.Orders[order]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutOrder(order)
-		}
-	}
-	return order
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of order to the model stage
-func (order *Order) StageCopy() *Order {
-	_order := new(Order)
-	*_order = *order
-	_order.Stage()
-	return _order
-}
-
-// StageAndCommit appends order to the model stage and commit to the orm repo
-func (order *Order) StageAndCommit() *Order {
-	order.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMOrder(order)
-	}
-	return order
-}
-
-// DeleteStageAndCommit appends order to the model stage and commit to the orm repo
-func (order *Order) DeleteStageAndCommit() *Order {
-	order.Unstage()
-	DeleteORMOrder(order)
-	return order
-}
-
-// StageCopyAndCommit appends a copy of order to the model stage and commit to the orm repo
-func (order *Order) StageCopyAndCommit() *Order {
-	_order := new(Order)
-	*_order = *order
-	_order.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMOrder(order)
-	}
-	return _order
-}
-
-// CreateORMOrder enables dynamic staging of a Order instance
-func CreateORMOrder(order *Order) {
-	order.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMOrder(order)
-	}
-}
-
-// DeleteORMOrder enables dynamic staging of a Order instance
-func DeleteORMOrder(order *Order) {
-	order.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMOrder(order)
-	}
-}
-
-// for satisfaction of GongStruct interface
-func (order *Order) GetName() (res string) {
-	return order.Name
-}
-
 func (stage *StageStruct) getRadarOrderedStructWithNameField() []*Radar {
 	// have alphabetical order generation
 	radarOrdered := []*Radar{}
@@ -830,113 +705,6 @@ func DeleteORMRadar(radar *Radar) {
 // for satisfaction of GongStruct interface
 func (radar *Radar) GetName() (res string) {
 	return radar.Name
-}
-
-func (stage *StageStruct) getReportOrderedStructWithNameField() []*Report {
-	// have alphabetical order generation
-	reportOrdered := []*Report{}
-	for report := range stage.Reports {
-		reportOrdered = append(reportOrdered, report)
-	}
-	sort.Slice(reportOrdered[:], func(i, j int) bool {
-		return reportOrdered[i].Name < reportOrdered[j].Name
-	})
-	return reportOrdered
-}
-
-// Stage puts report to the model stage
-func (report *Report) Stage() *Report {
-	Stage.Reports[report] = __member
-	Stage.Reports_mapString[report.Name] = report
-
-	return report
-}
-
-// Unstage removes report off the model stage
-func (report *Report) Unstage() *Report {
-	delete(Stage.Reports, report)
-	delete(Stage.Reports_mapString, report.Name)
-	return report
-}
-
-// commit report to the back repo (if it is already staged)
-func (report *Report) Commit() *Report {
-	if _, ok := Stage.Reports[report]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitReport(report)
-		}
-	}
-	return report
-}
-
-// Checkout report to the back repo (if it is already staged)
-func (report *Report) Checkout() *Report {
-	if _, ok := Stage.Reports[report]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutReport(report)
-		}
-	}
-	return report
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of report to the model stage
-func (report *Report) StageCopy() *Report {
-	_report := new(Report)
-	*_report = *report
-	_report.Stage()
-	return _report
-}
-
-// StageAndCommit appends report to the model stage and commit to the orm repo
-func (report *Report) StageAndCommit() *Report {
-	report.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMReport(report)
-	}
-	return report
-}
-
-// DeleteStageAndCommit appends report to the model stage and commit to the orm repo
-func (report *Report) DeleteStageAndCommit() *Report {
-	report.Unstage()
-	DeleteORMReport(report)
-	return report
-}
-
-// StageCopyAndCommit appends a copy of report to the model stage and commit to the orm repo
-func (report *Report) StageCopyAndCommit() *Report {
-	_report := new(Report)
-	*_report = *report
-	_report.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMReport(report)
-	}
-	return _report
-}
-
-// CreateORMReport enables dynamic staging of a Report instance
-func CreateORMReport(report *Report) {
-	report.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMReport(report)
-	}
-}
-
-// DeleteORMReport enables dynamic staging of a Report instance
-func DeleteORMReport(report *Report) {
-	report.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMReport(report)
-	}
-}
-
-// for satisfaction of GongStruct interface
-func (report *Report) GetName() (res string) {
-	return report.Name
 }
 
 func (stage *StageStruct) getSatelliteOrderedStructWithNameField() []*Satellite {
@@ -1159,9 +927,7 @@ type AllModelsStructCreateInterface interface { // insertion point for Callbacks
 	CreateORMLiner(Liner *Liner)
 	CreateORMMessage(Message *Message)
 	CreateORMOpsLine(OpsLine *OpsLine)
-	CreateORMOrder(Order *Order)
 	CreateORMRadar(Radar *Radar)
-	CreateORMReport(Report *Report)
 	CreateORMSatellite(Satellite *Satellite)
 	CreateORMScenario(Scenario *Scenario)
 }
@@ -1171,9 +937,7 @@ type AllModelsStructDeleteInterface interface { // insertion point for Callbacks
 	DeleteORMLiner(Liner *Liner)
 	DeleteORMMessage(Message *Message)
 	DeleteORMOpsLine(OpsLine *OpsLine)
-	DeleteORMOrder(Order *Order)
 	DeleteORMRadar(Radar *Radar)
-	DeleteORMReport(Report *Report)
 	DeleteORMSatellite(Satellite *Satellite)
 	DeleteORMScenario(Scenario *Scenario)
 }
@@ -1191,14 +955,8 @@ func (stage *StageStruct) Reset() { // insertion point for array reset
 	stage.OpsLines = make(map[*OpsLine]any)
 	stage.OpsLines_mapString = make(map[string]*OpsLine)
 
-	stage.Orders = make(map[*Order]any)
-	stage.Orders_mapString = make(map[string]*Order)
-
 	stage.Radars = make(map[*Radar]any)
 	stage.Radars_mapString = make(map[string]*Radar)
-
-	stage.Reports = make(map[*Report]any)
-	stage.Reports_mapString = make(map[string]*Report)
 
 	stage.Satellites = make(map[*Satellite]any)
 	stage.Satellites_mapString = make(map[string]*Satellite)
@@ -1221,14 +979,8 @@ func (stage *StageStruct) Nil() { // insertion point for array nil
 	stage.OpsLines = nil
 	stage.OpsLines_mapString = nil
 
-	stage.Orders = nil
-	stage.Orders_mapString = nil
-
 	stage.Radars = nil
 	stage.Radars_mapString = nil
-
-	stage.Reports = nil
-	stage.Reports_mapString = nil
 
 	stage.Satellites = nil
 	stage.Satellites_mapString = nil
@@ -1350,12 +1102,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "TechName")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(civilianairport.TechName))
-		initializerStatements += setValueField
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(civilianairport.Name))
 		initializerStatements += setValueField
@@ -1420,12 +1166,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Speed")
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%f", liner.Speed))
-		initializerStatements += setValueField
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "TechName")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(liner.TechName))
 		initializerStatements += setValueField
 
 		if liner.State != "" {
@@ -1532,12 +1272,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Speed")
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%f", message.Speed))
-		initializerStatements += setValueField
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "TechName")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(message.TechName))
 		initializerStatements += setValueField
 
 		if message.State != "" {
@@ -1670,12 +1404,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(opsline.TransmissionMessageBackward))
 		initializerStatements += setValueField
 
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "TechName")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(opsline.TechName))
-		initializerStatements += setValueField
-
 		if opsline.State != "" {
 			setValueField = StringEnumInitStatement
 			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1688,76 +1416,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(opsline.Name))
-		initializerStatements += setValueField
-
-	}
-
-	map_Order_Identifiers := make(map[*Order]string)
-	_ = map_Order_Identifiers
-
-	orderOrdered := []*Order{}
-	for order := range stage.Orders {
-		orderOrdered = append(orderOrdered, order)
-	}
-	sort.Slice(orderOrdered[:], func(i, j int) bool {
-		return orderOrdered[i].Name < orderOrdered[j].Name
-	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of Order"
-	for idx, order := range orderOrdered {
-
-		id = generatesIdentifier("Order", idx, order.Name)
-		map_Order_Identifiers[order] = id
-
-		decl = IdentifiersDecls
-		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
-		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "Order")
-		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", order.Name)
-		identifiersDecl += decl
-
-		initializerStatements += fmt.Sprintf("\n\n	// Order %s values setup", order.Name)
-		// Initialisation of values
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(order.Name))
-		initializerStatements += setValueField
-
-		setValueField = NumberInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Duration")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", order.Duration))
-		initializerStatements += setValueField
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "OrderMessage")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(order.OrderMessage))
-		initializerStatements += setValueField
-
-		setValueField = NumberInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Number")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", order.Number))
-		initializerStatements += setValueField
-
-		if order.Type != "" {
-			setValueField = StringEnumInitStatement
-			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Type")
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+order.Type.ToCodeString())
-			initializerStatements += setValueField
-		}
-
-		setValueField = NumberInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "TargetLat")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%f", order.TargetLat))
-		initializerStatements += setValueField
-
-		setValueField = NumberInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "TargetLng")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%f", order.TargetLng))
 		initializerStatements += setValueField
 
 	}
@@ -1786,12 +1444,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 
 		initializerStatements += fmt.Sprintf("\n\n	// Radar %s values setup", radar.Name)
 		// Initialisation of values
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "TechName")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(radar.TechName))
-		initializerStatements += setValueField
-
 		if radar.State != "" {
 			setValueField = StringEnumInitStatement
 			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1823,64 +1475,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Range")
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%f", radar.Range))
 		initializerStatements += setValueField
-
-	}
-
-	map_Report_Identifiers := make(map[*Report]string)
-	_ = map_Report_Identifiers
-
-	reportOrdered := []*Report{}
-	for report := range stage.Reports {
-		reportOrdered = append(reportOrdered, report)
-	}
-	sort.Slice(reportOrdered[:], func(i, j int) bool {
-		return reportOrdered[i].Name < reportOrdered[j].Name
-	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of Report"
-	for idx, report := range reportOrdered {
-
-		id = generatesIdentifier("Report", idx, report.Name)
-		map_Report_Identifiers[report] = id
-
-		decl = IdentifiersDecls
-		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
-		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "Report")
-		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", report.Name)
-		identifiersDecl += decl
-
-		initializerStatements += fmt.Sprintf("\n\n	// Report %s values setup", report.Name)
-		// Initialisation of values
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(report.Name))
-		initializerStatements += setValueField
-
-		setValueField = NumberInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Duration")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", report.Duration))
-		initializerStatements += setValueField
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "ReportMessage")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(report.ReportMessage))
-		initializerStatements += setValueField
-
-		setValueField = NumberInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Number")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", report.Number))
-		initializerStatements += setValueField
-
-		if report.Type != "" {
-			setValueField = StringEnumInitStatement
-			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Type")
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+report.Type.ToCodeString())
-			initializerStatements += setValueField
-		}
 
 	}
 
@@ -1954,12 +1548,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Speed")
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%f", satellite.Speed))
-		initializerStatements += setValueField
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "TechName")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(satellite.TechName))
 		initializerStatements += setValueField
 
 		setValueField = NumberInitStatement
@@ -2089,24 +1677,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 
 	}
 
-	for idx, order := range orderOrdered {
-		var setPointerField string
-		_ = setPointerField
-
-		id = generatesIdentifier("Order", idx, order.Name)
-		map_Order_Identifiers[order] = id
-
-		// Initialisation of values
-		if order.Target != nil {
-			setPointerField = PointerFieldInitStatement
-			setPointerField = strings.ReplaceAll(setPointerField, "{{Identifier}}", id)
-			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldName}}", "Target")
-			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldNameValue}}", map_Liner_Identifiers[order.Target])
-			pointersInitializesStatements += setPointerField
-		}
-
-	}
-
 	for idx, radar := range radarOrdered {
 		var setPointerField string
 		_ = setPointerField
@@ -2115,32 +1685,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		map_Radar_Identifiers[radar] = id
 
 		// Initialisation of values
-	}
-
-	for idx, report := range reportOrdered {
-		var setPointerField string
-		_ = setPointerField
-
-		id = generatesIdentifier("Report", idx, report.Name)
-		map_Report_Identifiers[report] = id
-
-		// Initialisation of values
-		if report.About != nil {
-			setPointerField = PointerFieldInitStatement
-			setPointerField = strings.ReplaceAll(setPointerField, "{{Identifier}}", id)
-			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldName}}", "About")
-			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldNameValue}}", map_Liner_Identifiers[report.About])
-			pointersInitializesStatements += setPointerField
-		}
-
-		if report.OpsLine != nil {
-			setPointerField = PointerFieldInitStatement
-			setPointerField = strings.ReplaceAll(setPointerField, "{{Identifier}}", id)
-			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldName}}", "OpsLine")
-			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldNameValue}}", map_OpsLine_Identifiers[report.OpsLine])
-			pointersInitializesStatements += setPointerField
-		}
-
 	}
 
 	for idx, satellite := range satelliteOrdered {
@@ -2236,71 +1780,7 @@ func (stageStruct *StageStruct) CreateReverseMap_OpsLine_Scenario() (res map[*Sc
 	return
 }
 
-// generate function for reverse association maps of Order
-func (stageStruct *StageStruct) CreateReverseMap_Order_Target() (res map[*Liner][]*Order) {
-	res = make(map[*Liner][]*Order)
-
-	for order := range stageStruct.Orders {
-		if order.Target != nil {
-			liner_ := order.Target
-			var orders []*Order
-			_, ok := res[liner_]
-			if ok {
-				orders = res[liner_]
-			} else {
-				orders = make([]*Order, 0)
-			}
-			orders = append(orders, order)
-			res[liner_] = orders
-		}
-	}
-
-	return
-}
-
 // generate function for reverse association maps of Radar
-
-// generate function for reverse association maps of Report
-func (stageStruct *StageStruct) CreateReverseMap_Report_About() (res map[*Liner][]*Report) {
-	res = make(map[*Liner][]*Report)
-
-	for report := range stageStruct.Reports {
-		if report.About != nil {
-			liner_ := report.About
-			var reports []*Report
-			_, ok := res[liner_]
-			if ok {
-				reports = res[liner_]
-			} else {
-				reports = make([]*Report, 0)
-			}
-			reports = append(reports, report)
-			res[liner_] = reports
-		}
-	}
-
-	return
-}
-func (stageStruct *StageStruct) CreateReverseMap_Report_OpsLine() (res map[*OpsLine][]*Report) {
-	res = make(map[*OpsLine][]*Report)
-
-	for report := range stageStruct.Reports {
-		if report.OpsLine != nil {
-			opsline_ := report.OpsLine
-			var reports []*Report
-			_, ok := res[opsline_]
-			if ok {
-				reports = res[opsline_]
-			} else {
-				reports = make([]*Report, 0)
-			}
-			reports = append(reports, report)
-			res[opsline_] = reports
-		}
-	}
-
-	return
-}
 
 // generate function for reverse association maps of Satellite
 
@@ -2312,7 +1792,7 @@ func (stageStruct *StageStruct) CreateReverseMap_Report_OpsLine() (res map[*OpsL
 // - full refactoring of Gongstruct identifiers / fields
 type Gongstruct interface {
 	// insertion point for generic types
-	CivilianAirport | Liner | Message | OpsLine | Order | Radar | Report | Satellite | Scenario
+	CivilianAirport | Liner | Message | OpsLine | Radar | Satellite | Scenario
 }
 
 type GongstructSet interface {
@@ -2322,9 +1802,7 @@ type GongstructSet interface {
 		map[*Liner]any |
 		map[*Message]any |
 		map[*OpsLine]any |
-		map[*Order]any |
 		map[*Radar]any |
-		map[*Report]any |
 		map[*Satellite]any |
 		map[*Scenario]any |
 		map[*any]any // because go does not support an extra "|" at the end of type specifications
@@ -2337,9 +1815,7 @@ type GongstructMapString interface {
 		map[string]*Liner |
 		map[string]*Message |
 		map[string]*OpsLine |
-		map[string]*Order |
 		map[string]*Radar |
-		map[string]*Report |
 		map[string]*Satellite |
 		map[string]*Scenario |
 		map[*any]any // because go does not support an extra "|" at the end of type specifications
@@ -2360,12 +1836,8 @@ func GongGetSet[Type GongstructSet]() *Type {
 		return any(&Stage.Messages).(*Type)
 	case map[*OpsLine]any:
 		return any(&Stage.OpsLines).(*Type)
-	case map[*Order]any:
-		return any(&Stage.Orders).(*Type)
 	case map[*Radar]any:
 		return any(&Stage.Radars).(*Type)
-	case map[*Report]any:
-		return any(&Stage.Reports).(*Type)
 	case map[*Satellite]any:
 		return any(&Stage.Satellites).(*Type)
 	case map[*Scenario]any:
@@ -2390,12 +1862,8 @@ func GongGetMap[Type GongstructMapString]() *Type {
 		return any(&Stage.Messages_mapString).(*Type)
 	case map[string]*OpsLine:
 		return any(&Stage.OpsLines_mapString).(*Type)
-	case map[string]*Order:
-		return any(&Stage.Orders_mapString).(*Type)
 	case map[string]*Radar:
 		return any(&Stage.Radars_mapString).(*Type)
-	case map[string]*Report:
-		return any(&Stage.Reports_mapString).(*Type)
 	case map[string]*Satellite:
 		return any(&Stage.Satellites_mapString).(*Type)
 	case map[string]*Scenario:
@@ -2420,12 +1888,8 @@ func GetGongstructInstancesSet[Type Gongstruct]() *map[*Type]any {
 		return any(&Stage.Messages).(*map[*Type]any)
 	case OpsLine:
 		return any(&Stage.OpsLines).(*map[*Type]any)
-	case Order:
-		return any(&Stage.Orders).(*map[*Type]any)
 	case Radar:
 		return any(&Stage.Radars).(*map[*Type]any)
-	case Report:
-		return any(&Stage.Reports).(*map[*Type]any)
 	case Satellite:
 		return any(&Stage.Satellites).(*map[*Type]any)
 	case Scenario:
@@ -2450,12 +1914,8 @@ func GetGongstructInstancesMap[Type Gongstruct]() *map[string]*Type {
 		return any(&Stage.Messages_mapString).(*map[string]*Type)
 	case OpsLine:
 		return any(&Stage.OpsLines_mapString).(*map[string]*Type)
-	case Order:
-		return any(&Stage.Orders_mapString).(*map[string]*Type)
 	case Radar:
 		return any(&Stage.Radars_mapString).(*map[string]*Type)
-	case Report:
-		return any(&Stage.Reports_mapString).(*map[string]*Type)
 	case Satellite:
 		return any(&Stage.Satellites_mapString).(*map[string]*Type)
 	case Scenario:
@@ -2494,23 +1954,9 @@ func GetAssociationName[Type Gongstruct]() *Type {
 			// field is initialized with an instance of Scenario with the name of the field
 			Scenario: &Scenario{Name: "Scenario"},
 		}).(*Type)
-	case Order:
-		return any(&Order{
-			// Initialisation of associations
-			// field is initialized with an instance of Liner with the name of the field
-			Target: &Liner{Name: "Target"},
-		}).(*Type)
 	case Radar:
 		return any(&Radar{
 			// Initialisation of associations
-		}).(*Type)
-	case Report:
-		return any(&Report{
-			// Initialisation of associations
-			// field is initialized with an instance of Liner with the name of the field
-			About: &Liner{Name: "About"},
-			// field is initialized with an instance of OpsLine with the name of the field
-			OpsLine: &OpsLine{Name: "OpsLine"},
 		}).(*Type)
 	case Satellite:
 		return any(&Satellite{
@@ -2591,71 +2037,10 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*S
 			}
 			return any(res).(map[*End][]*Start)
 		}
-	// reverse maps of direct associations of Order
-	case Order:
-		switch fieldname {
-		// insertion point for per direct association field
-		case "Target":
-			res := make(map[*Liner][]*Order)
-			for order := range Stage.Orders {
-				if order.Target != nil {
-					liner_ := order.Target
-					var orders []*Order
-					_, ok := res[liner_]
-					if ok {
-						orders = res[liner_]
-					} else {
-						orders = make([]*Order, 0)
-					}
-					orders = append(orders, order)
-					res[liner_] = orders
-				}
-			}
-			return any(res).(map[*End][]*Start)
-		}
 	// reverse maps of direct associations of Radar
 	case Radar:
 		switch fieldname {
 		// insertion point for per direct association field
-		}
-	// reverse maps of direct associations of Report
-	case Report:
-		switch fieldname {
-		// insertion point for per direct association field
-		case "About":
-			res := make(map[*Liner][]*Report)
-			for report := range Stage.Reports {
-				if report.About != nil {
-					liner_ := report.About
-					var reports []*Report
-					_, ok := res[liner_]
-					if ok {
-						reports = res[liner_]
-					} else {
-						reports = make([]*Report, 0)
-					}
-					reports = append(reports, report)
-					res[liner_] = reports
-				}
-			}
-			return any(res).(map[*End][]*Start)
-		case "OpsLine":
-			res := make(map[*OpsLine][]*Report)
-			for report := range Stage.Reports {
-				if report.OpsLine != nil {
-					opsline_ := report.OpsLine
-					var reports []*Report
-					_, ok := res[opsline_]
-					if ok {
-						reports = res[opsline_]
-					} else {
-						reports = make([]*Report, 0)
-					}
-					reports = append(reports, report)
-					res[opsline_] = reports
-				}
-			}
-			return any(res).(map[*End][]*Start)
 		}
 	// reverse maps of direct associations of Satellite
 	case Satellite:
@@ -2702,18 +2087,8 @@ func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string) map[*
 		switch fieldname {
 		// insertion point for per direct association field
 		}
-	// reverse maps of direct associations of Order
-	case Order:
-		switch fieldname {
-		// insertion point for per direct association field
-		}
 	// reverse maps of direct associations of Radar
 	case Radar:
-		switch fieldname {
-		// insertion point for per direct association field
-		}
-	// reverse maps of direct associations of Report
-	case Report:
 		switch fieldname {
 		// insertion point for per direct association field
 		}
@@ -2747,12 +2122,8 @@ func GetGongstructName[Type Gongstruct]() (res string) {
 		res = "Message"
 	case OpsLine:
 		res = "OpsLine"
-	case Order:
-		res = "Order"
 	case Radar:
 		res = "Radar"
-	case Report:
-		res = "Report"
 	case Satellite:
 		res = "Satellite"
 	case Scenario:
@@ -2769,21 +2140,17 @@ func GetFields[Type Gongstruct]() (res []string) {
 	switch any(ret).(type) {
 	// insertion point for generic get gongstruct name
 	case CivilianAirport:
-		res = []string{"Lat", "Lng", "TechName", "Name"}
+		res = []string{"Lat", "Lng", "Name"}
 	case Liner:
-		res = []string{"Name", "Lat", "Lng", "Heading", "Level", "Speed", "TechName", "State", "TargetHeading", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "MaxRotationalSpeed", "VerticalSpeed", "Timestampstring", "ReporingLine"}
+		res = []string{"Name", "Lat", "Lng", "Heading", "Level", "Speed", "State", "TargetHeading", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "MaxRotationalSpeed", "VerticalSpeed", "Timestampstring", "ReporingLine"}
 	case Message:
-		res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "TechName", "State", "Name", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "Timestampstring", "DurationSinceSimulationStart", "Timestampstartstring", "Source", "Destination", "Content", "About_string", "Display"}
+		res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "State", "Name", "TargetLocationLat", "TargetLocationLng", "DistanceToTarget", "Timestampstring", "DurationSinceSimulationStart", "Timestampstartstring", "Source", "Destination", "Content", "About_string", "Display"}
 	case OpsLine:
-		res = []string{"IsTransmitting", "TransmissionMessage", "IsTransmittingBackward", "TransmissionMessageBackward", "TechName", "Scenario", "State", "Name"}
-	case Order:
-		res = []string{"Name", "Duration", "OrderMessage", "Number", "Type", "Target", "TargetLat", "TargetLng"}
+		res = []string{"IsTransmitting", "TransmissionMessage", "IsTransmittingBackward", "TransmissionMessageBackward", "Scenario", "State", "Name"}
 	case Radar:
-		res = []string{"TechName", "State", "Name", "Lat", "Lng", "Range"}
-	case Report:
-		res = []string{"Name", "Duration", "ReportMessage", "Number", "Type", "About", "OpsLine"}
+		res = []string{"State", "Name", "Lat", "Lng", "Range"}
 	case Satellite:
-		res = []string{"Name", "Line1", "Line2", "Lat", "Lng", "Heading", "Level", "Speed", "TechName", "VerticalSpeed", "Timestampstring"}
+		res = []string{"Name", "Line1", "Line2", "Lat", "Lng", "Heading", "Level", "Speed", "VerticalSpeed", "Timestampstring"}
 	case Scenario:
 		res = []string{"Name", "Lat", "Lng", "ZoomLevel", "MessageVisualSpeed"}
 	}
@@ -2802,8 +2169,6 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = fmt.Sprintf("%f", any(instance).(CivilianAirport).Lat)
 		case "Lng":
 			res = fmt.Sprintf("%f", any(instance).(CivilianAirport).Lng)
-		case "TechName":
-			res = any(instance).(CivilianAirport).TechName
 		case "Name":
 			res = any(instance).(CivilianAirport).Name
 		}
@@ -2822,8 +2187,6 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = fmt.Sprintf("%f", any(instance).(Liner).Level)
 		case "Speed":
 			res = fmt.Sprintf("%f", any(instance).(Liner).Speed)
-		case "TechName":
-			res = any(instance).(Liner).TechName
 		case "State":
 			enum := any(instance).(Liner).State
 			res = enum.ToCodeString()
@@ -2859,8 +2222,6 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = fmt.Sprintf("%f", any(instance).(Message).Level)
 		case "Speed":
 			res = fmt.Sprintf("%f", any(instance).(Message).Speed)
-		case "TechName":
-			res = any(instance).(Message).TechName
 		case "State":
 			enum := any(instance).(Message).State
 			res = enum.ToCodeString()
@@ -2900,8 +2261,6 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = fmt.Sprintf("%t", any(instance).(OpsLine).IsTransmittingBackward)
 		case "TransmissionMessageBackward":
 			res = any(instance).(OpsLine).TransmissionMessageBackward
-		case "TechName":
-			res = any(instance).(OpsLine).TechName
 		case "Scenario":
 			if any(instance).(OpsLine).Scenario != nil {
 				res = any(instance).(OpsLine).Scenario.Name
@@ -2912,34 +2271,9 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 		case "Name":
 			res = any(instance).(OpsLine).Name
 		}
-	case Order:
-		switch fieldName {
-		// string value of fields
-		case "Name":
-			res = any(instance).(Order).Name
-		case "Duration":
-			res = fmt.Sprintf("%d", any(instance).(Order).Duration)
-		case "OrderMessage":
-			res = any(instance).(Order).OrderMessage
-		case "Number":
-			res = fmt.Sprintf("%d", any(instance).(Order).Number)
-		case "Type":
-			enum := any(instance).(Order).Type
-			res = enum.ToCodeString()
-		case "Target":
-			if any(instance).(Order).Target != nil {
-				res = any(instance).(Order).Target.Name
-			}
-		case "TargetLat":
-			res = fmt.Sprintf("%f", any(instance).(Order).TargetLat)
-		case "TargetLng":
-			res = fmt.Sprintf("%f", any(instance).(Order).TargetLng)
-		}
 	case Radar:
 		switch fieldName {
 		// string value of fields
-		case "TechName":
-			res = any(instance).(Radar).TechName
 		case "State":
 			enum := any(instance).(Radar).State
 			res = enum.ToCodeString()
@@ -2951,29 +2285,6 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = fmt.Sprintf("%f", any(instance).(Radar).Lng)
 		case "Range":
 			res = fmt.Sprintf("%f", any(instance).(Radar).Range)
-		}
-	case Report:
-		switch fieldName {
-		// string value of fields
-		case "Name":
-			res = any(instance).(Report).Name
-		case "Duration":
-			res = fmt.Sprintf("%d", any(instance).(Report).Duration)
-		case "ReportMessage":
-			res = any(instance).(Report).ReportMessage
-		case "Number":
-			res = fmt.Sprintf("%d", any(instance).(Report).Number)
-		case "Type":
-			enum := any(instance).(Report).Type
-			res = enum.ToCodeString()
-		case "About":
-			if any(instance).(Report).About != nil {
-				res = any(instance).(Report).About.Name
-			}
-		case "OpsLine":
-			if any(instance).(Report).OpsLine != nil {
-				res = any(instance).(Report).OpsLine.Name
-			}
 		}
 	case Satellite:
 		switch fieldName {
@@ -2994,8 +2305,6 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = fmt.Sprintf("%f", any(instance).(Satellite).Level)
 		case "Speed":
 			res = fmt.Sprintf("%f", any(instance).(Satellite).Speed)
-		case "TechName":
-			res = any(instance).(Satellite).TechName
 		case "VerticalSpeed":
 			res = fmt.Sprintf("%f", any(instance).(Satellite).VerticalSpeed)
 		case "Timestampstring":
@@ -3030,12 +2339,12 @@ func (conceptenum ConceptEnum) ToString() (res string) {
 	// insertion code per enum code
 	case Aircraft_:
 		res = "Aircrafts"
-	case Center_:
-		res = "Centers"
-	case Network_:
-		res = "Networks"
 	case Satellite_:
 		res = "Satellites"
+	case Network_:
+		res = "Networks"
+	case Center_:
+		res = "Centers"
 	case System_:
 		res = "Systems"
 	}
@@ -3048,12 +2357,12 @@ func (conceptenum *ConceptEnum) FromString(input string) {
 	// insertion code per enum code
 	case "Aircrafts":
 		*conceptenum = Aircraft_
-	case "Centers":
-		*conceptenum = Center_
-	case "Networks":
-		*conceptenum = Network_
 	case "Satellites":
 		*conceptenum = Satellite_
+	case "Networks":
+		*conceptenum = Network_
+	case "Centers":
+		*conceptenum = Center_
 	case "Systems":
 		*conceptenum = System_
 	}
@@ -3065,12 +2374,12 @@ func (conceptenum *ConceptEnum) ToCodeString() (res string) {
 	// insertion code per enum code
 	case Aircraft_:
 		res = "Aircraft_"
-	case Center_:
-		res = "Center_"
-	case Network_:
-		res = "Network_"
 	case Satellite_:
 		res = "Satellite_"
+	case Network_:
+		res = "Network_"
+	case Center_:
+		res = "Center_"
 	case System_:
 		res = "System_"
 	}
@@ -3124,10 +2433,10 @@ func (messagestateenum MessageStateEnum) ToString() (res string) {
 	// migration of former implementation of enum
 	switch messagestateenum {
 	// insertion code per enum code
-	case MESSAGE_ARRIVED:
-		res = "MESSAGE_ARRIVED"
 	case MESSAGE_EN_ROUTE:
 		res = "MESSAGE_EN_ROUTE"
+	case MESSAGE_ARRIVED:
+		res = "MESSAGE_ARRIVED"
 	}
 	return
 }
@@ -3136,10 +2445,10 @@ func (messagestateenum *MessageStateEnum) FromString(input string) {
 
 	switch input {
 	// insertion code per enum code
-	case "MESSAGE_ARRIVED":
-		*messagestateenum = MESSAGE_ARRIVED
 	case "MESSAGE_EN_ROUTE":
 		*messagestateenum = MESSAGE_EN_ROUTE
+	case "MESSAGE_ARRIVED":
+		*messagestateenum = MESSAGE_ARRIVED
 	}
 }
 
@@ -3147,10 +2456,10 @@ func (messagestateenum *MessageStateEnum) ToCodeString() (res string) {
 
 	switch *messagestateenum {
 	// insertion code per enum code
-	case MESSAGE_ARRIVED:
-		res = "MESSAGE_ARRIVED"
 	case MESSAGE_EN_ROUTE:
 		res = "MESSAGE_EN_ROUTE"
+	case MESSAGE_ARRIVED:
+		res = "MESSAGE_ARRIVED"
 	}
 	return
 }
@@ -3163,10 +2472,10 @@ func (operationallinestateenum OperationalLineStateEnum) ToString() (res string)
 	// migration of former implementation of enum
 	switch operationallinestateenum {
 	// insertion code per enum code
-	case OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING:
-		res = "OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING"
 	case OPS_COM_LINK_OPERATIONAL_LINE_WORKING:
 		res = "OPS_COM_LINK_OPERATIONAL_LINE_WORKING"
+	case OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING:
+		res = "OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING"
 	}
 	return
 }
@@ -3175,10 +2484,10 @@ func (operationallinestateenum *OperationalLineStateEnum) FromString(input strin
 
 	switch input {
 	// insertion code per enum code
-	case "OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING":
-		*operationallinestateenum = OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING
 	case "OPS_COM_LINK_OPERATIONAL_LINE_WORKING":
 		*operationallinestateenum = OPS_COM_LINK_OPERATIONAL_LINE_WORKING
+	case "OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING":
+		*operationallinestateenum = OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING
 	}
 }
 
@@ -3186,10 +2495,10 @@ func (operationallinestateenum *OperationalLineStateEnum) ToCodeString() (res st
 
 	switch *operationallinestateenum {
 	// insertion code per enum code
-	case OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING:
-		res = "OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING"
 	case OPS_COM_LINK_OPERATIONAL_LINE_WORKING:
 		res = "OPS_COM_LINK_OPERATIONAL_LINE_WORKING"
+	case OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING:
+		res = "OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING"
 	}
 	return
 }

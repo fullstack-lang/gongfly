@@ -92,9 +92,6 @@ export class SatellitesTableComponent implements OnInit {
         case 'Speed':
           return satelliteDB.Speed;
 
-        case 'TechName':
-          return satelliteDB.TechName;
-
         case 'VerticalSpeed':
           return satelliteDB.VerticalSpeed;
 
@@ -123,7 +120,6 @@ export class SatellitesTableComponent implements OnInit {
       mergedContent += satelliteDB.Heading.toString()
       mergedContent += satelliteDB.Level.toString()
       mergedContent += satelliteDB.Speed.toString()
-      mergedContent += satelliteDB.TechName.toLowerCase()
       mergedContent += satelliteDB.VerticalSpeed.toString()
       mergedContent += satelliteDB.Timestampstring.toLowerCase()
 
@@ -184,7 +180,6 @@ export class SatellitesTableComponent implements OnInit {
         "Heading",
         "Level",
         "Speed",
-        "TechName",
         "VerticalSpeed",
         "Timestampstring",
       ]
@@ -198,7 +193,6 @@ export class SatellitesTableComponent implements OnInit {
         "Heading",
         "Level",
         "Speed",
-        "TechName",
         "VerticalSpeed",
         "Timestampstring",
       ]

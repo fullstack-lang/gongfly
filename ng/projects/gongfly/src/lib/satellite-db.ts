@@ -17,7 +17,6 @@ export class SatelliteDB {
 	Heading: number = 0
 	Level: number = 0
 	Speed: number = 0
-	TechName: string = ""
 	VerticalSpeed: number = 0
 	Timestampstring: string = ""
 

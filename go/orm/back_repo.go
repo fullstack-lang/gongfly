@@ -27,11 +27,7 @@ type BackRepoStruct struct {
 
 	BackRepoOpsLine BackRepoOpsLineStruct
 
-	BackRepoOrder BackRepoOrderStruct
-
 	BackRepoRadar BackRepoRadarStruct
-
-	BackRepoReport BackRepoReportStruct
 
 	BackRepoSatellite BackRepoSatelliteStruct
 
@@ -79,9 +75,7 @@ func (backRepo *BackRepoStruct) init(db *gorm.DB) {
 	backRepo.BackRepoLiner.Init(db)
 	backRepo.BackRepoMessage.Init(db)
 	backRepo.BackRepoOpsLine.Init(db)
-	backRepo.BackRepoOrder.Init(db)
 	backRepo.BackRepoRadar.Init(db)
-	backRepo.BackRepoReport.Init(db)
 	backRepo.BackRepoSatellite.Init(db)
 	backRepo.BackRepoScenario.Init(db)
 
@@ -95,9 +89,7 @@ func (backRepo *BackRepoStruct) Commit(stage *models.StageStruct) {
 	backRepo.BackRepoLiner.CommitPhaseOne(stage)
 	backRepo.BackRepoMessage.CommitPhaseOne(stage)
 	backRepo.BackRepoOpsLine.CommitPhaseOne(stage)
-	backRepo.BackRepoOrder.CommitPhaseOne(stage)
 	backRepo.BackRepoRadar.CommitPhaseOne(stage)
-	backRepo.BackRepoReport.CommitPhaseOne(stage)
 	backRepo.BackRepoSatellite.CommitPhaseOne(stage)
 	backRepo.BackRepoScenario.CommitPhaseOne(stage)
 
@@ -106,9 +98,7 @@ func (backRepo *BackRepoStruct) Commit(stage *models.StageStruct) {
 	backRepo.BackRepoLiner.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoMessage.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoOpsLine.CommitPhaseTwo(backRepo)
-	backRepo.BackRepoOrder.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoRadar.CommitPhaseTwo(backRepo)
-	backRepo.BackRepoReport.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoSatellite.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoScenario.CommitPhaseTwo(backRepo)
 
@@ -122,9 +112,7 @@ func (backRepo *BackRepoStruct) Checkout(stage *models.StageStruct) {
 	backRepo.BackRepoLiner.CheckoutPhaseOne()
 	backRepo.BackRepoMessage.CheckoutPhaseOne()
 	backRepo.BackRepoOpsLine.CheckoutPhaseOne()
-	backRepo.BackRepoOrder.CheckoutPhaseOne()
 	backRepo.BackRepoRadar.CheckoutPhaseOne()
-	backRepo.BackRepoReport.CheckoutPhaseOne()
 	backRepo.BackRepoSatellite.CheckoutPhaseOne()
 	backRepo.BackRepoScenario.CheckoutPhaseOne()
 
@@ -133,9 +121,7 @@ func (backRepo *BackRepoStruct) Checkout(stage *models.StageStruct) {
 	backRepo.BackRepoLiner.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoMessage.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoOpsLine.CheckoutPhaseTwo(backRepo)
-	backRepo.BackRepoOrder.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoRadar.CheckoutPhaseTwo(backRepo)
-	backRepo.BackRepoReport.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoSatellite.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoScenario.CheckoutPhaseTwo(backRepo)
 }
@@ -159,9 +145,7 @@ func (backRepo *BackRepoStruct) Backup(stage *models.StageStruct, dirPath string
 	backRepo.BackRepoLiner.Backup(dirPath)
 	backRepo.BackRepoMessage.Backup(dirPath)
 	backRepo.BackRepoOpsLine.Backup(dirPath)
-	backRepo.BackRepoOrder.Backup(dirPath)
 	backRepo.BackRepoRadar.Backup(dirPath)
-	backRepo.BackRepoReport.Backup(dirPath)
 	backRepo.BackRepoSatellite.Backup(dirPath)
 	backRepo.BackRepoScenario.Backup(dirPath)
 }
@@ -178,9 +162,7 @@ func (backRepo *BackRepoStruct) BackupXL(stage *models.StageStruct, dirPath stri
 	backRepo.BackRepoLiner.BackupXL(file)
 	backRepo.BackRepoMessage.BackupXL(file)
 	backRepo.BackRepoOpsLine.BackupXL(file)
-	backRepo.BackRepoOrder.BackupXL(file)
 	backRepo.BackRepoRadar.BackupXL(file)
-	backRepo.BackRepoReport.BackupXL(file)
 	backRepo.BackRepoSatellite.BackupXL(file)
 	backRepo.BackRepoScenario.BackupXL(file)
 
@@ -211,9 +193,7 @@ func (backRepo *BackRepoStruct) Restore(stage *models.StageStruct, dirPath strin
 	backRepo.BackRepoLiner.RestorePhaseOne(dirPath)
 	backRepo.BackRepoMessage.RestorePhaseOne(dirPath)
 	backRepo.BackRepoOpsLine.RestorePhaseOne(dirPath)
-	backRepo.BackRepoOrder.RestorePhaseOne(dirPath)
 	backRepo.BackRepoRadar.RestorePhaseOne(dirPath)
-	backRepo.BackRepoReport.RestorePhaseOne(dirPath)
 	backRepo.BackRepoSatellite.RestorePhaseOne(dirPath)
 	backRepo.BackRepoScenario.RestorePhaseOne(dirPath)
 
@@ -226,9 +206,7 @@ func (backRepo *BackRepoStruct) Restore(stage *models.StageStruct, dirPath strin
 	backRepo.BackRepoLiner.RestorePhaseTwo()
 	backRepo.BackRepoMessage.RestorePhaseTwo()
 	backRepo.BackRepoOpsLine.RestorePhaseTwo()
-	backRepo.BackRepoOrder.RestorePhaseTwo()
 	backRepo.BackRepoRadar.RestorePhaseTwo()
-	backRepo.BackRepoReport.RestorePhaseTwo()
 	backRepo.BackRepoSatellite.RestorePhaseTwo()
 	backRepo.BackRepoScenario.RestorePhaseTwo()
 
@@ -261,9 +239,7 @@ func (backRepo *BackRepoStruct) RestoreXL(stage *models.StageStruct, dirPath str
 	backRepo.BackRepoLiner.RestoreXLPhaseOne(file)
 	backRepo.BackRepoMessage.RestoreXLPhaseOne(file)
 	backRepo.BackRepoOpsLine.RestoreXLPhaseOne(file)
-	backRepo.BackRepoOrder.RestoreXLPhaseOne(file)
 	backRepo.BackRepoRadar.RestoreXLPhaseOne(file)
-	backRepo.BackRepoReport.RestoreXLPhaseOne(file)
 	backRepo.BackRepoSatellite.RestoreXLPhaseOne(file)
 	backRepo.BackRepoScenario.RestoreXLPhaseOne(file)
 

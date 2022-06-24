@@ -11,7 +11,6 @@ export class CivilianAirportDB {
 	// insertion point for basic fields declarations
 	Lat: number = 0
 	Lng: number = 0
-	TechName: string = ""
 	Name: string = ""
 
 	// insertion point for other declarations

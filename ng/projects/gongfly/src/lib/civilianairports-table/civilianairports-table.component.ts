@@ -74,9 +74,6 @@ export class CivilianAirportsTableComponent implements OnInit {
         case 'Lng':
           return civilianairportDB.Lng;
 
-        case 'TechName':
-          return civilianairportDB.TechName;
-
         case 'Name':
           return civilianairportDB.Name;
 
@@ -96,7 +93,6 @@ export class CivilianAirportsTableComponent implements OnInit {
       // insertion point for merging of fields
       mergedContent += civilianairportDB.Lat.toString()
       mergedContent += civilianairportDB.Lng.toString()
-      mergedContent += civilianairportDB.TechName.toLowerCase()
       mergedContent += civilianairportDB.Name.toLowerCase()
 
       let isSelected = mergedContent.includes(filter.toLowerCase())
@@ -150,14 +146,12 @@ export class CivilianAirportsTableComponent implements OnInit {
       this.displayedColumns = ['ID', 'Edit', 'Delete', // insertion point for columns to display
         "Lat",
         "Lng",
-        "TechName",
         "Name",
       ]
     } else {
       this.displayedColumns = ['select', 'ID', // insertion point for columns to display
         "Lat",
         "Lng",
-        "TechName",
         "Name",
       ]
       this.selection = new SelectionModel<CivilianAirportDB>(allowMultiSelect, this.initialSelection);

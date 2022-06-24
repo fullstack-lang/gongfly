@@ -58,37 +58,34 @@ type SatelliteDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field satelliteDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field satelliteDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field satelliteDB.Line1 {{BasicKind}} (to be completed)
+	// Declation for basic field satelliteDB.Line1
 	Line1_Data sql.NullString
 
-	// Declation for basic field satelliteDB.Line2 {{BasicKind}} (to be completed)
+	// Declation for basic field satelliteDB.Line2
 	Line2_Data sql.NullString
 
-	// Declation for basic field satelliteDB.Lat {{BasicKind}} (to be completed)
+	// Declation for basic field satelliteDB.Lat
 	Lat_Data sql.NullFloat64
 
-	// Declation for basic field satelliteDB.Lng {{BasicKind}} (to be completed)
+	// Declation for basic field satelliteDB.Lng
 	Lng_Data sql.NullFloat64
 
-	// Declation for basic field satelliteDB.Heading {{BasicKind}} (to be completed)
+	// Declation for basic field satelliteDB.Heading
 	Heading_Data sql.NullFloat64
 
-	// Declation for basic field satelliteDB.Level {{BasicKind}} (to be completed)
+	// Declation for basic field satelliteDB.Level
 	Level_Data sql.NullFloat64
 
-	// Declation for basic field satelliteDB.Speed {{BasicKind}} (to be completed)
+	// Declation for basic field satelliteDB.Speed
 	Speed_Data sql.NullFloat64
 
-	// Declation for basic field satelliteDB.TechName {{BasicKind}} (to be completed)
-	TechName_Data sql.NullString
-
-	// Declation for basic field satelliteDB.VerticalSpeed {{BasicKind}} (to be completed)
+	// Declation for basic field satelliteDB.VerticalSpeed
 	VerticalSpeed_Data sql.NullFloat64
 
-	// Declation for basic field satelliteDB.Timestampstring {{BasicKind}} (to be completed)
+	// Declation for basic field satelliteDB.Timestampstring
 	Timestampstring_Data sql.NullString
 	// encoding of pointers
 	SatellitePointersEnconding
@@ -127,11 +124,9 @@ type SatelliteWOP struct {
 
 	Speed float64 `xlsx:"8"`
 
-	TechName string `xlsx:"9"`
+	VerticalSpeed float64 `xlsx:"9"`
 
-	VerticalSpeed float64 `xlsx:"10"`
-
-	Timestampstring string `xlsx:"11"`
+	Timestampstring string `xlsx:"10"`
 	// insertion for WOP pointer fields
 }
 
@@ -146,7 +141,6 @@ var Satellite_Fields = []string{
 	"Heading",
 	"Level",
 	"Speed",
-	"TechName",
 	"VerticalSpeed",
 	"Timestampstring",
 }
@@ -454,9 +448,6 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsFromSatellite(satellite *models.S
 	satelliteDB.Speed_Data.Float64 = satellite.Speed
 	satelliteDB.Speed_Data.Valid = true
 
-	satelliteDB.TechName_Data.String = satellite.TechName
-	satelliteDB.TechName_Data.Valid = true
-
 	satelliteDB.VerticalSpeed_Data.Float64 = satellite.VerticalSpeed
 	satelliteDB.VerticalSpeed_Data.Valid = true
 
@@ -492,9 +483,6 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsFromSatelliteWOP(satellite *Satel
 	satelliteDB.Speed_Data.Float64 = satellite.Speed
 	satelliteDB.Speed_Data.Valid = true
 
-	satelliteDB.TechName_Data.String = satellite.TechName
-	satelliteDB.TechName_Data.Valid = true
-
 	satelliteDB.VerticalSpeed_Data.Float64 = satellite.VerticalSpeed
 	satelliteDB.VerticalSpeed_Data.Valid = true
 
@@ -513,7 +501,6 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsToSatellite(satellite *models.Sat
 	satellite.Heading = satelliteDB.Heading_Data.Float64
 	satellite.Level = satelliteDB.Level_Data.Float64
 	satellite.Speed = satelliteDB.Speed_Data.Float64
-	satellite.TechName = satelliteDB.TechName_Data.String
 	satellite.VerticalSpeed = satelliteDB.VerticalSpeed_Data.Float64
 	satellite.Timestampstring = satelliteDB.Timestampstring_Data.String
 }
@@ -530,7 +517,6 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsToSatelliteWOP(satellite *Satelli
 	satellite.Heading = satelliteDB.Heading_Data.Float64
 	satellite.Level = satelliteDB.Level_Data.Float64
 	satellite.Speed = satelliteDB.Speed_Data.Float64
-	satellite.TechName = satelliteDB.TechName_Data.String
 	satellite.VerticalSpeed = satelliteDB.VerticalSpeed_Data.Float64
 	satellite.Timestampstring = satelliteDB.Timestampstring_Data.String
 }

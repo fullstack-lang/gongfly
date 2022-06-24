@@ -9,7 +9,6 @@ export class RadarDB {
 	ID: number = 0
 
 	// insertion point for basic fields declarations
-	TechName: string = ""
 	State: string = ""
 	Name: string = ""
 	Lat: number = 0

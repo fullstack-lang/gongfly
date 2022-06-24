@@ -14,7 +14,6 @@ export class OpsLineDB {
 	TransmissionMessage: string = ""
 	IsTransmittingBackward: boolean = false
 	TransmissionMessageBackward: string = ""
-	TechName: string = ""
 	State: string = ""
 	Name: string = ""
 

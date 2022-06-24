@@ -83,9 +83,6 @@ export class MessagesTableComponent implements OnInit {
         case 'Speed':
           return messageDB.Speed;
 
-        case 'TechName':
-          return messageDB.TechName;
-
         case 'State':
           return messageDB.State;
 
@@ -144,7 +141,6 @@ export class MessagesTableComponent implements OnInit {
       mergedContent += messageDB.Heading.toString()
       mergedContent += messageDB.Level.toString()
       mergedContent += messageDB.Speed.toString()
-      mergedContent += messageDB.TechName.toLowerCase()
       mergedContent += messageDB.State.toLowerCase()
       mergedContent += messageDB.Name.toLowerCase()
       mergedContent += messageDB.TargetLocationLat.toString()
@@ -211,7 +207,6 @@ export class MessagesTableComponent implements OnInit {
         "Heading",
         "Level",
         "Speed",
-        "TechName",
         "State",
         "Name",
         "TargetLocationLat",
@@ -233,7 +228,6 @@ export class MessagesTableComponent implements OnInit {
         "Heading",
         "Level",
         "Speed",
-        "TechName",
         "State",
         "Name",
         "TargetLocationLat",

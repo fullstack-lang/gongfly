@@ -19,12 +19,8 @@ import { MessageService } from '../message.service'
 import { getMessageUniqueID } from '../front-repo.service'
 import { OpsLineService } from '../opsline.service'
 import { getOpsLineUniqueID } from '../front-repo.service'
-import { OrderService } from '../order.service'
-import { getOrderUniqueID } from '../front-repo.service'
 import { RadarService } from '../radar.service'
 import { getRadarUniqueID } from '../front-repo.service'
-import { ReportService } from '../report.service'
-import { getReportUniqueID } from '../front-repo.service'
 import { SatelliteService } from '../satellite.service'
 import { getSatelliteUniqueID } from '../front-repo.service'
 import { ScenarioService } from '../scenario.service'
@@ -175,9 +171,7 @@ export class SidebarComponent implements OnInit {
     private linerService: LinerService,
     private messageService: MessageService,
     private opslineService: OpsLineService,
-    private orderService: OrderService,
     private radarService: RadarService,
-    private reportService: ReportService,
     private satelliteService: SatelliteService,
     private scenarioService: ScenarioService,
   ) { }
@@ -238,23 +232,7 @@ export class SidebarComponent implements OnInit {
       }
     )
     // observable for changes in structs
-    this.orderService.OrderServiceChanged.subscribe(
-      message => {
-        if (message == "post" || message == "update" || message == "delete") {
-          this.refresh()
-        }
-      }
-    )
-    // observable for changes in structs
     this.radarService.RadarServiceChanged.subscribe(
-      message => {
-        if (message == "post" || message == "update" || message == "delete") {
-          this.refresh()
-        }
-      }
-    )
-    // observable for changes in structs
-    this.reportService.ReportServiceChanged.subscribe(
       message => {
         if (message == "post" || message == "update" || message == "delete") {
           this.refresh()
@@ -548,85 +526,6 @@ export class SidebarComponent implements OnInit {
       )
 
       /**
-      * fill up the Order part of the mat tree
-      */
-      let orderGongNodeStruct: GongNode = {
-        name: "Order",
-        type: GongNodeType.STRUCT,
-        id: 0,
-        uniqueIdPerStack: 13 * nonInstanceNodeId,
-        structName: "Order",
-        associationField: "",
-        associatedStructName: "",
-        children: new Array<GongNode>()
-      }
-      nonInstanceNodeId = nonInstanceNodeId + 1
-      this.gongNodeTree.push(orderGongNodeStruct)
-
-      this.frontRepo.Orders_array.sort((t1, t2) => {
-        if (t1.Name > t2.Name) {
-          return 1;
-        }
-        if (t1.Name < t2.Name) {
-          return -1;
-        }
-        return 0;
-      });
-
-      this.frontRepo.Orders_array.forEach(
-        orderDB => {
-          let orderGongNodeInstance: GongNode = {
-            name: orderDB.Name,
-            type: GongNodeType.INSTANCE,
-            id: orderDB.ID,
-            uniqueIdPerStack: getOrderUniqueID(orderDB.ID),
-            structName: "Order",
-            associationField: "",
-            associatedStructName: "",
-            children: new Array<GongNode>()
-          }
-          orderGongNodeStruct.children!.push(orderGongNodeInstance)
-
-          // insertion point for per field code
-          /**
-          * let append a node for the association Target
-          */
-          let TargetGongNodeAssociation: GongNode = {
-            name: "(Liner) Target",
-            type: GongNodeType.ONE__ZERO_ONE_ASSOCIATION,
-            id: orderDB.ID,
-            uniqueIdPerStack: 17 * nonInstanceNodeId,
-            structName: "Order",
-            associationField: "Target",
-            associatedStructName: "Liner",
-            children: new Array<GongNode>()
-          }
-          nonInstanceNodeId = nonInstanceNodeId + 1
-          orderGongNodeInstance.children!.push(TargetGongNodeAssociation)
-
-          /**
-            * let append a node for the instance behind the asssociation Target
-            */
-          if (orderDB.Target != undefined) {
-            let orderGongNodeInstance_Target: GongNode = {
-              name: orderDB.Target.Name,
-              type: GongNodeType.INSTANCE,
-              id: orderDB.Target.ID,
-              uniqueIdPerStack: // godel numbering (thank you kurt)
-                3 * getOrderUniqueID(orderDB.ID)
-                + 5 * getLinerUniqueID(orderDB.Target.ID),
-              structName: "Liner",
-              associationField: "",
-              associatedStructName: "",
-              children: new Array<GongNode>()
-            }
-            TargetGongNodeAssociation.children.push(orderGongNodeInstance_Target)
-          }
-
-        }
-      )
-
-      /**
       * fill up the Radar part of the mat tree
       */
       let radarGongNodeStruct: GongNode = {
@@ -667,120 +566,6 @@ export class SidebarComponent implements OnInit {
           radarGongNodeStruct.children!.push(radarGongNodeInstance)
 
           // insertion point for per field code
-        }
-      )
-
-      /**
-      * fill up the Report part of the mat tree
-      */
-      let reportGongNodeStruct: GongNode = {
-        name: "Report",
-        type: GongNodeType.STRUCT,
-        id: 0,
-        uniqueIdPerStack: 13 * nonInstanceNodeId,
-        structName: "Report",
-        associationField: "",
-        associatedStructName: "",
-        children: new Array<GongNode>()
-      }
-      nonInstanceNodeId = nonInstanceNodeId + 1
-      this.gongNodeTree.push(reportGongNodeStruct)
-
-      this.frontRepo.Reports_array.sort((t1, t2) => {
-        if (t1.Name > t2.Name) {
-          return 1;
-        }
-        if (t1.Name < t2.Name) {
-          return -1;
-        }
-        return 0;
-      });
-
-      this.frontRepo.Reports_array.forEach(
-        reportDB => {
-          let reportGongNodeInstance: GongNode = {
-            name: reportDB.Name,
-            type: GongNodeType.INSTANCE,
-            id: reportDB.ID,
-            uniqueIdPerStack: getReportUniqueID(reportDB.ID),
-            structName: "Report",
-            associationField: "",
-            associatedStructName: "",
-            children: new Array<GongNode>()
-          }
-          reportGongNodeStruct.children!.push(reportGongNodeInstance)
-
-          // insertion point for per field code
-          /**
-          * let append a node for the association About
-          */
-          let AboutGongNodeAssociation: GongNode = {
-            name: "(Liner) About",
-            type: GongNodeType.ONE__ZERO_ONE_ASSOCIATION,
-            id: reportDB.ID,
-            uniqueIdPerStack: 17 * nonInstanceNodeId,
-            structName: "Report",
-            associationField: "About",
-            associatedStructName: "Liner",
-            children: new Array<GongNode>()
-          }
-          nonInstanceNodeId = nonInstanceNodeId + 1
-          reportGongNodeInstance.children!.push(AboutGongNodeAssociation)
-
-          /**
-            * let append a node for the instance behind the asssociation About
-            */
-          if (reportDB.About != undefined) {
-            let reportGongNodeInstance_About: GongNode = {
-              name: reportDB.About.Name,
-              type: GongNodeType.INSTANCE,
-              id: reportDB.About.ID,
-              uniqueIdPerStack: // godel numbering (thank you kurt)
-                3 * getReportUniqueID(reportDB.ID)
-                + 5 * getLinerUniqueID(reportDB.About.ID),
-              structName: "Liner",
-              associationField: "",
-              associatedStructName: "",
-              children: new Array<GongNode>()
-            }
-            AboutGongNodeAssociation.children.push(reportGongNodeInstance_About)
-          }
-
-          /**
-          * let append a node for the association OpsLine
-          */
-          let OpsLineGongNodeAssociation: GongNode = {
-            name: "(OpsLine) OpsLine",
-            type: GongNodeType.ONE__ZERO_ONE_ASSOCIATION,
-            id: reportDB.ID,
-            uniqueIdPerStack: 17 * nonInstanceNodeId,
-            structName: "Report",
-            associationField: "OpsLine",
-            associatedStructName: "OpsLine",
-            children: new Array<GongNode>()
-          }
-          nonInstanceNodeId = nonInstanceNodeId + 1
-          reportGongNodeInstance.children!.push(OpsLineGongNodeAssociation)
-
-          /**
-            * let append a node for the instance behind the asssociation OpsLine
-            */
-          if (reportDB.OpsLine != undefined) {
-            let reportGongNodeInstance_OpsLine: GongNode = {
-              name: reportDB.OpsLine.Name,
-              type: GongNodeType.INSTANCE,
-              id: reportDB.OpsLine.ID,
-              uniqueIdPerStack: // godel numbering (thank you kurt)
-                3 * getReportUniqueID(reportDB.ID)
-                + 5 * getOpsLineUniqueID(reportDB.OpsLine.ID),
-              structName: "OpsLine",
-              associationField: "",
-              associatedStructName: "",
-              children: new Array<GongNode>()
-            }
-            OpsLineGongNodeAssociation.children.push(reportGongNodeInstance_OpsLine)
-          }
-
         }
       )
 

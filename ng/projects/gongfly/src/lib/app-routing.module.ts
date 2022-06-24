@@ -18,17 +18,9 @@ import { OpsLinesTableComponent } from './opslines-table/opslines-table.componen
 import { OpsLineDetailComponent } from './opsline-detail/opsline-detail.component'
 import { OpsLinePresentationComponent } from './opsline-presentation/opsline-presentation.component'
 
-import { OrdersTableComponent } from './orders-table/orders-table.component'
-import { OrderDetailComponent } from './order-detail/order-detail.component'
-import { OrderPresentationComponent } from './order-presentation/order-presentation.component'
-
 import { RadarsTableComponent } from './radars-table/radars-table.component'
 import { RadarDetailComponent } from './radar-detail/radar-detail.component'
 import { RadarPresentationComponent } from './radar-presentation/radar-presentation.component'
-
-import { ReportsTableComponent } from './reports-table/reports-table.component'
-import { ReportDetailComponent } from './report-detail/report-detail.component'
-import { ReportPresentationComponent } from './report-presentation/report-presentation.component'
 
 import { SatellitesTableComponent } from './satellites-table/satellites-table.component'
 import { SatelliteDetailComponent } from './satellite-detail/satellite-detail.component'
@@ -68,26 +60,12 @@ const routes: Routes = [ // insertion point for routes declarations
 	{ path: 'github_com_fullstack_lang_gongfly_go-opsline-presentation/:id', component: OpsLinePresentationComponent, outlet: 'github_com_fullstack_lang_gongfly_go_presentation' },
 	{ path: 'github_com_fullstack_lang_gongfly_go-opsline-presentation-special/:id', component: OpsLinePresentationComponent, outlet: 'github_com_fullstack_lang_gongfly_goopslinepres' },
 
-	{ path: 'github_com_fullstack_lang_gongfly_go-orders', component: OrdersTableComponent, outlet: 'github_com_fullstack_lang_gongfly_go_table' },
-	{ path: 'github_com_fullstack_lang_gongfly_go-order-adder', component: OrderDetailComponent, outlet: 'github_com_fullstack_lang_gongfly_go_editor' },
-	{ path: 'github_com_fullstack_lang_gongfly_go-order-adder/:id/:originStruct/:originStructFieldName', component: OrderDetailComponent, outlet: 'github_com_fullstack_lang_gongfly_go_editor' },
-	{ path: 'github_com_fullstack_lang_gongfly_go-order-detail/:id', component: OrderDetailComponent, outlet: 'github_com_fullstack_lang_gongfly_go_editor' },
-	{ path: 'github_com_fullstack_lang_gongfly_go-order-presentation/:id', component: OrderPresentationComponent, outlet: 'github_com_fullstack_lang_gongfly_go_presentation' },
-	{ path: 'github_com_fullstack_lang_gongfly_go-order-presentation-special/:id', component: OrderPresentationComponent, outlet: 'github_com_fullstack_lang_gongfly_goorderpres' },
-
 	{ path: 'github_com_fullstack_lang_gongfly_go-radars', component: RadarsTableComponent, outlet: 'github_com_fullstack_lang_gongfly_go_table' },
 	{ path: 'github_com_fullstack_lang_gongfly_go-radar-adder', component: RadarDetailComponent, outlet: 'github_com_fullstack_lang_gongfly_go_editor' },
 	{ path: 'github_com_fullstack_lang_gongfly_go-radar-adder/:id/:originStruct/:originStructFieldName', component: RadarDetailComponent, outlet: 'github_com_fullstack_lang_gongfly_go_editor' },
 	{ path: 'github_com_fullstack_lang_gongfly_go-radar-detail/:id', component: RadarDetailComponent, outlet: 'github_com_fullstack_lang_gongfly_go_editor' },
 	{ path: 'github_com_fullstack_lang_gongfly_go-radar-presentation/:id', component: RadarPresentationComponent, outlet: 'github_com_fullstack_lang_gongfly_go_presentation' },
 	{ path: 'github_com_fullstack_lang_gongfly_go-radar-presentation-special/:id', component: RadarPresentationComponent, outlet: 'github_com_fullstack_lang_gongfly_goradarpres' },
-
-	{ path: 'github_com_fullstack_lang_gongfly_go-reports', component: ReportsTableComponent, outlet: 'github_com_fullstack_lang_gongfly_go_table' },
-	{ path: 'github_com_fullstack_lang_gongfly_go-report-adder', component: ReportDetailComponent, outlet: 'github_com_fullstack_lang_gongfly_go_editor' },
-	{ path: 'github_com_fullstack_lang_gongfly_go-report-adder/:id/:originStruct/:originStructFieldName', component: ReportDetailComponent, outlet: 'github_com_fullstack_lang_gongfly_go_editor' },
-	{ path: 'github_com_fullstack_lang_gongfly_go-report-detail/:id', component: ReportDetailComponent, outlet: 'github_com_fullstack_lang_gongfly_go_editor' },
-	{ path: 'github_com_fullstack_lang_gongfly_go-report-presentation/:id', component: ReportPresentationComponent, outlet: 'github_com_fullstack_lang_gongfly_go_presentation' },
-	{ path: 'github_com_fullstack_lang_gongfly_go-report-presentation-special/:id', component: ReportPresentationComponent, outlet: 'github_com_fullstack_lang_gongfly_goreportpres' },
 
 	{ path: 'github_com_fullstack_lang_gongfly_go-satellites', component: SatellitesTableComponent, outlet: 'github_com_fullstack_lang_gongfly_go_table' },
 	{ path: 'github_com_fullstack_lang_gongfly_go-satellite-adder', component: SatelliteDetailComponent, outlet: 'github_com_fullstack_lang_gongfly_go_editor' },

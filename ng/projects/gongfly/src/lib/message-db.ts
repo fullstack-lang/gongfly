@@ -14,7 +14,6 @@ export class MessageDB {
 	Heading: number = 0
 	Level: number = 0
 	Speed: number = 0
-	TechName: string = ""
 	State: string = ""
 	Name: string = ""
 	TargetLocationLat: number = 0

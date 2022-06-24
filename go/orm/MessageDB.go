@@ -58,61 +58,58 @@ type MessageDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field messageDB.Lat {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.Lat
 	Lat_Data sql.NullFloat64
 
-	// Declation for basic field messageDB.Lng {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.Lng
 	Lng_Data sql.NullFloat64
 
-	// Declation for basic field messageDB.Heading {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.Heading
 	Heading_Data sql.NullFloat64
 
-	// Declation for basic field messageDB.Level {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.Level
 	Level_Data sql.NullFloat64
 
-	// Declation for basic field messageDB.Speed {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.Speed
 	Speed_Data sql.NullFloat64
 
-	// Declation for basic field messageDB.TechName {{BasicKind}} (to be completed)
-	TechName_Data sql.NullString
-
-	// Declation for basic field messageDB.State {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.State
 	State_Data sql.NullString
 
-	// Declation for basic field messageDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field messageDB.TargetLocationLat {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.TargetLocationLat
 	TargetLocationLat_Data sql.NullFloat64
 
-	// Declation for basic field messageDB.TargetLocationLng {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.TargetLocationLng
 	TargetLocationLng_Data sql.NullFloat64
 
-	// Declation for basic field messageDB.DistanceToTarget {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.DistanceToTarget
 	DistanceToTarget_Data sql.NullFloat64
 
-	// Declation for basic field messageDB.Timestampstring {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.Timestampstring
 	Timestampstring_Data sql.NullString
 
-	// Declation for basic field messageDB.DurationSinceSimulationStart {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.DurationSinceSimulationStart
 	DurationSinceSimulationStart_Data sql.NullInt64
 
-	// Declation for basic field messageDB.Timestampstartstring {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.Timestampstartstring
 	Timestampstartstring_Data sql.NullString
 
-	// Declation for basic field messageDB.Source {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.Source
 	Source_Data sql.NullString
 
-	// Declation for basic field messageDB.Destination {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.Destination
 	Destination_Data sql.NullString
 
-	// Declation for basic field messageDB.Content {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.Content
 	Content_Data sql.NullString
 
-	// Declation for basic field messageDB.About_string {{BasicKind}} (to be completed)
+	// Declation for basic field messageDB.About_string
 	About_string_Data sql.NullString
 
-	// Declation for basic field messageDB.Display bool (to be completed)
+	// Declation for basic field messageDB.Display
 	// provide the sql storage for the boolan
 	Display_Data sql.NullBool
 	// encoding of pointers
@@ -146,33 +143,31 @@ type MessageWOP struct {
 
 	Speed float64 `xlsx:"5"`
 
-	TechName string `xlsx:"6"`
+	State models.MessageStateEnum `xlsx:"6"`
 
-	State models.MessageStateEnum `xlsx:"7"`
+	Name string `xlsx:"7"`
 
-	Name string `xlsx:"8"`
+	TargetLocationLat float64 `xlsx:"8"`
 
-	TargetLocationLat float64 `xlsx:"9"`
+	TargetLocationLng float64 `xlsx:"9"`
 
-	TargetLocationLng float64 `xlsx:"10"`
+	DistanceToTarget float64 `xlsx:"10"`
 
-	DistanceToTarget float64 `xlsx:"11"`
+	Timestampstring string `xlsx:"11"`
 
-	Timestampstring string `xlsx:"12"`
+	DurationSinceSimulationStart time.Duration `xlsx:"12"`
 
-	DurationSinceSimulationStart time.Duration `xlsx:"13"`
+	Timestampstartstring string `xlsx:"13"`
 
-	Timestampstartstring string `xlsx:"14"`
+	Source string `xlsx:"14"`
 
-	Source string `xlsx:"15"`
+	Destination string `xlsx:"15"`
 
-	Destination string `xlsx:"16"`
+	Content string `xlsx:"16"`
 
-	Content string `xlsx:"17"`
+	About_string string `xlsx:"17"`
 
-	About_string string `xlsx:"18"`
-
-	Display bool `xlsx:"19"`
+	Display bool `xlsx:"18"`
 	// insertion for WOP pointer fields
 }
 
@@ -184,7 +179,6 @@ var Message_Fields = []string{
 	"Heading",
 	"Level",
 	"Speed",
-	"TechName",
 	"State",
 	"Name",
 	"TargetLocationLat",
@@ -494,9 +488,6 @@ func (messageDB *MessageDB) CopyBasicFieldsFromMessage(message *models.Message) 
 	messageDB.Speed_Data.Float64 = message.Speed
 	messageDB.Speed_Data.Valid = true
 
-	messageDB.TechName_Data.String = message.TechName
-	messageDB.TechName_Data.Valid = true
-
 	messageDB.State_Data.String = message.State.ToString()
 	messageDB.State_Data.Valid = true
 
@@ -556,9 +547,6 @@ func (messageDB *MessageDB) CopyBasicFieldsFromMessageWOP(message *MessageWOP) {
 	messageDB.Speed_Data.Float64 = message.Speed
 	messageDB.Speed_Data.Valid = true
 
-	messageDB.TechName_Data.String = message.TechName
-	messageDB.TechName_Data.Valid = true
-
 	messageDB.State_Data.String = message.State.ToString()
 	messageDB.State_Data.Valid = true
 
@@ -607,7 +595,6 @@ func (messageDB *MessageDB) CopyBasicFieldsToMessage(message *models.Message) {
 	message.Heading = messageDB.Heading_Data.Float64
 	message.Level = messageDB.Level_Data.Float64
 	message.Speed = messageDB.Speed_Data.Float64
-	message.TechName = messageDB.TechName_Data.String
 	message.State.FromString(messageDB.State_Data.String)
 	message.Name = messageDB.Name_Data.String
 	message.TargetLocationLat = messageDB.TargetLocationLat_Data.Float64
@@ -632,7 +619,6 @@ func (messageDB *MessageDB) CopyBasicFieldsToMessageWOP(message *MessageWOP) {
 	message.Heading = messageDB.Heading_Data.Float64
 	message.Level = messageDB.Level_Data.Float64
 	message.Speed = messageDB.Speed_Data.Float64
-	message.TechName = messageDB.TechName_Data.String
 	message.State.FromString(messageDB.State_Data.String)
 	message.Name = messageDB.Name_Data.String
 	message.TargetLocationLat = messageDB.TargetLocationLat_Data.Float64

@@ -71,26 +71,12 @@ func RegisterControllers(r *gin.Engine) {
 		v1.PUT("/v1/opslines/:id", UpdateOpsLine)
 		v1.DELETE("/v1/opslines/:id", DeleteOpsLine)
 
-		v1.GET("/v1/orders", GetOrders)
-		v1.GET("/v1/orders/:id", GetOrder)
-		v1.POST("/v1/orders", PostOrder)
-		v1.PATCH("/v1/orders/:id", UpdateOrder)
-		v1.PUT("/v1/orders/:id", UpdateOrder)
-		v1.DELETE("/v1/orders/:id", DeleteOrder)
-
 		v1.GET("/v1/radars", GetRadars)
 		v1.GET("/v1/radars/:id", GetRadar)
 		v1.POST("/v1/radars", PostRadar)
 		v1.PATCH("/v1/radars/:id", UpdateRadar)
 		v1.PUT("/v1/radars/:id", UpdateRadar)
 		v1.DELETE("/v1/radars/:id", DeleteRadar)
-
-		v1.GET("/v1/reports", GetReports)
-		v1.GET("/v1/reports/:id", GetReport)
-		v1.POST("/v1/reports", PostReport)
-		v1.PATCH("/v1/reports/:id", UpdateReport)
-		v1.PUT("/v1/reports/:id", UpdateReport)
-		v1.DELETE("/v1/reports/:id", DeleteReport)
 
 		v1.GET("/v1/satellites", GetSatellites)
 		v1.GET("/v1/satellites/:id", GetSatellite)

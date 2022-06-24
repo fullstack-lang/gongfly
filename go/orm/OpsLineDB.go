@@ -62,27 +62,24 @@ type OpsLineDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field opslineDB.IsTransmitting bool (to be completed)
+	// Declation for basic field opslineDB.IsTransmitting
 	// provide the sql storage for the boolan
 	IsTransmitting_Data sql.NullBool
 
-	// Declation for basic field opslineDB.TransmissionMessage {{BasicKind}} (to be completed)
+	// Declation for basic field opslineDB.TransmissionMessage
 	TransmissionMessage_Data sql.NullString
 
-	// Declation for basic field opslineDB.IsTransmittingBackward bool (to be completed)
+	// Declation for basic field opslineDB.IsTransmittingBackward
 	// provide the sql storage for the boolan
 	IsTransmittingBackward_Data sql.NullBool
 
-	// Declation for basic field opslineDB.TransmissionMessageBackward {{BasicKind}} (to be completed)
+	// Declation for basic field opslineDB.TransmissionMessageBackward
 	TransmissionMessageBackward_Data sql.NullString
 
-	// Declation for basic field opslineDB.TechName {{BasicKind}} (to be completed)
-	TechName_Data sql.NullString
-
-	// Declation for basic field opslineDB.State {{BasicKind}} (to be completed)
+	// Declation for basic field opslineDB.State
 	State_Data sql.NullString
 
-	// Declation for basic field opslineDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field opslineDB.Name
 	Name_Data sql.NullString
 	// encoding of pointers
 	OpsLinePointersEnconding
@@ -113,11 +110,9 @@ type OpsLineWOP struct {
 
 	TransmissionMessageBackward string `xlsx:"4"`
 
-	TechName string `xlsx:"5"`
+	State models.OperationalLineStateEnum `xlsx:"5"`
 
-	State models.OperationalLineStateEnum `xlsx:"6"`
-
-	Name string `xlsx:"7"`
+	Name string `xlsx:"6"`
 	// insertion for WOP pointer fields
 }
 
@@ -128,7 +123,6 @@ var OpsLine_Fields = []string{
 	"TransmissionMessage",
 	"IsTransmittingBackward",
 	"TransmissionMessageBackward",
-	"TechName",
 	"State",
 	"Name",
 }
@@ -437,9 +431,6 @@ func (opslineDB *OpsLineDB) CopyBasicFieldsFromOpsLine(opsline *models.OpsLine) 
 	opslineDB.TransmissionMessageBackward_Data.String = opsline.TransmissionMessageBackward
 	opslineDB.TransmissionMessageBackward_Data.Valid = true
 
-	opslineDB.TechName_Data.String = opsline.TechName
-	opslineDB.TechName_Data.Valid = true
-
 	opslineDB.State_Data.String = opsline.State.ToString()
 	opslineDB.State_Data.Valid = true
 
@@ -463,9 +454,6 @@ func (opslineDB *OpsLineDB) CopyBasicFieldsFromOpsLineWOP(opsline *OpsLineWOP) {
 	opslineDB.TransmissionMessageBackward_Data.String = opsline.TransmissionMessageBackward
 	opslineDB.TransmissionMessageBackward_Data.Valid = true
 
-	opslineDB.TechName_Data.String = opsline.TechName
-	opslineDB.TechName_Data.Valid = true
-
 	opslineDB.State_Data.String = opsline.State.ToString()
 	opslineDB.State_Data.Valid = true
 
@@ -480,7 +468,6 @@ func (opslineDB *OpsLineDB) CopyBasicFieldsToOpsLine(opsline *models.OpsLine) {
 	opsline.TransmissionMessage = opslineDB.TransmissionMessage_Data.String
 	opsline.IsTransmittingBackward = opslineDB.IsTransmittingBackward_Data.Bool
 	opsline.TransmissionMessageBackward = opslineDB.TransmissionMessageBackward_Data.String
-	opsline.TechName = opslineDB.TechName_Data.String
 	opsline.State.FromString(opslineDB.State_Data.String)
 	opsline.Name = opslineDB.Name_Data.String
 }
@@ -493,7 +480,6 @@ func (opslineDB *OpsLineDB) CopyBasicFieldsToOpsLineWOP(opsline *OpsLineWOP) {
 	opsline.TransmissionMessage = opslineDB.TransmissionMessage_Data.String
 	opsline.IsTransmittingBackward = opslineDB.IsTransmittingBackward_Data.Bool
 	opsline.TransmissionMessageBackward = opslineDB.TransmissionMessageBackward_Data.String
-	opsline.TechName = opslineDB.TechName_Data.String
 	opsline.State.FromString(opslineDB.State_Data.String)
 	opsline.Name = opslineDB.Name_Data.String
 }

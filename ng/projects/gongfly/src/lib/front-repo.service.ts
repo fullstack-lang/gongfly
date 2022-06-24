@@ -16,14 +16,8 @@ import { MessageService } from './message.service'
 import { OpsLineDB } from './opsline-db'
 import { OpsLineService } from './opsline.service'
 
-import { OrderDB } from './order-db'
-import { OrderService } from './order.service'
-
 import { RadarDB } from './radar-db'
 import { RadarService } from './radar.service'
-
-import { ReportDB } from './report-db'
-import { ReportService } from './report.service'
 
 import { SatelliteDB } from './satellite-db'
 import { SatelliteService } from './satellite.service'
@@ -46,15 +40,9 @@ export class FrontRepo { // insertion point sub template
   OpsLines_array = new Array<OpsLineDB>(); // array of repo instances
   OpsLines = new Map<number, OpsLineDB>(); // map of repo instances
   OpsLines_batch = new Map<number, OpsLineDB>(); // same but only in last GET (for finding repo instances to delete)
-  Orders_array = new Array<OrderDB>(); // array of repo instances
-  Orders = new Map<number, OrderDB>(); // map of repo instances
-  Orders_batch = new Map<number, OrderDB>(); // same but only in last GET (for finding repo instances to delete)
   Radars_array = new Array<RadarDB>(); // array of repo instances
   Radars = new Map<number, RadarDB>(); // map of repo instances
   Radars_batch = new Map<number, RadarDB>(); // same but only in last GET (for finding repo instances to delete)
-  Reports_array = new Array<ReportDB>(); // array of repo instances
-  Reports = new Map<number, ReportDB>(); // map of repo instances
-  Reports_batch = new Map<number, ReportDB>(); // same but only in last GET (for finding repo instances to delete)
   Satellites_array = new Array<SatelliteDB>(); // array of repo instances
   Satellites = new Map<number, SatelliteDB>(); // map of repo instances
   Satellites_batch = new Map<number, SatelliteDB>(); // same but only in last GET (for finding repo instances to delete)
@@ -123,9 +111,7 @@ export class FrontRepoService {
     private linerService: LinerService,
     private messageService: MessageService,
     private opslineService: OpsLineService,
-    private orderService: OrderService,
     private radarService: RadarService,
-    private reportService: ReportService,
     private satelliteService: SatelliteService,
     private scenarioService: ScenarioService,
   ) { }
@@ -162,9 +148,7 @@ export class FrontRepoService {
     Observable<LinerDB[]>,
     Observable<MessageDB[]>,
     Observable<OpsLineDB[]>,
-    Observable<OrderDB[]>,
     Observable<RadarDB[]>,
-    Observable<ReportDB[]>,
     Observable<SatelliteDB[]>,
     Observable<ScenarioDB[]>,
   ] = [ // insertion point sub template 
@@ -172,9 +156,7 @@ export class FrontRepoService {
       this.linerService.getLiners(),
       this.messageService.getMessages(),
       this.opslineService.getOpsLines(),
-      this.orderService.getOrders(),
       this.radarService.getRadars(),
-      this.reportService.getReports(),
       this.satelliteService.getSatellites(),
       this.scenarioService.getScenarios(),
     ];
@@ -196,9 +178,7 @@ export class FrontRepoService {
             liners_,
             messages_,
             opslines_,
-            orders_,
             radars_,
-            reports_,
             satellites_,
             scenarios_,
           ]) => {
@@ -212,12 +192,8 @@ export class FrontRepoService {
             messages = messages_ as MessageDB[]
             var opslines: OpsLineDB[]
             opslines = opslines_ as OpsLineDB[]
-            var orders: OrderDB[]
-            orders = orders_ as OrderDB[]
             var radars: RadarDB[]
             radars = radars_ as RadarDB[]
-            var reports: ReportDB[]
-            reports = reports_ as ReportDB[]
             var satellites: SatelliteDB[]
             satellites = satellites_ as SatelliteDB[]
             var scenarios: ScenarioDB[]
@@ -359,39 +335,6 @@ export class FrontRepoService {
             });
 
             // init the array
-            FrontRepoSingloton.Orders_array = orders
-
-            // clear the map that counts Order in the GET
-            FrontRepoSingloton.Orders_batch.clear()
-
-            orders.forEach(
-              order => {
-                FrontRepoSingloton.Orders.set(order.ID, order)
-                FrontRepoSingloton.Orders_batch.set(order.ID, order)
-              }
-            )
-
-            // clear orders that are absent from the batch
-            FrontRepoSingloton.Orders.forEach(
-              order => {
-                if (FrontRepoSingloton.Orders_batch.get(order.ID) == undefined) {
-                  FrontRepoSingloton.Orders.delete(order.ID)
-                }
-              }
-            )
-
-            // sort Orders_array array
-            FrontRepoSingloton.Orders_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
             FrontRepoSingloton.Radars_array = radars
 
             // clear the map that counts Radar in the GET
@@ -415,39 +358,6 @@ export class FrontRepoService {
 
             // sort Radars_array array
             FrontRepoSingloton.Radars_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
-            FrontRepoSingloton.Reports_array = reports
-
-            // clear the map that counts Report in the GET
-            FrontRepoSingloton.Reports_batch.clear()
-
-            reports.forEach(
-              report => {
-                FrontRepoSingloton.Reports.set(report.ID, report)
-                FrontRepoSingloton.Reports_batch.set(report.ID, report)
-              }
-            )
-
-            // clear reports that are absent from the batch
-            FrontRepoSingloton.Reports.forEach(
-              report => {
-                if (FrontRepoSingloton.Reports_batch.get(report.ID) == undefined) {
-                  FrontRepoSingloton.Reports.delete(report.ID)
-                }
-              }
-            )
-
-            // sort Reports_array array
-            FrontRepoSingloton.Reports_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -569,44 +479,9 @@ export class FrontRepoService {
                 // insertion point for redeeming ONE-MANY associations
               }
             )
-            orders.forEach(
-              order => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointer field Target redeeming
-                {
-                  let _liner = FrontRepoSingloton.Liners.get(order.TargetID.Int64)
-                  if (_liner) {
-                    order.Target = _liner
-                  }
-                }
-
-                // insertion point for redeeming ONE-MANY associations
-              }
-            )
             radars.forEach(
               radar => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
-              }
-            )
-            reports.forEach(
-              report => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointer field About redeeming
-                {
-                  let _liner = FrontRepoSingloton.Liners.get(report.AboutID.Int64)
-                  if (_liner) {
-                    report.About = _liner
-                  }
-                }
-                // insertion point for pointer field OpsLine redeeming
-                {
-                  let _opsline = FrontRepoSingloton.OpsLines.get(report.OpsLineID.Int64)
-                  if (_opsline) {
-                    report.OpsLine = _opsline
-                  }
-                }
 
                 // insertion point for redeeming ONE-MANY associations
               }
@@ -854,64 +729,6 @@ export class FrontRepoService {
     )
   }
 
-  // OrderPull performs a GET on Order of the stack and redeem association pointers 
-  OrderPull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.orderService.getOrders()
-        ]).subscribe(
-          ([ // insertion point sub template 
-            orders,
-          ]) => {
-            // init the array
-            FrontRepoSingloton.Orders_array = orders
-
-            // clear the map that counts Order in the GET
-            FrontRepoSingloton.Orders_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            orders.forEach(
-              order => {
-                FrontRepoSingloton.Orders.set(order.ID, order)
-                FrontRepoSingloton.Orders_batch.set(order.ID, order)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-                // insertion point for pointer field Target redeeming
-                {
-                  let _liner = FrontRepoSingloton.Liners.get(order.TargetID.Int64)
-                  if (_liner) {
-                    order.Target = _liner
-                  }
-                }
-
-                // insertion point for redeeming ONE-MANY associations
-              }
-            )
-
-            // clear orders that are absent from the GET
-            FrontRepoSingloton.Orders.forEach(
-              order => {
-                if (FrontRepoSingloton.Orders_batch.get(order.ID) == undefined) {
-                  FrontRepoSingloton.Orders.delete(order.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
-          }
-        )
-      }
-    )
-  }
-
   // RadarPull performs a GET on Radar of the stack and redeem association pointers 
   RadarPull(): Observable<FrontRepo> {
     return new Observable<FrontRepo>(
@@ -947,71 +764,6 @@ export class FrontRepoService {
               radar => {
                 if (FrontRepoSingloton.Radars_batch.get(radar.ID) == undefined) {
                   FrontRepoSingloton.Radars.delete(radar.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
-          }
-        )
-      }
-    )
-  }
-
-  // ReportPull performs a GET on Report of the stack and redeem association pointers 
-  ReportPull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.reportService.getReports()
-        ]).subscribe(
-          ([ // insertion point sub template 
-            reports,
-          ]) => {
-            // init the array
-            FrontRepoSingloton.Reports_array = reports
-
-            // clear the map that counts Report in the GET
-            FrontRepoSingloton.Reports_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            reports.forEach(
-              report => {
-                FrontRepoSingloton.Reports.set(report.ID, report)
-                FrontRepoSingloton.Reports_batch.set(report.ID, report)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-                // insertion point for pointer field About redeeming
-                {
-                  let _liner = FrontRepoSingloton.Liners.get(report.AboutID.Int64)
-                  if (_liner) {
-                    report.About = _liner
-                  }
-                }
-                // insertion point for pointer field OpsLine redeeming
-                {
-                  let _opsline = FrontRepoSingloton.OpsLines.get(report.OpsLineID.Int64)
-                  if (_opsline) {
-                    report.OpsLine = _opsline
-                  }
-                }
-
-                // insertion point for redeeming ONE-MANY associations
-              }
-            )
-
-            // clear reports that are absent from the GET
-            FrontRepoSingloton.Reports.forEach(
-              report => {
-                if (FrontRepoSingloton.Reports_batch.get(report.ID) == undefined) {
-                  FrontRepoSingloton.Reports.delete(report.ID)
                 }
               }
             )
@@ -1144,18 +896,12 @@ export function getMessageUniqueID(id: number): number {
 export function getOpsLineUniqueID(id: number): number {
   return 43 * id
 }
-export function getOrderUniqueID(id: number): number {
+export function getRadarUniqueID(id: number): number {
   return 47 * id
 }
-export function getRadarUniqueID(id: number): number {
+export function getSatelliteUniqueID(id: number): number {
   return 53 * id
 }
-export function getReportUniqueID(id: number): number {
-  return 59 * id
-}
-export function getSatelliteUniqueID(id: number): number {
-  return 61 * id
-}
 export function getScenarioUniqueID(id: number): number {
-  return 67 * id
+  return 59 * id
 }

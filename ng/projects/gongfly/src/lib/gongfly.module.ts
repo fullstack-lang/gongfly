@@ -59,20 +59,10 @@ import { OpsLineSortingComponent } from './opsline-sorting/opsline-sorting.compo
 import { OpsLineDetailComponent } from './opsline-detail/opsline-detail.component'
 import { OpsLinePresentationComponent } from './opsline-presentation/opsline-presentation.component'
 
-import { OrdersTableComponent } from './orders-table/orders-table.component'
-import { OrderSortingComponent } from './order-sorting/order-sorting.component'
-import { OrderDetailComponent } from './order-detail/order-detail.component'
-import { OrderPresentationComponent } from './order-presentation/order-presentation.component'
-
 import { RadarsTableComponent } from './radars-table/radars-table.component'
 import { RadarSortingComponent } from './radar-sorting/radar-sorting.component'
 import { RadarDetailComponent } from './radar-detail/radar-detail.component'
 import { RadarPresentationComponent } from './radar-presentation/radar-presentation.component'
-
-import { ReportsTableComponent } from './reports-table/reports-table.component'
-import { ReportSortingComponent } from './report-sorting/report-sorting.component'
-import { ReportDetailComponent } from './report-detail/report-detail.component'
-import { ReportPresentationComponent } from './report-presentation/report-presentation.component'
 
 import { SatellitesTableComponent } from './satellites-table/satellites-table.component'
 import { SatelliteSortingComponent } from './satellite-sorting/satellite-sorting.component'
@@ -108,20 +98,10 @@ import { ScenarioPresentationComponent } from './scenario-presentation/scenario-
 		OpsLineDetailComponent,
 		OpsLinePresentationComponent,
 
-		OrdersTableComponent,
-		OrderSortingComponent,
-		OrderDetailComponent,
-		OrderPresentationComponent,
-
 		RadarsTableComponent,
 		RadarSortingComponent,
 		RadarDetailComponent,
 		RadarPresentationComponent,
-
-		ReportsTableComponent,
-		ReportSortingComponent,
-		ReportDetailComponent,
-		ReportPresentationComponent,
 
 		SatellitesTableComponent,
 		SatelliteSortingComponent,
@@ -192,20 +172,10 @@ import { ScenarioPresentationComponent } from './scenario-presentation/scenario-
 		OpsLineDetailComponent,
 		OpsLinePresentationComponent,
 
-		OrdersTableComponent,
-		OrderSortingComponent,
-		OrderDetailComponent,
-		OrderPresentationComponent,
-
 		RadarsTableComponent,
 		RadarSortingComponent,
 		RadarDetailComponent,
 		RadarPresentationComponent,
-
-		ReportsTableComponent,
-		ReportSortingComponent,
-		ReportDetailComponent,
-		ReportPresentationComponent,
 
 		SatellitesTableComponent,
 		SatelliteSortingComponent,

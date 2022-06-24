@@ -45,9 +45,7 @@ func AutoMigrate(db *gorm.DB) {
 		&LinerDB{},
 		&MessageDB{},
 		&OpsLineDB{},
-		&OrderDB{},
 		&RadarDB{},
-		&ReportDB{},
 		&SatelliteDB{},
 		&ScenarioDB{},
 	)
@@ -66,9 +64,7 @@ func ResetDB(db *gorm.DB) { // insertion point for reference to structs
 	db.Delete(&LinerDB{})
 	db.Delete(&MessageDB{})
 	db.Delete(&OpsLineDB{})
-	db.Delete(&OrderDB{})
 	db.Delete(&RadarDB{})
-	db.Delete(&ReportDB{})
 	db.Delete(&SatelliteDB{})
 	db.Delete(&ScenarioDB{})
 }

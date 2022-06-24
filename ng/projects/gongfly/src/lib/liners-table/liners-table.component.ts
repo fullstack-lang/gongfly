@@ -86,9 +86,6 @@ export class LinersTableComponent implements OnInit {
         case 'Speed':
           return linerDB.Speed;
 
-        case 'TechName':
-          return linerDB.TechName;
-
         case 'State':
           return linerDB.State;
 
@@ -136,7 +133,6 @@ export class LinersTableComponent implements OnInit {
       mergedContent += linerDB.Heading.toString()
       mergedContent += linerDB.Level.toString()
       mergedContent += linerDB.Speed.toString()
-      mergedContent += linerDB.TechName.toLowerCase()
       mergedContent += linerDB.State.toLowerCase()
       mergedContent += linerDB.TargetHeading.toString()
       mergedContent += linerDB.TargetLocationLat.toString()
@@ -204,7 +200,6 @@ export class LinersTableComponent implements OnInit {
         "Heading",
         "Level",
         "Speed",
-        "TechName",
         "State",
         "TargetHeading",
         "TargetLocationLat",
@@ -223,7 +218,6 @@ export class LinersTableComponent implements OnInit {
         "Heading",
         "Level",
         "Speed",
-        "TechName",
         "State",
         "TargetHeading",
         "TargetLocationLat",

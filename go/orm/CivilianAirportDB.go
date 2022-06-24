@@ -58,16 +58,13 @@ type CivilianAirportDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field civilianairportDB.Lat {{BasicKind}} (to be completed)
+	// Declation for basic field civilianairportDB.Lat
 	Lat_Data sql.NullFloat64
 
-	// Declation for basic field civilianairportDB.Lng {{BasicKind}} (to be completed)
+	// Declation for basic field civilianairportDB.Lng
 	Lng_Data sql.NullFloat64
 
-	// Declation for basic field civilianairportDB.TechName {{BasicKind}} (to be completed)
-	TechName_Data sql.NullString
-
-	// Declation for basic field civilianairportDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field civilianairportDB.Name
 	Name_Data sql.NullString
 	// encoding of pointers
 	CivilianAirportPointersEnconding
@@ -94,9 +91,7 @@ type CivilianAirportWOP struct {
 
 	Lng float64 `xlsx:"2"`
 
-	TechName string `xlsx:"3"`
-
-	Name string `xlsx:"4"`
+	Name string `xlsx:"3"`
 	// insertion for WOP pointer fields
 }
 
@@ -105,7 +100,6 @@ var CivilianAirport_Fields = []string{
 	"ID",
 	"Lat",
 	"Lng",
-	"TechName",
 	"Name",
 }
 
@@ -394,9 +388,6 @@ func (civilianairportDB *CivilianAirportDB) CopyBasicFieldsFromCivilianAirport(c
 	civilianairportDB.Lng_Data.Float64 = civilianairport.Lng
 	civilianairportDB.Lng_Data.Valid = true
 
-	civilianairportDB.TechName_Data.String = civilianairport.TechName
-	civilianairportDB.TechName_Data.Valid = true
-
 	civilianairportDB.Name_Data.String = civilianairport.Name
 	civilianairportDB.Name_Data.Valid = true
 }
@@ -411,9 +402,6 @@ func (civilianairportDB *CivilianAirportDB) CopyBasicFieldsFromCivilianAirportWO
 	civilianairportDB.Lng_Data.Float64 = civilianairport.Lng
 	civilianairportDB.Lng_Data.Valid = true
 
-	civilianairportDB.TechName_Data.String = civilianairport.TechName
-	civilianairportDB.TechName_Data.Valid = true
-
 	civilianairportDB.Name_Data.String = civilianairport.Name
 	civilianairportDB.Name_Data.Valid = true
 }
@@ -423,7 +411,6 @@ func (civilianairportDB *CivilianAirportDB) CopyBasicFieldsToCivilianAirport(civ
 	// insertion point for checkout of basic fields (back repo to stage)
 	civilianairport.Lat = civilianairportDB.Lat_Data.Float64
 	civilianairport.Lng = civilianairportDB.Lng_Data.Float64
-	civilianairport.TechName = civilianairportDB.TechName_Data.String
 	civilianairport.Name = civilianairportDB.Name_Data.String
 }
 
@@ -433,7 +420,6 @@ func (civilianairportDB *CivilianAirportDB) CopyBasicFieldsToCivilianAirportWOP(
 	// insertion point for checkout of basic fields (back repo to stage)
 	civilianairport.Lat = civilianairportDB.Lat_Data.Float64
 	civilianairport.Lng = civilianairportDB.Lng_Data.Float64
-	civilianairport.TechName = civilianairportDB.TechName_Data.String
 	civilianairport.Name = civilianairportDB.Name_Data.String
 }
 

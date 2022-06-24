@@ -80,9 +80,6 @@ export class OpsLinesTableComponent implements OnInit {
         case 'TransmissionMessageBackward':
           return opslineDB.TransmissionMessageBackward;
 
-        case 'TechName':
-          return opslineDB.TechName;
-
         case 'Scenario':
           return (opslineDB.Scenario ? opslineDB.Scenario.Name : '');
 
@@ -108,7 +105,6 @@ export class OpsLinesTableComponent implements OnInit {
       // insertion point for merging of fields
       mergedContent += opslineDB.TransmissionMessage.toLowerCase()
       mergedContent += opslineDB.TransmissionMessageBackward.toLowerCase()
-      mergedContent += opslineDB.TechName.toLowerCase()
       if (opslineDB.Scenario) {
         mergedContent += opslineDB.Scenario.Name.toLowerCase()
       }
@@ -168,7 +164,6 @@ export class OpsLinesTableComponent implements OnInit {
         "TransmissionMessage",
         "IsTransmittingBackward",
         "TransmissionMessageBackward",
-        "TechName",
         "Scenario",
         "State",
         "Name",
@@ -179,7 +174,6 @@ export class OpsLinesTableComponent implements OnInit {
         "TransmissionMessage",
         "IsTransmittingBackward",
         "TransmissionMessageBackward",
-        "TechName",
         "Scenario",
         "State",
         "Name",

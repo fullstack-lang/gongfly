@@ -68,9 +68,6 @@ export class RadarsTableComponent implements OnInit {
           return radarDB.ID
 
         // insertion point for specific sorting accessor
-        case 'TechName':
-          return radarDB.TechName;
-
         case 'State':
           return radarDB.State;
 
@@ -100,7 +97,6 @@ export class RadarsTableComponent implements OnInit {
       let mergedContent = ""
 
       // insertion point for merging of fields
-      mergedContent += radarDB.TechName.toLowerCase()
       mergedContent += radarDB.State.toLowerCase()
       mergedContent += radarDB.Name.toLowerCase()
       mergedContent += radarDB.Lat.toString()
@@ -156,7 +152,6 @@ export class RadarsTableComponent implements OnInit {
     )
     if (this.mode == TableComponentMode.DISPLAY_MODE) {
       this.displayedColumns = ['ID', 'Edit', 'Delete', // insertion point for columns to display
-        "TechName",
         "State",
         "Name",
         "Lat",
@@ -165,7 +160,6 @@ export class RadarsTableComponent implements OnInit {
       ]
     } else {
       this.displayedColumns = ['select', 'ID', // insertion point for columns to display
-        "TechName",
         "State",
         "Name",
         "Lat",

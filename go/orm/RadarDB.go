@@ -58,22 +58,19 @@ type RadarDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field radarDB.TechName {{BasicKind}} (to be completed)
-	TechName_Data sql.NullString
-
-	// Declation for basic field radarDB.State {{BasicKind}} (to be completed)
+	// Declation for basic field radarDB.State
 	State_Data sql.NullString
 
-	// Declation for basic field radarDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field radarDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field radarDB.Lat {{BasicKind}} (to be completed)
+	// Declation for basic field radarDB.Lat
 	Lat_Data sql.NullFloat64
 
-	// Declation for basic field radarDB.Lng {{BasicKind}} (to be completed)
+	// Declation for basic field radarDB.Lng
 	Lng_Data sql.NullFloat64
 
-	// Declation for basic field radarDB.Range {{BasicKind}} (to be completed)
+	// Declation for basic field radarDB.Range
 	Range_Data sql.NullFloat64
 	// encoding of pointers
 	RadarPointersEnconding
@@ -96,24 +93,21 @@ type RadarWOP struct {
 
 	// insertion for WOP basic fields
 
-	TechName string `xlsx:"1"`
+	State models.RadarStateEnum `xlsx:"1"`
 
-	State models.RadarStateEnum `xlsx:"2"`
+	Name string `xlsx:"2"`
 
-	Name string `xlsx:"3"`
+	Lat float64 `xlsx:"3"`
 
-	Lat float64 `xlsx:"4"`
+	Lng float64 `xlsx:"4"`
 
-	Lng float64 `xlsx:"5"`
-
-	Range float64 `xlsx:"6"`
+	Range float64 `xlsx:"5"`
 	// insertion for WOP pointer fields
 }
 
 var Radar_Fields = []string{
 	// insertion for WOP basic fields
 	"ID",
-	"TechName",
 	"State",
 	"Name",
 	"Lat",
@@ -400,9 +394,6 @@ func (backRepo *BackRepoStruct) CheckoutRadar(radar *models.Radar) {
 func (radarDB *RadarDB) CopyBasicFieldsFromRadar(radar *models.Radar) {
 	// insertion point for fields commit
 
-	radarDB.TechName_Data.String = radar.TechName
-	radarDB.TechName_Data.Valid = true
-
 	radarDB.State_Data.String = radar.State.ToString()
 	radarDB.State_Data.Valid = true
 
@@ -423,9 +414,6 @@ func (radarDB *RadarDB) CopyBasicFieldsFromRadar(radar *models.Radar) {
 func (radarDB *RadarDB) CopyBasicFieldsFromRadarWOP(radar *RadarWOP) {
 	// insertion point for fields commit
 
-	radarDB.TechName_Data.String = radar.TechName
-	radarDB.TechName_Data.Valid = true
-
 	radarDB.State_Data.String = radar.State.ToString()
 	radarDB.State_Data.Valid = true
 
@@ -445,7 +433,6 @@ func (radarDB *RadarDB) CopyBasicFieldsFromRadarWOP(radar *RadarWOP) {
 // CopyBasicFieldsToRadar
 func (radarDB *RadarDB) CopyBasicFieldsToRadar(radar *models.Radar) {
 	// insertion point for checkout of basic fields (back repo to stage)
-	radar.TechName = radarDB.TechName_Data.String
 	radar.State.FromString(radarDB.State_Data.String)
 	radar.Name = radarDB.Name_Data.String
 	radar.Lat = radarDB.Lat_Data.Float64
@@ -457,7 +444,6 @@ func (radarDB *RadarDB) CopyBasicFieldsToRadar(radar *models.Radar) {
 func (radarDB *RadarDB) CopyBasicFieldsToRadarWOP(radar *RadarWOP) {
 	radar.ID = int(radarDB.ID)
 	// insertion point for checkout of basic fields (back repo to stage)
-	radar.TechName = radarDB.TechName_Data.String
 	radar.State.FromString(radarDB.State_Data.String)
 	radar.Name = radarDB.Name_Data.String
 	radar.Lat = radarDB.Lat_Data.Float64

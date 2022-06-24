@@ -47,26 +47,6 @@
         <textarea name="" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="opsline.TransmissionMessageBackward"></textarea>
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("TechName")' cols="5" rowHeight="2:1">
-        <mat-grid-tile [colspan]="3">
-            <mat-form-field mat-form-field class="detail-full-width">
-                <mat-label>TechName</mat-label>
-                <input name="" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="opsline.TechName">
-            </mat-form-field>
-        </mat-grid-tile>
-        <mat-grid-tile>
-            <button mat-raised-button (click)="toggleTextArea('TechName')">
-                <mat-icon>
-                    expand_more
-                </mat-icon>
-            </button>
-        </mat-grid-tile>
-    </mat-grid-list>
-    <mat-form-field *ngIf='isATextArea("TechName")' mat-form-field class="detail-full-width">
-        <mat-label>TechName</mat-label>
-        <textarea name="" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="opsline.TechName"></textarea>
-    </mat-form-field>
-
     <mat-form-field class="detail-full-width">
         <mat-label>Scenario</mat-label>
         <mat-select [compareWith]="compareObjects" [(value)]="opsline.Scenario" (selectionChange)="fillUpNameIfEmpty($event)">

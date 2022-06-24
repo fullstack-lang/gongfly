@@ -16,7 +16,6 @@ export class LinerDB {
 	Heading: number = 0
 	Level: number = 0
 	Speed: number = 0
-	TechName: string = ""
 	State: string = ""
 	TargetHeading: number = 0
 	TargetLocationLat: number = 0

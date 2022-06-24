@@ -2,9 +2,9 @@
 export enum ConceptEnum {
 	// insertion point	
 	Aircraft_ = "Aircrafts",
-	Center_ = "Centers",
-	Network_ = "Networks",
 	Satellite_ = "Satellites",
+	Network_ = "Networks",
+	Center_ = "Centers",
 	System_ = "Systems",
 }
 
@@ -15,8 +15,8 @@ export interface ConceptEnumSelect {
 
 export const ConceptEnumList: ConceptEnumSelect[] = [ // insertion point	
 	{ value: ConceptEnum.Aircraft_, viewValue: "Aircrafts" },
-	{ value: ConceptEnum.Center_, viewValue: "Centers" },
-	{ value: ConceptEnum.Network_, viewValue: "Networks" },
 	{ value: ConceptEnum.Satellite_, viewValue: "Satellites" },
+	{ value: ConceptEnum.Network_, viewValue: "Networks" },
+	{ value: ConceptEnum.Center_, viewValue: "Centers" },
 	{ value: ConceptEnum.System_, viewValue: "Systems" },
 ];

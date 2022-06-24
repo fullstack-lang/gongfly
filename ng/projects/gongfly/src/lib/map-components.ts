@@ -7,12 +7,8 @@
   import { MessageSortingComponent } from './message-sorting/message-sorting.component'
   import { OpsLinesTableComponent } from './opslines-table/opslines-table.component'
   import { OpsLineSortingComponent } from './opsline-sorting/opsline-sorting.component'
-  import { OrdersTableComponent } from './orders-table/orders-table.component'
-  import { OrderSortingComponent } from './order-sorting/order-sorting.component'
   import { RadarsTableComponent } from './radars-table/radars-table.component'
   import { RadarSortingComponent } from './radar-sorting/radar-sorting.component'
-  import { ReportsTableComponent } from './reports-table/reports-table.component'
-  import { ReportSortingComponent } from './report-sorting/report-sorting.component'
   import { SatellitesTableComponent } from './satellites-table/satellites-table.component'
   import { SatelliteSortingComponent } from './satellite-sorting/satellite-sorting.component'
   import { ScenariosTableComponent } from './scenarios-table/scenarios-table.component'
@@ -27,12 +23,8 @@
   export const MapOfMessageSortingComponents: Map<string, any> = new Map([["MessageSortingComponent", MessageSortingComponent],])
   export const MapOfOpsLinesComponents: Map<string, any> = new Map([["OpsLinesTableComponent", OpsLinesTableComponent],])
   export const MapOfOpsLineSortingComponents: Map<string, any> = new Map([["OpsLineSortingComponent", OpsLineSortingComponent],])
-  export const MapOfOrdersComponents: Map<string, any> = new Map([["OrdersTableComponent", OrdersTableComponent],])
-  export const MapOfOrderSortingComponents: Map<string, any> = new Map([["OrderSortingComponent", OrderSortingComponent],])
   export const MapOfRadarsComponents: Map<string, any> = new Map([["RadarsTableComponent", RadarsTableComponent],])
   export const MapOfRadarSortingComponents: Map<string, any> = new Map([["RadarSortingComponent", RadarSortingComponent],])
-  export const MapOfReportsComponents: Map<string, any> = new Map([["ReportsTableComponent", ReportsTableComponent],])
-  export const MapOfReportSortingComponents: Map<string, any> = new Map([["ReportSortingComponent", ReportSortingComponent],])
   export const MapOfSatellitesComponents: Map<string, any> = new Map([["SatellitesTableComponent", SatellitesTableComponent],])
   export const MapOfSatelliteSortingComponents: Map<string, any> = new Map([["SatelliteSortingComponent", SatelliteSortingComponent],])
   export const MapOfScenariosComponents: Map<string, any> = new Map([["ScenariosTableComponent", ScenariosTableComponent],])
@@ -47,9 +39,7 @@ export const MapOfComponents: Map<string, any> =
       ["Liner", MapOfLinersComponents],
       ["Message", MapOfMessagesComponents],
       ["OpsLine", MapOfOpsLinesComponents],
-      ["Order", MapOfOrdersComponents],
       ["Radar", MapOfRadarsComponents],
-      ["Report", MapOfReportsComponents],
       ["Satellite", MapOfSatellitesComponents],
       ["Scenario", MapOfScenariosComponents],
     ]
@@ -64,9 +54,7 @@ export const MapOfSortingComponents: Map<string, any> =
       ["Liner", MapOfLinerSortingComponents],
       ["Message", MapOfMessageSortingComponents],
       ["OpsLine", MapOfOpsLineSortingComponents],
-      ["Order", MapOfOrderSortingComponents],
       ["Radar", MapOfRadarSortingComponents],
-      ["Report", MapOfReportSortingComponents],
       ["Satellite", MapOfSatelliteSortingComponents],
       ["Scenario", MapOfScenarioSortingComponents],
     ]

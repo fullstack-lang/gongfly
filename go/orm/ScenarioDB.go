@@ -58,19 +58,19 @@ type ScenarioDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field scenarioDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field scenarioDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field scenarioDB.Lat {{BasicKind}} (to be completed)
+	// Declation for basic field scenarioDB.Lat
 	Lat_Data sql.NullFloat64
 
-	// Declation for basic field scenarioDB.Lng {{BasicKind}} (to be completed)
+	// Declation for basic field scenarioDB.Lng
 	Lng_Data sql.NullFloat64
 
-	// Declation for basic field scenarioDB.ZoomLevel {{BasicKind}} (to be completed)
+	// Declation for basic field scenarioDB.ZoomLevel
 	ZoomLevel_Data sql.NullFloat64
 
-	// Declation for basic field scenarioDB.MessageVisualSpeed {{BasicKind}} (to be completed)
+	// Declation for basic field scenarioDB.MessageVisualSpeed
 	MessageVisualSpeed_Data sql.NullFloat64
 	// encoding of pointers
 	ScenarioPointersEnconding
