@@ -108,8 +108,8 @@ func (GenerateDocumentationScheduler *GenerateDocumentationScheduler) GenerateDo
 			},
 		}
 
-		root.SubElements = append(root.SubElements,
-			GongStructSlice2MarkdownTable(satelliteTable, satelliteFieldsToDisplay))
+		table := GongStructSlice2MarkdownTable(satelliteTable, satelliteFieldsToDisplay)
+		root.SubElements = append(root.SubElements, table)
 	}
 
 	{
@@ -162,11 +162,13 @@ type FieldHeadOfTable struct {
 	TableHead string
 }
 
-func GongStructSlice2MarkdownTable(gongStructInstances []gongfly_models.GongStructInterface, fieldsToDisplay []FieldHeadOfTable) (element *gongmarkdown_models.Element) {
+func GongStructSlice2MarkdownTable(
+	gongStructInstances []gongfly_models.GongStructInterface,
+	fieldsToDisplay []FieldHeadOfTable) (element *gongmarkdown_models.Element) {
 
-	if len(gongStructInstances) == 0 {
-		return
-	}
+	// if len(gongStructInstances) == 0 {
+	// 	return
+	// }
 
 	//
 	element = (&gongmarkdown_models.Element{Name: "Table "}).Stage()
