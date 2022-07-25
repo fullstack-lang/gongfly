@@ -17,11 +17,6 @@ type GenerateDocumentationScheduler struct {
 
 var GenerateDocumentationSchedulerSingloton GenerateDocumentationScheduler
 
-// start the scheduler
-func init() {
-	// go GenerateGanttSchedulerSingloton.checkoutScheduler()
-}
-
 func (generateDocumentationScheduler *GenerateDocumentationScheduler) CheckoutScheduler() {
 
 	// The period shall not too short for performance sake but not too long because the end user needs a responsive application
@@ -74,11 +69,11 @@ func (GenerateDocumentationScheduler *GenerateDocumentationScheduler) GenerateDo
 
 	{
 		// generate documentation
-		satelliteTable := []gongfly_models.GongStructInterface{}
+		satelliteTable := []*gongfly_models.Satellite{}
 
-		// for satellite := range *gongfly_models.GetGongstructInstancesSet[models.Satellite]() {
-		// 	satelliteTable = append(satelliteTable, satellite)
-		// }
+		for satellite := range *gongfly_models.GetGongstructInstancesSet[gongfly_models.Satellite]() {
+			satelliteTable = append(satelliteTable, satellite)
+		}
 
 		sort.Slice(satelliteTable[:], func(i, j int) bool {
 			return satelliteTable[i].GetName() < satelliteTable[j].GetName()
@@ -114,11 +109,11 @@ func (GenerateDocumentationScheduler *GenerateDocumentationScheduler) GenerateDo
 
 	{
 		// table of deploiements
-		linersTable := []gongfly_models.GongStructInterface{}
+		linersTable := []*gongfly_models.Liner{}
 
-		// for liner := range gongfly_models.Stage.Liners {
-		// 	linersTable = append(linersTable, liner)
-		// }
+		for liner := range gongfly_models.Stage.Liners {
+			linersTable = append(linersTable, liner)
+		}
 
 		sort.Slice(linersTable[:], func(i, j int) bool {
 			return linersTable[i].GetName() < linersTable[j].GetName()
@@ -162,13 +157,9 @@ type FieldHeadOfTable struct {
 	TableHead string
 }
 
-func GongStructSlice2MarkdownTable(
-	gongStructInstances []gongfly_models.GongStructInterface,
+func GongStructSlice2MarkdownTable[Type gongfly_models.Gongstruct](
+	gongStructInstances []*Type,
 	fieldsToDisplay []FieldHeadOfTable) (element *gongmarkdown_models.Element) {
-
-	// if len(gongStructInstances) == 0 {
-	// 	return
-	// }
 
 	//
 	element = (&gongmarkdown_models.Element{Name: "Table "}).Stage()
@@ -185,12 +176,13 @@ func GongStructSlice2MarkdownTable(
 
 	for _, gongStructInstance := range gongStructInstances {
 		// fill up title cells
-		row := (&gongmarkdown_models.Row{Name: "Date Row of " + gongStructInstance.GetFieldStringValue("Name")}).Stage()
+		rowName := "Date Row of " + gongfly_models.GetFieldStringValue(*gongStructInstance, "Name")
+		row := (&gongmarkdown_models.Row{Name: rowName}).Stage()
 		element.Rows = append(element.Rows, row)
 
 		for _, field := range fieldsToDisplay {
 
-			stringValue := gongStructInstance.GetFieldStringValue(field.FieldName)
+			stringValue := gongfly_models.GetFieldStringValue(*gongStructInstance, field.FieldName)
 
 			// replace new lines with <br>
 			stringValue = strings.ReplaceAll(stringValue, "\n", "<br>")
