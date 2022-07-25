@@ -58,13 +58,13 @@ type UserClickDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field userclickDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field userclickDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field userclickDB.Lat {{BasicKind}} (to be completed)
+	// Declation for basic field userclickDB.Lat
 	Lat_Data sql.NullFloat64
 
-	// Declation for basic field userclickDB.Lng {{BasicKind}} (to be completed)
+	// Declation for basic field userclickDB.Lng
 	Lng_Data sql.NullFloat64
 
 	// Declation for basic field userclickDB.TimeOfClick
@@ -279,7 +279,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseOne() (Error erro
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	userclickInstancesToBeRemovedFromTheStage := make(map[*models.UserClick]struct{})
+	userclickInstancesToBeRemovedFromTheStage := make(map[*models.UserClick]any)
 	for key, value := range models.Stage.UserClicks {
 		userclickInstancesToBeRemovedFromTheStage[key] = value
 	}

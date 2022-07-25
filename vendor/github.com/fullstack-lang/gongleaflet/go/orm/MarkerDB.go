@@ -66,16 +66,16 @@ type MarkerDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field markerDB.Lat {{BasicKind}} (to be completed)
+	// Declation for basic field markerDB.Lat
 	Lat_Data sql.NullFloat64
 
-	// Declation for basic field markerDB.Lng {{BasicKind}} (to be completed)
+	// Declation for basic field markerDB.Lng
 	Lng_Data sql.NullFloat64
 
-	// Declation for basic field markerDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field markerDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field markerDB.ColorEnum {{BasicKind}} (to be completed)
+	// Declation for basic field markerDB.ColorEnum
 	ColorEnum_Data sql.NullString
 	// encoding of pointers
 	MarkerPointersEnconding
@@ -305,7 +305,7 @@ func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseOne() (Error error) {
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	markerInstancesToBeRemovedFromTheStage := make(map[*models.Marker]struct{})
+	markerInstancesToBeRemovedFromTheStage := make(map[*models.Marker]any)
 	for key, value := range models.Stage.Markers {
 		markerInstancesToBeRemovedFromTheStage[key] = value
 	}

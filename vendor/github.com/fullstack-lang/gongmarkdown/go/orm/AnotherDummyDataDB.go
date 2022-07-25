@@ -58,7 +58,7 @@ type AnotherDummyDataDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field anotherdummydataDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field anotherdummydataDB.Name
 	Name_Data sql.NullString
 	// encoding of pointers
 	AnotherDummyDataPointersEnconding
@@ -261,7 +261,7 @@ func (backRepoAnotherDummyData *BackRepoAnotherDummyDataStruct) CheckoutPhaseOne
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	anotherdummydataInstancesToBeRemovedFromTheStage := make(map[*models.AnotherDummyData]struct{})
+	anotherdummydataInstancesToBeRemovedFromTheStage := make(map[*models.AnotherDummyData]any)
 	for key, value := range models.Stage.AnotherDummyDatas {
 		anotherdummydataInstancesToBeRemovedFromTheStage[key] = value
 	}

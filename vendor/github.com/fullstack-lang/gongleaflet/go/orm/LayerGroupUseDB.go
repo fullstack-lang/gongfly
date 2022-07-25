@@ -68,10 +68,10 @@ type LayerGroupUseDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field layergroupuseDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field layergroupuseDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field layergroupuseDB.Display bool (to be completed)
+	// Declation for basic field layergroupuseDB.Display
 	// provide the sql storage for the boolan
 	Display_Data sql.NullBool
 	// encoding of pointers
@@ -287,7 +287,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CheckoutPhaseOne() (Er
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	layergroupuseInstancesToBeRemovedFromTheStage := make(map[*models.LayerGroupUse]struct{})
+	layergroupuseInstancesToBeRemovedFromTheStage := make(map[*models.LayerGroupUse]any)
 	for key, value := range models.Stage.LayerGroupUses {
 		layergroupuseInstancesToBeRemovedFromTheStage[key] = value
 	}

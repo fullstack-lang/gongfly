@@ -64,10 +64,10 @@ type DataPointDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field datapointDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field datapointDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field datapointDB.Value {{BasicKind}} (to be completed)
+	// Declation for basic field datapointDB.Value
 	Value_Data sql.NullFloat64
 	// encoding of pointers
 	DataPointPointersEnconding
@@ -273,7 +273,7 @@ func (backRepoDataPoint *BackRepoDataPointStruct) CheckoutPhaseOne() (Error erro
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	datapointInstancesToBeRemovedFromTheStage := make(map[*models.DataPoint]struct{})
+	datapointInstancesToBeRemovedFromTheStage := make(map[*models.DataPoint]any)
 	for key, value := range models.Stage.DataPoints {
 		datapointInstancesToBeRemovedFromTheStage[key] = value
 	}

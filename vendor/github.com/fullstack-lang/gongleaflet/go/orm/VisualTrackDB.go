@@ -66,35 +66,35 @@ type VisualTrackDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field visualtrackDB.Lat {{BasicKind}} (to be completed)
+	// Declation for basic field visualtrackDB.Lat
 	Lat_Data sql.NullFloat64
 
-	// Declation for basic field visualtrackDB.Lng {{BasicKind}} (to be completed)
+	// Declation for basic field visualtrackDB.Lng
 	Lng_Data sql.NullFloat64
 
-	// Declation for basic field visualtrackDB.Heading {{BasicKind}} (to be completed)
+	// Declation for basic field visualtrackDB.Heading
 	Heading_Data sql.NullFloat64
 
-	// Declation for basic field visualtrackDB.Level {{BasicKind}} (to be completed)
+	// Declation for basic field visualtrackDB.Level
 	Level_Data sql.NullFloat64
 
-	// Declation for basic field visualtrackDB.Speed {{BasicKind}} (to be completed)
+	// Declation for basic field visualtrackDB.Speed
 	Speed_Data sql.NullFloat64
 
-	// Declation for basic field visualtrackDB.VerticalSpeed {{BasicKind}} (to be completed)
+	// Declation for basic field visualtrackDB.VerticalSpeed
 	VerticalSpeed_Data sql.NullFloat64
 
-	// Declation for basic field visualtrackDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field visualtrackDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field visualtrackDB.ColorEnum {{BasicKind}} (to be completed)
+	// Declation for basic field visualtrackDB.ColorEnum
 	ColorEnum_Data sql.NullString
 
-	// Declation for basic field visualtrackDB.DisplayTrackHistory bool (to be completed)
+	// Declation for basic field visualtrackDB.DisplayTrackHistory
 	// provide the sql storage for the boolan
 	DisplayTrackHistory_Data sql.NullBool
 
-	// Declation for basic field visualtrackDB.DisplayLevelAndSpeed bool (to be completed)
+	// Declation for basic field visualtrackDB.DisplayLevelAndSpeed
 	// provide the sql storage for the boolan
 	DisplayLevelAndSpeed_Data sql.NullBool
 	// encoding of pointers
@@ -343,7 +343,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseOne() (Error 
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	visualtrackInstancesToBeRemovedFromTheStage := make(map[*models.VisualTrack]struct{})
+	visualtrackInstancesToBeRemovedFromTheStage := make(map[*models.VisualTrack]any)
 	for key, value := range models.Stage.VisualTracks {
 		visualtrackInstancesToBeRemovedFromTheStage[key] = value
 	}

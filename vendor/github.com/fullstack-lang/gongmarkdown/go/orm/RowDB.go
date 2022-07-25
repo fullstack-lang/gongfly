@@ -64,7 +64,7 @@ type RowDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field rowDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field rowDB.Name
 	Name_Data sql.NullString
 	// encoding of pointers
 	RowPointersEnconding
@@ -286,7 +286,7 @@ func (backRepoRow *BackRepoRowStruct) CheckoutPhaseOne() (Error error) {
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	rowInstancesToBeRemovedFromTheStage := make(map[*models.Row]struct{})
+	rowInstancesToBeRemovedFromTheStage := make(map[*models.Row]any)
 	for key, value := range models.Stage.Rows {
 		rowInstancesToBeRemovedFromTheStage[key] = value
 	}

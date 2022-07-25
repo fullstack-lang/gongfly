@@ -4,10 +4,10 @@ go 1.18
 
 require (
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
-	github.com/fullstack-lang/gong v0.0.0-20220507103513-19aef7df6fb3
-	github.com/fullstack-lang/gongdoc v0.0.0-20220508044945-0e6011703c1c
-	github.com/fullstack-lang/gongleaflet v0.0.0-20220507103513-270bbbfdc49d
-	github.com/fullstack-lang/gongsim v0.0.0-20220507103516-e44c800ee5d7
+	github.com/fullstack-lang/gong v0.0.0-20220702044335-15f4f5a852a2
+	github.com/fullstack-lang/gongdoc v0.0.0-20220719125232-a32bd9bd612f
+	github.com/fullstack-lang/gongleaflet v0.0.0-20220628055716-2ed5b33ad2d0
+	github.com/fullstack-lang/gongsim v0.0.0-20220628055718-7e3bd61fd5d8
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.7.7
@@ -26,8 +26,8 @@ require (
 )
 
 require (
-	github.com/fullstack-lang/gongmarkdown v0.0.0-20220507103516-731dd3cf01d4
-	github.com/fullstack-lang/gongng2charts v0.0.0-20220507103516-0e392174b58a
+	github.com/fullstack-lang/gongmarkdown v0.0.0-20220628055718-6edfd7106935
+	github.com/fullstack-lang/gongng2charts v0.0.0-20220628055718-917f49bb56d1
 	github.com/glebarez/sqlite v1.4.1
 )
 

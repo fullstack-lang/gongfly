@@ -12,7 +12,7 @@ import (
 )
 
 // swagger:ignore
-type __void struct{}
+type __void any
 
 // needed for creating set of instances in the stage
 var __member __void
@@ -28,34 +28,34 @@ type GongStructInterface interface {
 // StageStruct enables storage of staged instances
 // swagger:ignore
 type StageStruct struct { // insertion point for definition of arrays registering instances
-	CheckoutSchedulers           map[*CheckoutScheduler]struct{}
+	CheckoutSchedulers           map[*CheckoutScheduler]any
 	CheckoutSchedulers_mapString map[string]*CheckoutScheduler
 
-	Circles           map[*Circle]struct{}
+	Circles           map[*Circle]any
 	Circles_mapString map[string]*Circle
 
-	DivIcons           map[*DivIcon]struct{}
+	DivIcons           map[*DivIcon]any
 	DivIcons_mapString map[string]*DivIcon
 
-	LayerGroups           map[*LayerGroup]struct{}
+	LayerGroups           map[*LayerGroup]any
 	LayerGroups_mapString map[string]*LayerGroup
 
-	LayerGroupUses           map[*LayerGroupUse]struct{}
+	LayerGroupUses           map[*LayerGroupUse]any
 	LayerGroupUses_mapString map[string]*LayerGroupUse
 
-	MapOptionss           map[*MapOptions]struct{}
+	MapOptionss           map[*MapOptions]any
 	MapOptionss_mapString map[string]*MapOptions
 
-	Markers           map[*Marker]struct{}
+	Markers           map[*Marker]any
 	Markers_mapString map[string]*Marker
 
-	UserClicks           map[*UserClick]struct{}
+	UserClicks           map[*UserClick]any
 	UserClicks_mapString map[string]*UserClick
 
-	VLines           map[*VLine]struct{}
+	VLines           map[*VLine]any
 	VLines_mapString map[string]*VLine
 
-	VisualTracks           map[*VisualTrack]struct{}
+	VisualTracks           map[*VisualTrack]any
 	VisualTracks_mapString map[string]*VisualTrack
 
 	AllModelsStructCreateCallback AllModelsStructCreateInterface
@@ -111,34 +111,34 @@ type BackRepoInterface interface {
 
 // swagger:ignore instructs the gong compiler (gongc) to avoid this particular struct
 var Stage StageStruct = StageStruct{ // insertion point for array initiatialisation
-	CheckoutSchedulers:           make(map[*CheckoutScheduler]struct{}),
+	CheckoutSchedulers:           make(map[*CheckoutScheduler]any),
 	CheckoutSchedulers_mapString: make(map[string]*CheckoutScheduler),
 
-	Circles:           make(map[*Circle]struct{}),
+	Circles:           make(map[*Circle]any),
 	Circles_mapString: make(map[string]*Circle),
 
-	DivIcons:           make(map[*DivIcon]struct{}),
+	DivIcons:           make(map[*DivIcon]any),
 	DivIcons_mapString: make(map[string]*DivIcon),
 
-	LayerGroups:           make(map[*LayerGroup]struct{}),
+	LayerGroups:           make(map[*LayerGroup]any),
 	LayerGroups_mapString: make(map[string]*LayerGroup),
 
-	LayerGroupUses:           make(map[*LayerGroupUse]struct{}),
+	LayerGroupUses:           make(map[*LayerGroupUse]any),
 	LayerGroupUses_mapString: make(map[string]*LayerGroupUse),
 
-	MapOptionss:           make(map[*MapOptions]struct{}),
+	MapOptionss:           make(map[*MapOptions]any),
 	MapOptionss_mapString: make(map[string]*MapOptions),
 
-	Markers:           make(map[*Marker]struct{}),
+	Markers:           make(map[*Marker]any),
 	Markers_mapString: make(map[string]*Marker),
 
-	UserClicks:           make(map[*UserClick]struct{}),
+	UserClicks:           make(map[*UserClick]any),
 	UserClicks_mapString: make(map[string]*UserClick),
 
-	VLines:           make(map[*VLine]struct{}),
+	VLines:           make(map[*VLine]any),
 	VLines_mapString: make(map[string]*VLine),
 
-	VisualTracks:           make(map[*VisualTrack]struct{}),
+	VisualTracks:           make(map[*VisualTrack]any),
 	VisualTracks_mapString: make(map[string]*VisualTrack),
 
 	// end of insertion point
@@ -168,6 +168,19 @@ func (stage *StageStruct) Checkout() {
 	if stage.BackRepo != nil {
 		stage.BackRepo.Checkout(stage)
 	}
+
+	// insertion point for computing the map of number of instances per gongstruct
+	stage.Map_GongStructName_InstancesNb["CheckoutScheduler"] = len(stage.CheckoutSchedulers)
+	stage.Map_GongStructName_InstancesNb["Circle"] = len(stage.Circles)
+	stage.Map_GongStructName_InstancesNb["DivIcon"] = len(stage.DivIcons)
+	stage.Map_GongStructName_InstancesNb["LayerGroup"] = len(stage.LayerGroups)
+	stage.Map_GongStructName_InstancesNb["LayerGroupUse"] = len(stage.LayerGroupUses)
+	stage.Map_GongStructName_InstancesNb["MapOptions"] = len(stage.MapOptionss)
+	stage.Map_GongStructName_InstancesNb["Marker"] = len(stage.Markers)
+	stage.Map_GongStructName_InstancesNb["UserClick"] = len(stage.UserClicks)
+	stage.Map_GongStructName_InstancesNb["VLine"] = len(stage.VLines)
+	stage.Map_GongStructName_InstancesNb["VisualTrack"] = len(stage.VisualTracks)
+
 }
 
 // backup generates backup files in the dirPath
@@ -306,23 +319,6 @@ func (checkoutscheduler *CheckoutScheduler) GetName() (res string) {
 	return checkoutscheduler.Name
 }
 
-func (checkoutscheduler *CheckoutScheduler) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "NbUpdatesFromFront"}
-	return
-}
-
-func (checkoutscheduler *CheckoutScheduler) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = checkoutscheduler.Name
-	case "NbUpdatesFromFront":
-		res = fmt.Sprintf("%d", checkoutscheduler.NbUpdatesFromFront)
-	}
-	return
-}
-
 func (stage *StageStruct) getCircleOrderedStructWithNameField() []*Circle {
 	// have alphabetical order generation
 	circleOrdered := []*Circle{}
@@ -428,35 +424,6 @@ func DeleteORMCircle(circle *Circle) {
 // for satisfaction of GongStruct interface
 func (circle *Circle) GetName() (res string) {
 	return circle.Name
-}
-
-func (circle *Circle) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Lat", "Lng", "Name", "Radius", "ColorEnum", "DashStyleEnum", "LayerGroup"}
-	return
-}
-
-func (circle *Circle) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Lat":
-		res = fmt.Sprintf("%f", circle.Lat)
-	case "Lng":
-		res = fmt.Sprintf("%f", circle.Lng)
-	case "Name":
-		res = circle.Name
-	case "Radius":
-		res = fmt.Sprintf("%f", circle.Radius)
-	case "ColorEnum":
-		res = circle.ColorEnum.ToCodeString()
-	case "DashStyleEnum":
-		res = circle.DashStyleEnum.ToCodeString()
-	case "LayerGroup":
-		if circle.LayerGroup != nil {
-			res = circle.LayerGroup.Name
-		}
-	}
-	return
 }
 
 func (stage *StageStruct) getDivIconOrderedStructWithNameField() []*DivIcon {
@@ -566,23 +533,6 @@ func (divicon *DivIcon) GetName() (res string) {
 	return divicon.Name
 }
 
-func (divicon *DivIcon) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "SVG"}
-	return
-}
-
-func (divicon *DivIcon) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = divicon.Name
-	case "SVG":
-		res = divicon.SVG
-	}
-	return
-}
-
 func (stage *StageStruct) getLayerGroupOrderedStructWithNameField() []*LayerGroup {
 	// have alphabetical order generation
 	layergroupOrdered := []*LayerGroup{}
@@ -688,23 +638,6 @@ func DeleteORMLayerGroup(layergroup *LayerGroup) {
 // for satisfaction of GongStruct interface
 func (layergroup *LayerGroup) GetName() (res string) {
 	return layergroup.Name
-}
-
-func (layergroup *LayerGroup) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "DisplayName"}
-	return
-}
-
-func (layergroup *LayerGroup) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = layergroup.Name
-	case "DisplayName":
-		res = layergroup.DisplayName
-	}
-	return
 }
 
 func (stage *StageStruct) getLayerGroupUseOrderedStructWithNameField() []*LayerGroupUse {
@@ -814,27 +747,6 @@ func (layergroupuse *LayerGroupUse) GetName() (res string) {
 	return layergroupuse.Name
 }
 
-func (layergroupuse *LayerGroupUse) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Display", "LayerGroup"}
-	return
-}
-
-func (layergroupuse *LayerGroupUse) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = layergroupuse.Name
-	case "Display":
-		res = fmt.Sprintf("%t", layergroupuse.Display)
-	case "LayerGroup":
-		if layergroupuse.LayerGroup != nil {
-			res = layergroupuse.LayerGroup.Name
-		}
-	}
-	return
-}
-
 func (stage *StageStruct) getMapOptionsOrderedStructWithNameField() []*MapOptions {
 	// have alphabetical order generation
 	mapoptionsOrdered := []*MapOptions{}
@@ -940,46 +852,6 @@ func DeleteORMMapOptions(mapoptions *MapOptions) {
 // for satisfaction of GongStruct interface
 func (mapoptions *MapOptions) GetName() (res string) {
 	return mapoptions.Name
-}
-
-func (mapoptions *MapOptions) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Lat", "Lng", "Name", "ZoomLevel", "UrlTemplate", "Attribution", "MaxZoom", "ZoomControl", "AttributionControl", "ZoomSnap", "LayerGroupUses"}
-	return
-}
-
-func (mapoptions *MapOptions) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Lat":
-		res = fmt.Sprintf("%f", mapoptions.Lat)
-	case "Lng":
-		res = fmt.Sprintf("%f", mapoptions.Lng)
-	case "Name":
-		res = mapoptions.Name
-	case "ZoomLevel":
-		res = fmt.Sprintf("%f", mapoptions.ZoomLevel)
-	case "UrlTemplate":
-		res = mapoptions.UrlTemplate
-	case "Attribution":
-		res = mapoptions.Attribution
-	case "MaxZoom":
-		res = fmt.Sprintf("%d", mapoptions.MaxZoom)
-	case "ZoomControl":
-		res = fmt.Sprintf("%t", mapoptions.ZoomControl)
-	case "AttributionControl":
-		res = fmt.Sprintf("%t", mapoptions.AttributionControl)
-	case "ZoomSnap":
-		res = fmt.Sprintf("%d", mapoptions.ZoomSnap)
-	case "LayerGroupUses":
-		for idx, __instance__ := range mapoptions.LayerGroupUses {
-			if idx > 0 {
-				res += "\n"
-			}
-			res += __instance__.Name
-		}
-	}
-	return
 }
 
 func (stage *StageStruct) getMarkerOrderedStructWithNameField() []*Marker {
@@ -1089,35 +961,6 @@ func (marker *Marker) GetName() (res string) {
 	return marker.Name
 }
 
-func (marker *Marker) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Lat", "Lng", "Name", "ColorEnum", "LayerGroup", "DivIcon"}
-	return
-}
-
-func (marker *Marker) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Lat":
-		res = fmt.Sprintf("%f", marker.Lat)
-	case "Lng":
-		res = fmt.Sprintf("%f", marker.Lng)
-	case "Name":
-		res = marker.Name
-	case "ColorEnum":
-		res = marker.ColorEnum.ToCodeString()
-	case "LayerGroup":
-		if marker.LayerGroup != nil {
-			res = marker.LayerGroup.Name
-		}
-	case "DivIcon":
-		if marker.DivIcon != nil {
-			res = marker.DivIcon.Name
-		}
-	}
-	return
-}
-
 func (stage *StageStruct) getUserClickOrderedStructWithNameField() []*UserClick {
 	// have alphabetical order generation
 	userclickOrdered := []*UserClick{}
@@ -1223,27 +1066,6 @@ func DeleteORMUserClick(userclick *UserClick) {
 // for satisfaction of GongStruct interface
 func (userclick *UserClick) GetName() (res string) {
 	return userclick.Name
-}
-
-func (userclick *UserClick) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Lat", "Lng", "TimeOfClick"}
-	return
-}
-
-func (userclick *UserClick) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = userclick.Name
-	case "Lat":
-		res = fmt.Sprintf("%f", userclick.Lat)
-	case "Lng":
-		res = fmt.Sprintf("%f", userclick.Lng)
-	case "TimeOfClick":
-		res = userclick.TimeOfClick.String()
-	}
-	return
 }
 
 func (stage *StageStruct) getVLineOrderedStructWithNameField() []*VLine {
@@ -1353,45 +1175,6 @@ func (vline *VLine) GetName() (res string) {
 	return vline.Name
 }
 
-func (vline *VLine) GetFields() (res []string) {
-	// list of fields
-	res = []string{"StartLat", "StartLng", "EndLat", "EndLng", "Name", "ColorEnum", "DashStyleEnum", "LayerGroup", "IsTransmitting", "Message", "IsTransmittingBackward", "MessageBackward"}
-	return
-}
-
-func (vline *VLine) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "StartLat":
-		res = fmt.Sprintf("%f", vline.StartLat)
-	case "StartLng":
-		res = fmt.Sprintf("%f", vline.StartLng)
-	case "EndLat":
-		res = fmt.Sprintf("%f", vline.EndLat)
-	case "EndLng":
-		res = fmt.Sprintf("%f", vline.EndLng)
-	case "Name":
-		res = vline.Name
-	case "ColorEnum":
-		res = vline.ColorEnum.ToCodeString()
-	case "DashStyleEnum":
-		res = vline.DashStyleEnum.ToCodeString()
-	case "LayerGroup":
-		if vline.LayerGroup != nil {
-			res = vline.LayerGroup.Name
-		}
-	case "IsTransmitting":
-		res = vline.IsTransmitting.ToCodeString()
-	case "Message":
-		res = vline.Message
-	case "IsTransmittingBackward":
-		res = vline.IsTransmittingBackward.ToCodeString()
-	case "MessageBackward":
-		res = vline.MessageBackward
-	}
-	return
-}
-
 func (stage *StageStruct) getVisualTrackOrderedStructWithNameField() []*VisualTrack {
 	// have alphabetical order generation
 	visualtrackOrdered := []*VisualTrack{}
@@ -1499,47 +1282,6 @@ func (visualtrack *VisualTrack) GetName() (res string) {
 	return visualtrack.Name
 }
 
-func (visualtrack *VisualTrack) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "VerticalSpeed", "Name", "ColorEnum", "LayerGroup", "DivIcon", "DisplayTrackHistory", "DisplayLevelAndSpeed"}
-	return
-}
-
-func (visualtrack *VisualTrack) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Lat":
-		res = fmt.Sprintf("%f", visualtrack.Lat)
-	case "Lng":
-		res = fmt.Sprintf("%f", visualtrack.Lng)
-	case "Heading":
-		res = fmt.Sprintf("%f", visualtrack.Heading)
-	case "Level":
-		res = fmt.Sprintf("%f", visualtrack.Level)
-	case "Speed":
-		res = fmt.Sprintf("%f", visualtrack.Speed)
-	case "VerticalSpeed":
-		res = fmt.Sprintf("%f", visualtrack.VerticalSpeed)
-	case "Name":
-		res = visualtrack.Name
-	case "ColorEnum":
-		res = visualtrack.ColorEnum.ToCodeString()
-	case "LayerGroup":
-		if visualtrack.LayerGroup != nil {
-			res = visualtrack.LayerGroup.Name
-		}
-	case "DivIcon":
-		if visualtrack.DivIcon != nil {
-			res = visualtrack.DivIcon.Name
-		}
-	case "DisplayTrackHistory":
-		res = fmt.Sprintf("%t", visualtrack.DisplayTrackHistory)
-	case "DisplayLevelAndSpeed":
-		res = fmt.Sprintf("%t", visualtrack.DisplayLevelAndSpeed)
-	}
-	return
-}
-
 // swagger:ignore
 type AllModelsStructCreateInterface interface { // insertion point for Callbacks on creation
 	CreateORMCheckoutScheduler(CheckoutScheduler *CheckoutScheduler)
@@ -1568,34 +1310,34 @@ type AllModelsStructDeleteInterface interface { // insertion point for Callbacks
 }
 
 func (stage *StageStruct) Reset() { // insertion point for array reset
-	stage.CheckoutSchedulers = make(map[*CheckoutScheduler]struct{})
+	stage.CheckoutSchedulers = make(map[*CheckoutScheduler]any)
 	stage.CheckoutSchedulers_mapString = make(map[string]*CheckoutScheduler)
 
-	stage.Circles = make(map[*Circle]struct{})
+	stage.Circles = make(map[*Circle]any)
 	stage.Circles_mapString = make(map[string]*Circle)
 
-	stage.DivIcons = make(map[*DivIcon]struct{})
+	stage.DivIcons = make(map[*DivIcon]any)
 	stage.DivIcons_mapString = make(map[string]*DivIcon)
 
-	stage.LayerGroups = make(map[*LayerGroup]struct{})
+	stage.LayerGroups = make(map[*LayerGroup]any)
 	stage.LayerGroups_mapString = make(map[string]*LayerGroup)
 
-	stage.LayerGroupUses = make(map[*LayerGroupUse]struct{})
+	stage.LayerGroupUses = make(map[*LayerGroupUse]any)
 	stage.LayerGroupUses_mapString = make(map[string]*LayerGroupUse)
 
-	stage.MapOptionss = make(map[*MapOptions]struct{})
+	stage.MapOptionss = make(map[*MapOptions]any)
 	stage.MapOptionss_mapString = make(map[string]*MapOptions)
 
-	stage.Markers = make(map[*Marker]struct{})
+	stage.Markers = make(map[*Marker]any)
 	stage.Markers_mapString = make(map[string]*Marker)
 
-	stage.UserClicks = make(map[*UserClick]struct{})
+	stage.UserClicks = make(map[*UserClick]any)
 	stage.UserClicks_mapString = make(map[string]*UserClick)
 
-	stage.VLines = make(map[*VLine]struct{})
+	stage.VLines = make(map[*VLine]any)
 	stage.VLines_mapString = make(map[string]*VLine)
 
-	stage.VisualTracks = make(map[*VisualTrack]struct{})
+	stage.VisualTracks = make(map[*VisualTrack]any)
 	stage.VisualTracks_mapString = make(map[string]*VisualTrack)
 
 }
@@ -1717,7 +1459,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(checkoutschedulerOrdered[:], func(i, j int) bool {
 		return checkoutschedulerOrdered[i].Name < checkoutschedulerOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of CheckoutScheduler")
+	identifiersDecl += "\n\n	// Declarations of staged instances of CheckoutScheduler"
 	for idx, checkoutscheduler := range checkoutschedulerOrdered {
 
 		id = generatesIdentifier("CheckoutScheduler", idx, checkoutscheduler.Name)
@@ -1755,7 +1497,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(circleOrdered[:], func(i, j int) bool {
 		return circleOrdered[i].Name < circleOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Circle")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Circle"
 	for idx, circle := range circleOrdered {
 
 		id = generatesIdentifier("Circle", idx, circle.Name)
@@ -1821,7 +1563,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(diviconOrdered[:], func(i, j int) bool {
 		return diviconOrdered[i].Name < diviconOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of DivIcon")
+	identifiersDecl += "\n\n	// Declarations of staged instances of DivIcon"
 	for idx, divicon := range diviconOrdered {
 
 		id = generatesIdentifier("DivIcon", idx, divicon.Name)
@@ -1859,7 +1601,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(layergroupOrdered[:], func(i, j int) bool {
 		return layergroupOrdered[i].Name < layergroupOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of LayerGroup")
+	identifiersDecl += "\n\n	// Declarations of staged instances of LayerGroup"
 	for idx, layergroup := range layergroupOrdered {
 
 		id = generatesIdentifier("LayerGroup", idx, layergroup.Name)
@@ -1897,7 +1639,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(layergroupuseOrdered[:], func(i, j int) bool {
 		return layergroupuseOrdered[i].Name < layergroupuseOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of LayerGroupUse")
+	identifiersDecl += "\n\n	// Declarations of staged instances of LayerGroupUse"
 	for idx, layergroupuse := range layergroupuseOrdered {
 
 		id = generatesIdentifier("LayerGroupUse", idx, layergroupuse.Name)
@@ -1935,7 +1677,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(mapoptionsOrdered[:], func(i, j int) bool {
 		return mapoptionsOrdered[i].Name < mapoptionsOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of MapOptions")
+	identifiersDecl += "\n\n	// Declarations of staged instances of MapOptions"
 	for idx, mapoptions := range mapoptionsOrdered {
 
 		id = generatesIdentifier("MapOptions", idx, mapoptions.Name)
@@ -2021,7 +1763,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(markerOrdered[:], func(i, j int) bool {
 		return markerOrdered[i].Name < markerOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Marker")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Marker"
 	for idx, marker := range markerOrdered {
 
 		id = generatesIdentifier("Marker", idx, marker.Name)
@@ -2073,7 +1815,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(userclickOrdered[:], func(i, j int) bool {
 		return userclickOrdered[i].Name < userclickOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of UserClick")
+	identifiersDecl += "\n\n	// Declarations of staged instances of UserClick"
 	for idx, userclick := range userclickOrdered {
 
 		id = generatesIdentifier("UserClick", idx, userclick.Name)
@@ -2123,7 +1865,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(vlineOrdered[:], func(i, j int) bool {
 		return vlineOrdered[i].Name < vlineOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of VLine")
+	identifiersDecl += "\n\n	// Declarations of staged instances of VLine"
 	for idx, vline := range vlineOrdered {
 
 		id = generatesIdentifier("VLine", idx, vline.Name)
@@ -2223,7 +1965,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(visualtrackOrdered[:], func(i, j int) bool {
 		return visualtrackOrdered[i].Name < visualtrackOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of VisualTrack")
+	identifiersDecl += "\n\n	// Declarations of staged instances of VisualTrack"
 	for idx, visualtrack := range visualtrackOrdered {
 
 		id = generatesIdentifier("VisualTrack", idx, visualtrack.Name)
@@ -2490,7 +2232,9 @@ func generatesIdentifier(gongStructName string, idx int, instanceName string) (i
 }
 
 // insertion point of functions that provide maps for reverse associations
+
 // generate function for reverse association maps of CheckoutScheduler
+
 // generate function for reverse association maps of Circle
 func (stageStruct *StageStruct) CreateReverseMap_Circle_LayerGroup() (res map[*LayerGroup][]*Circle) {
 	res = make(map[*LayerGroup][]*Circle)
@@ -2514,7 +2258,9 @@ func (stageStruct *StageStruct) CreateReverseMap_Circle_LayerGroup() (res map[*L
 }
 
 // generate function for reverse association maps of DivIcon
+
 // generate function for reverse association maps of LayerGroup
+
 // generate function for reverse association maps of LayerGroupUse
 func (stageStruct *StageStruct) CreateReverseMap_LayerGroupUse_LayerGroup() (res map[*LayerGroup][]*LayerGroupUse) {
 	res = make(map[*LayerGroup][]*LayerGroupUse)
@@ -2550,6 +2296,7 @@ func (stageStruct *StageStruct) CreateReverseMap_MapOptions_LayerGroupUses() (re
 	return
 }
 
+
 // generate function for reverse association maps of Marker
 func (stageStruct *StageStruct) CreateReverseMap_Marker_LayerGroup() (res map[*LayerGroup][]*Marker) {
 	res = make(map[*LayerGroup][]*Marker)
@@ -2571,7 +2318,6 @@ func (stageStruct *StageStruct) CreateReverseMap_Marker_LayerGroup() (res map[*L
 
 	return
 }
-
 func (stageStruct *StageStruct) CreateReverseMap_Marker_DivIcon() (res map[*DivIcon][]*Marker) {
 	res = make(map[*DivIcon][]*Marker)
 
@@ -2594,6 +2340,7 @@ func (stageStruct *StageStruct) CreateReverseMap_Marker_DivIcon() (res map[*DivI
 }
 
 // generate function for reverse association maps of UserClick
+
 // generate function for reverse association maps of VLine
 func (stageStruct *StageStruct) CreateReverseMap_VLine_LayerGroup() (res map[*LayerGroup][]*VLine) {
 	res = make(map[*LayerGroup][]*VLine)
@@ -2637,7 +2384,6 @@ func (stageStruct *StageStruct) CreateReverseMap_VisualTrack_LayerGroup() (res m
 
 	return
 }
-
 func (stageStruct *StageStruct) CreateReverseMap_VisualTrack_DivIcon() (res map[*DivIcon][]*VisualTrack) {
 	res = make(map[*DivIcon][]*VisualTrack)
 
@@ -2659,6 +2405,763 @@ func (stageStruct *StageStruct) CreateReverseMap_VisualTrack_DivIcon() (res map[
 	return
 }
 
+// Gongstruct is the type paramter for generated generic function that allows
+// - access to staged instances
+// - navigation between staged instances by going backward association links between gongstruct
+// - full refactoring of Gongstruct identifiers / fields
+type Gongstruct interface {
+	// insertion point for generic types
+	CheckoutScheduler | Circle | DivIcon | LayerGroup | LayerGroupUse | MapOptions | Marker | UserClick | VLine | VisualTrack
+}
+
+type GongstructSet interface {
+	map[any]any |
+		// insertion point for generic types
+		map[*CheckoutScheduler]any |
+		map[*Circle]any |
+		map[*DivIcon]any |
+		map[*LayerGroup]any |
+		map[*LayerGroupUse]any |
+		map[*MapOptions]any |
+		map[*Marker]any |
+		map[*UserClick]any |
+		map[*VLine]any |
+		map[*VisualTrack]any |
+		map[*any]any // because go does not support an extra "|" at the end of type specifications
+}
+
+type GongstructMapString interface {
+	map[any]any |
+		// insertion point for generic types
+		map[string]*CheckoutScheduler |
+		map[string]*Circle |
+		map[string]*DivIcon |
+		map[string]*LayerGroup |
+		map[string]*LayerGroupUse |
+		map[string]*MapOptions |
+		map[string]*Marker |
+		map[string]*UserClick |
+		map[string]*VLine |
+		map[string]*VisualTrack |
+		map[*any]any // because go does not support an extra "|" at the end of type specifications
+}
+
+// GongGetSet returns the set staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GongGetSet[Type GongstructSet]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case map[*CheckoutScheduler]any:
+		return any(&Stage.CheckoutSchedulers).(*Type)
+	case map[*Circle]any:
+		return any(&Stage.Circles).(*Type)
+	case map[*DivIcon]any:
+		return any(&Stage.DivIcons).(*Type)
+	case map[*LayerGroup]any:
+		return any(&Stage.LayerGroups).(*Type)
+	case map[*LayerGroupUse]any:
+		return any(&Stage.LayerGroupUses).(*Type)
+	case map[*MapOptions]any:
+		return any(&Stage.MapOptionss).(*Type)
+	case map[*Marker]any:
+		return any(&Stage.Markers).(*Type)
+	case map[*UserClick]any:
+		return any(&Stage.UserClicks).(*Type)
+	case map[*VLine]any:
+		return any(&Stage.VLines).(*Type)
+	case map[*VisualTrack]any:
+		return any(&Stage.VisualTracks).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GongGetMap returns the map of staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GongGetMap[Type GongstructMapString]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case map[string]*CheckoutScheduler:
+		return any(&Stage.CheckoutSchedulers_mapString).(*Type)
+	case map[string]*Circle:
+		return any(&Stage.Circles_mapString).(*Type)
+	case map[string]*DivIcon:
+		return any(&Stage.DivIcons_mapString).(*Type)
+	case map[string]*LayerGroup:
+		return any(&Stage.LayerGroups_mapString).(*Type)
+	case map[string]*LayerGroupUse:
+		return any(&Stage.LayerGroupUses_mapString).(*Type)
+	case map[string]*MapOptions:
+		return any(&Stage.MapOptionss_mapString).(*Type)
+	case map[string]*Marker:
+		return any(&Stage.Markers_mapString).(*Type)
+	case map[string]*UserClick:
+		return any(&Stage.UserClicks_mapString).(*Type)
+	case map[string]*VLine:
+		return any(&Stage.VLines_mapString).(*Type)
+	case map[string]*VisualTrack:
+		return any(&Stage.VisualTracks_mapString).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GetGongstructInstancesSet returns the set staged GongstructType instances
+// it is usefull because it allows refactoring of gongstruct identifier
+func GetGongstructInstancesSet[Type Gongstruct]() *map[*Type]any {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case CheckoutScheduler:
+		return any(&Stage.CheckoutSchedulers).(*map[*Type]any)
+	case Circle:
+		return any(&Stage.Circles).(*map[*Type]any)
+	case DivIcon:
+		return any(&Stage.DivIcons).(*map[*Type]any)
+	case LayerGroup:
+		return any(&Stage.LayerGroups).(*map[*Type]any)
+	case LayerGroupUse:
+		return any(&Stage.LayerGroupUses).(*map[*Type]any)
+	case MapOptions:
+		return any(&Stage.MapOptionss).(*map[*Type]any)
+	case Marker:
+		return any(&Stage.Markers).(*map[*Type]any)
+	case UserClick:
+		return any(&Stage.UserClicks).(*map[*Type]any)
+	case VLine:
+		return any(&Stage.VLines).(*map[*Type]any)
+	case VisualTrack:
+		return any(&Stage.VisualTracks).(*map[*Type]any)
+	default:
+		return nil
+	}
+}
+
+// GetGongstructInstancesMap returns the map of staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GetGongstructInstancesMap[Type Gongstruct]() *map[string]*Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case CheckoutScheduler:
+		return any(&Stage.CheckoutSchedulers_mapString).(*map[string]*Type)
+	case Circle:
+		return any(&Stage.Circles_mapString).(*map[string]*Type)
+	case DivIcon:
+		return any(&Stage.DivIcons_mapString).(*map[string]*Type)
+	case LayerGroup:
+		return any(&Stage.LayerGroups_mapString).(*map[string]*Type)
+	case LayerGroupUse:
+		return any(&Stage.LayerGroupUses_mapString).(*map[string]*Type)
+	case MapOptions:
+		return any(&Stage.MapOptionss_mapString).(*map[string]*Type)
+	case Marker:
+		return any(&Stage.Markers_mapString).(*map[string]*Type)
+	case UserClick:
+		return any(&Stage.UserClicks_mapString).(*map[string]*Type)
+	case VLine:
+		return any(&Stage.VLines_mapString).(*map[string]*Type)
+	case VisualTrack:
+		return any(&Stage.VisualTracks_mapString).(*map[string]*Type)
+	default:
+		return nil
+	}
+}
+
+// GetAssociationName is a generic function that returns an instance of Type
+// where each association is filled with an instance whose name is the name of the association
+//
+// This function can be handy for generating navigation function that are refactorable
+func GetAssociationName[Type Gongstruct]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for instance with special fields
+	case CheckoutScheduler:
+		return any(&CheckoutScheduler{
+			// Initialisation of associations
+		}).(*Type)
+	case Circle:
+		return any(&Circle{
+			// Initialisation of associations
+			// field is initialized with an instance of LayerGroup with the name of the field
+			LayerGroup: &LayerGroup{Name: "LayerGroup"},
+		}).(*Type)
+	case DivIcon:
+		return any(&DivIcon{
+			// Initialisation of associations
+		}).(*Type)
+	case LayerGroup:
+		return any(&LayerGroup{
+			// Initialisation of associations
+		}).(*Type)
+	case LayerGroupUse:
+		return any(&LayerGroupUse{
+			// Initialisation of associations
+			// field is initialized with an instance of LayerGroup with the name of the field
+			LayerGroup: &LayerGroup{Name: "LayerGroup"},
+		}).(*Type)
+	case MapOptions:
+		return any(&MapOptions{
+			// Initialisation of associations
+			// field is initialized with an instance of LayerGroupUse with the name of the field
+			LayerGroupUses: []*LayerGroupUse{{Name: "LayerGroupUses"}},
+		}).(*Type)
+	case Marker:
+		return any(&Marker{
+			// Initialisation of associations
+			// field is initialized with an instance of LayerGroup with the name of the field
+			LayerGroup: &LayerGroup{Name: "LayerGroup"},
+			// field is initialized with an instance of DivIcon with the name of the field
+			DivIcon: &DivIcon{Name: "DivIcon"},
+		}).(*Type)
+	case UserClick:
+		return any(&UserClick{
+			// Initialisation of associations
+		}).(*Type)
+	case VLine:
+		return any(&VLine{
+			// Initialisation of associations
+			// field is initialized with an instance of LayerGroup with the name of the field
+			LayerGroup: &LayerGroup{Name: "LayerGroup"},
+		}).(*Type)
+	case VisualTrack:
+		return any(&VisualTrack{
+			// Initialisation of associations
+			// field is initialized with an instance of LayerGroup with the name of the field
+			LayerGroup: &LayerGroup{Name: "LayerGroup"},
+			// field is initialized with an instance of DivIcon with the name of the field
+			DivIcon: &DivIcon{Name: "DivIcon"},
+		}).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GetPointerReverseMap allows backtrack navigation of any Start.Fieldname
+// associations (0..1) that is a pointer from one staged Gongstruct (type Start)
+// instances to another (type End)
+//
+// The function provides a map with keys as instances of End and values to arrays of *Start
+// the map is construed by iterating over all Start instances and populationg keys with End instances
+// and values with slice of Start instances
+func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*Start {
+	var ret Start
+
+	switch any(ret).(type) {
+	// insertion point of functions that provide maps for reverse associations
+	// reverse maps of direct associations of CheckoutScheduler
+	case CheckoutScheduler:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Circle
+	case Circle:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "LayerGroup":
+			res := make(map[*LayerGroup][]*Circle)
+			for circle := range Stage.Circles {
+				if circle.LayerGroup != nil {
+					layergroup_ := circle.LayerGroup
+					var circles []*Circle
+					_, ok := res[layergroup_]
+					if ok {
+						circles = res[layergroup_]
+					} else {
+						circles = make([]*Circle, 0)
+					}
+					circles = append(circles, circle)
+					res[layergroup_] = circles
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	// reverse maps of direct associations of DivIcon
+	case DivIcon:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of LayerGroup
+	case LayerGroup:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of LayerGroupUse
+	case LayerGroupUse:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "LayerGroup":
+			res := make(map[*LayerGroup][]*LayerGroupUse)
+			for layergroupuse := range Stage.LayerGroupUses {
+				if layergroupuse.LayerGroup != nil {
+					layergroup_ := layergroupuse.LayerGroup
+					var layergroupuses []*LayerGroupUse
+					_, ok := res[layergroup_]
+					if ok {
+						layergroupuses = res[layergroup_]
+					} else {
+						layergroupuses = make([]*LayerGroupUse, 0)
+					}
+					layergroupuses = append(layergroupuses, layergroupuse)
+					res[layergroup_] = layergroupuses
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	// reverse maps of direct associations of MapOptions
+	case MapOptions:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Marker
+	case Marker:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "LayerGroup":
+			res := make(map[*LayerGroup][]*Marker)
+			for marker := range Stage.Markers {
+				if marker.LayerGroup != nil {
+					layergroup_ := marker.LayerGroup
+					var markers []*Marker
+					_, ok := res[layergroup_]
+					if ok {
+						markers = res[layergroup_]
+					} else {
+						markers = make([]*Marker, 0)
+					}
+					markers = append(markers, marker)
+					res[layergroup_] = markers
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		case "DivIcon":
+			res := make(map[*DivIcon][]*Marker)
+			for marker := range Stage.Markers {
+				if marker.DivIcon != nil {
+					divicon_ := marker.DivIcon
+					var markers []*Marker
+					_, ok := res[divicon_]
+					if ok {
+						markers = res[divicon_]
+					} else {
+						markers = make([]*Marker, 0)
+					}
+					markers = append(markers, marker)
+					res[divicon_] = markers
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	// reverse maps of direct associations of UserClick
+	case UserClick:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of VLine
+	case VLine:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "LayerGroup":
+			res := make(map[*LayerGroup][]*VLine)
+			for vline := range Stage.VLines {
+				if vline.LayerGroup != nil {
+					layergroup_ := vline.LayerGroup
+					var vlines []*VLine
+					_, ok := res[layergroup_]
+					if ok {
+						vlines = res[layergroup_]
+					} else {
+						vlines = make([]*VLine, 0)
+					}
+					vlines = append(vlines, vline)
+					res[layergroup_] = vlines
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	// reverse maps of direct associations of VisualTrack
+	case VisualTrack:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "LayerGroup":
+			res := make(map[*LayerGroup][]*VisualTrack)
+			for visualtrack := range Stage.VisualTracks {
+				if visualtrack.LayerGroup != nil {
+					layergroup_ := visualtrack.LayerGroup
+					var visualtracks []*VisualTrack
+					_, ok := res[layergroup_]
+					if ok {
+						visualtracks = res[layergroup_]
+					} else {
+						visualtracks = make([]*VisualTrack, 0)
+					}
+					visualtracks = append(visualtracks, visualtrack)
+					res[layergroup_] = visualtracks
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		case "DivIcon":
+			res := make(map[*DivIcon][]*VisualTrack)
+			for visualtrack := range Stage.VisualTracks {
+				if visualtrack.DivIcon != nil {
+					divicon_ := visualtrack.DivIcon
+					var visualtracks []*VisualTrack
+					_, ok := res[divicon_]
+					if ok {
+						visualtracks = res[divicon_]
+					} else {
+						visualtracks = make([]*VisualTrack, 0)
+					}
+					visualtracks = append(visualtracks, visualtrack)
+					res[divicon_] = visualtracks
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	}
+	return nil
+}
+
+// GetSliceOfPointersReverseMap allows backtrack navigation of any Start.Fieldname
+// associations (0..N) between one staged Gongstruct instances and many others
+//
+// The function provides a map with keys as instances of End and values to *Start instances
+// the map is construed by iterating over all Start instances and populating keys with End instances
+// and values with the Start instances
+func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string) map[*End]*Start {
+	var ret Start
+
+	switch any(ret).(type) {
+	// insertion point of functions that provide maps for reverse associations
+	// reverse maps of direct associations of CheckoutScheduler
+	case CheckoutScheduler:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Circle
+	case Circle:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of DivIcon
+	case DivIcon:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of LayerGroup
+	case LayerGroup:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of LayerGroupUse
+	case LayerGroupUse:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of MapOptions
+	case MapOptions:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "LayerGroupUses":
+			res := make(map[*LayerGroupUse]*MapOptions)
+			for mapoptions := range Stage.MapOptionss {
+				for _, layergroupuse_ := range mapoptions.LayerGroupUses {
+					res[layergroupuse_] = mapoptions
+				}
+			}
+			return any(res).(map[*End]*Start)
+		}
+	// reverse maps of direct associations of Marker
+	case Marker:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of UserClick
+	case UserClick:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of VLine
+	case VLine:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of VisualTrack
+	case VisualTrack:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	}
+	return nil
+}
+
+// GetGongstructName returns the name of the Gongstruct
+// this can be usefull if one want program robust to refactoring
+func GetGongstructName[Type Gongstruct]() (res string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case CheckoutScheduler:
+		res = "CheckoutScheduler"
+	case Circle:
+		res = "Circle"
+	case DivIcon:
+		res = "DivIcon"
+	case LayerGroup:
+		res = "LayerGroup"
+	case LayerGroupUse:
+		res = "LayerGroupUse"
+	case MapOptions:
+		res = "MapOptions"
+	case Marker:
+		res = "Marker"
+	case UserClick:
+		res = "UserClick"
+	case VLine:
+		res = "VLine"
+	case VisualTrack:
+		res = "VisualTrack"
+	}
+	return res
+}
+
+// GetFields return the array of the fields
+func GetFields[Type Gongstruct]() (res []string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case CheckoutScheduler:
+		res = []string{"Name", "NbUpdatesFromFront"}
+	case Circle:
+		res = []string{"Lat", "Lng", "Name", "Radius", "ColorEnum", "DashStyleEnum", "LayerGroup"}
+	case DivIcon:
+		res = []string{"Name", "SVG"}
+	case LayerGroup:
+		res = []string{"Name", "DisplayName"}
+	case LayerGroupUse:
+		res = []string{"Name", "Display", "LayerGroup"}
+	case MapOptions:
+		res = []string{"Lat", "Lng", "Name", "ZoomLevel", "UrlTemplate", "Attribution", "MaxZoom", "ZoomControl", "AttributionControl", "ZoomSnap", "LayerGroupUses"}
+	case Marker:
+		res = []string{"Lat", "Lng", "Name", "ColorEnum", "LayerGroup", "DivIcon"}
+	case UserClick:
+		res = []string{"Name", "Lat", "Lng", "TimeOfClick"}
+	case VLine:
+		res = []string{"StartLat", "StartLng", "EndLat", "EndLng", "Name", "ColorEnum", "DashStyleEnum", "LayerGroup", "IsTransmitting", "Message", "IsTransmittingBackward", "MessageBackward"}
+	case VisualTrack:
+		res = []string{"Lat", "Lng", "Heading", "Level", "Speed", "VerticalSpeed", "Name", "ColorEnum", "LayerGroup", "DivIcon", "DisplayTrackHistory", "DisplayLevelAndSpeed"}
+	}
+	return
+}
+
+func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res string) {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct field value
+	case CheckoutScheduler:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(CheckoutScheduler).Name
+		case "NbUpdatesFromFront":
+			res = fmt.Sprintf("%d", any(instance).(CheckoutScheduler).NbUpdatesFromFront)
+		}
+	case Circle:
+		switch fieldName {
+		// string value of fields
+		case "Lat":
+			res = fmt.Sprintf("%f", any(instance).(Circle).Lat)
+		case "Lng":
+			res = fmt.Sprintf("%f", any(instance).(Circle).Lng)
+		case "Name":
+			res = any(instance).(Circle).Name
+		case "Radius":
+			res = fmt.Sprintf("%f", any(instance).(Circle).Radius)
+		case "ColorEnum":
+			enum := any(instance).(Circle).ColorEnum
+			res = enum.ToCodeString()
+		case "DashStyleEnum":
+			enum := any(instance).(Circle).DashStyleEnum
+			res = enum.ToCodeString()
+		case "LayerGroup":
+			if any(instance).(Circle).LayerGroup != nil {
+				res = any(instance).(Circle).LayerGroup.Name
+			}
+		}
+	case DivIcon:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(DivIcon).Name
+		case "SVG":
+			res = any(instance).(DivIcon).SVG
+		}
+	case LayerGroup:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(LayerGroup).Name
+		case "DisplayName":
+			res = any(instance).(LayerGroup).DisplayName
+		}
+	case LayerGroupUse:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(LayerGroupUse).Name
+		case "Display":
+			res = fmt.Sprintf("%t", any(instance).(LayerGroupUse).Display)
+		case "LayerGroup":
+			if any(instance).(LayerGroupUse).LayerGroup != nil {
+				res = any(instance).(LayerGroupUse).LayerGroup.Name
+			}
+		}
+	case MapOptions:
+		switch fieldName {
+		// string value of fields
+		case "Lat":
+			res = fmt.Sprintf("%f", any(instance).(MapOptions).Lat)
+		case "Lng":
+			res = fmt.Sprintf("%f", any(instance).(MapOptions).Lng)
+		case "Name":
+			res = any(instance).(MapOptions).Name
+		case "ZoomLevel":
+			res = fmt.Sprintf("%f", any(instance).(MapOptions).ZoomLevel)
+		case "UrlTemplate":
+			res = any(instance).(MapOptions).UrlTemplate
+		case "Attribution":
+			res = any(instance).(MapOptions).Attribution
+		case "MaxZoom":
+			res = fmt.Sprintf("%d", any(instance).(MapOptions).MaxZoom)
+		case "ZoomControl":
+			res = fmt.Sprintf("%t", any(instance).(MapOptions).ZoomControl)
+		case "AttributionControl":
+			res = fmt.Sprintf("%t", any(instance).(MapOptions).AttributionControl)
+		case "ZoomSnap":
+			res = fmt.Sprintf("%d", any(instance).(MapOptions).ZoomSnap)
+		case "LayerGroupUses":
+			for idx, __instance__ := range any(instance).(MapOptions).LayerGroupUses {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		}
+	case Marker:
+		switch fieldName {
+		// string value of fields
+		case "Lat":
+			res = fmt.Sprintf("%f", any(instance).(Marker).Lat)
+		case "Lng":
+			res = fmt.Sprintf("%f", any(instance).(Marker).Lng)
+		case "Name":
+			res = any(instance).(Marker).Name
+		case "ColorEnum":
+			enum := any(instance).(Marker).ColorEnum
+			res = enum.ToCodeString()
+		case "LayerGroup":
+			if any(instance).(Marker).LayerGroup != nil {
+				res = any(instance).(Marker).LayerGroup.Name
+			}
+		case "DivIcon":
+			if any(instance).(Marker).DivIcon != nil {
+				res = any(instance).(Marker).DivIcon.Name
+			}
+		}
+	case UserClick:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(UserClick).Name
+		case "Lat":
+			res = fmt.Sprintf("%f", any(instance).(UserClick).Lat)
+		case "Lng":
+			res = fmt.Sprintf("%f", any(instance).(UserClick).Lng)
+		case "TimeOfClick":
+			res = any(instance).(UserClick).TimeOfClick.String()
+		}
+	case VLine:
+		switch fieldName {
+		// string value of fields
+		case "StartLat":
+			res = fmt.Sprintf("%f", any(instance).(VLine).StartLat)
+		case "StartLng":
+			res = fmt.Sprintf("%f", any(instance).(VLine).StartLng)
+		case "EndLat":
+			res = fmt.Sprintf("%f", any(instance).(VLine).EndLat)
+		case "EndLng":
+			res = fmt.Sprintf("%f", any(instance).(VLine).EndLng)
+		case "Name":
+			res = any(instance).(VLine).Name
+		case "ColorEnum":
+			enum := any(instance).(VLine).ColorEnum
+			res = enum.ToCodeString()
+		case "DashStyleEnum":
+			enum := any(instance).(VLine).DashStyleEnum
+			res = enum.ToCodeString()
+		case "LayerGroup":
+			if any(instance).(VLine).LayerGroup != nil {
+				res = any(instance).(VLine).LayerGroup.Name
+			}
+		case "IsTransmitting":
+			enum := any(instance).(VLine).IsTransmitting
+			res = enum.ToCodeString()
+		case "Message":
+			res = any(instance).(VLine).Message
+		case "IsTransmittingBackward":
+			enum := any(instance).(VLine).IsTransmittingBackward
+			res = enum.ToCodeString()
+		case "MessageBackward":
+			res = any(instance).(VLine).MessageBackward
+		}
+	case VisualTrack:
+		switch fieldName {
+		// string value of fields
+		case "Lat":
+			res = fmt.Sprintf("%f", any(instance).(VisualTrack).Lat)
+		case "Lng":
+			res = fmt.Sprintf("%f", any(instance).(VisualTrack).Lng)
+		case "Heading":
+			res = fmt.Sprintf("%f", any(instance).(VisualTrack).Heading)
+		case "Level":
+			res = fmt.Sprintf("%f", any(instance).(VisualTrack).Level)
+		case "Speed":
+			res = fmt.Sprintf("%f", any(instance).(VisualTrack).Speed)
+		case "VerticalSpeed":
+			res = fmt.Sprintf("%f", any(instance).(VisualTrack).VerticalSpeed)
+		case "Name":
+			res = any(instance).(VisualTrack).Name
+		case "ColorEnum":
+			enum := any(instance).(VisualTrack).ColorEnum
+			res = enum.ToCodeString()
+		case "LayerGroup":
+			if any(instance).(VisualTrack).LayerGroup != nil {
+				res = any(instance).(VisualTrack).LayerGroup.Name
+			}
+		case "DivIcon":
+			if any(instance).(VisualTrack).DivIcon != nil {
+				res = any(instance).(VisualTrack).DivIcon.Name
+			}
+		case "DisplayTrackHistory":
+			res = fmt.Sprintf("%t", any(instance).(VisualTrack).DisplayTrackHistory)
+		case "DisplayLevelAndSpeed":
+			res = fmt.Sprintf("%t", any(instance).(VisualTrack).DisplayLevelAndSpeed)
+		}
+	}
+	return
+}
 
 // insertion point of enum utility functions
 // Utility function for ColorEnum
@@ -2669,18 +3172,18 @@ func (colorenum ColorEnum) ToString() (res string) {
 	// migration of former implementation of enum
 	switch colorenum {
 	// insertion code per enum code
-	case BLUE:
-		res = "BLUE"
-	case GREEN:
-		res = "GREEN"
-	case GREY:
-		res = "GREY"
 	case LIGHT_BROWN_8D6E63:
 		res = "LIGHT_BROWN_8D6E63"
-	case NONE:
-		res = "NONE"
 	case RED:
 		res = "RED"
+	case GREY:
+		res = "GREY"
+	case GREEN:
+		res = "GREEN"
+	case BLUE:
+		res = "BLUE"
+	case NONE:
+		res = "NONE"
 	}
 	return
 }
@@ -2689,18 +3192,18 @@ func (colorenum *ColorEnum) FromString(input string) {
 
 	switch input {
 	// insertion code per enum code
-	case "BLUE":
-		*colorenum = BLUE
-	case "GREEN":
-		*colorenum = GREEN
-	case "GREY":
-		*colorenum = GREY
 	case "LIGHT_BROWN_8D6E63":
 		*colorenum = LIGHT_BROWN_8D6E63
-	case "NONE":
-		*colorenum = NONE
 	case "RED":
 		*colorenum = RED
+	case "GREY":
+		*colorenum = GREY
+	case "GREEN":
+		*colorenum = GREEN
+	case "BLUE":
+		*colorenum = BLUE
+	case "NONE":
+		*colorenum = NONE
 	}
 }
 
@@ -2708,18 +3211,18 @@ func (colorenum *ColorEnum) ToCodeString() (res string) {
 
 	switch *colorenum {
 	// insertion code per enum code
-	case BLUE:
-		res = "BLUE"
-	case GREEN:
-		res = "GREEN"
-	case GREY:
-		res = "GREY"
 	case LIGHT_BROWN_8D6E63:
 		res = "LIGHT_BROWN_8D6E63"
-	case NONE:
-		res = "NONE"
 	case RED:
 		res = "RED"
+	case GREY:
+		res = "GREY"
+	case GREEN:
+		res = "GREEN"
+	case BLUE:
+		res = "BLUE"
+	case NONE:
+		res = "NONE"
 	}
 	return
 }
@@ -2771,10 +3274,10 @@ func (start_to_end_enum Start_To_End_Enum) ToString() (res string) {
 	// migration of former implementation of enum
 	switch start_to_end_enum {
 	// insertion code per enum code
-	case BACKWARD_END_TO_START:
-		res = "BACKWARD_START_TO_END"
 	case FORWARD_START_TO_END:
 		res = "FORWARD_START_TO_END"
+	case BACKWARD_END_TO_START:
+		res = "BACKWARD_START_TO_END"
 	}
 	return
 }
@@ -2783,10 +3286,10 @@ func (start_to_end_enum *Start_To_End_Enum) FromString(input string) {
 
 	switch input {
 	// insertion code per enum code
-	case "BACKWARD_START_TO_END":
-		*start_to_end_enum = BACKWARD_END_TO_START
 	case "FORWARD_START_TO_END":
 		*start_to_end_enum = FORWARD_START_TO_END
+	case "BACKWARD_START_TO_END":
+		*start_to_end_enum = BACKWARD_END_TO_START
 	}
 }
 
@@ -2794,10 +3297,10 @@ func (start_to_end_enum *Start_To_End_Enum) ToCodeString() (res string) {
 
 	switch *start_to_end_enum {
 	// insertion code per enum code
-	case BACKWARD_END_TO_START:
-		res = "BACKWARD_END_TO_START"
 	case FORWARD_START_TO_END:
 		res = "FORWARD_START_TO_END"
+	case BACKWARD_END_TO_START:
+		res = "BACKWARD_END_TO_START"
 	}
 	return
 }
@@ -2810,10 +3313,10 @@ func (transmittingenum TransmittingEnum) ToString() (res string) {
 	// migration of former implementation of enum
 	switch transmittingenum {
 	// insertion code per enum code
-	case IS_NOT_TRANSMITTING:
-		res = "IS_NOT_TRANSMITTING"
 	case IS_TRANSMITTING:
 		res = "IS_TRANSMITTING"
+	case IS_NOT_TRANSMITTING:
+		res = "IS_NOT_TRANSMITTING"
 	}
 	return
 }
@@ -2822,10 +3325,10 @@ func (transmittingenum *TransmittingEnum) FromString(input string) {
 
 	switch input {
 	// insertion code per enum code
-	case "IS_NOT_TRANSMITTING":
-		*transmittingenum = IS_NOT_TRANSMITTING
 	case "IS_TRANSMITTING":
 		*transmittingenum = IS_TRANSMITTING
+	case "IS_NOT_TRANSMITTING":
+		*transmittingenum = IS_NOT_TRANSMITTING
 	}
 }
 
@@ -2833,10 +3336,10 @@ func (transmittingenum *TransmittingEnum) ToCodeString() (res string) {
 
 	switch *transmittingenum {
 	// insertion code per enum code
-	case IS_NOT_TRANSMITTING:
-		res = "IS_NOT_TRANSMITTING"
 	case IS_TRANSMITTING:
 		res = "IS_TRANSMITTING"
+	case IS_NOT_TRANSMITTING:
+		res = "IS_NOT_TRANSMITTING"
 	}
 	return
 }

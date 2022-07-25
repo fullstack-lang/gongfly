@@ -39,41 +39,41 @@ github.com/erikstmartin/go-testdb
 # github.com/frankban/quicktest v1.13.1
 ## explicit; go 1.13
 github.com/frankban/quicktest
-# github.com/fullstack-lang/gong v0.0.0-20220507103513-19aef7df6fb3
-## explicit; go 1.17
+# github.com/fullstack-lang/gong v0.0.0-20220702044335-15f4f5a852a2
+## explicit; go 1.18
 github.com/fullstack-lang/gong/go/controllers
 github.com/fullstack-lang/gong/go/models
 github.com/fullstack-lang/gong/go/orm
 github.com/fullstack-lang/gong/ng
-# github.com/fullstack-lang/gongdoc v0.0.0-20220508044945-0e6011703c1c
-## explicit; go 1.17
+# github.com/fullstack-lang/gongdoc v0.0.0-20220719125232-a32bd9bd612f
+## explicit; go 1.18
 github.com/fullstack-lang/gongdoc/go/controllers
 github.com/fullstack-lang/gongdoc/go/models
 github.com/fullstack-lang/gongdoc/go/orm
 github.com/fullstack-lang/gongdoc/go/static
 github.com/fullstack-lang/gongdoc/go/walk
 github.com/fullstack-lang/gongdoc/ng
-# github.com/fullstack-lang/gongleaflet v0.0.0-20220507103513-270bbbfdc49d
-## explicit; go 1.17
+# github.com/fullstack-lang/gongleaflet v0.0.0-20220628055716-2ed5b33ad2d0
+## explicit; go 1.18
 github.com/fullstack-lang/gongleaflet/go/controllers
 github.com/fullstack-lang/gongleaflet/go/icons
 github.com/fullstack-lang/gongleaflet/go/models
 github.com/fullstack-lang/gongleaflet/go/orm
 github.com/fullstack-lang/gongleaflet/ng
-# github.com/fullstack-lang/gongmarkdown v0.0.0-20220507103516-731dd3cf01d4
-## explicit; go 1.17
+# github.com/fullstack-lang/gongmarkdown v0.0.0-20220628055718-6edfd7106935
+## explicit; go 1.18
 github.com/fullstack-lang/gongmarkdown/go/controllers
 github.com/fullstack-lang/gongmarkdown/go/models
 github.com/fullstack-lang/gongmarkdown/go/orm
 github.com/fullstack-lang/gongmarkdown/ng
-# github.com/fullstack-lang/gongng2charts v0.0.0-20220507103516-0e392174b58a
-## explicit; go 1.17
+# github.com/fullstack-lang/gongng2charts v0.0.0-20220628055718-917f49bb56d1
+## explicit; go 1.18
 github.com/fullstack-lang/gongng2charts/go/controllers
 github.com/fullstack-lang/gongng2charts/go/models
 github.com/fullstack-lang/gongng2charts/go/orm
 github.com/fullstack-lang/gongng2charts/ng
-# github.com/fullstack-lang/gongsim v0.0.0-20220507103516-e44c800ee5d7
-## explicit; go 1.17
+# github.com/fullstack-lang/gongsim v0.0.0-20220628055718-7e3bd61fd5d8
+## explicit; go 1.18
 github.com/fullstack-lang/gongsim/go/controllers
 github.com/fullstack-lang/gongsim/go/models
 github.com/fullstack-lang/gongsim/go/orm
@@ -251,6 +251,9 @@ golang.org/x/image/tiff/lzw
 golang.org/x/image/vector
 # golang.org/x/mod v0.5.1
 ## explicit; go 1.17
+golang.org/x/mod/internal/lazyregexp
+golang.org/x/mod/modfile
+golang.org/x/mod/module
 golang.org/x/mod/semver
 # golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8
 ## explicit; go 1.17

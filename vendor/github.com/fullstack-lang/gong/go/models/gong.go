@@ -12,7 +12,7 @@ import (
 )
 
 // swagger:ignore
-type __void struct{}
+type __void any
 
 // needed for creating set of instances in the stage
 var __member __void
@@ -28,28 +28,31 @@ type GongStructInterface interface {
 // StageStruct enables storage of staged instances
 // swagger:ignore
 type StageStruct struct { // insertion point for definition of arrays registering instances
-	GongBasicFields           map[*GongBasicField]struct{}
+	GongBasicFields           map[*GongBasicField]any
 	GongBasicFields_mapString map[string]*GongBasicField
 
-	GongEnums           map[*GongEnum]struct{}
+	GongEnums           map[*GongEnum]any
 	GongEnums_mapString map[string]*GongEnum
 
-	GongEnumValues           map[*GongEnumValue]struct{}
+	GongEnumValues           map[*GongEnumValue]any
 	GongEnumValues_mapString map[string]*GongEnumValue
 
-	GongStructs           map[*GongStruct]struct{}
+	GongNotes           map[*GongNote]any
+	GongNotes_mapString map[string]*GongNote
+
+	GongStructs           map[*GongStruct]any
 	GongStructs_mapString map[string]*GongStruct
 
-	GongTimeFields           map[*GongTimeField]struct{}
+	GongTimeFields           map[*GongTimeField]any
 	GongTimeFields_mapString map[string]*GongTimeField
 
-	ModelPkgs           map[*ModelPkg]struct{}
+	ModelPkgs           map[*ModelPkg]any
 	ModelPkgs_mapString map[string]*ModelPkg
 
-	PointerToGongStructFields           map[*PointerToGongStructField]struct{}
+	PointerToGongStructFields           map[*PointerToGongStructField]any
 	PointerToGongStructFields_mapString map[string]*PointerToGongStructField
 
-	SliceOfPointerToGongStructFields           map[*SliceOfPointerToGongStructField]struct{}
+	SliceOfPointerToGongStructFields           map[*SliceOfPointerToGongStructField]any
 	SliceOfPointerToGongStructFields_mapString map[string]*SliceOfPointerToGongStructField
 
 	AllModelsStructCreateCallback AllModelsStructCreateInterface
@@ -85,6 +88,8 @@ type BackRepoInterface interface {
 	CheckoutGongEnum(gongenum *GongEnum)
 	CommitGongEnumValue(gongenumvalue *GongEnumValue)
 	CheckoutGongEnumValue(gongenumvalue *GongEnumValue)
+	CommitGongNote(gongnote *GongNote)
+	CheckoutGongNote(gongnote *GongNote)
 	CommitGongStruct(gongstruct *GongStruct)
 	CheckoutGongStruct(gongstruct *GongStruct)
 	CommitGongTimeField(gongtimefield *GongTimeField)
@@ -101,28 +106,31 @@ type BackRepoInterface interface {
 
 // swagger:ignore instructs the gong compiler (gongc) to avoid this particular struct
 var Stage StageStruct = StageStruct{ // insertion point for array initiatialisation
-	GongBasicFields:           make(map[*GongBasicField]struct{}),
+	GongBasicFields:           make(map[*GongBasicField]any),
 	GongBasicFields_mapString: make(map[string]*GongBasicField),
 
-	GongEnums:           make(map[*GongEnum]struct{}),
+	GongEnums:           make(map[*GongEnum]any),
 	GongEnums_mapString: make(map[string]*GongEnum),
 
-	GongEnumValues:           make(map[*GongEnumValue]struct{}),
+	GongEnumValues:           make(map[*GongEnumValue]any),
 	GongEnumValues_mapString: make(map[string]*GongEnumValue),
 
-	GongStructs:           make(map[*GongStruct]struct{}),
+	GongNotes:           make(map[*GongNote]any),
+	GongNotes_mapString: make(map[string]*GongNote),
+
+	GongStructs:           make(map[*GongStruct]any),
 	GongStructs_mapString: make(map[string]*GongStruct),
 
-	GongTimeFields:           make(map[*GongTimeField]struct{}),
+	GongTimeFields:           make(map[*GongTimeField]any),
 	GongTimeFields_mapString: make(map[string]*GongTimeField),
 
-	ModelPkgs:           make(map[*ModelPkg]struct{}),
+	ModelPkgs:           make(map[*ModelPkg]any),
 	ModelPkgs_mapString: make(map[string]*ModelPkg),
 
-	PointerToGongStructFields:           make(map[*PointerToGongStructField]struct{}),
+	PointerToGongStructFields:           make(map[*PointerToGongStructField]any),
 	PointerToGongStructFields_mapString: make(map[string]*PointerToGongStructField),
 
-	SliceOfPointerToGongStructFields:           make(map[*SliceOfPointerToGongStructField]struct{}),
+	SliceOfPointerToGongStructFields:           make(map[*SliceOfPointerToGongStructField]any),
 	SliceOfPointerToGongStructFields_mapString: make(map[string]*SliceOfPointerToGongStructField),
 
 	// end of insertion point
@@ -138,6 +146,7 @@ func (stage *StageStruct) Commit() {
 	stage.Map_GongStructName_InstancesNb["GongBasicField"] = len(stage.GongBasicFields)
 	stage.Map_GongStructName_InstancesNb["GongEnum"] = len(stage.GongEnums)
 	stage.Map_GongStructName_InstancesNb["GongEnumValue"] = len(stage.GongEnumValues)
+	stage.Map_GongStructName_InstancesNb["GongNote"] = len(stage.GongNotes)
 	stage.Map_GongStructName_InstancesNb["GongStruct"] = len(stage.GongStructs)
 	stage.Map_GongStructName_InstancesNb["GongTimeField"] = len(stage.GongTimeFields)
 	stage.Map_GongStructName_InstancesNb["ModelPkg"] = len(stage.ModelPkgs)
@@ -150,6 +159,18 @@ func (stage *StageStruct) Checkout() {
 	if stage.BackRepo != nil {
 		stage.BackRepo.Checkout(stage)
 	}
+
+	// insertion point for computing the map of number of instances per gongstruct
+	stage.Map_GongStructName_InstancesNb["GongBasicField"] = len(stage.GongBasicFields)
+	stage.Map_GongStructName_InstancesNb["GongEnum"] = len(stage.GongEnums)
+	stage.Map_GongStructName_InstancesNb["GongEnumValue"] = len(stage.GongEnumValues)
+	stage.Map_GongStructName_InstancesNb["GongNote"] = len(stage.GongNotes)
+	stage.Map_GongStructName_InstancesNb["GongStruct"] = len(stage.GongStructs)
+	stage.Map_GongStructName_InstancesNb["GongTimeField"] = len(stage.GongTimeFields)
+	stage.Map_GongStructName_InstancesNb["ModelPkg"] = len(stage.ModelPkgs)
+	stage.Map_GongStructName_InstancesNb["PointerToGongStructField"] = len(stage.PointerToGongStructFields)
+	stage.Map_GongStructName_InstancesNb["SliceOfPointerToGongStructField"] = len(stage.SliceOfPointerToGongStructFields)
+
 }
 
 // backup generates backup files in the dirPath
@@ -288,31 +309,6 @@ func (gongbasicfield *GongBasicField) GetName() (res string) {
 	return gongbasicfield.Name
 }
 
-func (gongbasicfield *GongBasicField) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "BasicKindName", "GongEnum", "DeclaredType", "Index"}
-	return
-}
-
-func (gongbasicfield *GongBasicField) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = gongbasicfield.Name
-	case "BasicKindName":
-		res = gongbasicfield.BasicKindName
-	case "GongEnum":
-		if gongbasicfield.GongEnum != nil {
-			res = gongbasicfield.GongEnum.Name
-		}
-	case "DeclaredType":
-		res = gongbasicfield.DeclaredType
-	case "Index":
-		res = fmt.Sprintf("%d", gongbasicfield.Index)
-	}
-	return
-}
-
 func (stage *StageStruct) getGongEnumOrderedStructWithNameField() []*GongEnum {
 	// have alphabetical order generation
 	gongenumOrdered := []*GongEnum{}
@@ -418,30 +414,6 @@ func DeleteORMGongEnum(gongenum *GongEnum) {
 // for satisfaction of GongStruct interface
 func (gongenum *GongEnum) GetName() (res string) {
 	return gongenum.Name
-}
-
-func (gongenum *GongEnum) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Type", "GongEnumValues"}
-	return
-}
-
-func (gongenum *GongEnum) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = gongenum.Name
-	case "Type":
-		res = gongenum.Type.ToCodeString()
-	case "GongEnumValues":
-		for idx, __instance__ := range gongenum.GongEnumValues {
-			if idx > 0 {
-				res += "\n"
-			}
-			res += __instance__.Name
-		}
-	}
-	return
 }
 
 func (stage *StageStruct) getGongEnumValueOrderedStructWithNameField() []*GongEnumValue {
@@ -551,21 +523,111 @@ func (gongenumvalue *GongEnumValue) GetName() (res string) {
 	return gongenumvalue.Name
 }
 
-func (gongenumvalue *GongEnumValue) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Value"}
-	return
+func (stage *StageStruct) getGongNoteOrderedStructWithNameField() []*GongNote {
+	// have alphabetical order generation
+	gongnoteOrdered := []*GongNote{}
+	for gongnote := range stage.GongNotes {
+		gongnoteOrdered = append(gongnoteOrdered, gongnote)
+	}
+	sort.Slice(gongnoteOrdered[:], func(i, j int) bool {
+		return gongnoteOrdered[i].Name < gongnoteOrdered[j].Name
+	})
+	return gongnoteOrdered
 }
 
-func (gongenumvalue *GongEnumValue) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = gongenumvalue.Name
-	case "Value":
-		res = gongenumvalue.Value
+// Stage puts gongnote to the model stage
+func (gongnote *GongNote) Stage() *GongNote {
+	Stage.GongNotes[gongnote] = __member
+	Stage.GongNotes_mapString[gongnote.Name] = gongnote
+
+	return gongnote
+}
+
+// Unstage removes gongnote off the model stage
+func (gongnote *GongNote) Unstage() *GongNote {
+	delete(Stage.GongNotes, gongnote)
+	delete(Stage.GongNotes_mapString, gongnote.Name)
+	return gongnote
+}
+
+// commit gongnote to the back repo (if it is already staged)
+func (gongnote *GongNote) Commit() *GongNote {
+	if _, ok := Stage.GongNotes[gongnote]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CommitGongNote(gongnote)
+		}
 	}
-	return
+	return gongnote
+}
+
+// Checkout gongnote to the back repo (if it is already staged)
+func (gongnote *GongNote) Checkout() *GongNote {
+	if _, ok := Stage.GongNotes[gongnote]; ok {
+		if Stage.BackRepo != nil {
+			Stage.BackRepo.CheckoutGongNote(gongnote)
+		}
+	}
+	return gongnote
+}
+
+//
+// Legacy, to be deleted
+//
+
+// StageCopy appends a copy of gongnote to the model stage
+func (gongnote *GongNote) StageCopy() *GongNote {
+	_gongnote := new(GongNote)
+	*_gongnote = *gongnote
+	_gongnote.Stage()
+	return _gongnote
+}
+
+// StageAndCommit appends gongnote to the model stage and commit to the orm repo
+func (gongnote *GongNote) StageAndCommit() *GongNote {
+	gongnote.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMGongNote(gongnote)
+	}
+	return gongnote
+}
+
+// DeleteStageAndCommit appends gongnote to the model stage and commit to the orm repo
+func (gongnote *GongNote) DeleteStageAndCommit() *GongNote {
+	gongnote.Unstage()
+	DeleteORMGongNote(gongnote)
+	return gongnote
+}
+
+// StageCopyAndCommit appends a copy of gongnote to the model stage and commit to the orm repo
+func (gongnote *GongNote) StageCopyAndCommit() *GongNote {
+	_gongnote := new(GongNote)
+	*_gongnote = *gongnote
+	_gongnote.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMGongNote(gongnote)
+	}
+	return _gongnote
+}
+
+// CreateORMGongNote enables dynamic staging of a GongNote instance
+func CreateORMGongNote(gongnote *GongNote) {
+	gongnote.Stage()
+	if Stage.AllModelsStructCreateCallback != nil {
+		Stage.AllModelsStructCreateCallback.CreateORMGongNote(gongnote)
+	}
+}
+
+// DeleteORMGongNote enables dynamic staging of a GongNote instance
+func DeleteORMGongNote(gongnote *GongNote) {
+	gongnote.Unstage()
+	if Stage.AllModelsStructDeleteCallback != nil {
+		Stage.AllModelsStructDeleteCallback.DeleteORMGongNote(gongnote)
+	}
+}
+
+// for satisfaction of GongStruct interface
+func (gongnote *GongNote) GetName() (res string) {
+	return gongnote.Name
 }
 
 func (stage *StageStruct) getGongStructOrderedStructWithNameField() []*GongStruct {
@@ -675,49 +737,6 @@ func (gongstruct *GongStruct) GetName() (res string) {
 	return gongstruct.Name
 }
 
-func (gongstruct *GongStruct) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "GongBasicFields", "GongTimeFields", "PointerToGongStructFields", "SliceOfPointerToGongStructFields"}
-	return
-}
-
-func (gongstruct *GongStruct) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = gongstruct.Name
-	case "GongBasicFields":
-		for idx, __instance__ := range gongstruct.GongBasicFields {
-			if idx > 0 {
-				res += "\n"
-			}
-			res += __instance__.Name
-		}
-	case "GongTimeFields":
-		for idx, __instance__ := range gongstruct.GongTimeFields {
-			if idx > 0 {
-				res += "\n"
-			}
-			res += __instance__.Name
-		}
-	case "PointerToGongStructFields":
-		for idx, __instance__ := range gongstruct.PointerToGongStructFields {
-			if idx > 0 {
-				res += "\n"
-			}
-			res += __instance__.Name
-		}
-	case "SliceOfPointerToGongStructFields":
-		for idx, __instance__ := range gongstruct.SliceOfPointerToGongStructFields {
-			if idx > 0 {
-				res += "\n"
-			}
-			res += __instance__.Name
-		}
-	}
-	return
-}
-
 func (stage *StageStruct) getGongTimeFieldOrderedStructWithNameField() []*GongTimeField {
 	// have alphabetical order generation
 	gongtimefieldOrdered := []*GongTimeField{}
@@ -823,23 +842,6 @@ func DeleteORMGongTimeField(gongtimefield *GongTimeField) {
 // for satisfaction of GongStruct interface
 func (gongtimefield *GongTimeField) GetName() (res string) {
 	return gongtimefield.Name
-}
-
-func (gongtimefield *GongTimeField) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Index"}
-	return
-}
-
-func (gongtimefield *GongTimeField) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = gongtimefield.Name
-	case "Index":
-		res = fmt.Sprintf("%d", gongtimefield.Index)
-	}
-	return
 }
 
 func (stage *StageStruct) getModelPkgOrderedStructWithNameField() []*ModelPkg {
@@ -949,23 +951,6 @@ func (modelpkg *ModelPkg) GetName() (res string) {
 	return modelpkg.Name
 }
 
-func (modelpkg *ModelPkg) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "PkgPath"}
-	return
-}
-
-func (modelpkg *ModelPkg) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = modelpkg.Name
-	case "PkgPath":
-		res = modelpkg.PkgPath
-	}
-	return
-}
-
 func (stage *StageStruct) getPointerToGongStructFieldOrderedStructWithNameField() []*PointerToGongStructField {
 	// have alphabetical order generation
 	pointertogongstructfieldOrdered := []*PointerToGongStructField{}
@@ -1071,27 +1056,6 @@ func DeleteORMPointerToGongStructField(pointertogongstructfield *PointerToGongSt
 // for satisfaction of GongStruct interface
 func (pointertogongstructfield *PointerToGongStructField) GetName() (res string) {
 	return pointertogongstructfield.Name
-}
-
-func (pointertogongstructfield *PointerToGongStructField) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "GongStruct", "Index"}
-	return
-}
-
-func (pointertogongstructfield *PointerToGongStructField) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = pointertogongstructfield.Name
-	case "GongStruct":
-		if pointertogongstructfield.GongStruct != nil {
-			res = pointertogongstructfield.GongStruct.Name
-		}
-	case "Index":
-		res = fmt.Sprintf("%d", pointertogongstructfield.Index)
-	}
-	return
 }
 
 func (stage *StageStruct) getSliceOfPointerToGongStructFieldOrderedStructWithNameField() []*SliceOfPointerToGongStructField {
@@ -1201,32 +1165,12 @@ func (sliceofpointertogongstructfield *SliceOfPointerToGongStructField) GetName(
 	return sliceofpointertogongstructfield.Name
 }
 
-func (sliceofpointertogongstructfield *SliceOfPointerToGongStructField) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "GongStruct", "Index"}
-	return
-}
-
-func (sliceofpointertogongstructfield *SliceOfPointerToGongStructField) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = sliceofpointertogongstructfield.Name
-	case "GongStruct":
-		if sliceofpointertogongstructfield.GongStruct != nil {
-			res = sliceofpointertogongstructfield.GongStruct.Name
-		}
-	case "Index":
-		res = fmt.Sprintf("%d", sliceofpointertogongstructfield.Index)
-	}
-	return
-}
-
 // swagger:ignore
 type AllModelsStructCreateInterface interface { // insertion point for Callbacks on creation
 	CreateORMGongBasicField(GongBasicField *GongBasicField)
 	CreateORMGongEnum(GongEnum *GongEnum)
 	CreateORMGongEnumValue(GongEnumValue *GongEnumValue)
+	CreateORMGongNote(GongNote *GongNote)
 	CreateORMGongStruct(GongStruct *GongStruct)
 	CreateORMGongTimeField(GongTimeField *GongTimeField)
 	CreateORMModelPkg(ModelPkg *ModelPkg)
@@ -1238,6 +1182,7 @@ type AllModelsStructDeleteInterface interface { // insertion point for Callbacks
 	DeleteORMGongBasicField(GongBasicField *GongBasicField)
 	DeleteORMGongEnum(GongEnum *GongEnum)
 	DeleteORMGongEnumValue(GongEnumValue *GongEnumValue)
+	DeleteORMGongNote(GongNote *GongNote)
 	DeleteORMGongStruct(GongStruct *GongStruct)
 	DeleteORMGongTimeField(GongTimeField *GongTimeField)
 	DeleteORMModelPkg(ModelPkg *ModelPkg)
@@ -1246,28 +1191,31 @@ type AllModelsStructDeleteInterface interface { // insertion point for Callbacks
 }
 
 func (stage *StageStruct) Reset() { // insertion point for array reset
-	stage.GongBasicFields = make(map[*GongBasicField]struct{})
+	stage.GongBasicFields = make(map[*GongBasicField]any)
 	stage.GongBasicFields_mapString = make(map[string]*GongBasicField)
 
-	stage.GongEnums = make(map[*GongEnum]struct{})
+	stage.GongEnums = make(map[*GongEnum]any)
 	stage.GongEnums_mapString = make(map[string]*GongEnum)
 
-	stage.GongEnumValues = make(map[*GongEnumValue]struct{})
+	stage.GongEnumValues = make(map[*GongEnumValue]any)
 	stage.GongEnumValues_mapString = make(map[string]*GongEnumValue)
 
-	stage.GongStructs = make(map[*GongStruct]struct{})
+	stage.GongNotes = make(map[*GongNote]any)
+	stage.GongNotes_mapString = make(map[string]*GongNote)
+
+	stage.GongStructs = make(map[*GongStruct]any)
 	stage.GongStructs_mapString = make(map[string]*GongStruct)
 
-	stage.GongTimeFields = make(map[*GongTimeField]struct{})
+	stage.GongTimeFields = make(map[*GongTimeField]any)
 	stage.GongTimeFields_mapString = make(map[string]*GongTimeField)
 
-	stage.ModelPkgs = make(map[*ModelPkg]struct{})
+	stage.ModelPkgs = make(map[*ModelPkg]any)
 	stage.ModelPkgs_mapString = make(map[string]*ModelPkg)
 
-	stage.PointerToGongStructFields = make(map[*PointerToGongStructField]struct{})
+	stage.PointerToGongStructFields = make(map[*PointerToGongStructField]any)
 	stage.PointerToGongStructFields_mapString = make(map[string]*PointerToGongStructField)
 
-	stage.SliceOfPointerToGongStructFields = make(map[*SliceOfPointerToGongStructField]struct{})
+	stage.SliceOfPointerToGongStructFields = make(map[*SliceOfPointerToGongStructField]any)
 	stage.SliceOfPointerToGongStructFields_mapString = make(map[string]*SliceOfPointerToGongStructField)
 
 }
@@ -1281,6 +1229,9 @@ func (stage *StageStruct) Nil() { // insertion point for array nil
 
 	stage.GongEnumValues = nil
 	stage.GongEnumValues_mapString = nil
+
+	stage.GongNotes = nil
+	stage.GongNotes_mapString = nil
 
 	stage.GongStructs = nil
 	stage.GongStructs_mapString = nil
@@ -1383,7 +1334,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(gongbasicfieldOrdered[:], func(i, j int) bool {
 		return gongbasicfieldOrdered[i].Name < gongbasicfieldOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of GongBasicField")
+	identifiersDecl += "\n\n	// Declarations of staged instances of GongBasicField"
 	for idx, gongbasicfield := range gongbasicfieldOrdered {
 
 		id = generatesIdentifier("GongBasicField", idx, gongbasicfield.Name)
@@ -1415,6 +1366,12 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongbasicfield.DeclaredType))
 		initializerStatements += setValueField
 
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CompositeStructName")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongbasicfield.CompositeStructName))
+		initializerStatements += setValueField
+
 		setValueField = NumberInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Index")
@@ -1433,7 +1390,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(gongenumOrdered[:], func(i, j int) bool {
 		return gongenumOrdered[i].Name < gongenumOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of GongEnum")
+	identifiersDecl += "\n\n	// Declarations of staged instances of GongEnum"
 	for idx, gongenum := range gongenumOrdered {
 
 		id = generatesIdentifier("GongEnum", idx, gongenum.Name)
@@ -1471,7 +1428,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(gongenumvalueOrdered[:], func(i, j int) bool {
 		return gongenumvalueOrdered[i].Name < gongenumvalueOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of GongEnumValue")
+	identifiersDecl += "\n\n	// Declarations of staged instances of GongEnumValue"
 	for idx, gongenumvalue := range gongenumvalueOrdered {
 
 		id = generatesIdentifier("GongEnumValue", idx, gongenumvalue.Name)
@@ -1499,6 +1456,44 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 
 	}
 
+	map_GongNote_Identifiers := make(map[*GongNote]string)
+	_ = map_GongNote_Identifiers
+
+	gongnoteOrdered := []*GongNote{}
+	for gongnote := range stage.GongNotes {
+		gongnoteOrdered = append(gongnoteOrdered, gongnote)
+	}
+	sort.Slice(gongnoteOrdered[:], func(i, j int) bool {
+		return gongnoteOrdered[i].Name < gongnoteOrdered[j].Name
+	})
+	identifiersDecl += "\n\n	// Declarations of staged instances of GongNote"
+	for idx, gongnote := range gongnoteOrdered {
+
+		id = generatesIdentifier("GongNote", idx, gongnote.Name)
+		map_GongNote_Identifiers[gongnote] = id
+
+		decl = IdentifiersDecls
+		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
+		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "GongNote")
+		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", gongnote.Name)
+		identifiersDecl += decl
+
+		initializerStatements += fmt.Sprintf("\n\n	// GongNote %s values setup", gongnote.Name)
+		// Initialisation of values
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongnote.Name))
+		initializerStatements += setValueField
+
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Body")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongnote.Body))
+		initializerStatements += setValueField
+
+	}
+
 	map_GongStruct_Identifiers := make(map[*GongStruct]string)
 	_ = map_GongStruct_Identifiers
 
@@ -1509,7 +1504,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(gongstructOrdered[:], func(i, j int) bool {
 		return gongstructOrdered[i].Name < gongstructOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of GongStruct")
+	identifiersDecl += "\n\n	// Declarations of staged instances of GongStruct"
 	for idx, gongstruct := range gongstructOrdered {
 
 		id = generatesIdentifier("GongStruct", idx, gongstruct.Name)
@@ -1541,7 +1536,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(gongtimefieldOrdered[:], func(i, j int) bool {
 		return gongtimefieldOrdered[i].Name < gongtimefieldOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of GongTimeField")
+	identifiersDecl += "\n\n	// Declarations of staged instances of GongTimeField"
 	for idx, gongtimefield := range gongtimefieldOrdered {
 
 		id = generatesIdentifier("GongTimeField", idx, gongtimefield.Name)
@@ -1567,6 +1562,12 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", gongtimefield.Index))
 		initializerStatements += setValueField
 
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CompositeStructName")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongtimefield.CompositeStructName))
+		initializerStatements += setValueField
+
 	}
 
 	map_ModelPkg_Identifiers := make(map[*ModelPkg]string)
@@ -1579,7 +1580,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(modelpkgOrdered[:], func(i, j int) bool {
 		return modelpkgOrdered[i].Name < modelpkgOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of ModelPkg")
+	identifiersDecl += "\n\n	// Declarations of staged instances of ModelPkg"
 	for idx, modelpkg := range modelpkgOrdered {
 
 		id = generatesIdentifier("ModelPkg", idx, modelpkg.Name)
@@ -1617,7 +1618,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(pointertogongstructfieldOrdered[:], func(i, j int) bool {
 		return pointertogongstructfieldOrdered[i].Name < pointertogongstructfieldOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of PointerToGongStructField")
+	identifiersDecl += "\n\n	// Declarations of staged instances of PointerToGongStructField"
 	for idx, pointertogongstructfield := range pointertogongstructfieldOrdered {
 
 		id = generatesIdentifier("PointerToGongStructField", idx, pointertogongstructfield.Name)
@@ -1643,6 +1644,12 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", pointertogongstructfield.Index))
 		initializerStatements += setValueField
 
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CompositeStructName")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(pointertogongstructfield.CompositeStructName))
+		initializerStatements += setValueField
+
 	}
 
 	map_SliceOfPointerToGongStructField_Identifiers := make(map[*SliceOfPointerToGongStructField]string)
@@ -1655,7 +1662,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(sliceofpointertogongstructfieldOrdered[:], func(i, j int) bool {
 		return sliceofpointertogongstructfieldOrdered[i].Name < sliceofpointertogongstructfieldOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of SliceOfPointerToGongStructField")
+	identifiersDecl += "\n\n	// Declarations of staged instances of SliceOfPointerToGongStructField"
 	for idx, sliceofpointertogongstructfield := range sliceofpointertogongstructfieldOrdered {
 
 		id = generatesIdentifier("SliceOfPointerToGongStructField", idx, sliceofpointertogongstructfield.Name)
@@ -1679,6 +1686,12 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Index")
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", sliceofpointertogongstructfield.Index))
+		initializerStatements += setValueField
+
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CompositeStructName")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(sliceofpointertogongstructfield.CompositeStructName))
 		initializerStatements += setValueField
 
 	}
@@ -1726,6 +1739,16 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 
 		id = generatesIdentifier("GongEnumValue", idx, gongenumvalue.Name)
 		map_GongEnumValue_Identifiers[gongenumvalue] = id
+
+		// Initialisation of values
+	}
+
+	for idx, gongnote := range gongnoteOrdered {
+		var setPointerField string
+		_ = setPointerField
+
+		id = generatesIdentifier("GongNote", idx, gongnote.Name)
+		map_GongNote_Identifiers[gongnote] = id
 
 		// Initialisation of values
 	}
@@ -1852,6 +1875,7 @@ func generatesIdentifier(gongStructName string, idx int, instanceName string) (i
 }
 
 // insertion point of functions that provide maps for reverse associations
+
 // generate function for reverse association maps of GongBasicField
 func (stageStruct *StageStruct) CreateReverseMap_GongBasicField_GongEnum() (res map[*GongEnum][]*GongBasicField) {
 	res = make(map[*GongEnum][]*GongBasicField)
@@ -1887,7 +1911,11 @@ func (stageStruct *StageStruct) CreateReverseMap_GongEnum_GongEnumValues() (res 
 	return
 }
 
+
 // generate function for reverse association maps of GongEnumValue
+
+// generate function for reverse association maps of GongNote
+
 // generate function for reverse association maps of GongStruct
 func (stageStruct *StageStruct) CreateReverseMap_GongStruct_GongBasicFields() (res map[*GongBasicField]*GongStruct) {
 	res = make(map[*GongBasicField]*GongStruct)
@@ -1937,8 +1965,11 @@ func (stageStruct *StageStruct) CreateReverseMap_GongStruct_SliceOfPointerToGong
 	return
 }
 
+
 // generate function for reverse association maps of GongTimeField
+
 // generate function for reverse association maps of ModelPkg
+
 // generate function for reverse association maps of PointerToGongStructField
 func (stageStruct *StageStruct) CreateReverseMap_PointerToGongStructField_GongStruct() (res map[*GongStruct][]*PointerToGongStructField) {
 	res = make(map[*GongStruct][]*PointerToGongStructField)
@@ -1983,6 +2014,640 @@ func (stageStruct *StageStruct) CreateReverseMap_SliceOfPointerToGongStructField
 	return
 }
 
+// Gongstruct is the type paramter for generated generic function that allows
+// - access to staged instances
+// - navigation between staged instances by going backward association links between gongstruct
+// - full refactoring of Gongstruct identifiers / fields
+type Gongstruct interface {
+	// insertion point for generic types
+	GongBasicField | GongEnum | GongEnumValue | GongNote | GongStruct | GongTimeField | ModelPkg | PointerToGongStructField | SliceOfPointerToGongStructField
+}
+
+type GongstructSet interface {
+	map[any]any |
+		// insertion point for generic types
+		map[*GongBasicField]any |
+		map[*GongEnum]any |
+		map[*GongEnumValue]any |
+		map[*GongNote]any |
+		map[*GongStruct]any |
+		map[*GongTimeField]any |
+		map[*ModelPkg]any |
+		map[*PointerToGongStructField]any |
+		map[*SliceOfPointerToGongStructField]any |
+		map[*any]any // because go does not support an extra "|" at the end of type specifications
+}
+
+type GongstructMapString interface {
+	map[any]any |
+		// insertion point for generic types
+		map[string]*GongBasicField |
+		map[string]*GongEnum |
+		map[string]*GongEnumValue |
+		map[string]*GongNote |
+		map[string]*GongStruct |
+		map[string]*GongTimeField |
+		map[string]*ModelPkg |
+		map[string]*PointerToGongStructField |
+		map[string]*SliceOfPointerToGongStructField |
+		map[*any]any // because go does not support an extra "|" at the end of type specifications
+}
+
+// GongGetSet returns the set staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GongGetSet[Type GongstructSet]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case map[*GongBasicField]any:
+		return any(&Stage.GongBasicFields).(*Type)
+	case map[*GongEnum]any:
+		return any(&Stage.GongEnums).(*Type)
+	case map[*GongEnumValue]any:
+		return any(&Stage.GongEnumValues).(*Type)
+	case map[*GongNote]any:
+		return any(&Stage.GongNotes).(*Type)
+	case map[*GongStruct]any:
+		return any(&Stage.GongStructs).(*Type)
+	case map[*GongTimeField]any:
+		return any(&Stage.GongTimeFields).(*Type)
+	case map[*ModelPkg]any:
+		return any(&Stage.ModelPkgs).(*Type)
+	case map[*PointerToGongStructField]any:
+		return any(&Stage.PointerToGongStructFields).(*Type)
+	case map[*SliceOfPointerToGongStructField]any:
+		return any(&Stage.SliceOfPointerToGongStructFields).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GongGetMap returns the map of staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GongGetMap[Type GongstructMapString]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case map[string]*GongBasicField:
+		return any(&Stage.GongBasicFields_mapString).(*Type)
+	case map[string]*GongEnum:
+		return any(&Stage.GongEnums_mapString).(*Type)
+	case map[string]*GongEnumValue:
+		return any(&Stage.GongEnumValues_mapString).(*Type)
+	case map[string]*GongNote:
+		return any(&Stage.GongNotes_mapString).(*Type)
+	case map[string]*GongStruct:
+		return any(&Stage.GongStructs_mapString).(*Type)
+	case map[string]*GongTimeField:
+		return any(&Stage.GongTimeFields_mapString).(*Type)
+	case map[string]*ModelPkg:
+		return any(&Stage.ModelPkgs_mapString).(*Type)
+	case map[string]*PointerToGongStructField:
+		return any(&Stage.PointerToGongStructFields_mapString).(*Type)
+	case map[string]*SliceOfPointerToGongStructField:
+		return any(&Stage.SliceOfPointerToGongStructFields_mapString).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GetGongstructInstancesSet returns the set staged GongstructType instances
+// it is usefull because it allows refactoring of gongstruct identifier
+func GetGongstructInstancesSet[Type Gongstruct]() *map[*Type]any {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case GongBasicField:
+		return any(&Stage.GongBasicFields).(*map[*Type]any)
+	case GongEnum:
+		return any(&Stage.GongEnums).(*map[*Type]any)
+	case GongEnumValue:
+		return any(&Stage.GongEnumValues).(*map[*Type]any)
+	case GongNote:
+		return any(&Stage.GongNotes).(*map[*Type]any)
+	case GongStruct:
+		return any(&Stage.GongStructs).(*map[*Type]any)
+	case GongTimeField:
+		return any(&Stage.GongTimeFields).(*map[*Type]any)
+	case ModelPkg:
+		return any(&Stage.ModelPkgs).(*map[*Type]any)
+	case PointerToGongStructField:
+		return any(&Stage.PointerToGongStructFields).(*map[*Type]any)
+	case SliceOfPointerToGongStructField:
+		return any(&Stage.SliceOfPointerToGongStructFields).(*map[*Type]any)
+	default:
+		return nil
+	}
+}
+
+// GetGongstructInstancesMap returns the map of staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GetGongstructInstancesMap[Type Gongstruct]() *map[string]*Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case GongBasicField:
+		return any(&Stage.GongBasicFields_mapString).(*map[string]*Type)
+	case GongEnum:
+		return any(&Stage.GongEnums_mapString).(*map[string]*Type)
+	case GongEnumValue:
+		return any(&Stage.GongEnumValues_mapString).(*map[string]*Type)
+	case GongNote:
+		return any(&Stage.GongNotes_mapString).(*map[string]*Type)
+	case GongStruct:
+		return any(&Stage.GongStructs_mapString).(*map[string]*Type)
+	case GongTimeField:
+		return any(&Stage.GongTimeFields_mapString).(*map[string]*Type)
+	case ModelPkg:
+		return any(&Stage.ModelPkgs_mapString).(*map[string]*Type)
+	case PointerToGongStructField:
+		return any(&Stage.PointerToGongStructFields_mapString).(*map[string]*Type)
+	case SliceOfPointerToGongStructField:
+		return any(&Stage.SliceOfPointerToGongStructFields_mapString).(*map[string]*Type)
+	default:
+		return nil
+	}
+}
+
+// GetAssociationName is a generic function that returns an instance of Type
+// where each association is filled with an instance whose name is the name of the association
+//
+// This function can be handy for generating navigation function that are refactorable
+func GetAssociationName[Type Gongstruct]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for instance with special fields
+	case GongBasicField:
+		return any(&GongBasicField{
+			// Initialisation of associations
+			// field is initialized with an instance of GongEnum with the name of the field
+			GongEnum: &GongEnum{Name: "GongEnum"},
+		}).(*Type)
+	case GongEnum:
+		return any(&GongEnum{
+			// Initialisation of associations
+			// field is initialized with an instance of GongEnumValue with the name of the field
+			GongEnumValues: []*GongEnumValue{{Name: "GongEnumValues"}},
+		}).(*Type)
+	case GongEnumValue:
+		return any(&GongEnumValue{
+			// Initialisation of associations
+		}).(*Type)
+	case GongNote:
+		return any(&GongNote{
+			// Initialisation of associations
+		}).(*Type)
+	case GongStruct:
+		return any(&GongStruct{
+			// Initialisation of associations
+			// field is initialized with an instance of GongBasicField with the name of the field
+			GongBasicFields: []*GongBasicField{{Name: "GongBasicFields"}},
+			// field is initialized with an instance of GongTimeField with the name of the field
+			GongTimeFields: []*GongTimeField{{Name: "GongTimeFields"}},
+			// field is initialized with an instance of PointerToGongStructField with the name of the field
+			PointerToGongStructFields: []*PointerToGongStructField{{Name: "PointerToGongStructFields"}},
+			// field is initialized with an instance of SliceOfPointerToGongStructField with the name of the field
+			SliceOfPointerToGongStructFields: []*SliceOfPointerToGongStructField{{Name: "SliceOfPointerToGongStructFields"}},
+		}).(*Type)
+	case GongTimeField:
+		return any(&GongTimeField{
+			// Initialisation of associations
+		}).(*Type)
+	case ModelPkg:
+		return any(&ModelPkg{
+			// Initialisation of associations
+		}).(*Type)
+	case PointerToGongStructField:
+		return any(&PointerToGongStructField{
+			// Initialisation of associations
+			// field is initialized with an instance of GongStruct with the name of the field
+			GongStruct: &GongStruct{Name: "GongStruct"},
+		}).(*Type)
+	case SliceOfPointerToGongStructField:
+		return any(&SliceOfPointerToGongStructField{
+			// Initialisation of associations
+			// field is initialized with an instance of GongStruct with the name of the field
+			GongStruct: &GongStruct{Name: "GongStruct"},
+		}).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GetPointerReverseMap allows backtrack navigation of any Start.Fieldname
+// associations (0..1) that is a pointer from one staged Gongstruct (type Start)
+// instances to another (type End)
+//
+// The function provides a map with keys as instances of End and values to arrays of *Start
+// the map is construed by iterating over all Start instances and populationg keys with End instances
+// and values with slice of Start instances
+func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*Start {
+	var ret Start
+
+	switch any(ret).(type) {
+	// insertion point of functions that provide maps for reverse associations
+	// reverse maps of direct associations of GongBasicField
+	case GongBasicField:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "GongEnum":
+			res := make(map[*GongEnum][]*GongBasicField)
+			for gongbasicfield := range Stage.GongBasicFields {
+				if gongbasicfield.GongEnum != nil {
+					gongenum_ := gongbasicfield.GongEnum
+					var gongbasicfields []*GongBasicField
+					_, ok := res[gongenum_]
+					if ok {
+						gongbasicfields = res[gongenum_]
+					} else {
+						gongbasicfields = make([]*GongBasicField, 0)
+					}
+					gongbasicfields = append(gongbasicfields, gongbasicfield)
+					res[gongenum_] = gongbasicfields
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	// reverse maps of direct associations of GongEnum
+	case GongEnum:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of GongEnumValue
+	case GongEnumValue:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of GongNote
+	case GongNote:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of GongStruct
+	case GongStruct:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of GongTimeField
+	case GongTimeField:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of ModelPkg
+	case ModelPkg:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of PointerToGongStructField
+	case PointerToGongStructField:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "GongStruct":
+			res := make(map[*GongStruct][]*PointerToGongStructField)
+			for pointertogongstructfield := range Stage.PointerToGongStructFields {
+				if pointertogongstructfield.GongStruct != nil {
+					gongstruct_ := pointertogongstructfield.GongStruct
+					var pointertogongstructfields []*PointerToGongStructField
+					_, ok := res[gongstruct_]
+					if ok {
+						pointertogongstructfields = res[gongstruct_]
+					} else {
+						pointertogongstructfields = make([]*PointerToGongStructField, 0)
+					}
+					pointertogongstructfields = append(pointertogongstructfields, pointertogongstructfield)
+					res[gongstruct_] = pointertogongstructfields
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	// reverse maps of direct associations of SliceOfPointerToGongStructField
+	case SliceOfPointerToGongStructField:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "GongStruct":
+			res := make(map[*GongStruct][]*SliceOfPointerToGongStructField)
+			for sliceofpointertogongstructfield := range Stage.SliceOfPointerToGongStructFields {
+				if sliceofpointertogongstructfield.GongStruct != nil {
+					gongstruct_ := sliceofpointertogongstructfield.GongStruct
+					var sliceofpointertogongstructfields []*SliceOfPointerToGongStructField
+					_, ok := res[gongstruct_]
+					if ok {
+						sliceofpointertogongstructfields = res[gongstruct_]
+					} else {
+						sliceofpointertogongstructfields = make([]*SliceOfPointerToGongStructField, 0)
+					}
+					sliceofpointertogongstructfields = append(sliceofpointertogongstructfields, sliceofpointertogongstructfield)
+					res[gongstruct_] = sliceofpointertogongstructfields
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	}
+	return nil
+}
+
+// GetSliceOfPointersReverseMap allows backtrack navigation of any Start.Fieldname
+// associations (0..N) between one staged Gongstruct instances and many others
+//
+// The function provides a map with keys as instances of End and values to *Start instances
+// the map is construed by iterating over all Start instances and populating keys with End instances
+// and values with the Start instances
+func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string) map[*End]*Start {
+	var ret Start
+
+	switch any(ret).(type) {
+	// insertion point of functions that provide maps for reverse associations
+	// reverse maps of direct associations of GongBasicField
+	case GongBasicField:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of GongEnum
+	case GongEnum:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "GongEnumValues":
+			res := make(map[*GongEnumValue]*GongEnum)
+			for gongenum := range Stage.GongEnums {
+				for _, gongenumvalue_ := range gongenum.GongEnumValues {
+					res[gongenumvalue_] = gongenum
+				}
+			}
+			return any(res).(map[*End]*Start)
+		}
+	// reverse maps of direct associations of GongEnumValue
+	case GongEnumValue:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of GongNote
+	case GongNote:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of GongStruct
+	case GongStruct:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "GongBasicFields":
+			res := make(map[*GongBasicField]*GongStruct)
+			for gongstruct := range Stage.GongStructs {
+				for _, gongbasicfield_ := range gongstruct.GongBasicFields {
+					res[gongbasicfield_] = gongstruct
+				}
+			}
+			return any(res).(map[*End]*Start)
+		case "GongTimeFields":
+			res := make(map[*GongTimeField]*GongStruct)
+			for gongstruct := range Stage.GongStructs {
+				for _, gongtimefield_ := range gongstruct.GongTimeFields {
+					res[gongtimefield_] = gongstruct
+				}
+			}
+			return any(res).(map[*End]*Start)
+		case "PointerToGongStructFields":
+			res := make(map[*PointerToGongStructField]*GongStruct)
+			for gongstruct := range Stage.GongStructs {
+				for _, pointertogongstructfield_ := range gongstruct.PointerToGongStructFields {
+					res[pointertogongstructfield_] = gongstruct
+				}
+			}
+			return any(res).(map[*End]*Start)
+		case "SliceOfPointerToGongStructFields":
+			res := make(map[*SliceOfPointerToGongStructField]*GongStruct)
+			for gongstruct := range Stage.GongStructs {
+				for _, sliceofpointertogongstructfield_ := range gongstruct.SliceOfPointerToGongStructFields {
+					res[sliceofpointertogongstructfield_] = gongstruct
+				}
+			}
+			return any(res).(map[*End]*Start)
+		}
+	// reverse maps of direct associations of GongTimeField
+	case GongTimeField:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of ModelPkg
+	case ModelPkg:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of PointerToGongStructField
+	case PointerToGongStructField:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of SliceOfPointerToGongStructField
+	case SliceOfPointerToGongStructField:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	}
+	return nil
+}
+
+// GetGongstructName returns the name of the Gongstruct
+// this can be usefull if one want program robust to refactoring
+func GetGongstructName[Type Gongstruct]() (res string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case GongBasicField:
+		res = "GongBasicField"
+	case GongEnum:
+		res = "GongEnum"
+	case GongEnumValue:
+		res = "GongEnumValue"
+	case GongNote:
+		res = "GongNote"
+	case GongStruct:
+		res = "GongStruct"
+	case GongTimeField:
+		res = "GongTimeField"
+	case ModelPkg:
+		res = "ModelPkg"
+	case PointerToGongStructField:
+		res = "PointerToGongStructField"
+	case SliceOfPointerToGongStructField:
+		res = "SliceOfPointerToGongStructField"
+	}
+	return res
+}
+
+// GetFields return the array of the fields
+func GetFields[Type Gongstruct]() (res []string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case GongBasicField:
+		res = []string{"Name", "BasicKindName", "GongEnum", "DeclaredType", "CompositeStructName", "Index"}
+	case GongEnum:
+		res = []string{"Name", "Type", "GongEnumValues"}
+	case GongEnumValue:
+		res = []string{"Name", "Value"}
+	case GongNote:
+		res = []string{"Name", "Body"}
+	case GongStruct:
+		res = []string{"Name", "GongBasicFields", "GongTimeFields", "PointerToGongStructFields", "SliceOfPointerToGongStructFields"}
+	case GongTimeField:
+		res = []string{"Name", "Index", "CompositeStructName"}
+	case ModelPkg:
+		res = []string{"Name", "PkgPath"}
+	case PointerToGongStructField:
+		res = []string{"Name", "GongStruct", "Index", "CompositeStructName"}
+	case SliceOfPointerToGongStructField:
+		res = []string{"Name", "GongStruct", "Index", "CompositeStructName"}
+	}
+	return
+}
+
+func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res string) {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct field value
+	case GongBasicField:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(GongBasicField).Name
+		case "BasicKindName":
+			res = any(instance).(GongBasicField).BasicKindName
+		case "GongEnum":
+			if any(instance).(GongBasicField).GongEnum != nil {
+				res = any(instance).(GongBasicField).GongEnum.Name
+			}
+		case "DeclaredType":
+			res = any(instance).(GongBasicField).DeclaredType
+		case "CompositeStructName":
+			res = any(instance).(GongBasicField).CompositeStructName
+		case "Index":
+			res = fmt.Sprintf("%d", any(instance).(GongBasicField).Index)
+		}
+	case GongEnum:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(GongEnum).Name
+		case "Type":
+			enum := any(instance).(GongEnum).Type
+			res = enum.ToCodeString()
+		case "GongEnumValues":
+			for idx, __instance__ := range any(instance).(GongEnum).GongEnumValues {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		}
+	case GongEnumValue:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(GongEnumValue).Name
+		case "Value":
+			res = any(instance).(GongEnumValue).Value
+		}
+	case GongNote:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(GongNote).Name
+		case "Body":
+			res = any(instance).(GongNote).Body
+		}
+	case GongStruct:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(GongStruct).Name
+		case "GongBasicFields":
+			for idx, __instance__ := range any(instance).(GongStruct).GongBasicFields {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		case "GongTimeFields":
+			for idx, __instance__ := range any(instance).(GongStruct).GongTimeFields {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		case "PointerToGongStructFields":
+			for idx, __instance__ := range any(instance).(GongStruct).PointerToGongStructFields {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		case "SliceOfPointerToGongStructFields":
+			for idx, __instance__ := range any(instance).(GongStruct).SliceOfPointerToGongStructFields {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		}
+	case GongTimeField:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(GongTimeField).Name
+		case "Index":
+			res = fmt.Sprintf("%d", any(instance).(GongTimeField).Index)
+		case "CompositeStructName":
+			res = any(instance).(GongTimeField).CompositeStructName
+		}
+	case ModelPkg:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(ModelPkg).Name
+		case "PkgPath":
+			res = any(instance).(ModelPkg).PkgPath
+		}
+	case PointerToGongStructField:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(PointerToGongStructField).Name
+		case "GongStruct":
+			if any(instance).(PointerToGongStructField).GongStruct != nil {
+				res = any(instance).(PointerToGongStructField).GongStruct.Name
+			}
+		case "Index":
+			res = fmt.Sprintf("%d", any(instance).(PointerToGongStructField).Index)
+		case "CompositeStructName":
+			res = any(instance).(PointerToGongStructField).CompositeStructName
+		}
+	case SliceOfPointerToGongStructField:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(SliceOfPointerToGongStructField).Name
+		case "GongStruct":
+			if any(instance).(SliceOfPointerToGongStructField).GongStruct != nil {
+				res = any(instance).(SliceOfPointerToGongStructField).GongStruct.Name
+			}
+		case "Index":
+			res = fmt.Sprintf("%d", any(instance).(SliceOfPointerToGongStructField).Index)
+		case "CompositeStructName":
+			res = any(instance).(SliceOfPointerToGongStructField).CompositeStructName
+		}
+	}
+	return
+}
 
 // insertion point of enum utility functions
 // Utility function for BackRepoInsertionPoint
@@ -1993,30 +2658,30 @@ func (backrepoinsertionpoint BackRepoInsertionPoint) ToInt() (res int) {
 	// migration of former implementation of enum
 	switch backrepoinsertionpoint {
 	// insertion code per enum code
-	case BackRepoBasicAndTimeFieldsName:
-		res = 1
-	case BackRepoBasicAndTimeFieldsWOPDeclaration:
-		res = 3
-	case BackRepoBasicFieldsCheckout:
-		res = 8
-	case BackRepoBasicFieldsCommit:
-		res = 6
 	case BackRepoBasicFieldsDeclaration:
 		res = 0
-	case BackRepoNbInsertionPoints:
-		res = 11
-	case BackRepoPointerEncodingFieldsCheckout:
-		res = 9
-	case BackRepoPointerEncodingFieldsCommit:
-		res = 7
-	case BackRepoPointerEncodingFieldsDeclaration:
-		res = 4
-	case BackRepoPointerEncodingFieldsReindexing:
-		res = 10
-	case BackRepoPointerEncodingFieldsWOPDeclaration:
-		res = 5
+	case BackRepoBasicAndTimeFieldsName:
+		res = 1
 	case BackRepoWOPInitialIndex:
 		res = 2
+	case BackRepoBasicAndTimeFieldsWOPDeclaration:
+		res = 3
+	case BackRepoPointerEncodingFieldsDeclaration:
+		res = 4
+	case BackRepoPointerEncodingFieldsWOPDeclaration:
+		res = 5
+	case BackRepoBasicFieldsCommit:
+		res = 6
+	case BackRepoPointerEncodingFieldsCommit:
+		res = 7
+	case BackRepoBasicFieldsCheckout:
+		res = 8
+	case BackRepoPointerEncodingFieldsCheckout:
+		res = 9
+	case BackRepoPointerEncodingFieldsReindexing:
+		res = 10
+	case BackRepoNbInsertionPoints:
+		res = 11
 	}
 	return
 }
@@ -2025,30 +2690,30 @@ func (backrepoinsertionpoint *BackRepoInsertionPoint) FromInt(input int) {
 
 	switch input {
 	// insertion code per enum code
-	case 1:
-		*backrepoinsertionpoint = BackRepoBasicAndTimeFieldsName
-	case 3:
-		*backrepoinsertionpoint = BackRepoBasicAndTimeFieldsWOPDeclaration
-	case 8:
-		*backrepoinsertionpoint = BackRepoBasicFieldsCheckout
-	case 6:
-		*backrepoinsertionpoint = BackRepoBasicFieldsCommit
 	case 0:
 		*backrepoinsertionpoint = BackRepoBasicFieldsDeclaration
-	case 11:
-		*backrepoinsertionpoint = BackRepoNbInsertionPoints
-	case 9:
-		*backrepoinsertionpoint = BackRepoPointerEncodingFieldsCheckout
-	case 7:
-		*backrepoinsertionpoint = BackRepoPointerEncodingFieldsCommit
-	case 4:
-		*backrepoinsertionpoint = BackRepoPointerEncodingFieldsDeclaration
-	case 10:
-		*backrepoinsertionpoint = BackRepoPointerEncodingFieldsReindexing
-	case 5:
-		*backrepoinsertionpoint = BackRepoPointerEncodingFieldsWOPDeclaration
+	case 1:
+		*backrepoinsertionpoint = BackRepoBasicAndTimeFieldsName
 	case 2:
 		*backrepoinsertionpoint = BackRepoWOPInitialIndex
+	case 3:
+		*backrepoinsertionpoint = BackRepoBasicAndTimeFieldsWOPDeclaration
+	case 4:
+		*backrepoinsertionpoint = BackRepoPointerEncodingFieldsDeclaration
+	case 5:
+		*backrepoinsertionpoint = BackRepoPointerEncodingFieldsWOPDeclaration
+	case 6:
+		*backrepoinsertionpoint = BackRepoBasicFieldsCommit
+	case 7:
+		*backrepoinsertionpoint = BackRepoPointerEncodingFieldsCommit
+	case 8:
+		*backrepoinsertionpoint = BackRepoBasicFieldsCheckout
+	case 9:
+		*backrepoinsertionpoint = BackRepoPointerEncodingFieldsCheckout
+	case 10:
+		*backrepoinsertionpoint = BackRepoPointerEncodingFieldsReindexing
+	case 11:
+		*backrepoinsertionpoint = BackRepoNbInsertionPoints
 	}
 }
 
@@ -2056,30 +2721,30 @@ func (backrepoinsertionpoint *BackRepoInsertionPoint) ToCodeString() (res string
 
 	switch *backrepoinsertionpoint {
 	// insertion code per enum code
-	case BackRepoBasicAndTimeFieldsName:
-		res = "BackRepoBasicAndTimeFieldsName"
-	case BackRepoBasicAndTimeFieldsWOPDeclaration:
-		res = "BackRepoBasicAndTimeFieldsWOPDeclaration"
-	case BackRepoBasicFieldsCheckout:
-		res = "BackRepoBasicFieldsCheckout"
-	case BackRepoBasicFieldsCommit:
-		res = "BackRepoBasicFieldsCommit"
 	case BackRepoBasicFieldsDeclaration:
 		res = "BackRepoBasicFieldsDeclaration"
-	case BackRepoNbInsertionPoints:
-		res = "BackRepoNbInsertionPoints"
-	case BackRepoPointerEncodingFieldsCheckout:
-		res = "BackRepoPointerEncodingFieldsCheckout"
-	case BackRepoPointerEncodingFieldsCommit:
-		res = "BackRepoPointerEncodingFieldsCommit"
-	case BackRepoPointerEncodingFieldsDeclaration:
-		res = "BackRepoPointerEncodingFieldsDeclaration"
-	case BackRepoPointerEncodingFieldsReindexing:
-		res = "BackRepoPointerEncodingFieldsReindexing"
-	case BackRepoPointerEncodingFieldsWOPDeclaration:
-		res = "BackRepoPointerEncodingFieldsWOPDeclaration"
+	case BackRepoBasicAndTimeFieldsName:
+		res = "BackRepoBasicAndTimeFieldsName"
 	case BackRepoWOPInitialIndex:
 		res = "BackRepoWOPInitialIndex"
+	case BackRepoBasicAndTimeFieldsWOPDeclaration:
+		res = "BackRepoBasicAndTimeFieldsWOPDeclaration"
+	case BackRepoPointerEncodingFieldsDeclaration:
+		res = "BackRepoPointerEncodingFieldsDeclaration"
+	case BackRepoPointerEncodingFieldsWOPDeclaration:
+		res = "BackRepoPointerEncodingFieldsWOPDeclaration"
+	case BackRepoBasicFieldsCommit:
+		res = "BackRepoBasicFieldsCommit"
+	case BackRepoPointerEncodingFieldsCommit:
+		res = "BackRepoPointerEncodingFieldsCommit"
+	case BackRepoBasicFieldsCheckout:
+		res = "BackRepoBasicFieldsCheckout"
+	case BackRepoPointerEncodingFieldsCheckout:
+		res = "BackRepoPointerEncodingFieldsCheckout"
+	case BackRepoPointerEncodingFieldsReindexing:
+		res = "BackRepoPointerEncodingFieldsReindexing"
+	case BackRepoNbInsertionPoints:
+		res = "BackRepoNbInsertionPoints"
 	}
 	return
 }
@@ -2092,48 +2757,48 @@ func (backrepoperstructsubtemplate BackRepoPerStructSubTemplate) ToInt() (res in
 	// migration of former implementation of enum
 	switch backrepoperstructsubtemplate {
 	// insertion code per enum code
+	case BackRepoDeclarationBasicField:
+		res = 0
+	case BackRepoCommitBasicField:
+		res = 1
 	case BackRepoCheckoutBasicField:
 		res = 2
-	case BackRepoCheckoutBasicFieldBoolean:
-		res = 13
+	case BackRepoDeclarationTimeField:
+		res = 3
+	case BackRepoCommitTimeField:
+		res = 4
+	case BackRepoCheckoutTimeField:
+		res = 5
+	case BackRepoCommitBasicFieldEnum:
+		res = 6
 	case BackRepoCheckoutBasicFieldEnum:
 		res = 7
+	case BackRepoCommitBasicFieldInt:
+		res = 8
 	case BackRepoCheckoutBasicFieldInt:
 		res = 9
 	case BackRepoCheckoutBasicFieldIntEnum:
 		res = 10
-	case BackRepoCheckoutPointerToStructStageField:
-		res = 16
-	case BackRepoCheckoutSliceOfPointerToStructStageField:
-		res = 20
-	case BackRepoCheckoutTimeField:
-		res = 5
-	case BackRepoCommitBasicBooleanField:
-		res = 12
-	case BackRepoCommitBasicField:
-		res = 1
-	case BackRepoCommitBasicFieldEnum:
-		res = 6
-	case BackRepoCommitBasicFieldInt:
-		res = 8
-	case BackRepoCommitPointerToStructField:
-		res = 15
-	case BackRepoCommitSliceOfPointerToStructField:
-		res = 19
-	case BackRepoCommitTimeField:
-		res = 4
 	case BackRepoDeclarationBasicBooleanField:
 		res = 11
-	case BackRepoDeclarationBasicField:
-		res = 0
+	case BackRepoCommitBasicBooleanField:
+		res = 12
+	case BackRepoCheckoutBasicFieldBoolean:
+		res = 13
 	case BackRepoDeclarationPointerToStructField:
 		res = 14
-	case BackRepoDeclarationSliceOfPointerToStructField:
-		res = 18
-	case BackRepoDeclarationTimeField:
-		res = 3
+	case BackRepoCommitPointerToStructField:
+		res = 15
+	case BackRepoCheckoutPointerToStructStageField:
+		res = 16
 	case BackRepoReindexingPointerToStruct:
 		res = 17
+	case BackRepoDeclarationSliceOfPointerToStructField:
+		res = 18
+	case BackRepoCommitSliceOfPointerToStructField:
+		res = 19
+	case BackRepoCheckoutSliceOfPointerToStructStageField:
+		res = 20
 	case BackRepoReindexingSliceOfPointerToStruct:
 		res = 21
 	}
@@ -2144,48 +2809,48 @@ func (backrepoperstructsubtemplate *BackRepoPerStructSubTemplate) FromInt(input 
 
 	switch input {
 	// insertion code per enum code
+	case 0:
+		*backrepoperstructsubtemplate = BackRepoDeclarationBasicField
+	case 1:
+		*backrepoperstructsubtemplate = BackRepoCommitBasicField
 	case 2:
 		*backrepoperstructsubtemplate = BackRepoCheckoutBasicField
-	case 13:
-		*backrepoperstructsubtemplate = BackRepoCheckoutBasicFieldBoolean
+	case 3:
+		*backrepoperstructsubtemplate = BackRepoDeclarationTimeField
+	case 4:
+		*backrepoperstructsubtemplate = BackRepoCommitTimeField
+	case 5:
+		*backrepoperstructsubtemplate = BackRepoCheckoutTimeField
+	case 6:
+		*backrepoperstructsubtemplate = BackRepoCommitBasicFieldEnum
 	case 7:
 		*backrepoperstructsubtemplate = BackRepoCheckoutBasicFieldEnum
+	case 8:
+		*backrepoperstructsubtemplate = BackRepoCommitBasicFieldInt
 	case 9:
 		*backrepoperstructsubtemplate = BackRepoCheckoutBasicFieldInt
 	case 10:
 		*backrepoperstructsubtemplate = BackRepoCheckoutBasicFieldIntEnum
-	case 16:
-		*backrepoperstructsubtemplate = BackRepoCheckoutPointerToStructStageField
-	case 20:
-		*backrepoperstructsubtemplate = BackRepoCheckoutSliceOfPointerToStructStageField
-	case 5:
-		*backrepoperstructsubtemplate = BackRepoCheckoutTimeField
-	case 12:
-		*backrepoperstructsubtemplate = BackRepoCommitBasicBooleanField
-	case 1:
-		*backrepoperstructsubtemplate = BackRepoCommitBasicField
-	case 6:
-		*backrepoperstructsubtemplate = BackRepoCommitBasicFieldEnum
-	case 8:
-		*backrepoperstructsubtemplate = BackRepoCommitBasicFieldInt
-	case 15:
-		*backrepoperstructsubtemplate = BackRepoCommitPointerToStructField
-	case 19:
-		*backrepoperstructsubtemplate = BackRepoCommitSliceOfPointerToStructField
-	case 4:
-		*backrepoperstructsubtemplate = BackRepoCommitTimeField
 	case 11:
 		*backrepoperstructsubtemplate = BackRepoDeclarationBasicBooleanField
-	case 0:
-		*backrepoperstructsubtemplate = BackRepoDeclarationBasicField
+	case 12:
+		*backrepoperstructsubtemplate = BackRepoCommitBasicBooleanField
+	case 13:
+		*backrepoperstructsubtemplate = BackRepoCheckoutBasicFieldBoolean
 	case 14:
 		*backrepoperstructsubtemplate = BackRepoDeclarationPointerToStructField
-	case 18:
-		*backrepoperstructsubtemplate = BackRepoDeclarationSliceOfPointerToStructField
-	case 3:
-		*backrepoperstructsubtemplate = BackRepoDeclarationTimeField
+	case 15:
+		*backrepoperstructsubtemplate = BackRepoCommitPointerToStructField
+	case 16:
+		*backrepoperstructsubtemplate = BackRepoCheckoutPointerToStructStageField
 	case 17:
 		*backrepoperstructsubtemplate = BackRepoReindexingPointerToStruct
+	case 18:
+		*backrepoperstructsubtemplate = BackRepoDeclarationSliceOfPointerToStructField
+	case 19:
+		*backrepoperstructsubtemplate = BackRepoCommitSliceOfPointerToStructField
+	case 20:
+		*backrepoperstructsubtemplate = BackRepoCheckoutSliceOfPointerToStructStageField
 	case 21:
 		*backrepoperstructsubtemplate = BackRepoReindexingSliceOfPointerToStruct
 	}
@@ -2195,48 +2860,48 @@ func (backrepoperstructsubtemplate *BackRepoPerStructSubTemplate) ToCodeString()
 
 	switch *backrepoperstructsubtemplate {
 	// insertion code per enum code
+	case BackRepoDeclarationBasicField:
+		res = "BackRepoDeclarationBasicField"
+	case BackRepoCommitBasicField:
+		res = "BackRepoCommitBasicField"
 	case BackRepoCheckoutBasicField:
 		res = "BackRepoCheckoutBasicField"
-	case BackRepoCheckoutBasicFieldBoolean:
-		res = "BackRepoCheckoutBasicFieldBoolean"
+	case BackRepoDeclarationTimeField:
+		res = "BackRepoDeclarationTimeField"
+	case BackRepoCommitTimeField:
+		res = "BackRepoCommitTimeField"
+	case BackRepoCheckoutTimeField:
+		res = "BackRepoCheckoutTimeField"
+	case BackRepoCommitBasicFieldEnum:
+		res = "BackRepoCommitBasicFieldEnum"
 	case BackRepoCheckoutBasicFieldEnum:
 		res = "BackRepoCheckoutBasicFieldEnum"
+	case BackRepoCommitBasicFieldInt:
+		res = "BackRepoCommitBasicFieldInt"
 	case BackRepoCheckoutBasicFieldInt:
 		res = "BackRepoCheckoutBasicFieldInt"
 	case BackRepoCheckoutBasicFieldIntEnum:
 		res = "BackRepoCheckoutBasicFieldIntEnum"
-	case BackRepoCheckoutPointerToStructStageField:
-		res = "BackRepoCheckoutPointerToStructStageField"
-	case BackRepoCheckoutSliceOfPointerToStructStageField:
-		res = "BackRepoCheckoutSliceOfPointerToStructStageField"
-	case BackRepoCheckoutTimeField:
-		res = "BackRepoCheckoutTimeField"
-	case BackRepoCommitBasicBooleanField:
-		res = "BackRepoCommitBasicBooleanField"
-	case BackRepoCommitBasicField:
-		res = "BackRepoCommitBasicField"
-	case BackRepoCommitBasicFieldEnum:
-		res = "BackRepoCommitBasicFieldEnum"
-	case BackRepoCommitBasicFieldInt:
-		res = "BackRepoCommitBasicFieldInt"
-	case BackRepoCommitPointerToStructField:
-		res = "BackRepoCommitPointerToStructField"
-	case BackRepoCommitSliceOfPointerToStructField:
-		res = "BackRepoCommitSliceOfPointerToStructField"
-	case BackRepoCommitTimeField:
-		res = "BackRepoCommitTimeField"
 	case BackRepoDeclarationBasicBooleanField:
 		res = "BackRepoDeclarationBasicBooleanField"
-	case BackRepoDeclarationBasicField:
-		res = "BackRepoDeclarationBasicField"
+	case BackRepoCommitBasicBooleanField:
+		res = "BackRepoCommitBasicBooleanField"
+	case BackRepoCheckoutBasicFieldBoolean:
+		res = "BackRepoCheckoutBasicFieldBoolean"
 	case BackRepoDeclarationPointerToStructField:
 		res = "BackRepoDeclarationPointerToStructField"
-	case BackRepoDeclarationSliceOfPointerToStructField:
-		res = "BackRepoDeclarationSliceOfPointerToStructField"
-	case BackRepoDeclarationTimeField:
-		res = "BackRepoDeclarationTimeField"
+	case BackRepoCommitPointerToStructField:
+		res = "BackRepoCommitPointerToStructField"
+	case BackRepoCheckoutPointerToStructStageField:
+		res = "BackRepoCheckoutPointerToStructStageField"
 	case BackRepoReindexingPointerToStruct:
 		res = "BackRepoReindexingPointerToStruct"
+	case BackRepoDeclarationSliceOfPointerToStructField:
+		res = "BackRepoDeclarationSliceOfPointerToStructField"
+	case BackRepoCommitSliceOfPointerToStructField:
+		res = "BackRepoCommitSliceOfPointerToStructField"
+	case BackRepoCheckoutSliceOfPointerToStructStageField:
+		res = "BackRepoCheckoutSliceOfPointerToStructStageField"
 	case BackRepoReindexingSliceOfPointerToStruct:
 		res = "BackRepoReindexingSliceOfPointerToStruct"
 	}
@@ -2251,36 +2916,36 @@ func (backreposubtemplateinsertion BackRepoSubTemplateInsertion) ToInt() (res in
 	// migration of former implementation of enum
 	switch backreposubtemplateinsertion {
 	// insertion code per enum code
-	case BackRepoBackup:
-		res = 10
-	case BackRepoBackupXL:
-		res = 11
-	case BackRepoCheckout:
-		res = 9
-	case BackRepoCommit:
-		res = 8
-	case BackRepoInitAndCheckout:
-		res = 7
-	case BackRepoInitAndCommit:
-		res = 6
 	case BackRepoPerStructDeclarations:
 		res = 0
 	case BackRepoPerStructInits:
 		res = 1
-	case BackRepoPerStructPhaseOneCheckouts:
-		res = 4
 	case BackRepoPerStructPhaseOneCommits:
 		res = 2
-	case BackRepoPerStructPhaseTwoCheckouts:
-		res = 5
 	case BackRepoPerStructPhaseTwoCommits:
 		res = 3
+	case BackRepoPerStructPhaseOneCheckouts:
+		res = 4
+	case BackRepoPerStructPhaseTwoCheckouts:
+		res = 5
+	case BackRepoInitAndCommit:
+		res = 6
+	case BackRepoInitAndCheckout:
+		res = 7
+	case BackRepoCommit:
+		res = 8
+	case BackRepoCheckout:
+		res = 9
+	case BackRepoBackup:
+		res = 10
+	case BackRepoBackupXL:
+		res = 11
 	case BackRepoRestorePhaseOne:
 		res = 12
-	case BackRepoRestorePhaseTwo:
-		res = 14
 	case BackRepoRestoreXLPhaseOne:
 		res = 13
+	case BackRepoRestorePhaseTwo:
+		res = 14
 	}
 	return
 }
@@ -2289,36 +2954,36 @@ func (backreposubtemplateinsertion *BackRepoSubTemplateInsertion) FromInt(input 
 
 	switch input {
 	// insertion code per enum code
-	case 10:
-		*backreposubtemplateinsertion = BackRepoBackup
-	case 11:
-		*backreposubtemplateinsertion = BackRepoBackupXL
-	case 9:
-		*backreposubtemplateinsertion = BackRepoCheckout
-	case 8:
-		*backreposubtemplateinsertion = BackRepoCommit
-	case 7:
-		*backreposubtemplateinsertion = BackRepoInitAndCheckout
-	case 6:
-		*backreposubtemplateinsertion = BackRepoInitAndCommit
 	case 0:
 		*backreposubtemplateinsertion = BackRepoPerStructDeclarations
 	case 1:
 		*backreposubtemplateinsertion = BackRepoPerStructInits
-	case 4:
-		*backreposubtemplateinsertion = BackRepoPerStructPhaseOneCheckouts
 	case 2:
 		*backreposubtemplateinsertion = BackRepoPerStructPhaseOneCommits
-	case 5:
-		*backreposubtemplateinsertion = BackRepoPerStructPhaseTwoCheckouts
 	case 3:
 		*backreposubtemplateinsertion = BackRepoPerStructPhaseTwoCommits
+	case 4:
+		*backreposubtemplateinsertion = BackRepoPerStructPhaseOneCheckouts
+	case 5:
+		*backreposubtemplateinsertion = BackRepoPerStructPhaseTwoCheckouts
+	case 6:
+		*backreposubtemplateinsertion = BackRepoInitAndCommit
+	case 7:
+		*backreposubtemplateinsertion = BackRepoInitAndCheckout
+	case 8:
+		*backreposubtemplateinsertion = BackRepoCommit
+	case 9:
+		*backreposubtemplateinsertion = BackRepoCheckout
+	case 10:
+		*backreposubtemplateinsertion = BackRepoBackup
+	case 11:
+		*backreposubtemplateinsertion = BackRepoBackupXL
 	case 12:
 		*backreposubtemplateinsertion = BackRepoRestorePhaseOne
-	case 14:
-		*backreposubtemplateinsertion = BackRepoRestorePhaseTwo
 	case 13:
 		*backreposubtemplateinsertion = BackRepoRestoreXLPhaseOne
+	case 14:
+		*backreposubtemplateinsertion = BackRepoRestorePhaseTwo
 	}
 }
 
@@ -2326,36 +2991,36 @@ func (backreposubtemplateinsertion *BackRepoSubTemplateInsertion) ToCodeString()
 
 	switch *backreposubtemplateinsertion {
 	// insertion code per enum code
-	case BackRepoBackup:
-		res = "BackRepoBackup"
-	case BackRepoBackupXL:
-		res = "BackRepoBackupXL"
-	case BackRepoCheckout:
-		res = "BackRepoCheckout"
-	case BackRepoCommit:
-		res = "BackRepoCommit"
-	case BackRepoInitAndCheckout:
-		res = "BackRepoInitAndCheckout"
-	case BackRepoInitAndCommit:
-		res = "BackRepoInitAndCommit"
 	case BackRepoPerStructDeclarations:
 		res = "BackRepoPerStructDeclarations"
 	case BackRepoPerStructInits:
 		res = "BackRepoPerStructInits"
-	case BackRepoPerStructPhaseOneCheckouts:
-		res = "BackRepoPerStructPhaseOneCheckouts"
 	case BackRepoPerStructPhaseOneCommits:
 		res = "BackRepoPerStructPhaseOneCommits"
-	case BackRepoPerStructPhaseTwoCheckouts:
-		res = "BackRepoPerStructPhaseTwoCheckouts"
 	case BackRepoPerStructPhaseTwoCommits:
 		res = "BackRepoPerStructPhaseTwoCommits"
+	case BackRepoPerStructPhaseOneCheckouts:
+		res = "BackRepoPerStructPhaseOneCheckouts"
+	case BackRepoPerStructPhaseTwoCheckouts:
+		res = "BackRepoPerStructPhaseTwoCheckouts"
+	case BackRepoInitAndCommit:
+		res = "BackRepoInitAndCommit"
+	case BackRepoInitAndCheckout:
+		res = "BackRepoInitAndCheckout"
+	case BackRepoCommit:
+		res = "BackRepoCommit"
+	case BackRepoCheckout:
+		res = "BackRepoCheckout"
+	case BackRepoBackup:
+		res = "BackRepoBackup"
+	case BackRepoBackupXL:
+		res = "BackRepoBackupXL"
 	case BackRepoRestorePhaseOne:
 		res = "BackRepoRestorePhaseOne"
-	case BackRepoRestorePhaseTwo:
-		res = "BackRepoRestorePhaseTwo"
 	case BackRepoRestoreXLPhaseOne:
 		res = "BackRepoRestoreXLPhaseOne"
+	case BackRepoRestorePhaseTwo:
+		res = "BackRepoRestorePhaseTwo"
 	}
 	return
 }
@@ -2368,54 +3033,54 @@ func (controllerfilperstructsubtemplate ControllerFilPerStructSubTemplate) ToInt
 	// migration of former implementation of enum
 	switch controllerfilperstructsubtemplate {
 	// insertion code per enum code
-	case ControllerFileFieldSubTmplGetBasicFieldBool:
-		res = 2
-	case ControllerFileFieldSubTmplGetBasicFieldFloat64:
-		res = 10
-	case ControllerFileFieldSubTmplGetBasicFieldInt:
-		res = 6
-	case ControllerFileFieldSubTmplGetBasicFieldString:
-		res = 14
-	case ControllerFileFieldSubTmplGetBasicFieldStringEnum:
-		res = 22
-	case ControllerFileFieldSubTmplGetTimeField:
-		res = 18
 	case ControllerFileFieldSubTmplGetsBasicFieldBool:
 		res = 0
-	case ControllerFileFieldSubTmplGetsBasicFieldFloat64:
-		res = 8
-	case ControllerFileFieldSubTmplGetsBasicFieldInt:
-		res = 4
-	case ControllerFileFieldSubTmplGetsBasicFieldString:
-		res = 12
-	case ControllerFileFieldSubTmplGetsBasicFieldStringEnum:
-		res = 20
-	case ControllerFileFieldSubTmplGetsTimeField:
-		res = 16
 	case ControllerFileFieldSubTmplPostBasicFieldBool:
 		res = 1
-	case ControllerFileFieldSubTmplPostBasicFieldFloat64:
-		res = 9
-	case ControllerFileFieldSubTmplPostBasicFieldInt:
-		res = 5
-	case ControllerFileFieldSubTmplPostBasicFieldString:
-		res = 13
-	case ControllerFileFieldSubTmplPostBasicFieldStringEnum:
-		res = 21
-	case ControllerFileFieldSubTmplPostTimeField:
-		res = 17
+	case ControllerFileFieldSubTmplGetBasicFieldBool:
+		res = 2
 	case ControllerFileFieldSubTmplUpdateBasicFieldBool:
 		res = 3
-	case ControllerFileFieldSubTmplUpdateBasicFieldFloat64:
-		res = 11
+	case ControllerFileFieldSubTmplGetsBasicFieldInt:
+		res = 4
+	case ControllerFileFieldSubTmplPostBasicFieldInt:
+		res = 5
+	case ControllerFileFieldSubTmplGetBasicFieldInt:
+		res = 6
 	case ControllerFileFieldSubTmplUpdateBasicFieldInt:
 		res = 7
+	case ControllerFileFieldSubTmplGetsBasicFieldFloat64:
+		res = 8
+	case ControllerFileFieldSubTmplPostBasicFieldFloat64:
+		res = 9
+	case ControllerFileFieldSubTmplGetBasicFieldFloat64:
+		res = 10
+	case ControllerFileFieldSubTmplUpdateBasicFieldFloat64:
+		res = 11
+	case ControllerFileFieldSubTmplGetsBasicFieldString:
+		res = 12
+	case ControllerFileFieldSubTmplPostBasicFieldString:
+		res = 13
+	case ControllerFileFieldSubTmplGetBasicFieldString:
+		res = 14
 	case ControllerFileFieldSubTmplUpdateBasicFieldString:
 		res = 15
-	case ControllerFileFieldSubTmplUpdateBasicFieldStringEnum:
-		res = 23
+	case ControllerFileFieldSubTmplGetsTimeField:
+		res = 16
+	case ControllerFileFieldSubTmplPostTimeField:
+		res = 17
+	case ControllerFileFieldSubTmplGetTimeField:
+		res = 18
 	case ControllerFileFieldSubTmplUpdateTimeField:
 		res = 19
+	case ControllerFileFieldSubTmplGetsBasicFieldStringEnum:
+		res = 20
+	case ControllerFileFieldSubTmplPostBasicFieldStringEnum:
+		res = 21
+	case ControllerFileFieldSubTmplGetBasicFieldStringEnum:
+		res = 22
+	case ControllerFileFieldSubTmplUpdateBasicFieldStringEnum:
+		res = 23
 	}
 	return
 }
@@ -2424,54 +3089,54 @@ func (controllerfilperstructsubtemplate *ControllerFilPerStructSubTemplate) From
 
 	switch input {
 	// insertion code per enum code
-	case 2:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetBasicFieldBool
-	case 10:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetBasicFieldFloat64
-	case 6:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetBasicFieldInt
-	case 14:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetBasicFieldString
-	case 22:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetBasicFieldStringEnum
-	case 18:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetTimeField
 	case 0:
 		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetsBasicFieldBool
-	case 8:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetsBasicFieldFloat64
-	case 4:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetsBasicFieldInt
-	case 12:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetsBasicFieldString
-	case 20:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetsBasicFieldStringEnum
-	case 16:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetsTimeField
 	case 1:
 		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplPostBasicFieldBool
-	case 9:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplPostBasicFieldFloat64
-	case 5:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplPostBasicFieldInt
-	case 13:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplPostBasicFieldString
-	case 21:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplPostBasicFieldStringEnum
-	case 17:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplPostTimeField
+	case 2:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetBasicFieldBool
 	case 3:
 		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplUpdateBasicFieldBool
-	case 11:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplUpdateBasicFieldFloat64
+	case 4:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetsBasicFieldInt
+	case 5:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplPostBasicFieldInt
+	case 6:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetBasicFieldInt
 	case 7:
 		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplUpdateBasicFieldInt
+	case 8:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetsBasicFieldFloat64
+	case 9:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplPostBasicFieldFloat64
+	case 10:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetBasicFieldFloat64
+	case 11:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplUpdateBasicFieldFloat64
+	case 12:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetsBasicFieldString
+	case 13:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplPostBasicFieldString
+	case 14:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetBasicFieldString
 	case 15:
 		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplUpdateBasicFieldString
-	case 23:
-		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplUpdateBasicFieldStringEnum
+	case 16:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetsTimeField
+	case 17:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplPostTimeField
+	case 18:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetTimeField
 	case 19:
 		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplUpdateTimeField
+	case 20:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetsBasicFieldStringEnum
+	case 21:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplPostBasicFieldStringEnum
+	case 22:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplGetBasicFieldStringEnum
+	case 23:
+		*controllerfilperstructsubtemplate = ControllerFileFieldSubTmplUpdateBasicFieldStringEnum
 	}
 }
 
@@ -2479,54 +3144,54 @@ func (controllerfilperstructsubtemplate *ControllerFilPerStructSubTemplate) ToCo
 
 	switch *controllerfilperstructsubtemplate {
 	// insertion code per enum code
-	case ControllerFileFieldSubTmplGetBasicFieldBool:
-		res = "ControllerFileFieldSubTmplGetBasicFieldBool"
-	case ControllerFileFieldSubTmplGetBasicFieldFloat64:
-		res = "ControllerFileFieldSubTmplGetBasicFieldFloat64"
-	case ControllerFileFieldSubTmplGetBasicFieldInt:
-		res = "ControllerFileFieldSubTmplGetBasicFieldInt"
-	case ControllerFileFieldSubTmplGetBasicFieldString:
-		res = "ControllerFileFieldSubTmplGetBasicFieldString"
-	case ControllerFileFieldSubTmplGetBasicFieldStringEnum:
-		res = "ControllerFileFieldSubTmplGetBasicFieldStringEnum"
-	case ControllerFileFieldSubTmplGetTimeField:
-		res = "ControllerFileFieldSubTmplGetTimeField"
 	case ControllerFileFieldSubTmplGetsBasicFieldBool:
 		res = "ControllerFileFieldSubTmplGetsBasicFieldBool"
-	case ControllerFileFieldSubTmplGetsBasicFieldFloat64:
-		res = "ControllerFileFieldSubTmplGetsBasicFieldFloat64"
-	case ControllerFileFieldSubTmplGetsBasicFieldInt:
-		res = "ControllerFileFieldSubTmplGetsBasicFieldInt"
-	case ControllerFileFieldSubTmplGetsBasicFieldString:
-		res = "ControllerFileFieldSubTmplGetsBasicFieldString"
-	case ControllerFileFieldSubTmplGetsBasicFieldStringEnum:
-		res = "ControllerFileFieldSubTmplGetsBasicFieldStringEnum"
-	case ControllerFileFieldSubTmplGetsTimeField:
-		res = "ControllerFileFieldSubTmplGetsTimeField"
 	case ControllerFileFieldSubTmplPostBasicFieldBool:
 		res = "ControllerFileFieldSubTmplPostBasicFieldBool"
-	case ControllerFileFieldSubTmplPostBasicFieldFloat64:
-		res = "ControllerFileFieldSubTmplPostBasicFieldFloat64"
-	case ControllerFileFieldSubTmplPostBasicFieldInt:
-		res = "ControllerFileFieldSubTmplPostBasicFieldInt"
-	case ControllerFileFieldSubTmplPostBasicFieldString:
-		res = "ControllerFileFieldSubTmplPostBasicFieldString"
-	case ControllerFileFieldSubTmplPostBasicFieldStringEnum:
-		res = "ControllerFileFieldSubTmplPostBasicFieldStringEnum"
-	case ControllerFileFieldSubTmplPostTimeField:
-		res = "ControllerFileFieldSubTmplPostTimeField"
+	case ControllerFileFieldSubTmplGetBasicFieldBool:
+		res = "ControllerFileFieldSubTmplGetBasicFieldBool"
 	case ControllerFileFieldSubTmplUpdateBasicFieldBool:
 		res = "ControllerFileFieldSubTmplUpdateBasicFieldBool"
-	case ControllerFileFieldSubTmplUpdateBasicFieldFloat64:
-		res = "ControllerFileFieldSubTmplUpdateBasicFieldFloat64"
+	case ControllerFileFieldSubTmplGetsBasicFieldInt:
+		res = "ControllerFileFieldSubTmplGetsBasicFieldInt"
+	case ControllerFileFieldSubTmplPostBasicFieldInt:
+		res = "ControllerFileFieldSubTmplPostBasicFieldInt"
+	case ControllerFileFieldSubTmplGetBasicFieldInt:
+		res = "ControllerFileFieldSubTmplGetBasicFieldInt"
 	case ControllerFileFieldSubTmplUpdateBasicFieldInt:
 		res = "ControllerFileFieldSubTmplUpdateBasicFieldInt"
+	case ControllerFileFieldSubTmplGetsBasicFieldFloat64:
+		res = "ControllerFileFieldSubTmplGetsBasicFieldFloat64"
+	case ControllerFileFieldSubTmplPostBasicFieldFloat64:
+		res = "ControllerFileFieldSubTmplPostBasicFieldFloat64"
+	case ControllerFileFieldSubTmplGetBasicFieldFloat64:
+		res = "ControllerFileFieldSubTmplGetBasicFieldFloat64"
+	case ControllerFileFieldSubTmplUpdateBasicFieldFloat64:
+		res = "ControllerFileFieldSubTmplUpdateBasicFieldFloat64"
+	case ControllerFileFieldSubTmplGetsBasicFieldString:
+		res = "ControllerFileFieldSubTmplGetsBasicFieldString"
+	case ControllerFileFieldSubTmplPostBasicFieldString:
+		res = "ControllerFileFieldSubTmplPostBasicFieldString"
+	case ControllerFileFieldSubTmplGetBasicFieldString:
+		res = "ControllerFileFieldSubTmplGetBasicFieldString"
 	case ControllerFileFieldSubTmplUpdateBasicFieldString:
 		res = "ControllerFileFieldSubTmplUpdateBasicFieldString"
-	case ControllerFileFieldSubTmplUpdateBasicFieldStringEnum:
-		res = "ControllerFileFieldSubTmplUpdateBasicFieldStringEnum"
+	case ControllerFileFieldSubTmplGetsTimeField:
+		res = "ControllerFileFieldSubTmplGetsTimeField"
+	case ControllerFileFieldSubTmplPostTimeField:
+		res = "ControllerFileFieldSubTmplPostTimeField"
+	case ControllerFileFieldSubTmplGetTimeField:
+		res = "ControllerFileFieldSubTmplGetTimeField"
 	case ControllerFileFieldSubTmplUpdateTimeField:
 		res = "ControllerFileFieldSubTmplUpdateTimeField"
+	case ControllerFileFieldSubTmplGetsBasicFieldStringEnum:
+		res = "ControllerFileFieldSubTmplGetsBasicFieldStringEnum"
+	case ControllerFileFieldSubTmplPostBasicFieldStringEnum:
+		res = "ControllerFileFieldSubTmplPostBasicFieldStringEnum"
+	case ControllerFileFieldSubTmplGetBasicFieldStringEnum:
+		res = "ControllerFileFieldSubTmplGetBasicFieldStringEnum"
+	case ControllerFileFieldSubTmplUpdateBasicFieldStringEnum:
+		res = "ControllerFileFieldSubTmplUpdateBasicFieldStringEnum"
 	}
 	return
 }
@@ -2539,16 +3204,16 @@ func (controllerfileinsertionpoint ControllerFileInsertionPoint) ToInt() (res in
 	// migration of former implementation of enum
 	switch controllerfileinsertionpoint {
 	// insertion code per enum code
-	case ControllerFileGetInsertion:
-		res = 2
 	case ControllerFileGetsInsertion:
 		res = 0
-	case ControllerFileNbInsertionPoints:
-		res = 4
 	case ControllerFilePostInsertion:
 		res = 1
+	case ControllerFileGetInsertion:
+		res = 2
 	case ControllerFileUpdateInsertion:
 		res = 3
+	case ControllerFileNbInsertionPoints:
+		res = 4
 	}
 	return
 }
@@ -2557,16 +3222,16 @@ func (controllerfileinsertionpoint *ControllerFileInsertionPoint) FromInt(input 
 
 	switch input {
 	// insertion code per enum code
-	case 2:
-		*controllerfileinsertionpoint = ControllerFileGetInsertion
 	case 0:
 		*controllerfileinsertionpoint = ControllerFileGetsInsertion
-	case 4:
-		*controllerfileinsertionpoint = ControllerFileNbInsertionPoints
 	case 1:
 		*controllerfileinsertionpoint = ControllerFilePostInsertion
+	case 2:
+		*controllerfileinsertionpoint = ControllerFileGetInsertion
 	case 3:
 		*controllerfileinsertionpoint = ControllerFileUpdateInsertion
+	case 4:
+		*controllerfileinsertionpoint = ControllerFileNbInsertionPoints
 	}
 }
 
@@ -2574,16 +3239,16 @@ func (controllerfileinsertionpoint *ControllerFileInsertionPoint) ToCodeString()
 
 	switch *controllerfileinsertionpoint {
 	// insertion code per enum code
-	case ControllerFileGetInsertion:
-		res = "ControllerFileGetInsertion"
 	case ControllerFileGetsInsertion:
 		res = "ControllerFileGetsInsertion"
-	case ControllerFileNbInsertionPoints:
-		res = "ControllerFileNbInsertionPoints"
 	case ControllerFilePostInsertion:
 		res = "ControllerFilePostInsertion"
+	case ControllerFileGetInsertion:
+		res = "ControllerFileGetInsertion"
 	case ControllerFileUpdateInsertion:
 		res = "ControllerFileUpdateInsertion"
+	case ControllerFileNbInsertionPoints:
+		res = "ControllerFileNbInsertionPoints"
 	}
 	return
 }
@@ -2668,48 +3333,60 @@ func (gongfileperstructsubtemplateid GongFilePerStructSubTemplateId) ToInt() (re
 	// migration of former implementation of enum
 	switch gongfileperstructsubtemplateid {
 	// insertion code per enum code
-	case GongFileFieldSubTmplPointerFieldAssociationMapFunction:
-		res = 19
 	case GongFileFieldSubTmplSetBasicFieldBool:
 		res = 0
-	case GongFileFieldSubTmplSetBasicFieldEnumInt:
-		res = 3
-	case GongFileFieldSubTmplSetBasicFieldEnumString:
-		res = 2
-	case GongFileFieldSubTmplSetBasicFieldFloat64:
-		res = 4
 	case GongFileFieldSubTmplSetBasicFieldInt:
 		res = 1
+	case GongFileFieldSubTmplSetBasicFieldEnumString:
+		res = 2
+	case GongFileFieldSubTmplSetBasicFieldEnumInt:
+		res = 3
+	case GongFileFieldSubTmplSetBasicFieldFloat64:
+		res = 4
 	case GongFileFieldSubTmplSetBasicFieldString:
 		res = 5
+	case GongFileFieldSubTmplSetTimeField:
+		res = 6
 	case GongFileFieldSubTmplSetPointerField:
 		res = 7
 	case GongFileFieldSubTmplSetSliceOfPointersField:
 		res = 8
-	case GongFileFieldSubTmplSetTimeField:
-		res = 6
-	case GongFileFieldSubTmplSliceOfPointersFieldAssociationMapFunction:
-		res = 20
 	case GongFileFieldSubTmplStringFieldName:
 		res = 9
 	case GongFileFieldSubTmplStringValueBasicFieldBool:
 		res = 10
-	case GongFileFieldSubTmplStringValueBasicFieldEnumInt:
-		res = 13
-	case GongFileFieldSubTmplStringValueBasicFieldEnumString:
-		res = 12
-	case GongFileFieldSubTmplStringValueBasicFieldFloat64:
-		res = 14
 	case GongFileFieldSubTmplStringValueBasicFieldInt:
 		res = 11
+	case GongFileFieldSubTmplStringValueBasicFieldEnumString:
+		res = 12
+	case GongFileFieldSubTmplStringValueBasicFieldEnumInt:
+		res = 13
+	case GongFileFieldSubTmplStringValueBasicFieldFloat64:
+		res = 14
 	case GongFileFieldSubTmplStringValueBasicFieldString:
 		res = 15
+	case GongFileFieldSubTmplStringValueTimeField:
+		res = 16
 	case GongFileFieldSubTmplStringValuePointerField:
 		res = 17
 	case GongFileFieldSubTmplStringValueSliceOfPointersField:
 		res = 18
-	case GongFileFieldSubTmplStringValueTimeField:
-		res = 16
+	case GongFileFieldSubTmplAssociationNamePointerField:
+		res = 19
+	case GongFileFieldSubTmplAssociationNameSliceOfPointersField:
+		res = 20
+	case GongFileFieldSubTmplAssociationNameCompositePointerField:
+		res = 21
+	case GongFileFieldSubTmplAssociationNameCompositeSliceOfPointersField:
+		res = 22
+	case GongFileFieldSubTmplPointerFieldAssociationMapFunction:
+		res = 23
+	case GongFileFieldSubTmplSliceOfPointersFieldAssociationMapFunction:
+		res = 24
+	case GongFileFieldSubTmplPointerFieldPointerAssociationMapFunction:
+		res = 25
+	case GongFileFieldSubTmplPointerFieldSliceOfPointersAssociationMapFunction:
+		res = 26
 	}
 	return
 }
@@ -2718,48 +3395,60 @@ func (gongfileperstructsubtemplateid *GongFilePerStructSubTemplateId) FromInt(in
 
 	switch input {
 	// insertion code per enum code
-	case 19:
-		*gongfileperstructsubtemplateid = GongFileFieldSubTmplPointerFieldAssociationMapFunction
 	case 0:
 		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSetBasicFieldBool
-	case 3:
-		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSetBasicFieldEnumInt
-	case 2:
-		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSetBasicFieldEnumString
-	case 4:
-		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSetBasicFieldFloat64
 	case 1:
 		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSetBasicFieldInt
+	case 2:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSetBasicFieldEnumString
+	case 3:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSetBasicFieldEnumInt
+	case 4:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSetBasicFieldFloat64
 	case 5:
 		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSetBasicFieldString
+	case 6:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSetTimeField
 	case 7:
 		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSetPointerField
 	case 8:
 		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSetSliceOfPointersField
-	case 6:
-		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSetTimeField
-	case 20:
-		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSliceOfPointersFieldAssociationMapFunction
 	case 9:
 		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringFieldName
 	case 10:
 		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringValueBasicFieldBool
-	case 13:
-		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringValueBasicFieldEnumInt
-	case 12:
-		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringValueBasicFieldEnumString
-	case 14:
-		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringValueBasicFieldFloat64
 	case 11:
 		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringValueBasicFieldInt
+	case 12:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringValueBasicFieldEnumString
+	case 13:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringValueBasicFieldEnumInt
+	case 14:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringValueBasicFieldFloat64
 	case 15:
 		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringValueBasicFieldString
+	case 16:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringValueTimeField
 	case 17:
 		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringValuePointerField
 	case 18:
 		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringValueSliceOfPointersField
-	case 16:
-		*gongfileperstructsubtemplateid = GongFileFieldSubTmplStringValueTimeField
+	case 19:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplAssociationNamePointerField
+	case 20:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplAssociationNameSliceOfPointersField
+	case 21:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplAssociationNameCompositePointerField
+	case 22:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplAssociationNameCompositeSliceOfPointersField
+	case 23:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplPointerFieldAssociationMapFunction
+	case 24:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplSliceOfPointersFieldAssociationMapFunction
+	case 25:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplPointerFieldPointerAssociationMapFunction
+	case 26:
+		*gongfileperstructsubtemplateid = GongFileFieldSubTmplPointerFieldSliceOfPointersAssociationMapFunction
 	}
 }
 
@@ -2767,48 +3456,60 @@ func (gongfileperstructsubtemplateid *GongFilePerStructSubTemplateId) ToCodeStri
 
 	switch *gongfileperstructsubtemplateid {
 	// insertion code per enum code
-	case GongFileFieldSubTmplPointerFieldAssociationMapFunction:
-		res = "GongFileFieldSubTmplPointerFieldAssociationMapFunction"
 	case GongFileFieldSubTmplSetBasicFieldBool:
 		res = "GongFileFieldSubTmplSetBasicFieldBool"
-	case GongFileFieldSubTmplSetBasicFieldEnumInt:
-		res = "GongFileFieldSubTmplSetBasicFieldEnumInt"
-	case GongFileFieldSubTmplSetBasicFieldEnumString:
-		res = "GongFileFieldSubTmplSetBasicFieldEnumString"
-	case GongFileFieldSubTmplSetBasicFieldFloat64:
-		res = "GongFileFieldSubTmplSetBasicFieldFloat64"
 	case GongFileFieldSubTmplSetBasicFieldInt:
 		res = "GongFileFieldSubTmplSetBasicFieldInt"
+	case GongFileFieldSubTmplSetBasicFieldEnumString:
+		res = "GongFileFieldSubTmplSetBasicFieldEnumString"
+	case GongFileFieldSubTmplSetBasicFieldEnumInt:
+		res = "GongFileFieldSubTmplSetBasicFieldEnumInt"
+	case GongFileFieldSubTmplSetBasicFieldFloat64:
+		res = "GongFileFieldSubTmplSetBasicFieldFloat64"
 	case GongFileFieldSubTmplSetBasicFieldString:
 		res = "GongFileFieldSubTmplSetBasicFieldString"
+	case GongFileFieldSubTmplSetTimeField:
+		res = "GongFileFieldSubTmplSetTimeField"
 	case GongFileFieldSubTmplSetPointerField:
 		res = "GongFileFieldSubTmplSetPointerField"
 	case GongFileFieldSubTmplSetSliceOfPointersField:
 		res = "GongFileFieldSubTmplSetSliceOfPointersField"
-	case GongFileFieldSubTmplSetTimeField:
-		res = "GongFileFieldSubTmplSetTimeField"
-	case GongFileFieldSubTmplSliceOfPointersFieldAssociationMapFunction:
-		res = "GongFileFieldSubTmplSliceOfPointersFieldAssociationMapFunction"
 	case GongFileFieldSubTmplStringFieldName:
 		res = "GongFileFieldSubTmplStringFieldName"
 	case GongFileFieldSubTmplStringValueBasicFieldBool:
 		res = "GongFileFieldSubTmplStringValueBasicFieldBool"
-	case GongFileFieldSubTmplStringValueBasicFieldEnumInt:
-		res = "GongFileFieldSubTmplStringValueBasicFieldEnumInt"
-	case GongFileFieldSubTmplStringValueBasicFieldEnumString:
-		res = "GongFileFieldSubTmplStringValueBasicFieldEnumString"
-	case GongFileFieldSubTmplStringValueBasicFieldFloat64:
-		res = "GongFileFieldSubTmplStringValueBasicFieldFloat64"
 	case GongFileFieldSubTmplStringValueBasicFieldInt:
 		res = "GongFileFieldSubTmplStringValueBasicFieldInt"
+	case GongFileFieldSubTmplStringValueBasicFieldEnumString:
+		res = "GongFileFieldSubTmplStringValueBasicFieldEnumString"
+	case GongFileFieldSubTmplStringValueBasicFieldEnumInt:
+		res = "GongFileFieldSubTmplStringValueBasicFieldEnumInt"
+	case GongFileFieldSubTmplStringValueBasicFieldFloat64:
+		res = "GongFileFieldSubTmplStringValueBasicFieldFloat64"
 	case GongFileFieldSubTmplStringValueBasicFieldString:
 		res = "GongFileFieldSubTmplStringValueBasicFieldString"
+	case GongFileFieldSubTmplStringValueTimeField:
+		res = "GongFileFieldSubTmplStringValueTimeField"
 	case GongFileFieldSubTmplStringValuePointerField:
 		res = "GongFileFieldSubTmplStringValuePointerField"
 	case GongFileFieldSubTmplStringValueSliceOfPointersField:
 		res = "GongFileFieldSubTmplStringValueSliceOfPointersField"
-	case GongFileFieldSubTmplStringValueTimeField:
-		res = "GongFileFieldSubTmplStringValueTimeField"
+	case GongFileFieldSubTmplAssociationNamePointerField:
+		res = "GongFileFieldSubTmplAssociationNamePointerField"
+	case GongFileFieldSubTmplAssociationNameSliceOfPointersField:
+		res = "GongFileFieldSubTmplAssociationNameSliceOfPointersField"
+	case GongFileFieldSubTmplAssociationNameCompositePointerField:
+		res = "GongFileFieldSubTmplAssociationNameCompositePointerField"
+	case GongFileFieldSubTmplAssociationNameCompositeSliceOfPointersField:
+		res = "GongFileFieldSubTmplAssociationNameCompositeSliceOfPointersField"
+	case GongFileFieldSubTmplPointerFieldAssociationMapFunction:
+		res = "GongFileFieldSubTmplPointerFieldAssociationMapFunction"
+	case GongFileFieldSubTmplSliceOfPointersFieldAssociationMapFunction:
+		res = "GongFileFieldSubTmplSliceOfPointersFieldAssociationMapFunction"
+	case GongFileFieldSubTmplPointerFieldPointerAssociationMapFunction:
+		res = "GongFileFieldSubTmplPointerFieldPointerAssociationMapFunction"
+	case GongFileFieldSubTmplPointerFieldSliceOfPointersAssociationMapFunction:
+		res = "GongFileFieldSubTmplPointerFieldSliceOfPointersAssociationMapFunction"
 	}
 	return
 }
@@ -2823,10 +3524,10 @@ func (gongmodelenumvaluesubtemplateid GongModelEnumValueSubTemplateId) ToInt() (
 	// insertion code per enum code
 	case GongModelEnumValueFromString:
 		res = 0
-	case GongModelEnumValueToCodeString:
-		res = 2
 	case GongModelEnumValueToString:
 		res = 1
+	case GongModelEnumValueToCodeString:
+		res = 2
 	}
 	return
 }
@@ -2837,10 +3538,10 @@ func (gongmodelenumvaluesubtemplateid *GongModelEnumValueSubTemplateId) FromInt(
 	// insertion code per enum code
 	case 0:
 		*gongmodelenumvaluesubtemplateid = GongModelEnumValueFromString
-	case 2:
-		*gongmodelenumvaluesubtemplateid = GongModelEnumValueToCodeString
 	case 1:
 		*gongmodelenumvaluesubtemplateid = GongModelEnumValueToString
+	case 2:
+		*gongmodelenumvaluesubtemplateid = GongModelEnumValueToCodeString
 	}
 }
 
@@ -2850,10 +3551,10 @@ func (gongmodelenumvaluesubtemplateid *GongModelEnumValueSubTemplateId) ToCodeSt
 	// insertion code per enum code
 	case GongModelEnumValueFromString:
 		res = "GongModelEnumValueFromString"
-	case GongModelEnumValueToCodeString:
-		res = "GongModelEnumValueToCodeString"
 	case GongModelEnumValueToString:
 		res = "GongModelEnumValueToString"
+	case GongModelEnumValueToCodeString:
+		res = "GongModelEnumValueToCodeString"
 	}
 	return
 }
@@ -2866,10 +3567,10 @@ func (modelgongenuminsertionid ModelGongEnumInsertionId) ToInt() (res int) {
 	// migration of former implementation of enum
 	switch modelgongenuminsertionid {
 	// insertion code per enum code
-	case ModelGongEnumInsertionsNb:
-		res = 41
 	case ModelGongEnumUtilityFunctions:
-		res = 40
+		res = 0
+	case ModelGongEnumInsertionsNb:
+		res = 1
 	}
 	return
 }
@@ -2878,10 +3579,10 @@ func (modelgongenuminsertionid *ModelGongEnumInsertionId) FromInt(input int) {
 
 	switch input {
 	// insertion code per enum code
-	case 41:
-		*modelgongenuminsertionid = ModelGongEnumInsertionsNb
-	case 40:
+	case 0:
 		*modelgongenuminsertionid = ModelGongEnumUtilityFunctions
+	case 1:
+		*modelgongenuminsertionid = ModelGongEnumInsertionsNb
 	}
 }
 
@@ -2889,10 +3590,10 @@ func (modelgongenuminsertionid *ModelGongEnumInsertionId) ToCodeString() (res st
 
 	switch *modelgongenuminsertionid {
 	// insertion code per enum code
-	case ModelGongEnumInsertionsNb:
-		res = "ModelGongEnumInsertionsNb"
 	case ModelGongEnumUtilityFunctions:
 		res = "ModelGongEnumUtilityFunctions"
+	case ModelGongEnumInsertionsNb:
+		res = "ModelGongEnumInsertionsNb"
 	}
 	return
 }
@@ -2905,34 +3606,58 @@ func (modelgongstructinsertionid ModelGongStructInsertionId) ToInt() (res int) {
 	// migration of former implementation of enum
 	switch modelgongstructinsertionid {
 	// insertion code per enum code
-	case ModelGongStructInsertionArrayDefintion:
-		res = 5
-	case ModelGongStructInsertionArrayInitialisation:
-		res = 6
-	case ModelGongStructInsertionArrayNil:
-		res = 8
-	case ModelGongStructInsertionArrayReset:
-		res = 7
 	case ModelGongStructInsertionCommitCheckout:
 		res = 0
-	case ModelGongStructInsertionComputeNbInstances:
-		res = 11
-	case ModelGongStructInsertionCreateCallback:
-		res = 3
-	case ModelGongStructInsertionDeleteCallback:
-		res = 4
-	case ModelGongStructInsertionGetFields:
-		res = 1
-	case ModelGongStructInsertionReverseAssociationsMaps:
-		res = 12
 	case ModelGongStructInsertionStageFunctions:
+		res = 1
+	case ModelGongStructInsertionCreateCallback:
 		res = 2
+	case ModelGongStructInsertionDeleteCallback:
+		res = 3
+	case ModelGongStructInsertionArrayDefintion:
+		res = 4
+	case ModelGongStructInsertionArrayInitialisation:
+		res = 5
+	case ModelGongStructInsertionArrayReset:
+		res = 6
+	case ModelGongStructInsertionArrayNil:
+		res = 7
 	case ModelGongStructInsertionUnmarshallDeclarations:
-		res = 9
+		res = 8
 	case ModelGongStructInsertionUnmarshallPointersInitializations:
+		res = 9
+	case ModelGongStructInsertionComputeNbInstances:
 		res = 10
-	case ModelGongStructInsertionsNb:
+	case ModelGongStructInsertionReverseAssociationsMaps:
+		res = 11
+	case ModelGongStructInsertionGenericGetFields:
+		res = 12
+	case ModelGongStructInsertionGenericGetFieldValues:
 		res = 13
+	case ModelGongStructInsertionGenericReversePointerAssociationsMaps:
+		res = 14
+	case ModelGongStructInsertionGenericReverseSliceOfPointersAssociationsMaps:
+		res = 15
+	case ModelGongStructInsertionGenericGongstructTypes:
+		res = 16
+	case ModelGongStructInsertionGenericGongSetTypes:
+		res = 17
+	case ModelGongStructInsertionGenericGongstructName:
+		res = 18
+	case ModelGongStructInsertionGenericGongMapTypes:
+		res = 19
+	case ModelGongStructInsertionGenericGetSetFunctions:
+		res = 20
+	case ModelGongStructInsertionGenericGetMapFunctions:
+		res = 21
+	case ModelGongStructInsertionGenericInstancesSetFunctions:
+		res = 22
+	case ModelGongStructInsertionGenericInstancesMapFunctions:
+		res = 23
+	case ModelGongStructInsertionGenericGetAssociationNameFunctions:
+		res = 24
+	case ModelGongStructInsertionsNb:
+		res = 25
 	}
 	return
 }
@@ -2941,33 +3666,57 @@ func (modelgongstructinsertionid *ModelGongStructInsertionId) FromInt(input int)
 
 	switch input {
 	// insertion code per enum code
-	case 5:
-		*modelgongstructinsertionid = ModelGongStructInsertionArrayDefintion
-	case 6:
-		*modelgongstructinsertionid = ModelGongStructInsertionArrayInitialisation
-	case 8:
-		*modelgongstructinsertionid = ModelGongStructInsertionArrayNil
-	case 7:
-		*modelgongstructinsertionid = ModelGongStructInsertionArrayReset
 	case 0:
 		*modelgongstructinsertionid = ModelGongStructInsertionCommitCheckout
-	case 11:
-		*modelgongstructinsertionid = ModelGongStructInsertionComputeNbInstances
-	case 3:
-		*modelgongstructinsertionid = ModelGongStructInsertionCreateCallback
-	case 4:
-		*modelgongstructinsertionid = ModelGongStructInsertionDeleteCallback
 	case 1:
-		*modelgongstructinsertionid = ModelGongStructInsertionGetFields
-	case 12:
-		*modelgongstructinsertionid = ModelGongStructInsertionReverseAssociationsMaps
-	case 2:
 		*modelgongstructinsertionid = ModelGongStructInsertionStageFunctions
-	case 9:
+	case 2:
+		*modelgongstructinsertionid = ModelGongStructInsertionCreateCallback
+	case 3:
+		*modelgongstructinsertionid = ModelGongStructInsertionDeleteCallback
+	case 4:
+		*modelgongstructinsertionid = ModelGongStructInsertionArrayDefintion
+	case 5:
+		*modelgongstructinsertionid = ModelGongStructInsertionArrayInitialisation
+	case 6:
+		*modelgongstructinsertionid = ModelGongStructInsertionArrayReset
+	case 7:
+		*modelgongstructinsertionid = ModelGongStructInsertionArrayNil
+	case 8:
 		*modelgongstructinsertionid = ModelGongStructInsertionUnmarshallDeclarations
-	case 10:
+	case 9:
 		*modelgongstructinsertionid = ModelGongStructInsertionUnmarshallPointersInitializations
+	case 10:
+		*modelgongstructinsertionid = ModelGongStructInsertionComputeNbInstances
+	case 11:
+		*modelgongstructinsertionid = ModelGongStructInsertionReverseAssociationsMaps
+	case 12:
+		*modelgongstructinsertionid = ModelGongStructInsertionGenericGetFields
 	case 13:
+		*modelgongstructinsertionid = ModelGongStructInsertionGenericGetFieldValues
+	case 14:
+		*modelgongstructinsertionid = ModelGongStructInsertionGenericReversePointerAssociationsMaps
+	case 15:
+		*modelgongstructinsertionid = ModelGongStructInsertionGenericReverseSliceOfPointersAssociationsMaps
+	case 16:
+		*modelgongstructinsertionid = ModelGongStructInsertionGenericGongstructTypes
+	case 17:
+		*modelgongstructinsertionid = ModelGongStructInsertionGenericGongSetTypes
+	case 18:
+		*modelgongstructinsertionid = ModelGongStructInsertionGenericGongstructName
+	case 19:
+		*modelgongstructinsertionid = ModelGongStructInsertionGenericGongMapTypes
+	case 20:
+		*modelgongstructinsertionid = ModelGongStructInsertionGenericGetSetFunctions
+	case 21:
+		*modelgongstructinsertionid = ModelGongStructInsertionGenericGetMapFunctions
+	case 22:
+		*modelgongstructinsertionid = ModelGongStructInsertionGenericInstancesSetFunctions
+	case 23:
+		*modelgongstructinsertionid = ModelGongStructInsertionGenericInstancesMapFunctions
+	case 24:
+		*modelgongstructinsertionid = ModelGongStructInsertionGenericGetAssociationNameFunctions
+	case 25:
 		*modelgongstructinsertionid = ModelGongStructInsertionsNb
 	}
 }
@@ -2976,32 +3725,56 @@ func (modelgongstructinsertionid *ModelGongStructInsertionId) ToCodeString() (re
 
 	switch *modelgongstructinsertionid {
 	// insertion code per enum code
-	case ModelGongStructInsertionArrayDefintion:
-		res = "ModelGongStructInsertionArrayDefintion"
-	case ModelGongStructInsertionArrayInitialisation:
-		res = "ModelGongStructInsertionArrayInitialisation"
-	case ModelGongStructInsertionArrayNil:
-		res = "ModelGongStructInsertionArrayNil"
-	case ModelGongStructInsertionArrayReset:
-		res = "ModelGongStructInsertionArrayReset"
 	case ModelGongStructInsertionCommitCheckout:
 		res = "ModelGongStructInsertionCommitCheckout"
-	case ModelGongStructInsertionComputeNbInstances:
-		res = "ModelGongStructInsertionComputeNbInstances"
+	case ModelGongStructInsertionStageFunctions:
+		res = "ModelGongStructInsertionStageFunctions"
 	case ModelGongStructInsertionCreateCallback:
 		res = "ModelGongStructInsertionCreateCallback"
 	case ModelGongStructInsertionDeleteCallback:
 		res = "ModelGongStructInsertionDeleteCallback"
-	case ModelGongStructInsertionGetFields:
-		res = "ModelGongStructInsertionGetFields"
-	case ModelGongStructInsertionReverseAssociationsMaps:
-		res = "ModelGongStructInsertionReverseAssociationsMaps"
-	case ModelGongStructInsertionStageFunctions:
-		res = "ModelGongStructInsertionStageFunctions"
+	case ModelGongStructInsertionArrayDefintion:
+		res = "ModelGongStructInsertionArrayDefintion"
+	case ModelGongStructInsertionArrayInitialisation:
+		res = "ModelGongStructInsertionArrayInitialisation"
+	case ModelGongStructInsertionArrayReset:
+		res = "ModelGongStructInsertionArrayReset"
+	case ModelGongStructInsertionArrayNil:
+		res = "ModelGongStructInsertionArrayNil"
 	case ModelGongStructInsertionUnmarshallDeclarations:
 		res = "ModelGongStructInsertionUnmarshallDeclarations"
 	case ModelGongStructInsertionUnmarshallPointersInitializations:
 		res = "ModelGongStructInsertionUnmarshallPointersInitializations"
+	case ModelGongStructInsertionComputeNbInstances:
+		res = "ModelGongStructInsertionComputeNbInstances"
+	case ModelGongStructInsertionReverseAssociationsMaps:
+		res = "ModelGongStructInsertionReverseAssociationsMaps"
+	case ModelGongStructInsertionGenericGetFields:
+		res = "ModelGongStructInsertionGenericGetFields"
+	case ModelGongStructInsertionGenericGetFieldValues:
+		res = "ModelGongStructInsertionGenericGetFieldValues"
+	case ModelGongStructInsertionGenericReversePointerAssociationsMaps:
+		res = "ModelGongStructInsertionGenericReversePointerAssociationsMaps"
+	case ModelGongStructInsertionGenericReverseSliceOfPointersAssociationsMaps:
+		res = "ModelGongStructInsertionGenericReverseSliceOfPointersAssociationsMaps"
+	case ModelGongStructInsertionGenericGongstructTypes:
+		res = "ModelGongStructInsertionGenericGongstructTypes"
+	case ModelGongStructInsertionGenericGongSetTypes:
+		res = "ModelGongStructInsertionGenericGongSetTypes"
+	case ModelGongStructInsertionGenericGongstructName:
+		res = "ModelGongStructInsertionGenericGongstructName"
+	case ModelGongStructInsertionGenericGongMapTypes:
+		res = "ModelGongStructInsertionGenericGongMapTypes"
+	case ModelGongStructInsertionGenericGetSetFunctions:
+		res = "ModelGongStructInsertionGenericGetSetFunctions"
+	case ModelGongStructInsertionGenericGetMapFunctions:
+		res = "ModelGongStructInsertionGenericGetMapFunctions"
+	case ModelGongStructInsertionGenericInstancesSetFunctions:
+		res = "ModelGongStructInsertionGenericInstancesSetFunctions"
+	case ModelGongStructInsertionGenericInstancesMapFunctions:
+		res = "ModelGongStructInsertionGenericInstancesMapFunctions"
+	case ModelGongStructInsertionGenericGetAssociationNameFunctions:
+		res = "ModelGongStructInsertionGenericGetAssociationNameFunctions"
 	case ModelGongStructInsertionsNb:
 		res = "ModelGongStructInsertionsNb"
 	}
@@ -3016,24 +3789,24 @@ func (ngclasssubtemplate NgClassSubTemplate) ToInt() (res int) {
 	// migration of former implementation of enum
 	switch ngclasssubtemplate {
 	// insertion code per enum code
-	case NgClassTSBasicFieldDecls:
-		res = 1
 	case NgClassTSBasicFieldImports:
 		res = 0
-	case NgClassTSOtherDecls:
-		res = 3
-	case NgClassTSOtherDeclsEnumInt:
-		res = 8
-	case NgClassTSOtherDeclsTimeDuration:
-		res = 7
-	case NgClassTSPointerToStructFieldsDecl:
-		res = 4
-	case NgClassTSSliceOfPtrToGongStructReverseID:
-		res = 6
-	case NgClassTSSliceOfPtrToStructFieldsDecl:
-		res = 5
+	case NgClassTSBasicFieldDecls:
+		res = 1
 	case NgClassTSTimeFieldDecls:
 		res = 2
+	case NgClassTSOtherDecls:
+		res = 3
+	case NgClassTSPointerToStructFieldsDecl:
+		res = 4
+	case NgClassTSSliceOfPtrToStructFieldsDecl:
+		res = 5
+	case NgClassTSSliceOfPtrToGongStructReverseID:
+		res = 6
+	case NgClassTSOtherDeclsTimeDuration:
+		res = 7
+	case NgClassTSOtherDeclsEnumInt:
+		res = 8
 	}
 	return
 }
@@ -3042,24 +3815,24 @@ func (ngclasssubtemplate *NgClassSubTemplate) FromInt(input int) {
 
 	switch input {
 	// insertion code per enum code
-	case 1:
-		*ngclasssubtemplate = NgClassTSBasicFieldDecls
 	case 0:
 		*ngclasssubtemplate = NgClassTSBasicFieldImports
-	case 3:
-		*ngclasssubtemplate = NgClassTSOtherDecls
-	case 8:
-		*ngclasssubtemplate = NgClassTSOtherDeclsEnumInt
-	case 7:
-		*ngclasssubtemplate = NgClassTSOtherDeclsTimeDuration
-	case 4:
-		*ngclasssubtemplate = NgClassTSPointerToStructFieldsDecl
-	case 6:
-		*ngclasssubtemplate = NgClassTSSliceOfPtrToGongStructReverseID
-	case 5:
-		*ngclasssubtemplate = NgClassTSSliceOfPtrToStructFieldsDecl
+	case 1:
+		*ngclasssubtemplate = NgClassTSBasicFieldDecls
 	case 2:
 		*ngclasssubtemplate = NgClassTSTimeFieldDecls
+	case 3:
+		*ngclasssubtemplate = NgClassTSOtherDecls
+	case 4:
+		*ngclasssubtemplate = NgClassTSPointerToStructFieldsDecl
+	case 5:
+		*ngclasssubtemplate = NgClassTSSliceOfPtrToStructFieldsDecl
+	case 6:
+		*ngclasssubtemplate = NgClassTSSliceOfPtrToGongStructReverseID
+	case 7:
+		*ngclasssubtemplate = NgClassTSOtherDeclsTimeDuration
+	case 8:
+		*ngclasssubtemplate = NgClassTSOtherDeclsEnumInt
 	}
 }
 
@@ -3067,24 +3840,24 @@ func (ngclasssubtemplate *NgClassSubTemplate) ToCodeString() (res string) {
 
 	switch *ngclasssubtemplate {
 	// insertion code per enum code
-	case NgClassTSBasicFieldDecls:
-		res = "NgClassTSBasicFieldDecls"
 	case NgClassTSBasicFieldImports:
 		res = "NgClassTSBasicFieldImports"
-	case NgClassTSOtherDecls:
-		res = "NgClassTSOtherDecls"
-	case NgClassTSOtherDeclsEnumInt:
-		res = "NgClassTSOtherDeclsEnumInt"
-	case NgClassTSOtherDeclsTimeDuration:
-		res = "NgClassTSOtherDeclsTimeDuration"
-	case NgClassTSPointerToStructFieldsDecl:
-		res = "NgClassTSPointerToStructFieldsDecl"
-	case NgClassTSSliceOfPtrToGongStructReverseID:
-		res = "NgClassTSSliceOfPtrToGongStructReverseID"
-	case NgClassTSSliceOfPtrToStructFieldsDecl:
-		res = "NgClassTSSliceOfPtrToStructFieldsDecl"
+	case NgClassTSBasicFieldDecls:
+		res = "NgClassTSBasicFieldDecls"
 	case NgClassTSTimeFieldDecls:
 		res = "NgClassTSTimeFieldDecls"
+	case NgClassTSOtherDecls:
+		res = "NgClassTSOtherDecls"
+	case NgClassTSPointerToStructFieldsDecl:
+		res = "NgClassTSPointerToStructFieldsDecl"
+	case NgClassTSSliceOfPtrToStructFieldsDecl:
+		res = "NgClassTSSliceOfPtrToStructFieldsDecl"
+	case NgClassTSSliceOfPtrToGongStructReverseID:
+		res = "NgClassTSSliceOfPtrToGongStructReverseID"
+	case NgClassTSOtherDeclsTimeDuration:
+		res = "NgClassTSOtherDeclsTimeDuration"
+	case NgClassTSOtherDeclsEnumInt:
+		res = "NgClassTSOtherDeclsEnumInt"
 	}
 	return
 }
@@ -3097,10 +3870,10 @@ func (ngclasstsinsertionpoint NgClassTsInsertionPoint) ToInt() (res int) {
 	// migration of former implementation of enum
 	switch ngclasstsinsertionpoint {
 	// insertion code per enum code
-	case NgClassTsInsertionPerStructBasicFieldsDecl:
-		res = 1
 	case NgClassTsInsertionPerStructImports:
 		res = 0
+	case NgClassTsInsertionPerStructBasicFieldsDecl:
+		res = 1
 	case NgClassTsInsertionPerStructOtherDecls:
 		res = 2
 	case NgClassTsInsertionsNb:
@@ -3113,10 +3886,10 @@ func (ngclasstsinsertionpoint *NgClassTsInsertionPoint) FromInt(input int) {
 
 	switch input {
 	// insertion code per enum code
-	case 1:
-		*ngclasstsinsertionpoint = NgClassTsInsertionPerStructBasicFieldsDecl
 	case 0:
 		*ngclasstsinsertionpoint = NgClassTsInsertionPerStructImports
+	case 1:
+		*ngclasstsinsertionpoint = NgClassTsInsertionPerStructBasicFieldsDecl
 	case 2:
 		*ngclasstsinsertionpoint = NgClassTsInsertionPerStructOtherDecls
 	case 3:
@@ -3128,10 +3901,10 @@ func (ngclasstsinsertionpoint *NgClassTsInsertionPoint) ToCodeString() (res stri
 
 	switch *ngclasstsinsertionpoint {
 	// insertion code per enum code
-	case NgClassTsInsertionPerStructBasicFieldsDecl:
-		res = "NgClassTsInsertionPerStructBasicFieldsDecl"
 	case NgClassTsInsertionPerStructImports:
 		res = "NgClassTsInsertionPerStructImports"
+	case NgClassTsInsertionPerStructBasicFieldsDecl:
+		res = "NgClassTsInsertionPerStructBasicFieldsDecl"
 	case NgClassTsInsertionPerStructOtherDecls:
 		res = "NgClassTsInsertionPerStructOtherDecls"
 	case NgClassTsInsertionsNb:
@@ -3193,18 +3966,18 @@ func (ngdetailhtmlsubtemplate NgDetailHtmlSubTemplate) ToInt() (res int) {
 	// migration of former implementation of enum
 	switch ngdetailhtmlsubtemplate {
 	// insertion code per enum code
+	case NgDetailHtmlEnum:
+		res = 0
 	case NgDetailHtmlBasicField:
 		res = 1
 	case NgDetailHtmlBasicStringField:
 		res = 2
-	case NgDetailHtmlBool:
-		res = 4
-	case NgDetailHtmlEnum:
-		res = 0
-	case NgDetailHtmlTimeDuration:
-		res = 5
 	case NgDetailHtmlTimeField:
 		res = 3
+	case NgDetailHtmlBool:
+		res = 4
+	case NgDetailHtmlTimeDuration:
+		res = 5
 	case NgDetailPointerToStructHtmlFormField:
 		res = 6
 	case NgDetailSliceOfPointerToStructHtml:
@@ -3221,18 +3994,18 @@ func (ngdetailhtmlsubtemplate *NgDetailHtmlSubTemplate) FromInt(input int) {
 
 	switch input {
 	// insertion code per enum code
+	case 0:
+		*ngdetailhtmlsubtemplate = NgDetailHtmlEnum
 	case 1:
 		*ngdetailhtmlsubtemplate = NgDetailHtmlBasicField
 	case 2:
 		*ngdetailhtmlsubtemplate = NgDetailHtmlBasicStringField
-	case 4:
-		*ngdetailhtmlsubtemplate = NgDetailHtmlBool
-	case 0:
-		*ngdetailhtmlsubtemplate = NgDetailHtmlEnum
-	case 5:
-		*ngdetailhtmlsubtemplate = NgDetailHtmlTimeDuration
 	case 3:
 		*ngdetailhtmlsubtemplate = NgDetailHtmlTimeField
+	case 4:
+		*ngdetailhtmlsubtemplate = NgDetailHtmlBool
+	case 5:
+		*ngdetailhtmlsubtemplate = NgDetailHtmlTimeDuration
 	case 6:
 		*ngdetailhtmlsubtemplate = NgDetailPointerToStructHtmlFormField
 	case 7:
@@ -3248,18 +4021,18 @@ func (ngdetailhtmlsubtemplate *NgDetailHtmlSubTemplate) ToCodeString() (res stri
 
 	switch *ngdetailhtmlsubtemplate {
 	// insertion code per enum code
+	case NgDetailHtmlEnum:
+		res = "NgDetailHtmlEnum"
 	case NgDetailHtmlBasicField:
 		res = "NgDetailHtmlBasicField"
 	case NgDetailHtmlBasicStringField:
 		res = "NgDetailHtmlBasicStringField"
-	case NgDetailHtmlBool:
-		res = "NgDetailHtmlBool"
-	case NgDetailHtmlEnum:
-		res = "NgDetailHtmlEnum"
-	case NgDetailHtmlTimeDuration:
-		res = "NgDetailHtmlTimeDuration"
 	case NgDetailHtmlTimeField:
 		res = "NgDetailHtmlTimeField"
+	case NgDetailHtmlBool:
+		res = "NgDetailHtmlBool"
+	case NgDetailHtmlTimeDuration:
+		res = "NgDetailHtmlTimeDuration"
 	case NgDetailPointerToStructHtmlFormField:
 		res = "NgDetailPointerToStructHtmlFormField"
 	case NgDetailSliceOfPointerToStructHtml:
@@ -3280,36 +4053,36 @@ func (ngdetailsubtemplate NgDetailSubTemplate) ToInt() (res int) {
 	// migration of former implementation of enum
 	switch ngdetailsubtemplate {
 	// insertion code per enum code
+	case NgDetailTSEnumImports:
+		res = 0
+	case NgDetailTSEnumDeclarations:
+		res = 1
+	case NgDetailTSEnumInits:
+		res = 2
 	case NgDetailTSBooleanDeclarations:
 		res = 3
 	case NgDetailTSBooleanRecoveries:
 		res = 4
 	case NgDetailTSBooleanSaves:
 		res = 5
-	case NgDetailTSEnumDeclarations:
-		res = 1
-	case NgDetailTSEnumImports:
-		res = 0
-	case NgDetailTSEnumInits:
-		res = 2
-	case NgDetailTSPointerToGongStructSaves:
-		res = 9
-	case NgDetailTSReversePointerToSliceOfGongStructImports:
-		res = 10
-	case NgDetailTSReversePointerToSliceOfGongStructSavesWhenUpdate:
-		res = 14
-	case NgDetailTSReversePointerToSliceOfGongStructStateCaseComputation:
-		res = 12
-	case NgDetailTSReversePointerToSliceOfGongStructStateCaseSetField:
-		res = 13
-	case NgDetailTSReversePointerToSliceOfGongStructStateEnumDeclaration:
-		res = 11
 	case NgDetailTSTimeDurationDeclarations:
 		res = 6
 	case NgDetailTSTimeDurationRecoveries:
 		res = 7
 	case NgDetailTSTimeDurationSaves:
 		res = 8
+	case NgDetailTSPointerToGongStructSaves:
+		res = 9
+	case NgDetailTSReversePointerToSliceOfGongStructImports:
+		res = 10
+	case NgDetailTSReversePointerToSliceOfGongStructStateEnumDeclaration:
+		res = 11
+	case NgDetailTSReversePointerToSliceOfGongStructStateCaseComputation:
+		res = 12
+	case NgDetailTSReversePointerToSliceOfGongStructStateCaseSetField:
+		res = 13
+	case NgDetailTSReversePointerToSliceOfGongStructSavesWhenUpdate:
+		res = 14
 	}
 	return
 }
@@ -3318,36 +4091,36 @@ func (ngdetailsubtemplate *NgDetailSubTemplate) FromInt(input int) {
 
 	switch input {
 	// insertion code per enum code
+	case 0:
+		*ngdetailsubtemplate = NgDetailTSEnumImports
+	case 1:
+		*ngdetailsubtemplate = NgDetailTSEnumDeclarations
+	case 2:
+		*ngdetailsubtemplate = NgDetailTSEnumInits
 	case 3:
 		*ngdetailsubtemplate = NgDetailTSBooleanDeclarations
 	case 4:
 		*ngdetailsubtemplate = NgDetailTSBooleanRecoveries
 	case 5:
 		*ngdetailsubtemplate = NgDetailTSBooleanSaves
-	case 1:
-		*ngdetailsubtemplate = NgDetailTSEnumDeclarations
-	case 0:
-		*ngdetailsubtemplate = NgDetailTSEnumImports
-	case 2:
-		*ngdetailsubtemplate = NgDetailTSEnumInits
-	case 9:
-		*ngdetailsubtemplate = NgDetailTSPointerToGongStructSaves
-	case 10:
-		*ngdetailsubtemplate = NgDetailTSReversePointerToSliceOfGongStructImports
-	case 14:
-		*ngdetailsubtemplate = NgDetailTSReversePointerToSliceOfGongStructSavesWhenUpdate
-	case 12:
-		*ngdetailsubtemplate = NgDetailTSReversePointerToSliceOfGongStructStateCaseComputation
-	case 13:
-		*ngdetailsubtemplate = NgDetailTSReversePointerToSliceOfGongStructStateCaseSetField
-	case 11:
-		*ngdetailsubtemplate = NgDetailTSReversePointerToSliceOfGongStructStateEnumDeclaration
 	case 6:
 		*ngdetailsubtemplate = NgDetailTSTimeDurationDeclarations
 	case 7:
 		*ngdetailsubtemplate = NgDetailTSTimeDurationRecoveries
 	case 8:
 		*ngdetailsubtemplate = NgDetailTSTimeDurationSaves
+	case 9:
+		*ngdetailsubtemplate = NgDetailTSPointerToGongStructSaves
+	case 10:
+		*ngdetailsubtemplate = NgDetailTSReversePointerToSliceOfGongStructImports
+	case 11:
+		*ngdetailsubtemplate = NgDetailTSReversePointerToSliceOfGongStructStateEnumDeclaration
+	case 12:
+		*ngdetailsubtemplate = NgDetailTSReversePointerToSliceOfGongStructStateCaseComputation
+	case 13:
+		*ngdetailsubtemplate = NgDetailTSReversePointerToSliceOfGongStructStateCaseSetField
+	case 14:
+		*ngdetailsubtemplate = NgDetailTSReversePointerToSliceOfGongStructSavesWhenUpdate
 	}
 }
 
@@ -3355,36 +4128,36 @@ func (ngdetailsubtemplate *NgDetailSubTemplate) ToCodeString() (res string) {
 
 	switch *ngdetailsubtemplate {
 	// insertion code per enum code
+	case NgDetailTSEnumImports:
+		res = "NgDetailTSEnumImports"
+	case NgDetailTSEnumDeclarations:
+		res = "NgDetailTSEnumDeclarations"
+	case NgDetailTSEnumInits:
+		res = "NgDetailTSEnumInits"
 	case NgDetailTSBooleanDeclarations:
 		res = "NgDetailTSBooleanDeclarations"
 	case NgDetailTSBooleanRecoveries:
 		res = "NgDetailTSBooleanRecoveries"
 	case NgDetailTSBooleanSaves:
 		res = "NgDetailTSBooleanSaves"
-	case NgDetailTSEnumDeclarations:
-		res = "NgDetailTSEnumDeclarations"
-	case NgDetailTSEnumImports:
-		res = "NgDetailTSEnumImports"
-	case NgDetailTSEnumInits:
-		res = "NgDetailTSEnumInits"
-	case NgDetailTSPointerToGongStructSaves:
-		res = "NgDetailTSPointerToGongStructSaves"
-	case NgDetailTSReversePointerToSliceOfGongStructImports:
-		res = "NgDetailTSReversePointerToSliceOfGongStructImports"
-	case NgDetailTSReversePointerToSliceOfGongStructSavesWhenUpdate:
-		res = "NgDetailTSReversePointerToSliceOfGongStructSavesWhenUpdate"
-	case NgDetailTSReversePointerToSliceOfGongStructStateCaseComputation:
-		res = "NgDetailTSReversePointerToSliceOfGongStructStateCaseComputation"
-	case NgDetailTSReversePointerToSliceOfGongStructStateCaseSetField:
-		res = "NgDetailTSReversePointerToSliceOfGongStructStateCaseSetField"
-	case NgDetailTSReversePointerToSliceOfGongStructStateEnumDeclaration:
-		res = "NgDetailTSReversePointerToSliceOfGongStructStateEnumDeclaration"
 	case NgDetailTSTimeDurationDeclarations:
 		res = "NgDetailTSTimeDurationDeclarations"
 	case NgDetailTSTimeDurationRecoveries:
 		res = "NgDetailTSTimeDurationRecoveries"
 	case NgDetailTSTimeDurationSaves:
 		res = "NgDetailTSTimeDurationSaves"
+	case NgDetailTSPointerToGongStructSaves:
+		res = "NgDetailTSPointerToGongStructSaves"
+	case NgDetailTSReversePointerToSliceOfGongStructImports:
+		res = "NgDetailTSReversePointerToSliceOfGongStructImports"
+	case NgDetailTSReversePointerToSliceOfGongStructStateEnumDeclaration:
+		res = "NgDetailTSReversePointerToSliceOfGongStructStateEnumDeclaration"
+	case NgDetailTSReversePointerToSliceOfGongStructStateCaseComputation:
+		res = "NgDetailTSReversePointerToSliceOfGongStructStateCaseComputation"
+	case NgDetailTSReversePointerToSliceOfGongStructStateCaseSetField:
+		res = "NgDetailTSReversePointerToSliceOfGongStructStateCaseSetField"
+	case NgDetailTSReversePointerToSliceOfGongStructSavesWhenUpdate:
+		res = "NgDetailTSReversePointerToSliceOfGongStructSavesWhenUpdate"
 	}
 	return
 }
@@ -3397,28 +4170,28 @@ func (ngdetailtsinsertionpoint NgDetailTsInsertionPoint) ToInt() (res int) {
 	// migration of former implementation of enum
 	switch ngdetailtsinsertionpoint {
 	// insertion code per enum code
+	case NgDetailTsInsertionPerStructImports:
+		res = 0
+	case NgDetailTsInsertionPerStructEnumFieldDeclarations:
+		res = 1
+	case NgDetailTsInsertionPerStructDeclarations:
+		res = 2
 	case NgDetailTsInsertionPerStructCaseInitFieldDeclarations:
 		res = 3
 	case NgDetailTsInsertionPerStructCaseSetField:
 		res = 4
-	case NgDetailTsInsertionPerStructDeclarations:
-		res = 2
-	case NgDetailTsInsertionPerStructEnumFieldDeclarations:
-		res = 1
-	case NgDetailTsInsertionPerStructImports:
-		res = 0
 	case NgDetailTsInsertionPerStructInits:
 		res = 5
-	case NgDetailTsInsertionPerStructRecoveries:
-		res = 7
-	case NgDetailTsInsertionPerStructReversePointerSaveWhenCreateFromOwner:
-		res = 10
-	case NgDetailTsInsertionPerStructReversePointerSaveWhenUpdate:
-		res = 9
-	case NgDetailTsInsertionPerStructSaves:
-		res = 8
 	case NgDetailTsInsertionPerStructSorting:
 		res = 6
+	case NgDetailTsInsertionPerStructRecoveries:
+		res = 7
+	case NgDetailTsInsertionPerStructSaves:
+		res = 8
+	case NgDetailTsInsertionPerStructReversePointerSaveWhenUpdate:
+		res = 9
+	case NgDetailTsInsertionPerStructReversePointerSaveWhenCreateFromOwner:
+		res = 10
 	case NgDetailTsInsertionsNb:
 		res = 11
 	}
@@ -3429,28 +4202,28 @@ func (ngdetailtsinsertionpoint *NgDetailTsInsertionPoint) FromInt(input int) {
 
 	switch input {
 	// insertion code per enum code
+	case 0:
+		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructImports
+	case 1:
+		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructEnumFieldDeclarations
+	case 2:
+		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructDeclarations
 	case 3:
 		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructCaseInitFieldDeclarations
 	case 4:
 		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructCaseSetField
-	case 2:
-		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructDeclarations
-	case 1:
-		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructEnumFieldDeclarations
-	case 0:
-		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructImports
 	case 5:
 		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructInits
-	case 7:
-		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructRecoveries
-	case 10:
-		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructReversePointerSaveWhenCreateFromOwner
-	case 9:
-		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructReversePointerSaveWhenUpdate
-	case 8:
-		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructSaves
 	case 6:
 		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructSorting
+	case 7:
+		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructRecoveries
+	case 8:
+		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructSaves
+	case 9:
+		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructReversePointerSaveWhenUpdate
+	case 10:
+		*ngdetailtsinsertionpoint = NgDetailTsInsertionPerStructReversePointerSaveWhenCreateFromOwner
 	case 11:
 		*ngdetailtsinsertionpoint = NgDetailTsInsertionsNb
 	}
@@ -3460,28 +4233,28 @@ func (ngdetailtsinsertionpoint *NgDetailTsInsertionPoint) ToCodeString() (res st
 
 	switch *ngdetailtsinsertionpoint {
 	// insertion code per enum code
+	case NgDetailTsInsertionPerStructImports:
+		res = "NgDetailTsInsertionPerStructImports"
+	case NgDetailTsInsertionPerStructEnumFieldDeclarations:
+		res = "NgDetailTsInsertionPerStructEnumFieldDeclarations"
+	case NgDetailTsInsertionPerStructDeclarations:
+		res = "NgDetailTsInsertionPerStructDeclarations"
 	case NgDetailTsInsertionPerStructCaseInitFieldDeclarations:
 		res = "NgDetailTsInsertionPerStructCaseInitFieldDeclarations"
 	case NgDetailTsInsertionPerStructCaseSetField:
 		res = "NgDetailTsInsertionPerStructCaseSetField"
-	case NgDetailTsInsertionPerStructDeclarations:
-		res = "NgDetailTsInsertionPerStructDeclarations"
-	case NgDetailTsInsertionPerStructEnumFieldDeclarations:
-		res = "NgDetailTsInsertionPerStructEnumFieldDeclarations"
-	case NgDetailTsInsertionPerStructImports:
-		res = "NgDetailTsInsertionPerStructImports"
 	case NgDetailTsInsertionPerStructInits:
 		res = "NgDetailTsInsertionPerStructInits"
-	case NgDetailTsInsertionPerStructRecoveries:
-		res = "NgDetailTsInsertionPerStructRecoveries"
-	case NgDetailTsInsertionPerStructReversePointerSaveWhenCreateFromOwner:
-		res = "NgDetailTsInsertionPerStructReversePointerSaveWhenCreateFromOwner"
-	case NgDetailTsInsertionPerStructReversePointerSaveWhenUpdate:
-		res = "NgDetailTsInsertionPerStructReversePointerSaveWhenUpdate"
-	case NgDetailTsInsertionPerStructSaves:
-		res = "NgDetailTsInsertionPerStructSaves"
 	case NgDetailTsInsertionPerStructSorting:
 		res = "NgDetailTsInsertionPerStructSorting"
+	case NgDetailTsInsertionPerStructRecoveries:
+		res = "NgDetailTsInsertionPerStructRecoveries"
+	case NgDetailTsInsertionPerStructSaves:
+		res = "NgDetailTsInsertionPerStructSaves"
+	case NgDetailTsInsertionPerStructReversePointerSaveWhenUpdate:
+		res = "NgDetailTsInsertionPerStructReversePointerSaveWhenUpdate"
+	case NgDetailTsInsertionPerStructReversePointerSaveWhenCreateFromOwner:
+		res = "NgDetailTsInsertionPerStructReversePointerSaveWhenCreateFromOwner"
 	case NgDetailTsInsertionsNb:
 		res = "NgDetailTsInsertionsNb"
 	}
@@ -3498,10 +4271,10 @@ func (ngenuminsertionpoint NgEnumInsertionPoint) ToInt() (res int) {
 	// insertion code per enum code
 	case NgEnumInsertionPointEnumDeclaration:
 		res = 0
-	case NgEnumNbInsertionPoints:
-		res = 2
 	case NgEnumValuesInsertionPointDeclarationForPullDownSelect:
 		res = 1
+	case NgEnumNbInsertionPoints:
+		res = 2
 	}
 	return
 }
@@ -3512,10 +4285,10 @@ func (ngenuminsertionpoint *NgEnumInsertionPoint) FromInt(input int) {
 	// insertion code per enum code
 	case 0:
 		*ngenuminsertionpoint = NgEnumInsertionPointEnumDeclaration
-	case 2:
-		*ngenuminsertionpoint = NgEnumNbInsertionPoints
 	case 1:
 		*ngenuminsertionpoint = NgEnumValuesInsertionPointDeclarationForPullDownSelect
+	case 2:
+		*ngenuminsertionpoint = NgEnumNbInsertionPoints
 	}
 }
 
@@ -3525,10 +4298,10 @@ func (ngenuminsertionpoint *NgEnumInsertionPoint) ToCodeString() (res string) {
 	// insertion code per enum code
 	case NgEnumInsertionPointEnumDeclaration:
 		res = "NgEnumInsertionPointEnumDeclaration"
-	case NgEnumNbInsertionPoints:
-		res = "NgEnumNbInsertionPoints"
 	case NgEnumValuesInsertionPointDeclarationForPullDownSelect:
 		res = "NgEnumValuesInsertionPointDeclarationForPullDownSelect"
+	case NgEnumNbInsertionPoints:
+		res = "NgEnumNbInsertionPoints"
 	}
 	return
 }
@@ -3619,28 +4392,28 @@ func (nglibfrontreposervicesubtemplate NgLibFrontRepoServiceSubTemplate) ToStrin
 	// migration of former implementation of enum
 	switch nglibfrontreposervicesubtemplate {
 	// insertion code per enum code
-	case NgLibFrontRepoArraysDecls:
-		res = "ArraysDecls"
-	case NgLibFrontRepoInitMapInstances:
-		res = "InitMapInstances"
+	case NgLibFrontRepoServiceImports:
+		res = "ServiceImports"
 	case NgLibFrontRepoMapDecl:
 		res = "MapDecl"
 	case NgLibFrontRepoObservableArrayType:
 		res = "ObservableArrayType"
-	case NgLibFrontRepoObservableRefs:
-		res = "ObservableRefs"
-	case NgLibFrontRepoPerStructGetUniqueID:
-		res = "PerStructGetUniqueID"
-	case NgLibFrontRepoPerStructPull:
-		res = "PerStructPull"
-	case NgLibFrontRepoRedeemPointers:
-		res = "RedeemPointers"
-	case NgLibFrontRepoServiceDecl:
-		res = "ServiceDecl"
-	case NgLibFrontRepoServiceImports:
-		res = "ServiceImports"
 	case NgLibFrontRepoTypeCasting:
 		res = "TypeCasting"
+	case NgLibFrontRepoServiceDecl:
+		res = "ServiceDecl"
+	case NgLibFrontRepoObservableRefs:
+		res = "ObservableRefs"
+	case NgLibFrontRepoArraysDecls:
+		res = "ArraysDecls"
+	case NgLibFrontRepoInitMapInstances:
+		res = "InitMapInstances"
+	case NgLibFrontRepoRedeemPointers:
+		res = "RedeemPointers"
+	case NgLibFrontRepoPerStructPull:
+		res = "PerStructPull"
+	case NgLibFrontRepoPerStructGetUniqueID:
+		res = "PerStructGetUniqueID"
 	}
 	return
 }
@@ -3649,28 +4422,28 @@ func (nglibfrontreposervicesubtemplate *NgLibFrontRepoServiceSubTemplate) FromSt
 
 	switch input {
 	// insertion code per enum code
-	case "ArraysDecls":
-		*nglibfrontreposervicesubtemplate = NgLibFrontRepoArraysDecls
-	case "InitMapInstances":
-		*nglibfrontreposervicesubtemplate = NgLibFrontRepoInitMapInstances
+	case "ServiceImports":
+		*nglibfrontreposervicesubtemplate = NgLibFrontRepoServiceImports
 	case "MapDecl":
 		*nglibfrontreposervicesubtemplate = NgLibFrontRepoMapDecl
 	case "ObservableArrayType":
 		*nglibfrontreposervicesubtemplate = NgLibFrontRepoObservableArrayType
-	case "ObservableRefs":
-		*nglibfrontreposervicesubtemplate = NgLibFrontRepoObservableRefs
-	case "PerStructGetUniqueID":
-		*nglibfrontreposervicesubtemplate = NgLibFrontRepoPerStructGetUniqueID
-	case "PerStructPull":
-		*nglibfrontreposervicesubtemplate = NgLibFrontRepoPerStructPull
-	case "RedeemPointers":
-		*nglibfrontreposervicesubtemplate = NgLibFrontRepoRedeemPointers
-	case "ServiceDecl":
-		*nglibfrontreposervicesubtemplate = NgLibFrontRepoServiceDecl
-	case "ServiceImports":
-		*nglibfrontreposervicesubtemplate = NgLibFrontRepoServiceImports
 	case "TypeCasting":
 		*nglibfrontreposervicesubtemplate = NgLibFrontRepoTypeCasting
+	case "ServiceDecl":
+		*nglibfrontreposervicesubtemplate = NgLibFrontRepoServiceDecl
+	case "ObservableRefs":
+		*nglibfrontreposervicesubtemplate = NgLibFrontRepoObservableRefs
+	case "ArraysDecls":
+		*nglibfrontreposervicesubtemplate = NgLibFrontRepoArraysDecls
+	case "InitMapInstances":
+		*nglibfrontreposervicesubtemplate = NgLibFrontRepoInitMapInstances
+	case "RedeemPointers":
+		*nglibfrontreposervicesubtemplate = NgLibFrontRepoRedeemPointers
+	case "PerStructPull":
+		*nglibfrontreposervicesubtemplate = NgLibFrontRepoPerStructPull
+	case "PerStructGetUniqueID":
+		*nglibfrontreposervicesubtemplate = NgLibFrontRepoPerStructGetUniqueID
 	}
 }
 
@@ -3678,28 +4451,28 @@ func (nglibfrontreposervicesubtemplate *NgLibFrontRepoServiceSubTemplate) ToCode
 
 	switch *nglibfrontreposervicesubtemplate {
 	// insertion code per enum code
-	case NgLibFrontRepoArraysDecls:
-		res = "NgLibFrontRepoArraysDecls"
-	case NgLibFrontRepoInitMapInstances:
-		res = "NgLibFrontRepoInitMapInstances"
+	case NgLibFrontRepoServiceImports:
+		res = "NgLibFrontRepoServiceImports"
 	case NgLibFrontRepoMapDecl:
 		res = "NgLibFrontRepoMapDecl"
 	case NgLibFrontRepoObservableArrayType:
 		res = "NgLibFrontRepoObservableArrayType"
-	case NgLibFrontRepoObservableRefs:
-		res = "NgLibFrontRepoObservableRefs"
-	case NgLibFrontRepoPerStructGetUniqueID:
-		res = "NgLibFrontRepoPerStructGetUniqueID"
-	case NgLibFrontRepoPerStructPull:
-		res = "NgLibFrontRepoPerStructPull"
-	case NgLibFrontRepoRedeemPointers:
-		res = "NgLibFrontRepoRedeemPointers"
-	case NgLibFrontRepoServiceDecl:
-		res = "NgLibFrontRepoServiceDecl"
-	case NgLibFrontRepoServiceImports:
-		res = "NgLibFrontRepoServiceImports"
 	case NgLibFrontRepoTypeCasting:
 		res = "NgLibFrontRepoTypeCasting"
+	case NgLibFrontRepoServiceDecl:
+		res = "NgLibFrontRepoServiceDecl"
+	case NgLibFrontRepoObservableRefs:
+		res = "NgLibFrontRepoObservableRefs"
+	case NgLibFrontRepoArraysDecls:
+		res = "NgLibFrontRepoArraysDecls"
+	case NgLibFrontRepoInitMapInstances:
+		res = "NgLibFrontRepoInitMapInstances"
+	case NgLibFrontRepoRedeemPointers:
+		res = "NgLibFrontRepoRedeemPointers"
+	case NgLibFrontRepoPerStructPull:
+		res = "NgLibFrontRepoPerStructPull"
+	case NgLibFrontRepoPerStructGetUniqueID:
+		res = "NgLibFrontRepoPerStructGetUniqueID"
 	}
 	return
 }
@@ -3712,12 +4485,12 @@ func (nglibmapcomponentsservicesubtemplate NgLibMapComponentsServiceSubTemplate)
 	// migration of former implementation of enum
 	switch nglibmapcomponentsservicesubtemplate {
 	// insertion code per enum code
-	case NgLibMapComponentsDecls:
-		res = "NgLibMapComponentsDecls"
 	case NgLibMapComponentsImports:
 		res = "NgLibMapComponentsImports"
 	case NgLibMapComponentsIndivDecls:
 		res = "NgLibMapComponentsIndivDecls"
+	case NgLibMapComponentsDecls:
+		res = "NgLibMapComponentsDecls"
 	case NgLibMapSortingComponentsDecls:
 		res = "NgLibMapSortingComponentsDecls"
 	}
@@ -3728,12 +4501,12 @@ func (nglibmapcomponentsservicesubtemplate *NgLibMapComponentsServiceSubTemplate
 
 	switch input {
 	// insertion code per enum code
-	case "NgLibMapComponentsDecls":
-		*nglibmapcomponentsservicesubtemplate = NgLibMapComponentsDecls
 	case "NgLibMapComponentsImports":
 		*nglibmapcomponentsservicesubtemplate = NgLibMapComponentsImports
 	case "NgLibMapComponentsIndivDecls":
 		*nglibmapcomponentsservicesubtemplate = NgLibMapComponentsIndivDecls
+	case "NgLibMapComponentsDecls":
+		*nglibmapcomponentsservicesubtemplate = NgLibMapComponentsDecls
 	case "NgLibMapSortingComponentsDecls":
 		*nglibmapcomponentsservicesubtemplate = NgLibMapSortingComponentsDecls
 	}
@@ -3743,12 +4516,12 @@ func (nglibmapcomponentsservicesubtemplate *NgLibMapComponentsServiceSubTemplate
 
 	switch *nglibmapcomponentsservicesubtemplate {
 	// insertion code per enum code
-	case NgLibMapComponentsDecls:
-		res = "NgLibMapComponentsDecls"
 	case NgLibMapComponentsImports:
 		res = "NgLibMapComponentsImports"
 	case NgLibMapComponentsIndivDecls:
 		res = "NgLibMapComponentsIndivDecls"
+	case NgLibMapComponentsDecls:
+		res = "NgLibMapComponentsDecls"
 	case NgLibMapSortingComponentsDecls:
 		res = "NgLibMapSortingComponentsDecls"
 	}
@@ -3802,20 +4575,20 @@ func (ngpresentationhtmlsubtemplateid NgPresentationHtmlSubTemplateId) ToInt() (
 	// migration of former implementation of enum
 	switch ngpresentationhtmlsubtemplateid {
 	// insertion code per enum code
+	case NgPresentationHtmlField:
+		res = 0
+	case NgPresentationHtmlEnumString:
+		res = 1
+	case NgPresentationHtmlEnumInt:
+		res = 2
 	case NgPresentationHtmlBasicField:
 		res = 3
+	case NgPresentationHtmlTimeField:
+		res = 4
 	case NgPresentationHtmlBasicFieldTimeDuration:
 		res = 5
 	case NgPresentationHtmlBool:
 		res = 6
-	case NgPresentationHtmlEnumInt:
-		res = 2
-	case NgPresentationHtmlEnumString:
-		res = 1
-	case NgPresentationHtmlField:
-		res = 0
-	case NgPresentationHtmlTimeField:
-		res = 4
 	case NgPresentationPointerToStructHtmlFormField:
 		res = 7
 	}
@@ -3826,20 +4599,20 @@ func (ngpresentationhtmlsubtemplateid *NgPresentationHtmlSubTemplateId) FromInt(
 
 	switch input {
 	// insertion code per enum code
+	case 0:
+		*ngpresentationhtmlsubtemplateid = NgPresentationHtmlField
+	case 1:
+		*ngpresentationhtmlsubtemplateid = NgPresentationHtmlEnumString
+	case 2:
+		*ngpresentationhtmlsubtemplateid = NgPresentationHtmlEnumInt
 	case 3:
 		*ngpresentationhtmlsubtemplateid = NgPresentationHtmlBasicField
+	case 4:
+		*ngpresentationhtmlsubtemplateid = NgPresentationHtmlTimeField
 	case 5:
 		*ngpresentationhtmlsubtemplateid = NgPresentationHtmlBasicFieldTimeDuration
 	case 6:
 		*ngpresentationhtmlsubtemplateid = NgPresentationHtmlBool
-	case 2:
-		*ngpresentationhtmlsubtemplateid = NgPresentationHtmlEnumInt
-	case 1:
-		*ngpresentationhtmlsubtemplateid = NgPresentationHtmlEnumString
-	case 0:
-		*ngpresentationhtmlsubtemplateid = NgPresentationHtmlField
-	case 4:
-		*ngpresentationhtmlsubtemplateid = NgPresentationHtmlTimeField
 	case 7:
 		*ngpresentationhtmlsubtemplateid = NgPresentationPointerToStructHtmlFormField
 	}
@@ -3849,20 +4622,20 @@ func (ngpresentationhtmlsubtemplateid *NgPresentationHtmlSubTemplateId) ToCodeSt
 
 	switch *ngpresentationhtmlsubtemplateid {
 	// insertion code per enum code
+	case NgPresentationHtmlField:
+		res = "NgPresentationHtmlField"
+	case NgPresentationHtmlEnumString:
+		res = "NgPresentationHtmlEnumString"
+	case NgPresentationHtmlEnumInt:
+		res = "NgPresentationHtmlEnumInt"
 	case NgPresentationHtmlBasicField:
 		res = "NgPresentationHtmlBasicField"
+	case NgPresentationHtmlTimeField:
+		res = "NgPresentationHtmlTimeField"
 	case NgPresentationHtmlBasicFieldTimeDuration:
 		res = "NgPresentationHtmlBasicFieldTimeDuration"
 	case NgPresentationHtmlBool:
 		res = "NgPresentationHtmlBool"
-	case NgPresentationHtmlEnumInt:
-		res = "NgPresentationHtmlEnumInt"
-	case NgPresentationHtmlEnumString:
-		res = "NgPresentationHtmlEnumString"
-	case NgPresentationHtmlField:
-		res = "NgPresentationHtmlField"
-	case NgPresentationHtmlTimeField:
-		res = "NgPresentationHtmlTimeField"
 	case NgPresentationPointerToStructHtmlFormField:
 		res = "NgPresentationPointerToStructHtmlFormField"
 	}
@@ -3877,16 +4650,16 @@ func (ngpresentationtsinsertionpointid NgPresentationTsInsertionPointId) ToInt()
 	// migration of former implementation of enum
 	switch ngpresentationtsinsertionpointid {
 	// insertion code per enum code
-	case NgPresentationTsInsertionFieldPerStructEnumIntDeclarations:
-		res = 2
 	case NgPresentationTsInsertionPerStructEnumIntImports:
 		res = 0
-	case NgPresentationTsInsertionPerStructEnumIntRecoveries:
-		res = 4
-	case NgPresentationTsInsertionPerStructTimeDurationRecoveries:
-		res = 3
 	case NgPresentationTsInsertionTimeDurationFieldPerStructDeclarations:
 		res = 1
+	case NgPresentationTsInsertionFieldPerStructEnumIntDeclarations:
+		res = 2
+	case NgPresentationTsInsertionPerStructTimeDurationRecoveries:
+		res = 3
+	case NgPresentationTsInsertionPerStructEnumIntRecoveries:
+		res = 4
 	case NgPresentationTsInsertionsNb:
 		res = 5
 	}
@@ -3897,16 +4670,16 @@ func (ngpresentationtsinsertionpointid *NgPresentationTsInsertionPointId) FromIn
 
 	switch input {
 	// insertion code per enum code
-	case 2:
-		*ngpresentationtsinsertionpointid = NgPresentationTsInsertionFieldPerStructEnumIntDeclarations
 	case 0:
 		*ngpresentationtsinsertionpointid = NgPresentationTsInsertionPerStructEnumIntImports
-	case 4:
-		*ngpresentationtsinsertionpointid = NgPresentationTsInsertionPerStructEnumIntRecoveries
-	case 3:
-		*ngpresentationtsinsertionpointid = NgPresentationTsInsertionPerStructTimeDurationRecoveries
 	case 1:
 		*ngpresentationtsinsertionpointid = NgPresentationTsInsertionTimeDurationFieldPerStructDeclarations
+	case 2:
+		*ngpresentationtsinsertionpointid = NgPresentationTsInsertionFieldPerStructEnumIntDeclarations
+	case 3:
+		*ngpresentationtsinsertionpointid = NgPresentationTsInsertionPerStructTimeDurationRecoveries
+	case 4:
+		*ngpresentationtsinsertionpointid = NgPresentationTsInsertionPerStructEnumIntRecoveries
 	case 5:
 		*ngpresentationtsinsertionpointid = NgPresentationTsInsertionsNb
 	}
@@ -3916,16 +4689,16 @@ func (ngpresentationtsinsertionpointid *NgPresentationTsInsertionPointId) ToCode
 
 	switch *ngpresentationtsinsertionpointid {
 	// insertion code per enum code
-	case NgPresentationTsInsertionFieldPerStructEnumIntDeclarations:
-		res = "NgPresentationTsInsertionFieldPerStructEnumIntDeclarations"
 	case NgPresentationTsInsertionPerStructEnumIntImports:
 		res = "NgPresentationTsInsertionPerStructEnumIntImports"
-	case NgPresentationTsInsertionPerStructEnumIntRecoveries:
-		res = "NgPresentationTsInsertionPerStructEnumIntRecoveries"
-	case NgPresentationTsInsertionPerStructTimeDurationRecoveries:
-		res = "NgPresentationTsInsertionPerStructTimeDurationRecoveries"
 	case NgPresentationTsInsertionTimeDurationFieldPerStructDeclarations:
 		res = "NgPresentationTsInsertionTimeDurationFieldPerStructDeclarations"
+	case NgPresentationTsInsertionFieldPerStructEnumIntDeclarations:
+		res = "NgPresentationTsInsertionFieldPerStructEnumIntDeclarations"
+	case NgPresentationTsInsertionPerStructTimeDurationRecoveries:
+		res = "NgPresentationTsInsertionPerStructTimeDurationRecoveries"
+	case NgPresentationTsInsertionPerStructEnumIntRecoveries:
+		res = "NgPresentationTsInsertionPerStructEnumIntRecoveries"
 	case NgPresentationTsInsertionsNb:
 		res = "NgPresentationTsInsertionsNb"
 	}
@@ -3940,10 +4713,10 @@ func (ngpublicapiinsertionpoint NgPublicApiInsertionPoint) ToInt() (res int) {
 	// migration of former implementation of enum
 	switch ngpublicapiinsertionpoint {
 	// insertion code per enum code
-	case NgPublicApiInsertionEnumsExportDeclaration:
-		res = 1
 	case NgPublicApiInsertionStructComponentsExportDeclaration:
 		res = 0
+	case NgPublicApiInsertionEnumsExportDeclaration:
+		res = 1
 	case NgPublicApiNbInsertionPoints:
 		res = 2
 	}
@@ -3954,10 +4727,10 @@ func (ngpublicapiinsertionpoint *NgPublicApiInsertionPoint) FromInt(input int) {
 
 	switch input {
 	// insertion code per enum code
-	case 1:
-		*ngpublicapiinsertionpoint = NgPublicApiInsertionEnumsExportDeclaration
 	case 0:
 		*ngpublicapiinsertionpoint = NgPublicApiInsertionStructComponentsExportDeclaration
+	case 1:
+		*ngpublicapiinsertionpoint = NgPublicApiInsertionEnumsExportDeclaration
 	case 2:
 		*ngpublicapiinsertionpoint = NgPublicApiNbInsertionPoints
 	}
@@ -3967,10 +4740,10 @@ func (ngpublicapiinsertionpoint *NgPublicApiInsertionPoint) ToCodeString() (res 
 
 	switch *ngpublicapiinsertionpoint {
 	// insertion code per enum code
-	case NgPublicApiInsertionEnumsExportDeclaration:
-		res = "NgPublicApiInsertionEnumsExportDeclaration"
 	case NgPublicApiInsertionStructComponentsExportDeclaration:
 		res = "NgPublicApiInsertionStructComponentsExportDeclaration"
+	case NgPublicApiInsertionEnumsExportDeclaration:
+		res = "NgPublicApiInsertionEnumsExportDeclaration"
 	case NgPublicApiNbInsertionPoints:
 		res = "NgPublicApiNbInsertionPoints"
 	}
@@ -3985,10 +4758,10 @@ func (ngpublicapisubtemplate NgPublicApiSubTemplate) ToInt() (res int) {
 	// migration of former implementation of enum
 	switch ngpublicapisubtemplate {
 	// insertion code per enum code
-	case NgPublicApiDEnumsExportDeclaration:
-		res = 1
 	case NgPublicApiStructComponentsExportDeclaration:
 		res = 0
+	case NgPublicApiDEnumsExportDeclaration:
+		res = 1
 	}
 	return
 }
@@ -3997,10 +4770,10 @@ func (ngpublicapisubtemplate *NgPublicApiSubTemplate) FromInt(input int) {
 
 	switch input {
 	// insertion code per enum code
-	case 1:
-		*ngpublicapisubtemplate = NgPublicApiDEnumsExportDeclaration
 	case 0:
 		*ngpublicapisubtemplate = NgPublicApiStructComponentsExportDeclaration
+	case 1:
+		*ngpublicapisubtemplate = NgPublicApiDEnumsExportDeclaration
 	}
 }
 
@@ -4008,10 +4781,10 @@ func (ngpublicapisubtemplate *NgPublicApiSubTemplate) ToCodeString() (res string
 
 	switch *ngpublicapisubtemplate {
 	// insertion code per enum code
-	case NgPublicApiDEnumsExportDeclaration:
-		res = "NgPublicApiDEnumsExportDeclaration"
 	case NgPublicApiStructComponentsExportDeclaration:
 		res = "NgPublicApiStructComponentsExportDeclaration"
+	case NgPublicApiDEnumsExportDeclaration:
+		res = "NgPublicApiDEnumsExportDeclaration"
 	}
 	return
 }
@@ -4067,14 +4840,14 @@ func (ngservicesubtemplate NgServiceSubTemplate) ToInt() (res int) {
 		res = 0
 	case NgServiceTSPointerToGongStructReset:
 		res = 1
-	case NgServiceTSReversePointerToSliceOfGongStructImports:
-		res = 5
 	case NgServiceTSSliceOfPointerToGongStructReset:
 		res = 2
 	case NgServiceTSSliceOfPointerToGongStructReversePointerReset:
 		res = 3
 	case NgServiceTSSliceOfPointerToGongStructReversePointerRestore:
 		res = 4
+	case NgServiceTSReversePointerToSliceOfGongStructImports:
+		res = 5
 	}
 	return
 }
@@ -4087,14 +4860,14 @@ func (ngservicesubtemplate *NgServiceSubTemplate) FromInt(input int) {
 		*ngservicesubtemplate = NgServiceTSPointerToGongStructImports
 	case 1:
 		*ngservicesubtemplate = NgServiceTSPointerToGongStructReset
-	case 5:
-		*ngservicesubtemplate = NgServiceTSReversePointerToSliceOfGongStructImports
 	case 2:
 		*ngservicesubtemplate = NgServiceTSSliceOfPointerToGongStructReset
 	case 3:
 		*ngservicesubtemplate = NgServiceTSSliceOfPointerToGongStructReversePointerReset
 	case 4:
 		*ngservicesubtemplate = NgServiceTSSliceOfPointerToGongStructReversePointerRestore
+	case 5:
+		*ngservicesubtemplate = NgServiceTSReversePointerToSliceOfGongStructImports
 	}
 }
 
@@ -4106,14 +4879,14 @@ func (ngservicesubtemplate *NgServiceSubTemplate) ToCodeString() (res string) {
 		res = "NgServiceTSPointerToGongStructImports"
 	case NgServiceTSPointerToGongStructReset:
 		res = "NgServiceTSPointerToGongStructReset"
-	case NgServiceTSReversePointerToSliceOfGongStructImports:
-		res = "NgServiceTSReversePointerToSliceOfGongStructImports"
 	case NgServiceTSSliceOfPointerToGongStructReset:
 		res = "NgServiceTSSliceOfPointerToGongStructReset"
 	case NgServiceTSSliceOfPointerToGongStructReversePointerReset:
 		res = "NgServiceTSSliceOfPointerToGongStructReversePointerReset"
 	case NgServiceTSSliceOfPointerToGongStructReversePointerRestore:
 		res = "NgServiceTSSliceOfPointerToGongStructReversePointerRestore"
+	case NgServiceTSReversePointerToSliceOfGongStructImports:
+		res = "NgServiceTSReversePointerToSliceOfGongStructImports"
 	}
 	return
 }
@@ -4126,12 +4899,12 @@ func (ngservicetsinsertionpoint NgServiceTsInsertionPoint) ToInt() (res int) {
 	// migration of former implementation of enum
 	switch ngservicetsinsertionpoint {
 	// insertion code per enum code
-	case NgServiceTsInsertionImports:
-		res = 2
 	case NgServiceTsInsertionPointerReset:
 		res = 0
 	case NgServiceTsInsertionPointerRestore:
 		res = 1
+	case NgServiceTsInsertionImports:
+		res = 2
 	case NgServiceTsInsertionsNb:
 		res = 3
 	}
@@ -4142,12 +4915,12 @@ func (ngservicetsinsertionpoint *NgServiceTsInsertionPoint) FromInt(input int) {
 
 	switch input {
 	// insertion code per enum code
-	case 2:
-		*ngservicetsinsertionpoint = NgServiceTsInsertionImports
 	case 0:
 		*ngservicetsinsertionpoint = NgServiceTsInsertionPointerReset
 	case 1:
 		*ngservicetsinsertionpoint = NgServiceTsInsertionPointerRestore
+	case 2:
+		*ngservicetsinsertionpoint = NgServiceTsInsertionImports
 	case 3:
 		*ngservicetsinsertionpoint = NgServiceTsInsertionsNb
 	}
@@ -4157,12 +4930,12 @@ func (ngservicetsinsertionpoint *NgServiceTsInsertionPoint) ToCodeString() (res 
 
 	switch *ngservicetsinsertionpoint {
 	// insertion code per enum code
-	case NgServiceTsInsertionImports:
-		res = "NgServiceTsInsertionImports"
 	case NgServiceTsInsertionPointerReset:
 		res = "NgServiceTsInsertionPointerReset"
 	case NgServiceTsInsertionPointerRestore:
 		res = "NgServiceTsInsertionPointerRestore"
+	case NgServiceTsInsertionImports:
+		res = "NgServiceTsInsertionImports"
 	case NgServiceTsInsertionsNb:
 		res = "NgServiceTsInsertionsNb"
 	}
@@ -4177,10 +4950,10 @@ func (ngsidebarhtmlinsertionpoint NgSidebarHtmlInsertionPoint) ToInt() (res int)
 	// migration of former implementation of enum
 	switch ngsidebarhtmlinsertionpoint {
 	// insertion code per enum code
-	case NgSidebarHtmlNbInsertionPoints:
-		res = 1
 	case NgSidebarHtmlStruct:
 		res = 0
+	case NgSidebarHtmlNbInsertionPoints:
+		res = 1
 	}
 	return
 }
@@ -4189,10 +4962,10 @@ func (ngsidebarhtmlinsertionpoint *NgSidebarHtmlInsertionPoint) FromInt(input in
 
 	switch input {
 	// insertion code per enum code
-	case 1:
-		*ngsidebarhtmlinsertionpoint = NgSidebarHtmlNbInsertionPoints
 	case 0:
 		*ngsidebarhtmlinsertionpoint = NgSidebarHtmlStruct
+	case 1:
+		*ngsidebarhtmlinsertionpoint = NgSidebarHtmlNbInsertionPoints
 	}
 }
 
@@ -4200,10 +4973,10 @@ func (ngsidebarhtmlinsertionpoint *NgSidebarHtmlInsertionPoint) ToCodeString() (
 
 	switch *ngsidebarhtmlinsertionpoint {
 	// insertion code per enum code
-	case NgSidebarHtmlNbInsertionPoints:
-		res = "NgSidebarHtmlNbInsertionPoints"
 	case NgSidebarHtmlStruct:
 		res = "NgSidebarHtmlStruct"
+	case NgSidebarHtmlNbInsertionPoints:
+		res = "NgSidebarHtmlNbInsertionPoints"
 	}
 	return
 }
@@ -4253,10 +5026,10 @@ func (ngsidebartsinsertionpoint NgSidebarTsInsertionPoint) ToInt() (res int) {
 		res = 0
 	case NgSidebarTsInsertionPerStructImports:
 		res = 1
-	case NgSidebarTsInsertionPerStructObservableForRefresh:
-		res = 3
 	case NgSidebarTsInsertionPerStructServiceDeclaration:
 		res = 2
+	case NgSidebarTsInsertionPerStructObservableForRefresh:
+		res = 3
 	case NgSidebarTsInsertionsNb:
 		res = 4
 	}
@@ -4271,10 +5044,10 @@ func (ngsidebartsinsertionpoint *NgSidebarTsInsertionPoint) FromInt(input int) {
 		*ngsidebartsinsertionpoint = NgSidebarTsInsertionPerStruct
 	case 1:
 		*ngsidebartsinsertionpoint = NgSidebarTsInsertionPerStructImports
-	case 3:
-		*ngsidebartsinsertionpoint = NgSidebarTsInsertionPerStructObservableForRefresh
 	case 2:
 		*ngsidebartsinsertionpoint = NgSidebarTsInsertionPerStructServiceDeclaration
+	case 3:
+		*ngsidebartsinsertionpoint = NgSidebarTsInsertionPerStructObservableForRefresh
 	case 4:
 		*ngsidebartsinsertionpoint = NgSidebarTsInsertionsNb
 	}
@@ -4288,10 +5061,10 @@ func (ngsidebartsinsertionpoint *NgSidebarTsInsertionPoint) ToCodeString() (res 
 		res = "NgSidebarTsInsertionPerStruct"
 	case NgSidebarTsInsertionPerStructImports:
 		res = "NgSidebarTsInsertionPerStructImports"
-	case NgSidebarTsInsertionPerStructObservableForRefresh:
-		res = "NgSidebarTsInsertionPerStructObservableForRefresh"
 	case NgSidebarTsInsertionPerStructServiceDeclaration:
 		res = "NgSidebarTsInsertionPerStructServiceDeclaration"
+	case NgSidebarTsInsertionPerStructObservableForRefresh:
+		res = "NgSidebarTsInsertionPerStructObservableForRefresh"
 	case NgSidebarTsInsertionsNb:
 		res = "NgSidebarTsInsertionsNb"
 	}
@@ -4388,10 +5161,10 @@ func (ngsidebartssubtemplate NgSidebarTsSubTemplate) ToInt() (res int) {
 		res = 0
 	case NgSidebarTsPerStructNodeImports:
 		res = 1
-	case NgSidebarTsPerStructNodeObservableForRefresh:
-		res = 3
 	case NgSidebarTsPerStructNodeServiceDeclaration:
 		res = 2
+	case NgSidebarTsPerStructNodeObservableForRefresh:
+		res = 3
 	}
 	return
 }
@@ -4404,10 +5177,10 @@ func (ngsidebartssubtemplate *NgSidebarTsSubTemplate) FromInt(input int) {
 		*ngsidebartssubtemplate = NgSidebarTsPerStructNode
 	case 1:
 		*ngsidebartssubtemplate = NgSidebarTsPerStructNodeImports
-	case 3:
-		*ngsidebartssubtemplate = NgSidebarTsPerStructNodeObservableForRefresh
 	case 2:
 		*ngsidebartssubtemplate = NgSidebarTsPerStructNodeServiceDeclaration
+	case 3:
+		*ngsidebartssubtemplate = NgSidebarTsPerStructNodeObservableForRefresh
 	}
 }
 
@@ -4419,10 +5192,10 @@ func (ngsidebartssubtemplate *NgSidebarTsSubTemplate) ToCodeString() (res string
 		res = "NgSidebarTsPerStructNode"
 	case NgSidebarTsPerStructNodeImports:
 		res = "NgSidebarTsPerStructNodeImports"
-	case NgSidebarTsPerStructNodeObservableForRefresh:
-		res = "NgSidebarTsPerStructNodeObservableForRefresh"
 	case NgSidebarTsPerStructNodeServiceDeclaration:
 		res = "NgSidebarTsPerStructNodeServiceDeclaration"
+	case NgSidebarTsPerStructNodeObservableForRefresh:
+		res = "NgSidebarTsPerStructNodeObservableForRefresh"
 	}
 	return
 }
@@ -4437,20 +5210,20 @@ func (ngtablehtmlsubtemplate NgTableHTMLSubTemplate) ToInt() (res int) {
 	// insertion code per enum code
 	case NgTableHTMLBasicField:
 		res = 0
-	case NgTableHTMLBasicFieldTimeDuration:
-		res = 4
-	case NgTableHTMLBasicFloat64Field:
-		res = 3
-	case NgTableHTMLBool:
-		res = 5
 	case NgTableHTMLEnumIntField:
 		res = 1
 	case NgTableHTMLTimeField:
 		res = 2
-	case NgTablePointerToSliceOfGongStructHTMLFormField:
-		res = 7
+	case NgTableHTMLBasicFloat64Field:
+		res = 3
+	case NgTableHTMLBasicFieldTimeDuration:
+		res = 4
+	case NgTableHTMLBool:
+		res = 5
 	case NgTablePointerToStructHTMLFormField:
 		res = 6
+	case NgTablePointerToSliceOfGongStructHTMLFormField:
+		res = 7
 	}
 	return
 }
@@ -4461,20 +5234,20 @@ func (ngtablehtmlsubtemplate *NgTableHTMLSubTemplate) FromInt(input int) {
 	// insertion code per enum code
 	case 0:
 		*ngtablehtmlsubtemplate = NgTableHTMLBasicField
-	case 4:
-		*ngtablehtmlsubtemplate = NgTableHTMLBasicFieldTimeDuration
-	case 3:
-		*ngtablehtmlsubtemplate = NgTableHTMLBasicFloat64Field
-	case 5:
-		*ngtablehtmlsubtemplate = NgTableHTMLBool
 	case 1:
 		*ngtablehtmlsubtemplate = NgTableHTMLEnumIntField
 	case 2:
 		*ngtablehtmlsubtemplate = NgTableHTMLTimeField
-	case 7:
-		*ngtablehtmlsubtemplate = NgTablePointerToSliceOfGongStructHTMLFormField
+	case 3:
+		*ngtablehtmlsubtemplate = NgTableHTMLBasicFloat64Field
+	case 4:
+		*ngtablehtmlsubtemplate = NgTableHTMLBasicFieldTimeDuration
+	case 5:
+		*ngtablehtmlsubtemplate = NgTableHTMLBool
 	case 6:
 		*ngtablehtmlsubtemplate = NgTablePointerToStructHTMLFormField
+	case 7:
+		*ngtablehtmlsubtemplate = NgTablePointerToSliceOfGongStructHTMLFormField
 	}
 }
 
@@ -4484,20 +5257,20 @@ func (ngtablehtmlsubtemplate *NgTableHTMLSubTemplate) ToCodeString() (res string
 	// insertion code per enum code
 	case NgTableHTMLBasicField:
 		res = "NgTableHTMLBasicField"
-	case NgTableHTMLBasicFieldTimeDuration:
-		res = "NgTableHTMLBasicFieldTimeDuration"
-	case NgTableHTMLBasicFloat64Field:
-		res = "NgTableHTMLBasicFloat64Field"
-	case NgTableHTMLBool:
-		res = "NgTableHTMLBool"
 	case NgTableHTMLEnumIntField:
 		res = "NgTableHTMLEnumIntField"
 	case NgTableHTMLTimeField:
 		res = "NgTableHTMLTimeField"
-	case NgTablePointerToSliceOfGongStructHTMLFormField:
-		res = "NgTablePointerToSliceOfGongStructHTMLFormField"
+	case NgTableHTMLBasicFloat64Field:
+		res = "NgTableHTMLBasicFloat64Field"
+	case NgTableHTMLBasicFieldTimeDuration:
+		res = "NgTableHTMLBasicFieldTimeDuration"
+	case NgTableHTMLBool:
+		res = "NgTableHTMLBool"
 	case NgTablePointerToStructHTMLFormField:
 		res = "NgTablePointerToStructHTMLFormField"
+	case NgTablePointerToSliceOfGongStructHTMLFormField:
+		res = "NgTablePointerToSliceOfGongStructHTMLFormField"
 	}
 	return
 }
@@ -4549,36 +5322,36 @@ func (ngtablesubtemplate NgTableSubTemplate) ToInt() (res int) {
 	// migration of former implementation of enum
 	switch ngtablesubtemplate {
 	// insertion code per enum code
-	case NgTableTSBasicFieldSorting:
-		res = 3
-	case NgTableTSEnumIntFiltering:
-		res = 9
-	case NgTableTSNonNumberFieldFiltering:
-		res = 7
-	case NgTableTSNumberFieldFiltering:
-		res = 8
-	case NgTableTSPerStructColumn:
-		res = 13
+	case NgTableTsInsertionPerStructImportsTpl:
+		res = 0
 	case NgTableTSPerStructEnumIntRecoveries:
 		res = 1
 	case NgTableTSPerStructTimeDurationRecoveries:
 		res = 2
-	case NgTableTSPointerToStructFiltering:
-		res = 11
-	case NgTableTSPointerToStructSorting:
-		res = 5
-	case NgTableTSSliceOfPointerToStructFiltering:
-		res = 12
-	case NgTableTSSliceOfPointerToStructPerStructColumn:
-		res = 14
-	case NgTableTSSliceOfPointerToStructSorting:
-		res = 6
-	case NgTableTSTimeFieldFiltering:
-		res = 10
+	case NgTableTSBasicFieldSorting:
+		res = 3
 	case NgTableTSTimeFieldSorting:
 		res = 4
-	case NgTableTsInsertionPerStructImportsTpl:
-		res = 0
+	case NgTableTSPointerToStructSorting:
+		res = 5
+	case NgTableTSSliceOfPointerToStructSorting:
+		res = 6
+	case NgTableTSNonNumberFieldFiltering:
+		res = 7
+	case NgTableTSNumberFieldFiltering:
+		res = 8
+	case NgTableTSEnumIntFiltering:
+		res = 9
+	case NgTableTSTimeFieldFiltering:
+		res = 10
+	case NgTableTSPointerToStructFiltering:
+		res = 11
+	case NgTableTSSliceOfPointerToStructFiltering:
+		res = 12
+	case NgTableTSPerStructColumn:
+		res = 13
+	case NgTableTSSliceOfPointerToStructPerStructColumn:
+		res = 14
 	}
 	return
 }
@@ -4587,36 +5360,36 @@ func (ngtablesubtemplate *NgTableSubTemplate) FromInt(input int) {
 
 	switch input {
 	// insertion code per enum code
-	case 3:
-		*ngtablesubtemplate = NgTableTSBasicFieldSorting
-	case 9:
-		*ngtablesubtemplate = NgTableTSEnumIntFiltering
-	case 7:
-		*ngtablesubtemplate = NgTableTSNonNumberFieldFiltering
-	case 8:
-		*ngtablesubtemplate = NgTableTSNumberFieldFiltering
-	case 13:
-		*ngtablesubtemplate = NgTableTSPerStructColumn
+	case 0:
+		*ngtablesubtemplate = NgTableTsInsertionPerStructImportsTpl
 	case 1:
 		*ngtablesubtemplate = NgTableTSPerStructEnumIntRecoveries
 	case 2:
 		*ngtablesubtemplate = NgTableTSPerStructTimeDurationRecoveries
-	case 11:
-		*ngtablesubtemplate = NgTableTSPointerToStructFiltering
-	case 5:
-		*ngtablesubtemplate = NgTableTSPointerToStructSorting
-	case 12:
-		*ngtablesubtemplate = NgTableTSSliceOfPointerToStructFiltering
-	case 14:
-		*ngtablesubtemplate = NgTableTSSliceOfPointerToStructPerStructColumn
-	case 6:
-		*ngtablesubtemplate = NgTableTSSliceOfPointerToStructSorting
-	case 10:
-		*ngtablesubtemplate = NgTableTSTimeFieldFiltering
+	case 3:
+		*ngtablesubtemplate = NgTableTSBasicFieldSorting
 	case 4:
 		*ngtablesubtemplate = NgTableTSTimeFieldSorting
-	case 0:
-		*ngtablesubtemplate = NgTableTsInsertionPerStructImportsTpl
+	case 5:
+		*ngtablesubtemplate = NgTableTSPointerToStructSorting
+	case 6:
+		*ngtablesubtemplate = NgTableTSSliceOfPointerToStructSorting
+	case 7:
+		*ngtablesubtemplate = NgTableTSNonNumberFieldFiltering
+	case 8:
+		*ngtablesubtemplate = NgTableTSNumberFieldFiltering
+	case 9:
+		*ngtablesubtemplate = NgTableTSEnumIntFiltering
+	case 10:
+		*ngtablesubtemplate = NgTableTSTimeFieldFiltering
+	case 11:
+		*ngtablesubtemplate = NgTableTSPointerToStructFiltering
+	case 12:
+		*ngtablesubtemplate = NgTableTSSliceOfPointerToStructFiltering
+	case 13:
+		*ngtablesubtemplate = NgTableTSPerStructColumn
+	case 14:
+		*ngtablesubtemplate = NgTableTSSliceOfPointerToStructPerStructColumn
 	}
 }
 
@@ -4624,36 +5397,36 @@ func (ngtablesubtemplate *NgTableSubTemplate) ToCodeString() (res string) {
 
 	switch *ngtablesubtemplate {
 	// insertion code per enum code
-	case NgTableTSBasicFieldSorting:
-		res = "NgTableTSBasicFieldSorting"
-	case NgTableTSEnumIntFiltering:
-		res = "NgTableTSEnumIntFiltering"
-	case NgTableTSNonNumberFieldFiltering:
-		res = "NgTableTSNonNumberFieldFiltering"
-	case NgTableTSNumberFieldFiltering:
-		res = "NgTableTSNumberFieldFiltering"
-	case NgTableTSPerStructColumn:
-		res = "NgTableTSPerStructColumn"
+	case NgTableTsInsertionPerStructImportsTpl:
+		res = "NgTableTsInsertionPerStructImportsTpl"
 	case NgTableTSPerStructEnumIntRecoveries:
 		res = "NgTableTSPerStructEnumIntRecoveries"
 	case NgTableTSPerStructTimeDurationRecoveries:
 		res = "NgTableTSPerStructTimeDurationRecoveries"
-	case NgTableTSPointerToStructFiltering:
-		res = "NgTableTSPointerToStructFiltering"
-	case NgTableTSPointerToStructSorting:
-		res = "NgTableTSPointerToStructSorting"
-	case NgTableTSSliceOfPointerToStructFiltering:
-		res = "NgTableTSSliceOfPointerToStructFiltering"
-	case NgTableTSSliceOfPointerToStructPerStructColumn:
-		res = "NgTableTSSliceOfPointerToStructPerStructColumn"
-	case NgTableTSSliceOfPointerToStructSorting:
-		res = "NgTableTSSliceOfPointerToStructSorting"
-	case NgTableTSTimeFieldFiltering:
-		res = "NgTableTSTimeFieldFiltering"
+	case NgTableTSBasicFieldSorting:
+		res = "NgTableTSBasicFieldSorting"
 	case NgTableTSTimeFieldSorting:
 		res = "NgTableTSTimeFieldSorting"
-	case NgTableTsInsertionPerStructImportsTpl:
-		res = "NgTableTsInsertionPerStructImportsTpl"
+	case NgTableTSPointerToStructSorting:
+		res = "NgTableTSPointerToStructSorting"
+	case NgTableTSSliceOfPointerToStructSorting:
+		res = "NgTableTSSliceOfPointerToStructSorting"
+	case NgTableTSNonNumberFieldFiltering:
+		res = "NgTableTSNonNumberFieldFiltering"
+	case NgTableTSNumberFieldFiltering:
+		res = "NgTableTSNumberFieldFiltering"
+	case NgTableTSEnumIntFiltering:
+		res = "NgTableTSEnumIntFiltering"
+	case NgTableTSTimeFieldFiltering:
+		res = "NgTableTSTimeFieldFiltering"
+	case NgTableTSPointerToStructFiltering:
+		res = "NgTableTSPointerToStructFiltering"
+	case NgTableTSSliceOfPointerToStructFiltering:
+		res = "NgTableTSSliceOfPointerToStructFiltering"
+	case NgTableTSPerStructColumn:
+		res = "NgTableTSPerStructColumn"
+	case NgTableTSSliceOfPointerToStructPerStructColumn:
+		res = "NgTableTSSliceOfPointerToStructPerStructColumn"
 	}
 	return
 }
@@ -4666,18 +5439,18 @@ func (ngtabletsinsertionpoint NgTableTsInsertionPoint) ToInt() (res int) {
 	// migration of former implementation of enum
 	switch ngtabletsinsertionpoint {
 	// insertion code per enum code
-	case NgTableTsInsertionPerStructColumns:
-		res = 3
-	case NgTableTsInsertionPerStructColumnsFiltering:
-		res = 5
-	case NgTableTsInsertionPerStructColumnsSorting:
-		res = 4
-	case NgTableTsInsertionPerStructEnumIntRecoveries:
-		res = 2
 	case NgTableTsInsertionPerStructImports:
 		res = 0
 	case NgTableTsInsertionPerStructTimeDurationRecoveries:
 		res = 1
+	case NgTableTsInsertionPerStructEnumIntRecoveries:
+		res = 2
+	case NgTableTsInsertionPerStructColumns:
+		res = 3
+	case NgTableTsInsertionPerStructColumnsSorting:
+		res = 4
+	case NgTableTsInsertionPerStructColumnsFiltering:
+		res = 5
 	case NgTableTsInsertionsNb:
 		res = 6
 	}
@@ -4688,18 +5461,18 @@ func (ngtabletsinsertionpoint *NgTableTsInsertionPoint) FromInt(input int) {
 
 	switch input {
 	// insertion code per enum code
-	case 3:
-		*ngtabletsinsertionpoint = NgTableTsInsertionPerStructColumns
-	case 5:
-		*ngtabletsinsertionpoint = NgTableTsInsertionPerStructColumnsFiltering
-	case 4:
-		*ngtabletsinsertionpoint = NgTableTsInsertionPerStructColumnsSorting
-	case 2:
-		*ngtabletsinsertionpoint = NgTableTsInsertionPerStructEnumIntRecoveries
 	case 0:
 		*ngtabletsinsertionpoint = NgTableTsInsertionPerStructImports
 	case 1:
 		*ngtabletsinsertionpoint = NgTableTsInsertionPerStructTimeDurationRecoveries
+	case 2:
+		*ngtabletsinsertionpoint = NgTableTsInsertionPerStructEnumIntRecoveries
+	case 3:
+		*ngtabletsinsertionpoint = NgTableTsInsertionPerStructColumns
+	case 4:
+		*ngtabletsinsertionpoint = NgTableTsInsertionPerStructColumnsSorting
+	case 5:
+		*ngtabletsinsertionpoint = NgTableTsInsertionPerStructColumnsFiltering
 	case 6:
 		*ngtabletsinsertionpoint = NgTableTsInsertionsNb
 	}
@@ -4709,18 +5482,18 @@ func (ngtabletsinsertionpoint *NgTableTsInsertionPoint) ToCodeString() (res stri
 
 	switch *ngtabletsinsertionpoint {
 	// insertion code per enum code
-	case NgTableTsInsertionPerStructColumns:
-		res = "NgTableTsInsertionPerStructColumns"
-	case NgTableTsInsertionPerStructColumnsFiltering:
-		res = "NgTableTsInsertionPerStructColumnsFiltering"
-	case NgTableTsInsertionPerStructColumnsSorting:
-		res = "NgTableTsInsertionPerStructColumnsSorting"
-	case NgTableTsInsertionPerStructEnumIntRecoveries:
-		res = "NgTableTsInsertionPerStructEnumIntRecoveries"
 	case NgTableTsInsertionPerStructImports:
 		res = "NgTableTsInsertionPerStructImports"
 	case NgTableTsInsertionPerStructTimeDurationRecoveries:
 		res = "NgTableTsInsertionPerStructTimeDurationRecoveries"
+	case NgTableTsInsertionPerStructEnumIntRecoveries:
+		res = "NgTableTsInsertionPerStructEnumIntRecoveries"
+	case NgTableTsInsertionPerStructColumns:
+		res = "NgTableTsInsertionPerStructColumns"
+	case NgTableTsInsertionPerStructColumnsSorting:
+		res = "NgTableTsInsertionPerStructColumnsSorting"
+	case NgTableTsInsertionPerStructColumnsFiltering:
+		res = "NgTableTsInsertionPerStructColumnsFiltering"
 	case NgTableTsInsertionsNb:
 		res = "NgTableTsInsertionsNb"
 	}
@@ -4807,10 +5580,10 @@ func (ormsetupcumulsubtemplate OrmSetupCumulSubTemplate) ToString() (res string)
 	// migration of former implementation of enum
 	switch ormsetupcumulsubtemplate {
 	// insertion code per enum code
-	case OrmSetupDelete:
-		res = "OrmSetupDelete"
 	case OrmSetupRefToStructDB:
 		res = "OrmSetupRefToStructDB"
+	case OrmSetupDelete:
+		res = "OrmSetupDelete"
 	}
 	return
 }
@@ -4819,10 +5592,10 @@ func (ormsetupcumulsubtemplate *OrmSetupCumulSubTemplate) FromString(input strin
 
 	switch input {
 	// insertion code per enum code
-	case "OrmSetupDelete":
-		*ormsetupcumulsubtemplate = OrmSetupDelete
 	case "OrmSetupRefToStructDB":
 		*ormsetupcumulsubtemplate = OrmSetupRefToStructDB
+	case "OrmSetupDelete":
+		*ormsetupcumulsubtemplate = OrmSetupDelete
 	}
 }
 
@@ -4830,10 +5603,10 @@ func (ormsetupcumulsubtemplate *OrmSetupCumulSubTemplate) ToCodeString() (res st
 
 	switch *ormsetupcumulsubtemplate {
 	// insertion code per enum code
-	case OrmSetupDelete:
-		res = "OrmSetupDelete"
 	case OrmSetupRefToStructDB:
 		res = "OrmSetupRefToStructDB"
+	case OrmSetupDelete:
+		res = "OrmSetupDelete"
 	}
 	return
 }

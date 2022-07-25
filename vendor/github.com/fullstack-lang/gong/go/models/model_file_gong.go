@@ -24,7 +24,7 @@ import (
 )
 
 // swagger:ignore
-type __void struct{}
+type __void any
 
 // needed for creating set of instances in the stage
 var __member __void
@@ -90,6 +90,9 @@ func (stage *StageStruct) Checkout() {
 	if stage.BackRepo != nil {
 		stage.BackRepo.Checkout(stage)
 	}
+
+	// insertion point for computing the map of number of instances per gongstruct{{` + string(rune(ModelGongStructInsertionComputeNbInstances)) + `}}
+
 }
 
 // backup generates backup files in the dirPath
@@ -236,6 +239,153 @@ func generatesIdentifier(gongStructName string, idx int, instanceName string) (i
 
 // insertion point of functions that provide maps for reverse associations{{` + string(rune(ModelGongStructInsertionReverseAssociationsMaps)) + `}}
 
+// Gongstruct is the type paramter for generated generic function that allows
+// - access to staged instances
+// - navigation between staged instances by going backward association links between gongstruct
+// - full refactoring of Gongstruct identifiers / fields
+type Gongstruct interface {
+	// insertion point for generic types
+	{{` + string(rune(ModelGongStructInsertionGenericGongstructTypes)) + `}}
+}
+
+type GongstructSet interface {
+	map[any]any |
+		// insertion point for generic types{{` + string(rune(ModelGongStructInsertionGenericGongSetTypes)) + `}}
+		map[*any]any // because go does not support an extra "|" at the end of type specifications
+}
+
+type GongstructMapString interface {
+	map[any]any |
+		// insertion point for generic types{{` + string(rune(ModelGongStructInsertionGenericGongMapTypes)) + `}}
+		map[*any]any // because go does not support an extra "|" at the end of type specifications
+}
+
+// GongGetSet returns the set staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GongGetSet[Type GongstructSet]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions{{` + string(rune(ModelGongStructInsertionGenericGetSetFunctions)) + `}}
+	default:
+		return nil
+	}
+}
+
+// GongGetMap returns the map of staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GongGetMap[Type GongstructMapString]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions{{` + string(rune(ModelGongStructInsertionGenericGetMapFunctions)) + `}}
+	default:
+		return nil
+	}
+}
+
+// GetGongstructInstancesSet returns the set staged GongstructType instances
+// it is usefull because it allows refactoring of gongstruct identifier
+func GetGongstructInstancesSet[Type Gongstruct]() *map[*Type]any {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions{{` + string(rune(ModelGongStructInsertionGenericInstancesSetFunctions)) + `}}
+	default:
+		return nil
+	}
+}
+
+// GetGongstructInstancesMap returns the map of staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GetGongstructInstancesMap[Type Gongstruct]() *map[string]*Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions{{` + string(rune(ModelGongStructInsertionGenericInstancesMapFunctions)) + `}}
+	default:
+		return nil
+	}
+}
+
+// GetAssociationName is a generic function that returns an instance of Type
+// where each association is filled with an instance whose name is the name of the association
+//
+// This function can be handy for generating navigation function that are refactorable
+func GetAssociationName[Type Gongstruct]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for instance with special fields{{` + string(rune(ModelGongStructInsertionGenericGetAssociationNameFunctions)) + `}}
+	default:
+		return nil
+	}
+}
+
+// GetPointerReverseMap allows backtrack navigation of any Start.Fieldname
+// associations (0..1) that is a pointer from one staged Gongstruct (type Start)
+// instances to another (type End)
+//
+// The function provides a map with keys as instances of End and values to arrays of *Start
+// the map is construed by iterating over all Start instances and populationg keys with End instances
+// and values with slice of Start instances
+func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*Start {
+	var ret Start
+
+	switch any(ret).(type) {
+	// insertion point of functions that provide maps for reverse associations{{` + string(rune(ModelGongStructInsertionGenericReversePointerAssociationsMaps)) + `}}
+	}
+	return nil
+}
+
+// GetSliceOfPointersReverseMap allows backtrack navigation of any Start.Fieldname
+// associations (0..N) between one staged Gongstruct instances and many others
+//
+// The function provides a map with keys as instances of End and values to *Start instances
+// the map is construed by iterating over all Start instances and populating keys with End instances
+// and values with the Start instances
+func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string) map[*End]*Start {
+	var ret Start
+
+	switch any(ret).(type) {
+	// insertion point of functions that provide maps for reverse associations{{` +
+	string(rune(ModelGongStructInsertionGenericReverseSliceOfPointersAssociationsMaps)) + `}}
+	}
+	return nil
+}
+
+// GetGongstructName returns the name of the Gongstruct
+// this can be usefull if one want program robust to refactoring
+func GetGongstructName[Type Gongstruct]() (res string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name{{` + string(rune(ModelGongStructInsertionGenericGongstructName)) + `}}
+	}
+	return res
+}
+
+// GetFields return the array of the fields
+func GetFields[Type Gongstruct]() (res []string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name{{` + string(rune(ModelGongStructInsertionGenericGetFields)) + `}}
+	}
+	return
+}
+
+func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res string) {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct field value{{` + string(rune(ModelGongStructInsertionGenericGetFieldValues)) + `}}
+	}
+	return
+}
+
 // insertion point of enum utility functions{{` + string(rune(ModelGongEnumUtilityFunctions)) + `}}
 `
 
@@ -247,7 +397,6 @@ type ModelGongStructInsertionId int
 
 const (
 	ModelGongStructInsertionCommitCheckout ModelGongStructInsertionId = iota
-	ModelGongStructInsertionGetFields
 	ModelGongStructInsertionStageFunctions
 	ModelGongStructInsertionCreateCallback
 	ModelGongStructInsertionDeleteCallback
@@ -259,6 +408,19 @@ const (
 	ModelGongStructInsertionUnmarshallPointersInitializations
 	ModelGongStructInsertionComputeNbInstances
 	ModelGongStructInsertionReverseAssociationsMaps
+	ModelGongStructInsertionGenericGetFields
+	ModelGongStructInsertionGenericGetFieldValues
+	ModelGongStructInsertionGenericReversePointerAssociationsMaps
+	ModelGongStructInsertionGenericReverseSliceOfPointersAssociationsMaps
+	ModelGongStructInsertionGenericGongstructTypes
+	ModelGongStructInsertionGenericGongSetTypes
+	ModelGongStructInsertionGenericGongstructName
+	ModelGongStructInsertionGenericGongMapTypes
+	ModelGongStructInsertionGenericGetSetFunctions
+	ModelGongStructInsertionGenericGetMapFunctions
+	ModelGongStructInsertionGenericInstancesSetFunctions
+	ModelGongStructInsertionGenericInstancesMapFunctions
+	ModelGongStructInsertionGenericGetAssociationNameFunctions
 	ModelGongStructInsertionsNb
 )
 
@@ -311,7 +473,15 @@ map[ModelGongStructInsertionId]string{
 	Commit{{Structname}}({{structname}} *{{Structname}})
 	Checkout{{Structname}}({{structname}} *{{Structname}})`,
 
-	ModelGongStructInsertionGetFields: ``,
+	ModelGongStructInsertionGenericGetFields: `
+	case {{Structname}}:{{ListOfFieldsName}}`,
+
+	ModelGongStructInsertionGenericGetFieldValues: `
+	case {{Structname}}:
+		switch fieldName {
+		// string value of fields{{StringValueOfFields}}
+		}`,
+
 	ModelGongStructInsertionStageFunctions: `
 func (stage *StageStruct) get{{Structname}}OrderedStructWithNameField() []*{{Structname}} {
 	// have alphabetical order generation
@@ -419,18 +589,6 @@ func DeleteORM{{Structname}}({{structname}} *{{Structname}}) {
 func ({{structname}} *{{Structname}}) GetName() (res string) {
 	return {{structname}}.Name
 }
-
-func ({{structname}} *{{Structname}}) GetFields() (res []string) {
-	// list of fields{{ListOfFieldsName}}
-	return
-}
-
-func ({{structname}} *{{Structname}}) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields{{StringValueOfFields}}
-	}
-	return
-}
 `,
 
 	ModelGongStructInsertionCreateCallback: `
@@ -440,17 +598,17 @@ func ({{structname}} *{{Structname}}) GetFieldStringValue(fieldName string) (res
 	DeleteORM{{Structname}}({{Structname}} *{{Structname}})`,
 
 	ModelGongStructInsertionArrayDefintion: `
-	{{Structname}}s           map[*{{Structname}}]struct{}
+	{{Structname}}s           map[*{{Structname}}]any
 	{{Structname}}s_mapString map[string]*{{Structname}}
 `,
 
 	ModelGongStructInsertionArrayInitialisation: `
-	{{Structname}}s:           make(map[*{{Structname}}]struct{}),
+	{{Structname}}s:           make(map[*{{Structname}}]any),
 	{{Structname}}s_mapString: make(map[string]*{{Structname}}),
 `,
 
 	ModelGongStructInsertionArrayReset: `
-	stage.{{Structname}}s = make(map[*{{Structname}}]struct{})
+	stage.{{Structname}}s = make(map[*{{Structname}}]any)
 	stage.{{Structname}}s_mapString = make(map[string]*{{Structname}})
 `,
 
@@ -470,7 +628,7 @@ func ({{structname}} *{{Structname}}) GetFieldStringValue(fieldName string) (res
 	sort.Slice({{structname}}Ordered[:], func(i, j int) bool {
 		return {{structname}}Ordered[i].Name < {{structname}}Ordered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of {{Structname}}")
+	identifiersDecl += "\n\n	// Declarations of staged instances of {{Structname}}"
 	for idx, {{structname}} := range {{structname}}Ordered {
 
 		id = generatesIdentifier("{{Structname}}", idx, {{structname}}.Name)
@@ -503,7 +661,56 @@ func ({{structname}} *{{Structname}}) GetFieldStringValue(fieldName string) (res
 	stage.Map_GongStructName_InstancesNb["{{Structname}}"] = len(stage.{{Structname}}s)`,
 
 	ModelGongStructInsertionReverseAssociationsMaps: `
+
 // generate function for reverse association maps of {{Structname}}{{ReverseAssociationMapFunctions}}`,
+
+	ModelGongStructInsertionGenericReversePointerAssociationsMaps: `
+	// reverse maps of direct associations of {{Structname}}
+	case {{Structname}}:
+		switch fieldname {
+		// insertion point for per direct association field{{fieldReversePointerAssociationMapCode}}
+		}`,
+
+	ModelGongStructInsertionGenericReverseSliceOfPointersAssociationsMaps: `
+	// reverse maps of direct associations of {{Structname}}
+	case {{Structname}}:
+		switch fieldname {
+		// insertion point for per direct association field{{fieldReverseSliceOfPointersAssociationMapCode}}
+		}`,
+
+	ModelGongStructInsertionGenericGongstructTypes: ` | {{Structname}}`,
+
+	ModelGongStructInsertionGenericGongSetTypes: `
+		map[*{{Structname}}]any |`,
+
+	ModelGongStructInsertionGenericGongstructName: `
+	case {{Structname}}:
+		res = "{{Structname}}"`,
+
+	ModelGongStructInsertionGenericGongMapTypes: `
+		map[string]*{{Structname}} |`,
+
+	ModelGongStructInsertionGenericGetSetFunctions: `
+	case map[*{{Structname}}]any:
+		return any(&Stage.{{Structname}}s).(*Type)`,
+
+	ModelGongStructInsertionGenericGetMapFunctions: `
+	case map[string]*{{Structname}}:
+		return any(&Stage.{{Structname}}s_mapString).(*Type)`,
+
+	ModelGongStructInsertionGenericInstancesSetFunctions: `
+	case {{Structname}}:
+		return any(&Stage.{{Structname}}s).(*map[*Type]any)`,
+
+	ModelGongStructInsertionGenericInstancesMapFunctions: `
+	case {{Structname}}:
+		return any(&Stage.{{Structname}}s_mapString).(*map[string]*Type)`,
+
+	ModelGongStructInsertionGenericGetAssociationNameFunctions: `
+	case {{Structname}}:
+		return any(&{{Structname}}{
+			// Initialisation of associations{{associationFieldInitialization}}
+		}).(*Type)`,
 }
 
 //
@@ -536,8 +743,16 @@ const (
 	GongFileFieldSubTmplStringValuePointerField
 	GongFileFieldSubTmplStringValueSliceOfPointersField
 
+	GongFileFieldSubTmplAssociationNamePointerField
+	GongFileFieldSubTmplAssociationNameSliceOfPointersField
+	GongFileFieldSubTmplAssociationNameCompositePointerField
+	GongFileFieldSubTmplAssociationNameCompositeSliceOfPointersField
+
 	GongFileFieldSubTmplPointerFieldAssociationMapFunction
 	GongFileFieldSubTmplSliceOfPointersFieldAssociationMapFunction
+
+	GongFileFieldSubTmplPointerFieldPointerAssociationMapFunction
+	GongFileFieldSubTmplPointerFieldSliceOfPointersAssociationMapFunction
 )
 
 //
@@ -618,39 +833,62 @@ map[GongFilePerStructSubTemplateId]string{
 	GongFileFieldSubTmplStringFieldName: `"{{FieldName}}"`,
 
 	GongFileFieldSubTmplStringValueBasicFieldBool: `
-	case "{{FieldName}}":
-		res = fmt.Sprintf("%t", {{structname}}.{{FieldName}})`,
+		case "{{FieldName}}":
+			res = fmt.Sprintf("%t", any(instance).({{Structname}}).{{FieldName}})`,
 	GongFileFieldSubTmplStringValueBasicFieldInt: `
-	case "{{FieldName}}":
-		res = fmt.Sprintf("%d", {{structname}}.{{FieldName}})`,
+		case "{{FieldName}}":
+			res = fmt.Sprintf("%d", any(instance).({{Structname}}).{{FieldName}})`,
 	GongFileFieldSubTmplStringValueBasicFieldEnumString: `
-	case "{{FieldName}}":
-		res = {{structname}}.{{FieldName}}.ToCodeString()`,
+		case "{{FieldName}}":
+			enum := any(instance).({{Structname}}).{{FieldName}}
+			res = enum.ToCodeString()`,
 	GongFileFieldSubTmplStringValueBasicFieldEnumInt: `
-	case "{{FieldName}}":
-		res = {{structname}}.{{FieldName}}.ToCodeString()`,
+		case "{{FieldName}}":
+			enum := any(instance).({{Structname}}).{{FieldName}}
+			res = enum.ToCodeString()`,
 	GongFileFieldSubTmplStringValueBasicFieldFloat64: `
-	case "{{FieldName}}":
-		res = fmt.Sprintf("%f", {{structname}}.{{FieldName}})`,
+		case "{{FieldName}}":
+			res = fmt.Sprintf("%f", any(instance).({{Structname}}).{{FieldName}})`,
 	GongFileFieldSubTmplStringValueBasicFieldString: `
-	case "{{FieldName}}":
-		res = {{structname}}.{{FieldName}}`,
+		case "{{FieldName}}":
+			res = any(instance).({{Structname}}).{{FieldName}}`,
 	GongFileFieldSubTmplStringValueTimeField: `
-	case "{{FieldName}}":
-		res = {{structname}}.{{FieldName}}.String()`,
+		case "{{FieldName}}":
+			res = any(instance).({{Structname}}).{{FieldName}}.String()`,
 	GongFileFieldSubTmplStringValuePointerField: `
-	case "{{FieldName}}":
-		if {{structname}}.{{FieldName}} != nil {
-			res = {{structname}}.{{FieldName}}.Name
-		}`,
+		case "{{FieldName}}":
+			if any(instance).({{Structname}}).{{FieldName}} != nil {
+				res = any(instance).({{Structname}}).{{FieldName}}.Name
+			}`,
 	GongFileFieldSubTmplStringValueSliceOfPointersField: `
-	case "{{FieldName}}":
-		for idx, __instance__ := range {{structname}}.{{FieldName}} {
-			if idx > 0 {
-				res += "\n"
-			}
-			res += __instance__.Name
-		}`,
+		case "{{FieldName}}":
+			for idx, __instance__ := range any(instance).({{Structname}}).{{FieldName}} {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}`,
+
+	GongFileFieldSubTmplAssociationNamePointerField: `
+			// field is initialized with an instance of {{AssocStructName}} with the name of the field
+			{{FieldName}}: &{{AssocStructName}}{Name: "{{FieldName}}"},`,
+
+	GongFileFieldSubTmplAssociationNameSliceOfPointersField: `
+			// field is initialized with an instance of {{AssocStructName}} with the name of the field
+			{{FieldName}}: []*{{AssocStructName}}{{Name: "{{FieldName}}"}},`,
+
+	GongFileFieldSubTmplAssociationNameCompositePointerField: `
+			// field is initialized with an instance of {{AssocStructName}} ({{AssocCompositeStructName}} as it is a composite) with the name of the field
+			{{AssocCompositeStructName}}: {{AssocCompositeStructName}}{
+				{{FieldName}}: &{{AssocStructName}}{Name: "{{FieldName}}"},
+			},`,
+
+	GongFileFieldSubTmplAssociationNameCompositeSliceOfPointersField: `
+			// field is initialized with an instance of {{AssocStructName}} ({{AssocCompositeStructName}} as it is a composite) with the name of the field
+			{{AssocCompositeStructName}}: {{AssocCompositeStructName}}{
+				{{FieldName}}: []*{{AssocStructName}}{{Name: "{{FieldName}}"}},
+			},`,
+
 	GongFileFieldSubTmplPointerFieldAssociationMapFunction: `
 func (stageStruct *StageStruct) CreateReverseMap_{{Structname}}_{{FieldName}}() (res map[*{{AssocStructName}}][]*{{Structname}}) {
 	res = make(map[*{{AssocStructName}}][]*{{Structname}})
@@ -672,6 +910,35 @@ func (stageStruct *StageStruct) CreateReverseMap_{{Structname}}_{{FieldName}}() 
 
 	return
 }`,
+	GongFileFieldSubTmplPointerFieldPointerAssociationMapFunction: `
+		case "{{FieldName}}":
+			res := make(map[*{{AssocStructName}}][]*{{Structname}})
+			for {{structname}} := range Stage.{{Structname}}s {
+				if {{structname}}.{{FieldName}} != nil {
+					{{assocstructname}}_ := {{structname}}.{{FieldName}}
+					var {{structname}}s []*{{Structname}}
+					_, ok := res[{{assocstructname}}_]
+					if ok {
+						{{structname}}s = res[{{assocstructname}}_]
+					} else {
+						{{structname}}s = make([]*{{Structname}}, 0)
+					}
+					{{structname}}s = append({{structname}}s, {{structname}})
+					res[{{assocstructname}}_] = {{structname}}s
+				}
+			}
+			return any(res).(map[*End][]*Start)`,
+
+	GongFileFieldSubTmplPointerFieldSliceOfPointersAssociationMapFunction: `
+		case "{{FieldName}}":
+			res := make(map[*{{AssocStructName}}]*{{Structname}})
+			for {{structname}} := range Stage.{{Structname}}s {
+				for _, {{assocstructname}}_ := range {{structname}}.{{FieldName}} {
+					res[{{assocstructname}}_] = {{structname}}
+				}
+			}
+			return any(res).(map[*End]*Start)`,
+
 	GongFileFieldSubTmplSliceOfPointersFieldAssociationMapFunction: `
 func (stageStruct *StageStruct) CreateReverseMap_{{Structname}}_{{FieldName}}() (res map[*{{AssocStructName}}]*{{Structname}}) {
 	res = make(map[*{{AssocStructName}}]*{{Structname}})
@@ -746,9 +1013,12 @@ func CodeGeneratorModelGong(
 			valInitCode := ""
 			pointerInitCode := ""
 			fieldNames := `
-	res = []string{`
+		res = []string{`
 			fieldStringValues := ``
 			fieldReverseAssociationMapCreationCode := ``
+			fieldReversePointerAssociationMapCode := ``
+			fieldReverseSliceOfPointersAssociationMapCode := ``
+			associationFieldInitialization := ``
 
 			for idx, field := range gongStruct.Fields {
 
@@ -825,6 +1095,25 @@ func CodeGeneratorModelGong(
 						"{{FieldName}}", field.Name,
 						"{{AssocStructName}}", field.GongStruct.Name,
 						"{{assocstructname}}", strings.ToLower(field.GongStruct.Name))
+					fieldReversePointerAssociationMapCode += Replace3(
+						GongFileFieldFieldSubTemplateCode[GongFileFieldSubTmplPointerFieldPointerAssociationMapFunction],
+						"{{FieldName}}", field.Name,
+						"{{AssocStructName}}", field.GongStruct.Name,
+						"{{assocstructname}}", strings.ToLower(field.GongStruct.Name))
+					if field.CompositeStructName == "" {
+						associationFieldInitialization += Replace3(
+							GongFileFieldFieldSubTemplateCode[GongFileFieldSubTmplAssociationNamePointerField],
+							"{{FieldName}}", field.Name,
+							"{{AssocStructName}}", field.GongStruct.Name,
+							"{{assocstructname}}", strings.ToLower(field.GongStruct.Name))
+					} else {
+						associationFieldInitialization += Replace4(
+							GongFileFieldFieldSubTemplateCode[GongFileFieldSubTmplAssociationNameCompositePointerField],
+							"{{FieldName}}", field.Name,
+							"{{AssocStructName}}", field.GongStruct.Name,
+							"{{AssocCompositeStructName}}", field.CompositeStructName,
+							"{{assocstructname}}", strings.ToLower(field.GongStruct.Name))
+					}
 				case *SliceOfPointerToGongStructField:
 					pointerInitCode += Replace3(
 						GongFileFieldFieldSubTemplateCode[GongFileFieldSubTmplSetSliceOfPointersField],
@@ -836,6 +1125,16 @@ func CodeGeneratorModelGong(
 						"{{FieldName}}", field.Name)
 					fieldReverseAssociationMapCreationCode += Replace3(
 						GongFileFieldFieldSubTemplateCode[GongFileFieldSubTmplSliceOfPointersFieldAssociationMapFunction],
+						"{{FieldName}}", field.Name,
+						"{{AssocStructName}}", field.GongStruct.Name,
+						"{{assocstructname}}", strings.ToLower(field.GongStruct.Name))
+					fieldReverseSliceOfPointersAssociationMapCode += Replace3(
+						GongFileFieldFieldSubTemplateCode[GongFileFieldSubTmplPointerFieldSliceOfPointersAssociationMapFunction],
+						"{{FieldName}}", field.Name,
+						"{{AssocStructName}}", field.GongStruct.Name,
+						"{{assocstructname}}", strings.ToLower(field.GongStruct.Name))
+					associationFieldInitialization += Replace3(
+						GongFileFieldFieldSubTemplateCode[GongFileFieldSubTmplAssociationNameSliceOfPointersField],
 						"{{FieldName}}", field.Name,
 						"{{AssocStructName}}", field.GongStruct.Name,
 						"{{assocstructname}}", strings.ToLower(field.GongStruct.Name))
@@ -866,8 +1165,16 @@ func CodeGeneratorModelGong(
 				"{{structname}}", strings.ToLower(gongStruct.Name),
 				"{{Structname}}", gongStruct.Name)
 
+			fieldReversePointerAssociationMapCode = Replace2(fieldReversePointerAssociationMapCode,
+				"{{structname}}", strings.ToLower(gongStruct.Name),
+				"{{Structname}}", gongStruct.Name)
+
+			fieldReverseSliceOfPointersAssociationMapCode = Replace2(fieldReverseSliceOfPointersAssociationMapCode,
+				"{{structname}}", strings.ToLower(gongStruct.Name),
+				"{{Structname}}", gongStruct.Name)
+
 			fieldNames += `}`
-			generatedCodeFromSubTemplate := Replace7(ModelGongStructSubTemplateCode[subStructTemplate],
+			generatedCodeFromSubTemplate := Replace10(ModelGongStructSubTemplateCode[subStructTemplate],
 				"{{structname}}", strings.ToLower(gongStruct.Name),
 				"{{Structname}}", gongStruct.Name,
 				"{{ValuesInitialization}}", valInitCode,
@@ -875,6 +1182,9 @@ func CodeGeneratorModelGong(
 				"{{ListOfFieldsName}}", fieldNames,
 				"{{StringValueOfFields}}", fieldStringValues,
 				"{{ReverseAssociationMapFunctions}}", fieldReverseAssociationMapCreationCode,
+				"{{fieldReversePointerAssociationMapCode}}", fieldReversePointerAssociationMapCode,
+				"{{fieldReverseSliceOfPointersAssociationMapCode}}", fieldReverseSliceOfPointersAssociationMapCode,
+				"{{associationFieldInitialization}}", associationFieldInitialization,
 			)
 
 			subStructCodes[subStructTemplate] += generatedCodeFromSubTemplate
@@ -950,10 +1260,12 @@ func CodeGeneratorModelGong(
 		codeGO = strings.ReplaceAll(codeGO, toReplace, subEnumCodes[insertionPerEnumId])
 	}
 
-	codeGO = Replace3(codeGO,
+	codeGO = Replace4(codeGO,
 		"{{PkgName}}", pkgName,
 		"{{TitlePkgName}}", strings.Title(pkgName),
-		"{{pkgname}}", strings.ToLower(pkgName))
+		"{{pkgname}}", strings.ToLower(pkgName),
+		"	 | ", "	", // for the replacement of the of the first bar in the Gongstruct Type def
+	)
 
 	file, err := os.Create(filepath.Join(pkgPath, "gong.go"))
 	if err != nil {

@@ -62,32 +62,32 @@ type DummyDataDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field dummydataDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field dummydataDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field dummydataDB.DummyString {{BasicKind}} (to be completed)
+	// Declation for basic field dummydataDB.DummyString
 	DummyString_Data sql.NullString
 
-	// Declation for basic field dummydataDB.DummyInt {{BasicKind}} (to be completed)
+	// Declation for basic field dummydataDB.DummyInt
 	DummyInt_Data sql.NullInt64
 
-	// Declation for basic field dummydataDB.DummyFloat {{BasicKind}} (to be completed)
+	// Declation for basic field dummydataDB.DummyFloat
 	DummyFloat_Data sql.NullFloat64
 
-	// Declation for basic field dummydataDB.DummyBool bool (to be completed)
+	// Declation for basic field dummydataDB.DummyBool
 	// provide the sql storage for the boolan
 	DummyBool_Data sql.NullBool
 
-	// Declation for basic field dummydataDB.DummyEnumString {{BasicKind}} (to be completed)
+	// Declation for basic field dummydataDB.DummyEnumString
 	DummyEnumString_Data sql.NullString
 
-	// Declation for basic field dummydataDB.DummyEnumInt {{BasicKind}} (to be completed)
+	// Declation for basic field dummydataDB.DummyEnumInt
 	DummyEnumInt_Data sql.NullInt64
 
 	// Declation for basic field dummydataDB.DummyTime
 	DummyTime_Data sql.NullTime
 
-	// Declation for basic field dummydataDB.DummyDuration {{BasicKind}} (to be completed)
+	// Declation for basic field dummydataDB.DummyDuration
 	DummyDuration_Data sql.NullInt64
 	// encoding of pointers
 	DummyDataPointersEnconding
@@ -323,7 +323,7 @@ func (backRepoDummyData *BackRepoDummyDataStruct) CheckoutPhaseOne() (Error erro
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	dummydataInstancesToBeRemovedFromTheStage := make(map[*models.DummyData]struct{})
+	dummydataInstancesToBeRemovedFromTheStage := make(map[*models.DummyData]any)
 	for key, value := range models.Stage.DummyDatas {
 		dummydataInstancesToBeRemovedFromTheStage[key] = value
 	}

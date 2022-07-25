@@ -12,7 +12,7 @@ import (
 )
 
 // swagger:ignore
-type __void struct{}
+type __void any
 
 // needed for creating set of instances in the stage
 var __member __void
@@ -28,16 +28,16 @@ type GongStructInterface interface {
 // StageStruct enables storage of staged instances
 // swagger:ignore
 type StageStruct struct { // insertion point for definition of arrays registering instances
-	ChartConfigurations           map[*ChartConfiguration]struct{}
+	ChartConfigurations           map[*ChartConfiguration]any
 	ChartConfigurations_mapString map[string]*ChartConfiguration
 
-	DataPoints           map[*DataPoint]struct{}
+	DataPoints           map[*DataPoint]any
 	DataPoints_mapString map[string]*DataPoint
 
-	Datasets           map[*Dataset]struct{}
+	Datasets           map[*Dataset]any
 	Datasets_mapString map[string]*Dataset
 
-	Labels           map[*Label]struct{}
+	Labels           map[*Label]any
 	Labels_mapString map[string]*Label
 
 	AllModelsStructCreateCallback AllModelsStructCreateInterface
@@ -81,16 +81,16 @@ type BackRepoInterface interface {
 
 // swagger:ignore instructs the gong compiler (gongc) to avoid this particular struct
 var Stage StageStruct = StageStruct{ // insertion point for array initiatialisation
-	ChartConfigurations:           make(map[*ChartConfiguration]struct{}),
+	ChartConfigurations:           make(map[*ChartConfiguration]any),
 	ChartConfigurations_mapString: make(map[string]*ChartConfiguration),
 
-	DataPoints:           make(map[*DataPoint]struct{}),
+	DataPoints:           make(map[*DataPoint]any),
 	DataPoints_mapString: make(map[string]*DataPoint),
 
-	Datasets:           make(map[*Dataset]struct{}),
+	Datasets:           make(map[*Dataset]any),
 	Datasets_mapString: make(map[string]*Dataset),
 
-	Labels:           make(map[*Label]struct{}),
+	Labels:           make(map[*Label]any),
 	Labels_mapString: make(map[string]*Label),
 
 	// end of insertion point
@@ -114,6 +114,13 @@ func (stage *StageStruct) Checkout() {
 	if stage.BackRepo != nil {
 		stage.BackRepo.Checkout(stage)
 	}
+
+	// insertion point for computing the map of number of instances per gongstruct
+	stage.Map_GongStructName_InstancesNb["ChartConfiguration"] = len(stage.ChartConfigurations)
+	stage.Map_GongStructName_InstancesNb["DataPoint"] = len(stage.DataPoints)
+	stage.Map_GongStructName_InstancesNb["Dataset"] = len(stage.Datasets)
+	stage.Map_GongStructName_InstancesNb["Label"] = len(stage.Labels)
+
 }
 
 // backup generates backup files in the dirPath
@@ -252,41 +259,6 @@ func (chartconfiguration *ChartConfiguration) GetName() (res string) {
 	return chartconfiguration.Name
 }
 
-func (chartconfiguration *ChartConfiguration) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Datasets", "Labels", "ChartType", "Width", "Heigth"}
-	return
-}
-
-func (chartconfiguration *ChartConfiguration) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = chartconfiguration.Name
-	case "Datasets":
-		for idx, __instance__ := range chartconfiguration.Datasets {
-			if idx > 0 {
-				res += "\n"
-			}
-			res += __instance__.Name
-		}
-	case "Labels":
-		for idx, __instance__ := range chartconfiguration.Labels {
-			if idx > 0 {
-				res += "\n"
-			}
-			res += __instance__.Name
-		}
-	case "ChartType":
-		res = chartconfiguration.ChartType.ToCodeString()
-	case "Width":
-		res = fmt.Sprintf("%d", chartconfiguration.Width)
-	case "Heigth":
-		res = fmt.Sprintf("%d", chartconfiguration.Heigth)
-	}
-	return
-}
-
 func (stage *StageStruct) getDataPointOrderedStructWithNameField() []*DataPoint {
 	// have alphabetical order generation
 	datapointOrdered := []*DataPoint{}
@@ -392,23 +364,6 @@ func DeleteORMDataPoint(datapoint *DataPoint) {
 // for satisfaction of GongStruct interface
 func (datapoint *DataPoint) GetName() (res string) {
 	return datapoint.Name
-}
-
-func (datapoint *DataPoint) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Value"}
-	return
-}
-
-func (datapoint *DataPoint) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = datapoint.Name
-	case "Value":
-		res = fmt.Sprintf("%f", datapoint.Value)
-	}
-	return
 }
 
 func (stage *StageStruct) getDatasetOrderedStructWithNameField() []*Dataset {
@@ -518,30 +473,6 @@ func (dataset *Dataset) GetName() (res string) {
 	return dataset.Name
 }
 
-func (dataset *Dataset) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "DataPoints", "Label"}
-	return
-}
-
-func (dataset *Dataset) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = dataset.Name
-	case "DataPoints":
-		for idx, __instance__ := range dataset.DataPoints {
-			if idx > 0 {
-				res += "\n"
-			}
-			res += __instance__.Name
-		}
-	case "Label":
-		res = dataset.Label
-	}
-	return
-}
-
 func (stage *StageStruct) getLabelOrderedStructWithNameField() []*Label {
 	// have alphabetical order generation
 	labelOrdered := []*Label{}
@@ -649,21 +580,6 @@ func (label *Label) GetName() (res string) {
 	return label.Name
 }
 
-func (label *Label) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name"}
-	return
-}
-
-func (label *Label) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = label.Name
-	}
-	return
-}
-
 // swagger:ignore
 type AllModelsStructCreateInterface interface { // insertion point for Callbacks on creation
 	CreateORMChartConfiguration(ChartConfiguration *ChartConfiguration)
@@ -680,16 +596,16 @@ type AllModelsStructDeleteInterface interface { // insertion point for Callbacks
 }
 
 func (stage *StageStruct) Reset() { // insertion point for array reset
-	stage.ChartConfigurations = make(map[*ChartConfiguration]struct{})
+	stage.ChartConfigurations = make(map[*ChartConfiguration]any)
 	stage.ChartConfigurations_mapString = make(map[string]*ChartConfiguration)
 
-	stage.DataPoints = make(map[*DataPoint]struct{})
+	stage.DataPoints = make(map[*DataPoint]any)
 	stage.DataPoints_mapString = make(map[string]*DataPoint)
 
-	stage.Datasets = make(map[*Dataset]struct{})
+	stage.Datasets = make(map[*Dataset]any)
 	stage.Datasets_mapString = make(map[string]*Dataset)
 
-	stage.Labels = make(map[*Label]struct{})
+	stage.Labels = make(map[*Label]any)
 	stage.Labels_mapString = make(map[string]*Label)
 
 }
@@ -793,7 +709,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(chartconfigurationOrdered[:], func(i, j int) bool {
 		return chartconfigurationOrdered[i].Name < chartconfigurationOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of ChartConfiguration")
+	identifiersDecl += "\n\n	// Declarations of staged instances of ChartConfiguration"
 	for idx, chartconfiguration := range chartconfigurationOrdered {
 
 		id = generatesIdentifier("ChartConfiguration", idx, chartconfiguration.Name)
@@ -845,7 +761,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(datapointOrdered[:], func(i, j int) bool {
 		return datapointOrdered[i].Name < datapointOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of DataPoint")
+	identifiersDecl += "\n\n	// Declarations of staged instances of DataPoint"
 	for idx, datapoint := range datapointOrdered {
 
 		id = generatesIdentifier("DataPoint", idx, datapoint.Name)
@@ -883,7 +799,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(datasetOrdered[:], func(i, j int) bool {
 		return datasetOrdered[i].Name < datasetOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Dataset")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Dataset"
 	for idx, dataset := range datasetOrdered {
 
 		id = generatesIdentifier("Dataset", idx, dataset.Name)
@@ -921,7 +837,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(labelOrdered[:], func(i, j int) bool {
 		return labelOrdered[i].Name < labelOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Label")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Label"
 	for idx, label := range labelOrdered {
 
 		id = generatesIdentifier("Label", idx, label.Name)
@@ -1032,6 +948,7 @@ func generatesIdentifier(gongStructName string, idx int, instanceName string) (i
 }
 
 // insertion point of functions that provide maps for reverse associations
+
 // generate function for reverse association maps of ChartConfiguration
 func (stageStruct *StageStruct) CreateReverseMap_ChartConfiguration_Datasets() (res map[*Dataset]*ChartConfiguration) {
 	res = make(map[*Dataset]*ChartConfiguration)
@@ -1057,7 +974,9 @@ func (stageStruct *StageStruct) CreateReverseMap_ChartConfiguration_Labels() (re
 	return
 }
 
+
 // generate function for reverse association maps of DataPoint
+
 // generate function for reverse association maps of Dataset
 func (stageStruct *StageStruct) CreateReverseMap_Dataset_DataPoints() (res map[*DataPoint]*Dataset) {
 	res = make(map[*DataPoint]*Dataset)
@@ -1071,7 +990,352 @@ func (stageStruct *StageStruct) CreateReverseMap_Dataset_DataPoints() (res map[*
 	return
 }
 
+
 // generate function for reverse association maps of Label
+
+// Gongstruct is the type paramter for generated generic function that allows
+// - access to staged instances
+// - navigation between staged instances by going backward association links between gongstruct
+// - full refactoring of Gongstruct identifiers / fields
+type Gongstruct interface {
+	// insertion point for generic types
+	ChartConfiguration | DataPoint | Dataset | Label
+}
+
+type GongstructSet interface {
+	map[any]any |
+		// insertion point for generic types
+		map[*ChartConfiguration]any |
+		map[*DataPoint]any |
+		map[*Dataset]any |
+		map[*Label]any |
+		map[*any]any // because go does not support an extra "|" at the end of type specifications
+}
+
+type GongstructMapString interface {
+	map[any]any |
+		// insertion point for generic types
+		map[string]*ChartConfiguration |
+		map[string]*DataPoint |
+		map[string]*Dataset |
+		map[string]*Label |
+		map[*any]any // because go does not support an extra "|" at the end of type specifications
+}
+
+// GongGetSet returns the set staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GongGetSet[Type GongstructSet]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case map[*ChartConfiguration]any:
+		return any(&Stage.ChartConfigurations).(*Type)
+	case map[*DataPoint]any:
+		return any(&Stage.DataPoints).(*Type)
+	case map[*Dataset]any:
+		return any(&Stage.Datasets).(*Type)
+	case map[*Label]any:
+		return any(&Stage.Labels).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GongGetMap returns the map of staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GongGetMap[Type GongstructMapString]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case map[string]*ChartConfiguration:
+		return any(&Stage.ChartConfigurations_mapString).(*Type)
+	case map[string]*DataPoint:
+		return any(&Stage.DataPoints_mapString).(*Type)
+	case map[string]*Dataset:
+		return any(&Stage.Datasets_mapString).(*Type)
+	case map[string]*Label:
+		return any(&Stage.Labels_mapString).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GetGongstructInstancesSet returns the set staged GongstructType instances
+// it is usefull because it allows refactoring of gongstruct identifier
+func GetGongstructInstancesSet[Type Gongstruct]() *map[*Type]any {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case ChartConfiguration:
+		return any(&Stage.ChartConfigurations).(*map[*Type]any)
+	case DataPoint:
+		return any(&Stage.DataPoints).(*map[*Type]any)
+	case Dataset:
+		return any(&Stage.Datasets).(*map[*Type]any)
+	case Label:
+		return any(&Stage.Labels).(*map[*Type]any)
+	default:
+		return nil
+	}
+}
+
+// GetGongstructInstancesMap returns the map of staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GetGongstructInstancesMap[Type Gongstruct]() *map[string]*Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case ChartConfiguration:
+		return any(&Stage.ChartConfigurations_mapString).(*map[string]*Type)
+	case DataPoint:
+		return any(&Stage.DataPoints_mapString).(*map[string]*Type)
+	case Dataset:
+		return any(&Stage.Datasets_mapString).(*map[string]*Type)
+	case Label:
+		return any(&Stage.Labels_mapString).(*map[string]*Type)
+	default:
+		return nil
+	}
+}
+
+// GetAssociationName is a generic function that returns an instance of Type
+// where each association is filled with an instance whose name is the name of the association
+//
+// This function can be handy for generating navigation function that are refactorable
+func GetAssociationName[Type Gongstruct]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for instance with special fields
+	case ChartConfiguration:
+		return any(&ChartConfiguration{
+			// Initialisation of associations
+			// field is initialized with an instance of Dataset with the name of the field
+			Datasets: []*Dataset{{Name: "Datasets"}},
+			// field is initialized with an instance of Label with the name of the field
+			Labels: []*Label{{Name: "Labels"}},
+		}).(*Type)
+	case DataPoint:
+		return any(&DataPoint{
+			// Initialisation of associations
+		}).(*Type)
+	case Dataset:
+		return any(&Dataset{
+			// Initialisation of associations
+			// field is initialized with an instance of DataPoint with the name of the field
+			DataPoints: []*DataPoint{{Name: "DataPoints"}},
+		}).(*Type)
+	case Label:
+		return any(&Label{
+			// Initialisation of associations
+		}).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GetPointerReverseMap allows backtrack navigation of any Start.Fieldname
+// associations (0..1) that is a pointer from one staged Gongstruct (type Start)
+// instances to another (type End)
+//
+// The function provides a map with keys as instances of End and values to arrays of *Start
+// the map is construed by iterating over all Start instances and populationg keys with End instances
+// and values with slice of Start instances
+func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*Start {
+	var ret Start
+
+	switch any(ret).(type) {
+	// insertion point of functions that provide maps for reverse associations
+	// reverse maps of direct associations of ChartConfiguration
+	case ChartConfiguration:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of DataPoint
+	case DataPoint:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Dataset
+	case Dataset:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Label
+	case Label:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	}
+	return nil
+}
+
+// GetSliceOfPointersReverseMap allows backtrack navigation of any Start.Fieldname
+// associations (0..N) between one staged Gongstruct instances and many others
+//
+// The function provides a map with keys as instances of End and values to *Start instances
+// the map is construed by iterating over all Start instances and populating keys with End instances
+// and values with the Start instances
+func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string) map[*End]*Start {
+	var ret Start
+
+	switch any(ret).(type) {
+	// insertion point of functions that provide maps for reverse associations
+	// reverse maps of direct associations of ChartConfiguration
+	case ChartConfiguration:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "Datasets":
+			res := make(map[*Dataset]*ChartConfiguration)
+			for chartconfiguration := range Stage.ChartConfigurations {
+				for _, dataset_ := range chartconfiguration.Datasets {
+					res[dataset_] = chartconfiguration
+				}
+			}
+			return any(res).(map[*End]*Start)
+		case "Labels":
+			res := make(map[*Label]*ChartConfiguration)
+			for chartconfiguration := range Stage.ChartConfigurations {
+				for _, label_ := range chartconfiguration.Labels {
+					res[label_] = chartconfiguration
+				}
+			}
+			return any(res).(map[*End]*Start)
+		}
+	// reverse maps of direct associations of DataPoint
+	case DataPoint:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Dataset
+	case Dataset:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "DataPoints":
+			res := make(map[*DataPoint]*Dataset)
+			for dataset := range Stage.Datasets {
+				for _, datapoint_ := range dataset.DataPoints {
+					res[datapoint_] = dataset
+				}
+			}
+			return any(res).(map[*End]*Start)
+		}
+	// reverse maps of direct associations of Label
+	case Label:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	}
+	return nil
+}
+
+// GetGongstructName returns the name of the Gongstruct
+// this can be usefull if one want program robust to refactoring
+func GetGongstructName[Type Gongstruct]() (res string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case ChartConfiguration:
+		res = "ChartConfiguration"
+	case DataPoint:
+		res = "DataPoint"
+	case Dataset:
+		res = "Dataset"
+	case Label:
+		res = "Label"
+	}
+	return res
+}
+
+// GetFields return the array of the fields
+func GetFields[Type Gongstruct]() (res []string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case ChartConfiguration:
+		res = []string{"Name", "Datasets", "Labels", "ChartType", "Width", "Heigth"}
+	case DataPoint:
+		res = []string{"Name", "Value"}
+	case Dataset:
+		res = []string{"Name", "DataPoints", "Label"}
+	case Label:
+		res = []string{"Name"}
+	}
+	return
+}
+
+func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res string) {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct field value
+	case ChartConfiguration:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(ChartConfiguration).Name
+		case "Datasets":
+			for idx, __instance__ := range any(instance).(ChartConfiguration).Datasets {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		case "Labels":
+			for idx, __instance__ := range any(instance).(ChartConfiguration).Labels {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		case "ChartType":
+			enum := any(instance).(ChartConfiguration).ChartType
+			res = enum.ToCodeString()
+		case "Width":
+			res = fmt.Sprintf("%d", any(instance).(ChartConfiguration).Width)
+		case "Heigth":
+			res = fmt.Sprintf("%d", any(instance).(ChartConfiguration).Heigth)
+		}
+	case DataPoint:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(DataPoint).Name
+		case "Value":
+			res = fmt.Sprintf("%f", any(instance).(DataPoint).Value)
+		}
+	case Dataset:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(Dataset).Name
+		case "DataPoints":
+			for idx, __instance__ := range any(instance).(Dataset).DataPoints {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		case "Label":
+			res = any(instance).(Dataset).Label
+		}
+	case Label:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(Label).Name
+		}
+	}
+	return
+}
 
 // insertion point of enum utility functions
 // Utility function for ChartType
@@ -1082,18 +1346,18 @@ func (charttype ChartType) ToString() (res string) {
 	// migration of former implementation of enum
 	switch charttype {
 	// insertion code per enum code
-	case BAR:
-		res = "bar"
-	case DOUGHNUT:
-		res = "doughnut"
 	case LINE:
 		res = "line"
+	case BAR:
+		res = "bar"
+	case RADAR:
+		res = "radar"
 	case PIE:
 		res = "pie"
 	case POLAR_AREA:
 		res = "polarArea"
-	case RADAR:
-		res = "radar"
+	case DOUGHNUT:
+		res = "doughnut"
 	}
 	return
 }
@@ -1102,18 +1366,18 @@ func (charttype *ChartType) FromString(input string) {
 
 	switch input {
 	// insertion code per enum code
-	case "bar":
-		*charttype = BAR
-	case "doughnut":
-		*charttype = DOUGHNUT
 	case "line":
 		*charttype = LINE
+	case "bar":
+		*charttype = BAR
+	case "radar":
+		*charttype = RADAR
 	case "pie":
 		*charttype = PIE
 	case "polarArea":
 		*charttype = POLAR_AREA
-	case "radar":
-		*charttype = RADAR
+	case "doughnut":
+		*charttype = DOUGHNUT
 	}
 }
 
@@ -1121,18 +1385,18 @@ func (charttype *ChartType) ToCodeString() (res string) {
 
 	switch *charttype {
 	// insertion code per enum code
-	case BAR:
-		res = "BAR"
-	case DOUGHNUT:
-		res = "DOUGHNUT"
 	case LINE:
 		res = "LINE"
+	case BAR:
+		res = "BAR"
+	case RADAR:
+		res = "RADAR"
 	case PIE:
 		res = "PIE"
 	case POLAR_AREA:
 		res = "POLAR_AREA"
-	case RADAR:
-		res = "RADAR"
+	case DOUGHNUT:
+		res = "DOUGHNUT"
 	}
 	return
 }

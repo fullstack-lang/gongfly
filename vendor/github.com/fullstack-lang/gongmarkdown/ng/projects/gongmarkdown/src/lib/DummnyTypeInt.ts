@@ -1,8 +1,8 @@
 // generated from ng_file_enum.ts.go
 export enum DummnyTypeInt {
 	// insertion point	
-	ONE = 1,
-	TWO = 2,
+	ONE = 0,
+	TWO = 1,
 }
 
 export interface DummnyTypeIntSelect {

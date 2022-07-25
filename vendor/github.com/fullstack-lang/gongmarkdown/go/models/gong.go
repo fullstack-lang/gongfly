@@ -12,7 +12,7 @@ import (
 )
 
 // swagger:ignore
-type __void struct{}
+type __void any
 
 // needed for creating set of instances in the stage
 var __member __void
@@ -28,22 +28,22 @@ type GongStructInterface interface {
 // StageStruct enables storage of staged instances
 // swagger:ignore
 type StageStruct struct { // insertion point for definition of arrays registering instances
-	AnotherDummyDatas           map[*AnotherDummyData]struct{}
+	AnotherDummyDatas           map[*AnotherDummyData]any
 	AnotherDummyDatas_mapString map[string]*AnotherDummyData
 
-	Cells           map[*Cell]struct{}
+	Cells           map[*Cell]any
 	Cells_mapString map[string]*Cell
 
-	DummyDatas           map[*DummyData]struct{}
+	DummyDatas           map[*DummyData]any
 	DummyDatas_mapString map[string]*DummyData
 
-	Elements           map[*Element]struct{}
+	Elements           map[*Element]any
 	Elements_mapString map[string]*Element
 
-	MarkdownContents           map[*MarkdownContent]struct{}
+	MarkdownContents           map[*MarkdownContent]any
 	MarkdownContents_mapString map[string]*MarkdownContent
 
-	Rows           map[*Row]struct{}
+	Rows           map[*Row]any
 	Rows_mapString map[string]*Row
 
 	AllModelsStructCreateCallback AllModelsStructCreateInterface
@@ -91,22 +91,22 @@ type BackRepoInterface interface {
 
 // swagger:ignore instructs the gong compiler (gongc) to avoid this particular struct
 var Stage StageStruct = StageStruct{ // insertion point for array initiatialisation
-	AnotherDummyDatas:           make(map[*AnotherDummyData]struct{}),
+	AnotherDummyDatas:           make(map[*AnotherDummyData]any),
 	AnotherDummyDatas_mapString: make(map[string]*AnotherDummyData),
 
-	Cells:           make(map[*Cell]struct{}),
+	Cells:           make(map[*Cell]any),
 	Cells_mapString: make(map[string]*Cell),
 
-	DummyDatas:           make(map[*DummyData]struct{}),
+	DummyDatas:           make(map[*DummyData]any),
 	DummyDatas_mapString: make(map[string]*DummyData),
 
-	Elements:           make(map[*Element]struct{}),
+	Elements:           make(map[*Element]any),
 	Elements_mapString: make(map[string]*Element),
 
-	MarkdownContents:           make(map[*MarkdownContent]struct{}),
+	MarkdownContents:           make(map[*MarkdownContent]any),
 	MarkdownContents_mapString: make(map[string]*MarkdownContent),
 
-	Rows:           make(map[*Row]struct{}),
+	Rows:           make(map[*Row]any),
 	Rows_mapString: make(map[string]*Row),
 
 	// end of insertion point
@@ -132,6 +132,15 @@ func (stage *StageStruct) Checkout() {
 	if stage.BackRepo != nil {
 		stage.BackRepo.Checkout(stage)
 	}
+
+	// insertion point for computing the map of number of instances per gongstruct
+	stage.Map_GongStructName_InstancesNb["AnotherDummyData"] = len(stage.AnotherDummyDatas)
+	stage.Map_GongStructName_InstancesNb["Cell"] = len(stage.Cells)
+	stage.Map_GongStructName_InstancesNb["DummyData"] = len(stage.DummyDatas)
+	stage.Map_GongStructName_InstancesNb["Element"] = len(stage.Elements)
+	stage.Map_GongStructName_InstancesNb["MarkdownContent"] = len(stage.MarkdownContents)
+	stage.Map_GongStructName_InstancesNb["Row"] = len(stage.Rows)
+
 }
 
 // backup generates backup files in the dirPath
@@ -270,21 +279,6 @@ func (anotherdummydata *AnotherDummyData) GetName() (res string) {
 	return anotherdummydata.Name
 }
 
-func (anotherdummydata *AnotherDummyData) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name"}
-	return
-}
-
-func (anotherdummydata *AnotherDummyData) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = anotherdummydata.Name
-	}
-	return
-}
-
 func (stage *StageStruct) getCellOrderedStructWithNameField() []*Cell {
 	// have alphabetical order generation
 	cellOrdered := []*Cell{}
@@ -390,21 +384,6 @@ func DeleteORMCell(cell *Cell) {
 // for satisfaction of GongStruct interface
 func (cell *Cell) GetName() (res string) {
 	return cell.Name
-}
-
-func (cell *Cell) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name"}
-	return
-}
-
-func (cell *Cell) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = cell.Name
-	}
-	return
 }
 
 func (stage *StageStruct) getDummyDataOrderedStructWithNameField() []*DummyData {
@@ -514,41 +493,6 @@ func (dummydata *DummyData) GetName() (res string) {
 	return dummydata.Name
 }
 
-func (dummydata *DummyData) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "DummyString", "DummyInt", "DummyFloat", "DummyBool", "DummyEnumString", "DummyEnumInt", "DummyTime", "DummyDuration", "DummyPointerToGongStruct"}
-	return
-}
-
-func (dummydata *DummyData) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = dummydata.Name
-	case "DummyString":
-		res = dummydata.DummyString
-	case "DummyInt":
-		res = fmt.Sprintf("%d", dummydata.DummyInt)
-	case "DummyFloat":
-		res = fmt.Sprintf("%f", dummydata.DummyFloat)
-	case "DummyBool":
-		res = fmt.Sprintf("%t", dummydata.DummyBool)
-	case "DummyEnumString":
-		res = dummydata.DummyEnumString.ToCodeString()
-	case "DummyEnumInt":
-		res = dummydata.DummyEnumInt.ToCodeString()
-	case "DummyTime":
-		res = dummydata.DummyTime.String()
-	case "DummyDuration":
-		res = fmt.Sprintf("%d", dummydata.DummyDuration)
-	case "DummyPointerToGongStruct":
-		if dummydata.DummyPointerToGongStruct != nil {
-			res = dummydata.DummyPointerToGongStruct.Name
-		}
-	}
-	return
-}
-
 func (stage *StageStruct) getElementOrderedStructWithNameField() []*Element {
 	// have alphabetical order generation
 	elementOrdered := []*Element{}
@@ -654,39 +598,6 @@ func DeleteORMElement(element *Element) {
 // for satisfaction of GongStruct interface
 func (element *Element) GetName() (res string) {
 	return element.Name
-}
-
-func (element *Element) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Content", "Type", "SubElements", "Rows"}
-	return
-}
-
-func (element *Element) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = element.Name
-	case "Content":
-		res = element.Content
-	case "Type":
-		res = element.Type.ToCodeString()
-	case "SubElements":
-		for idx, __instance__ := range element.SubElements {
-			if idx > 0 {
-				res += "\n"
-			}
-			res += __instance__.Name
-		}
-	case "Rows":
-		for idx, __instance__ := range element.Rows {
-			if idx > 0 {
-				res += "\n"
-			}
-			res += __instance__.Name
-		}
-	}
-	return
 }
 
 func (stage *StageStruct) getMarkdownContentOrderedStructWithNameField() []*MarkdownContent {
@@ -796,27 +707,6 @@ func (markdowncontent *MarkdownContent) GetName() (res string) {
 	return markdowncontent.Name
 }
 
-func (markdowncontent *MarkdownContent) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Content", "Root"}
-	return
-}
-
-func (markdowncontent *MarkdownContent) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = markdowncontent.Name
-	case "Content":
-		res = markdowncontent.Content
-	case "Root":
-		if markdowncontent.Root != nil {
-			res = markdowncontent.Root.Name
-		}
-	}
-	return
-}
-
 func (stage *StageStruct) getRowOrderedStructWithNameField() []*Row {
 	// have alphabetical order generation
 	rowOrdered := []*Row{}
@@ -924,28 +814,6 @@ func (row *Row) GetName() (res string) {
 	return row.Name
 }
 
-func (row *Row) GetFields() (res []string) {
-	// list of fields
-	res = []string{"Name", "Cells"}
-	return
-}
-
-func (row *Row) GetFieldStringValue(fieldName string) (res string) {
-	switch fieldName {
-	// string value of fields
-	case "Name":
-		res = row.Name
-	case "Cells":
-		for idx, __instance__ := range row.Cells {
-			if idx > 0 {
-				res += "\n"
-			}
-			res += __instance__.Name
-		}
-	}
-	return
-}
-
 // swagger:ignore
 type AllModelsStructCreateInterface interface { // insertion point for Callbacks on creation
 	CreateORMAnotherDummyData(AnotherDummyData *AnotherDummyData)
@@ -966,22 +834,22 @@ type AllModelsStructDeleteInterface interface { // insertion point for Callbacks
 }
 
 func (stage *StageStruct) Reset() { // insertion point for array reset
-	stage.AnotherDummyDatas = make(map[*AnotherDummyData]struct{})
+	stage.AnotherDummyDatas = make(map[*AnotherDummyData]any)
 	stage.AnotherDummyDatas_mapString = make(map[string]*AnotherDummyData)
 
-	stage.Cells = make(map[*Cell]struct{})
+	stage.Cells = make(map[*Cell]any)
 	stage.Cells_mapString = make(map[string]*Cell)
 
-	stage.DummyDatas = make(map[*DummyData]struct{})
+	stage.DummyDatas = make(map[*DummyData]any)
 	stage.DummyDatas_mapString = make(map[string]*DummyData)
 
-	stage.Elements = make(map[*Element]struct{})
+	stage.Elements = make(map[*Element]any)
 	stage.Elements_mapString = make(map[string]*Element)
 
-	stage.MarkdownContents = make(map[*MarkdownContent]struct{})
+	stage.MarkdownContents = make(map[*MarkdownContent]any)
 	stage.MarkdownContents_mapString = make(map[string]*MarkdownContent)
 
-	stage.Rows = make(map[*Row]struct{})
+	stage.Rows = make(map[*Row]any)
 	stage.Rows_mapString = make(map[string]*Row)
 
 }
@@ -1091,7 +959,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(anotherdummydataOrdered[:], func(i, j int) bool {
 		return anotherdummydataOrdered[i].Name < anotherdummydataOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of AnotherDummyData")
+	identifiersDecl += "\n\n	// Declarations of staged instances of AnotherDummyData"
 	for idx, anotherdummydata := range anotherdummydataOrdered {
 
 		id = generatesIdentifier("AnotherDummyData", idx, anotherdummydata.Name)
@@ -1123,7 +991,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(cellOrdered[:], func(i, j int) bool {
 		return cellOrdered[i].Name < cellOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Cell")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Cell"
 	for idx, cell := range cellOrdered {
 
 		id = generatesIdentifier("Cell", idx, cell.Name)
@@ -1155,7 +1023,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(dummydataOrdered[:], func(i, j int) bool {
 		return dummydataOrdered[i].Name < dummydataOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of DummyData")
+	identifiersDecl += "\n\n	// Declarations of staged instances of DummyData"
 	for idx, dummydata := range dummydataOrdered {
 
 		id = generatesIdentifier("DummyData", idx, dummydata.Name)
@@ -1237,7 +1105,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(elementOrdered[:], func(i, j int) bool {
 		return elementOrdered[i].Name < elementOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Element")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Element"
 	for idx, element := range elementOrdered {
 
 		id = generatesIdentifier("Element", idx, element.Name)
@@ -1283,7 +1151,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(markdowncontentOrdered[:], func(i, j int) bool {
 		return markdowncontentOrdered[i].Name < markdowncontentOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of MarkdownContent")
+	identifiersDecl += "\n\n	// Declarations of staged instances of MarkdownContent"
 	for idx, markdowncontent := range markdowncontentOrdered {
 
 		id = generatesIdentifier("MarkdownContent", idx, markdowncontent.Name)
@@ -1321,7 +1189,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(rowOrdered[:], func(i, j int) bool {
 		return rowOrdered[i].Name < rowOrdered[j].Name
 	})
-	identifiersDecl += fmt.Sprintf("\n\n	// Declarations of staged instances of Row")
+	identifiersDecl += "\n\n	// Declarations of staged instances of Row"
 	for idx, row := range rowOrdered {
 
 		id = generatesIdentifier("Row", idx, row.Name)
@@ -1468,8 +1336,11 @@ func generatesIdentifier(gongStructName string, idx int, instanceName string) (i
 }
 
 // insertion point of functions that provide maps for reverse associations
+
 // generate function for reverse association maps of AnotherDummyData
+
 // generate function for reverse association maps of Cell
+
 // generate function for reverse association maps of DummyData
 func (stageStruct *StageStruct) CreateReverseMap_DummyData_DummyPointerToGongStruct() (res map[*AnotherDummyData][]*DummyData) {
 	res = make(map[*AnotherDummyData][]*DummyData)
@@ -1517,6 +1388,7 @@ func (stageStruct *StageStruct) CreateReverseMap_Element_Rows() (res map[*Row]*E
 	return
 }
 
+
 // generate function for reverse association maps of MarkdownContent
 func (stageStruct *StageStruct) CreateReverseMap_MarkdownContent_Root() (res map[*Element][]*MarkdownContent) {
 	res = make(map[*Element][]*MarkdownContent)
@@ -1553,6 +1425,478 @@ func (stageStruct *StageStruct) CreateReverseMap_Row_Cells() (res map[*Cell]*Row
 }
 
 
+// Gongstruct is the type paramter for generated generic function that allows
+// - access to staged instances
+// - navigation between staged instances by going backward association links between gongstruct
+// - full refactoring of Gongstruct identifiers / fields
+type Gongstruct interface {
+	// insertion point for generic types
+	AnotherDummyData | Cell | DummyData | Element | MarkdownContent | Row
+}
+
+type GongstructSet interface {
+	map[any]any |
+		// insertion point for generic types
+		map[*AnotherDummyData]any |
+		map[*Cell]any |
+		map[*DummyData]any |
+		map[*Element]any |
+		map[*MarkdownContent]any |
+		map[*Row]any |
+		map[*any]any // because go does not support an extra "|" at the end of type specifications
+}
+
+type GongstructMapString interface {
+	map[any]any |
+		// insertion point for generic types
+		map[string]*AnotherDummyData |
+		map[string]*Cell |
+		map[string]*DummyData |
+		map[string]*Element |
+		map[string]*MarkdownContent |
+		map[string]*Row |
+		map[*any]any // because go does not support an extra "|" at the end of type specifications
+}
+
+// GongGetSet returns the set staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GongGetSet[Type GongstructSet]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case map[*AnotherDummyData]any:
+		return any(&Stage.AnotherDummyDatas).(*Type)
+	case map[*Cell]any:
+		return any(&Stage.Cells).(*Type)
+	case map[*DummyData]any:
+		return any(&Stage.DummyDatas).(*Type)
+	case map[*Element]any:
+		return any(&Stage.Elements).(*Type)
+	case map[*MarkdownContent]any:
+		return any(&Stage.MarkdownContents).(*Type)
+	case map[*Row]any:
+		return any(&Stage.Rows).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GongGetMap returns the map of staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GongGetMap[Type GongstructMapString]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case map[string]*AnotherDummyData:
+		return any(&Stage.AnotherDummyDatas_mapString).(*Type)
+	case map[string]*Cell:
+		return any(&Stage.Cells_mapString).(*Type)
+	case map[string]*DummyData:
+		return any(&Stage.DummyDatas_mapString).(*Type)
+	case map[string]*Element:
+		return any(&Stage.Elements_mapString).(*Type)
+	case map[string]*MarkdownContent:
+		return any(&Stage.MarkdownContents_mapString).(*Type)
+	case map[string]*Row:
+		return any(&Stage.Rows_mapString).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GetGongstructInstancesSet returns the set staged GongstructType instances
+// it is usefull because it allows refactoring of gongstruct identifier
+func GetGongstructInstancesSet[Type Gongstruct]() *map[*Type]any {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case AnotherDummyData:
+		return any(&Stage.AnotherDummyDatas).(*map[*Type]any)
+	case Cell:
+		return any(&Stage.Cells).(*map[*Type]any)
+	case DummyData:
+		return any(&Stage.DummyDatas).(*map[*Type]any)
+	case Element:
+		return any(&Stage.Elements).(*map[*Type]any)
+	case MarkdownContent:
+		return any(&Stage.MarkdownContents).(*map[*Type]any)
+	case Row:
+		return any(&Stage.Rows).(*map[*Type]any)
+	default:
+		return nil
+	}
+}
+
+// GetGongstructInstancesMap returns the map of staged GongstructType instances
+// it is usefull because it allows refactoring of gong struct identifier
+func GetGongstructInstancesMap[Type Gongstruct]() *map[string]*Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get functions
+	case AnotherDummyData:
+		return any(&Stage.AnotherDummyDatas_mapString).(*map[string]*Type)
+	case Cell:
+		return any(&Stage.Cells_mapString).(*map[string]*Type)
+	case DummyData:
+		return any(&Stage.DummyDatas_mapString).(*map[string]*Type)
+	case Element:
+		return any(&Stage.Elements_mapString).(*map[string]*Type)
+	case MarkdownContent:
+		return any(&Stage.MarkdownContents_mapString).(*map[string]*Type)
+	case Row:
+		return any(&Stage.Rows_mapString).(*map[string]*Type)
+	default:
+		return nil
+	}
+}
+
+// GetAssociationName is a generic function that returns an instance of Type
+// where each association is filled with an instance whose name is the name of the association
+//
+// This function can be handy for generating navigation function that are refactorable
+func GetAssociationName[Type Gongstruct]() *Type {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for instance with special fields
+	case AnotherDummyData:
+		return any(&AnotherDummyData{
+			// Initialisation of associations
+		}).(*Type)
+	case Cell:
+		return any(&Cell{
+			// Initialisation of associations
+		}).(*Type)
+	case DummyData:
+		return any(&DummyData{
+			// Initialisation of associations
+			// field is initialized with an instance of AnotherDummyData with the name of the field
+			DummyPointerToGongStruct: &AnotherDummyData{Name: "DummyPointerToGongStruct"},
+		}).(*Type)
+	case Element:
+		return any(&Element{
+			// Initialisation of associations
+			// field is initialized with an instance of Element with the name of the field
+			SubElements: []*Element{{Name: "SubElements"}},
+			// field is initialized with an instance of Row with the name of the field
+			Rows: []*Row{{Name: "Rows"}},
+		}).(*Type)
+	case MarkdownContent:
+		return any(&MarkdownContent{
+			// Initialisation of associations
+			// field is initialized with an instance of Element with the name of the field
+			Root: &Element{Name: "Root"},
+		}).(*Type)
+	case Row:
+		return any(&Row{
+			// Initialisation of associations
+			// field is initialized with an instance of Cell with the name of the field
+			Cells: []*Cell{{Name: "Cells"}},
+		}).(*Type)
+	default:
+		return nil
+	}
+}
+
+// GetPointerReverseMap allows backtrack navigation of any Start.Fieldname
+// associations (0..1) that is a pointer from one staged Gongstruct (type Start)
+// instances to another (type End)
+//
+// The function provides a map with keys as instances of End and values to arrays of *Start
+// the map is construed by iterating over all Start instances and populationg keys with End instances
+// and values with slice of Start instances
+func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*Start {
+	var ret Start
+
+	switch any(ret).(type) {
+	// insertion point of functions that provide maps for reverse associations
+	// reverse maps of direct associations of AnotherDummyData
+	case AnotherDummyData:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Cell
+	case Cell:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of DummyData
+	case DummyData:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "DummyPointerToGongStruct":
+			res := make(map[*AnotherDummyData][]*DummyData)
+			for dummydata := range Stage.DummyDatas {
+				if dummydata.DummyPointerToGongStruct != nil {
+					anotherdummydata_ := dummydata.DummyPointerToGongStruct
+					var dummydatas []*DummyData
+					_, ok := res[anotherdummydata_]
+					if ok {
+						dummydatas = res[anotherdummydata_]
+					} else {
+						dummydatas = make([]*DummyData, 0)
+					}
+					dummydatas = append(dummydatas, dummydata)
+					res[anotherdummydata_] = dummydatas
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	// reverse maps of direct associations of Element
+	case Element:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of MarkdownContent
+	case MarkdownContent:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "Root":
+			res := make(map[*Element][]*MarkdownContent)
+			for markdowncontent := range Stage.MarkdownContents {
+				if markdowncontent.Root != nil {
+					element_ := markdowncontent.Root
+					var markdowncontents []*MarkdownContent
+					_, ok := res[element_]
+					if ok {
+						markdowncontents = res[element_]
+					} else {
+						markdowncontents = make([]*MarkdownContent, 0)
+					}
+					markdowncontents = append(markdowncontents, markdowncontent)
+					res[element_] = markdowncontents
+				}
+			}
+			return any(res).(map[*End][]*Start)
+		}
+	// reverse maps of direct associations of Row
+	case Row:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	}
+	return nil
+}
+
+// GetSliceOfPointersReverseMap allows backtrack navigation of any Start.Fieldname
+// associations (0..N) between one staged Gongstruct instances and many others
+//
+// The function provides a map with keys as instances of End and values to *Start instances
+// the map is construed by iterating over all Start instances and populating keys with End instances
+// and values with the Start instances
+func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string) map[*End]*Start {
+	var ret Start
+
+	switch any(ret).(type) {
+	// insertion point of functions that provide maps for reverse associations
+	// reverse maps of direct associations of AnotherDummyData
+	case AnotherDummyData:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Cell
+	case Cell:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of DummyData
+	case DummyData:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Element
+	case Element:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "SubElements":
+			res := make(map[*Element]*Element)
+			for element := range Stage.Elements {
+				for _, element_ := range element.SubElements {
+					res[element_] = element
+				}
+			}
+			return any(res).(map[*End]*Start)
+		case "Rows":
+			res := make(map[*Row]*Element)
+			for element := range Stage.Elements {
+				for _, row_ := range element.Rows {
+					res[row_] = element
+				}
+			}
+			return any(res).(map[*End]*Start)
+		}
+	// reverse maps of direct associations of MarkdownContent
+	case MarkdownContent:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Row
+	case Row:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "Cells":
+			res := make(map[*Cell]*Row)
+			for row := range Stage.Rows {
+				for _, cell_ := range row.Cells {
+					res[cell_] = row
+				}
+			}
+			return any(res).(map[*End]*Start)
+		}
+	}
+	return nil
+}
+
+// GetGongstructName returns the name of the Gongstruct
+// this can be usefull if one want program robust to refactoring
+func GetGongstructName[Type Gongstruct]() (res string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case AnotherDummyData:
+		res = "AnotherDummyData"
+	case Cell:
+		res = "Cell"
+	case DummyData:
+		res = "DummyData"
+	case Element:
+		res = "Element"
+	case MarkdownContent:
+		res = "MarkdownContent"
+	case Row:
+		res = "Row"
+	}
+	return res
+}
+
+// GetFields return the array of the fields
+func GetFields[Type Gongstruct]() (res []string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case AnotherDummyData:
+		res = []string{"Name"}
+	case Cell:
+		res = []string{"Name"}
+	case DummyData:
+		res = []string{"Name", "DummyString", "DummyInt", "DummyFloat", "DummyBool", "DummyEnumString", "DummyEnumInt", "DummyTime", "DummyDuration", "DummyPointerToGongStruct"}
+	case Element:
+		res = []string{"Name", "Content", "Type", "SubElements", "Rows"}
+	case MarkdownContent:
+		res = []string{"Name", "Content", "Root"}
+	case Row:
+		res = []string{"Name", "Cells"}
+	}
+	return
+}
+
+func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res string) {
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct field value
+	case AnotherDummyData:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(AnotherDummyData).Name
+		}
+	case Cell:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(Cell).Name
+		}
+	case DummyData:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(DummyData).Name
+		case "DummyString":
+			res = any(instance).(DummyData).DummyString
+		case "DummyInt":
+			res = fmt.Sprintf("%d", any(instance).(DummyData).DummyInt)
+		case "DummyFloat":
+			res = fmt.Sprintf("%f", any(instance).(DummyData).DummyFloat)
+		case "DummyBool":
+			res = fmt.Sprintf("%t", any(instance).(DummyData).DummyBool)
+		case "DummyEnumString":
+			enum := any(instance).(DummyData).DummyEnumString
+			res = enum.ToCodeString()
+		case "DummyEnumInt":
+			enum := any(instance).(DummyData).DummyEnumInt
+			res = enum.ToCodeString()
+		case "DummyTime":
+			res = any(instance).(DummyData).DummyTime.String()
+		case "DummyDuration":
+			res = fmt.Sprintf("%d", any(instance).(DummyData).DummyDuration)
+		case "DummyPointerToGongStruct":
+			if any(instance).(DummyData).DummyPointerToGongStruct != nil {
+				res = any(instance).(DummyData).DummyPointerToGongStruct.Name
+			}
+		}
+	case Element:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(Element).Name
+		case "Content":
+			res = any(instance).(Element).Content
+		case "Type":
+			enum := any(instance).(Element).Type
+			res = enum.ToCodeString()
+		case "SubElements":
+			for idx, __instance__ := range any(instance).(Element).SubElements {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		case "Rows":
+			for idx, __instance__ := range any(instance).(Element).Rows {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		}
+	case MarkdownContent:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(MarkdownContent).Name
+		case "Content":
+			res = any(instance).(MarkdownContent).Content
+		case "Root":
+			if any(instance).(MarkdownContent).Root != nil {
+				res = any(instance).(MarkdownContent).Root.Name
+			}
+		}
+	case Row:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = any(instance).(Row).Name
+		case "Cells":
+			for idx, __instance__ := range any(instance).(Row).Cells {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		}
+	}
+	return
+}
+
 // insertion point of enum utility functions
 // Utility function for DummnyTypeInt
 // if enum values are string, it is stored with the value
@@ -1563,9 +1907,9 @@ func (dummnytypeint DummnyTypeInt) ToInt() (res int) {
 	switch dummnytypeint {
 	// insertion code per enum code
 	case ONE:
-		res = 1
+		res = 0
 	case TWO:
-		res = 2
+		res = 1
 	}
 	return
 }
@@ -1574,9 +1918,9 @@ func (dummnytypeint *DummnyTypeInt) FromInt(input int) {
 
 	switch input {
 	// insertion code per enum code
-	case 1:
+	case 0:
 		*dummnytypeint = ONE
-	case 2:
+	case 1:
 		*dummnytypeint = TWO
 	}
 }
@@ -1603,10 +1947,10 @@ func (elementtype ElementType) ToString() (res string) {
 	// insertion code per enum code
 	case PARAGRAPH:
 		res = "Paragraph"
-	case TABLE:
-		res = "Table"
 	case TITLE:
 		res = "Title"
+	case TABLE:
+		res = "Table"
 	}
 	return
 }
@@ -1617,10 +1961,10 @@ func (elementtype *ElementType) FromString(input string) {
 	// insertion code per enum code
 	case "Paragraph":
 		*elementtype = PARAGRAPH
-	case "Table":
-		*elementtype = TABLE
 	case "Title":
 		*elementtype = TITLE
+	case "Table":
+		*elementtype = TABLE
 	}
 }
 
@@ -1630,10 +1974,10 @@ func (elementtype *ElementType) ToCodeString() (res string) {
 	// insertion code per enum code
 	case PARAGRAPH:
 		res = "PARAGRAPH"
-	case TABLE:
-		res = "TABLE"
 	case TITLE:
 		res = "TITLE"
+	case TABLE:
+		res = "TABLE"
 	}
 	return
 }

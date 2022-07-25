@@ -64,10 +64,10 @@ type DatasetDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field datasetDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field datasetDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field datasetDB.Label {{BasicKind}} (to be completed)
+	// Declation for basic field datasetDB.Label
 	Label_Data sql.NullString
 	// encoding of pointers
 	DatasetPointersEnconding
@@ -292,7 +292,7 @@ func (backRepoDataset *BackRepoDatasetStruct) CheckoutPhaseOne() (Error error) {
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	datasetInstancesToBeRemovedFromTheStage := make(map[*models.Dataset]struct{})
+	datasetInstancesToBeRemovedFromTheStage := make(map[*models.Dataset]any)
 	for key, value := range models.Stage.Datasets {
 		datasetInstancesToBeRemovedFromTheStage[key] = value
 	}

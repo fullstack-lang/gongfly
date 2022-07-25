@@ -62,37 +62,37 @@ type VLineDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field vlineDB.StartLat {{BasicKind}} (to be completed)
+	// Declation for basic field vlineDB.StartLat
 	StartLat_Data sql.NullFloat64
 
-	// Declation for basic field vlineDB.StartLng {{BasicKind}} (to be completed)
+	// Declation for basic field vlineDB.StartLng
 	StartLng_Data sql.NullFloat64
 
-	// Declation for basic field vlineDB.EndLat {{BasicKind}} (to be completed)
+	// Declation for basic field vlineDB.EndLat
 	EndLat_Data sql.NullFloat64
 
-	// Declation for basic field vlineDB.EndLng {{BasicKind}} (to be completed)
+	// Declation for basic field vlineDB.EndLng
 	EndLng_Data sql.NullFloat64
 
-	// Declation for basic field vlineDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field vlineDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field vlineDB.ColorEnum {{BasicKind}} (to be completed)
+	// Declation for basic field vlineDB.ColorEnum
 	ColorEnum_Data sql.NullString
 
-	// Declation for basic field vlineDB.DashStyleEnum {{BasicKind}} (to be completed)
+	// Declation for basic field vlineDB.DashStyleEnum
 	DashStyleEnum_Data sql.NullString
 
-	// Declation for basic field vlineDB.IsTransmitting {{BasicKind}} (to be completed)
+	// Declation for basic field vlineDB.IsTransmitting
 	IsTransmitting_Data sql.NullString
 
-	// Declation for basic field vlineDB.Message {{BasicKind}} (to be completed)
+	// Declation for basic field vlineDB.Message
 	Message_Data sql.NullString
 
-	// Declation for basic field vlineDB.IsTransmittingBackward {{BasicKind}} (to be completed)
+	// Declation for basic field vlineDB.IsTransmittingBackward
 	IsTransmittingBackward_Data sql.NullString
 
-	// Declation for basic field vlineDB.MessageBackward {{BasicKind}} (to be completed)
+	// Declation for basic field vlineDB.MessageBackward
 	MessageBackward_Data sql.NullString
 	// encoding of pointers
 	VLinePointersEnconding
@@ -334,7 +334,7 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseOne() (Error error) {
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	vlineInstancesToBeRemovedFromTheStage := make(map[*models.VLine]struct{})
+	vlineInstancesToBeRemovedFromTheStage := make(map[*models.VLine]any)
 	for key, value := range models.Stage.VLines {
 		vlineInstancesToBeRemovedFromTheStage[key] = value
 	}

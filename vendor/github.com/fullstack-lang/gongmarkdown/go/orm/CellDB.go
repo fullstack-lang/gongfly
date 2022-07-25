@@ -64,7 +64,7 @@ type CellDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field cellDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field cellDB.Name
 	Name_Data sql.NullString
 	// encoding of pointers
 	CellPointersEnconding
@@ -267,7 +267,7 @@ func (backRepoCell *BackRepoCellStruct) CheckoutPhaseOne() (Error error) {
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	cellInstancesToBeRemovedFromTheStage := make(map[*models.Cell]struct{})
+	cellInstancesToBeRemovedFromTheStage := make(map[*models.Cell]any)
 	for key, value := range models.Stage.Cells {
 		cellInstancesToBeRemovedFromTheStage[key] = value
 	}

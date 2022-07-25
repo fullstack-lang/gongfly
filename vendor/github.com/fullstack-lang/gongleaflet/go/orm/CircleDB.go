@@ -62,22 +62,22 @@ type CircleDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field circleDB.Lat {{BasicKind}} (to be completed)
+	// Declation for basic field circleDB.Lat
 	Lat_Data sql.NullFloat64
 
-	// Declation for basic field circleDB.Lng {{BasicKind}} (to be completed)
+	// Declation for basic field circleDB.Lng
 	Lng_Data sql.NullFloat64
 
-	// Declation for basic field circleDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field circleDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field circleDB.Radius {{BasicKind}} (to be completed)
+	// Declation for basic field circleDB.Radius
 	Radius_Data sql.NullFloat64
 
-	// Declation for basic field circleDB.ColorEnum {{BasicKind}} (to be completed)
+	// Declation for basic field circleDB.ColorEnum
 	ColorEnum_Data sql.NullString
 
-	// Declation for basic field circleDB.DashStyleEnum {{BasicKind}} (to be completed)
+	// Declation for basic field circleDB.DashStyleEnum
 	DashStyleEnum_Data sql.NullString
 	// encoding of pointers
 	CirclePointersEnconding
@@ -304,7 +304,7 @@ func (backRepoCircle *BackRepoCircleStruct) CheckoutPhaseOne() (Error error) {
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	circleInstancesToBeRemovedFromTheStage := make(map[*models.Circle]struct{})
+	circleInstancesToBeRemovedFromTheStage := make(map[*models.Circle]any)
 	for key, value := range models.Stage.Circles {
 		circleInstancesToBeRemovedFromTheStage[key] = value
 	}

@@ -58,10 +58,10 @@ type CheckoutSchedulerDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field checkoutschedulerDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field checkoutschedulerDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field checkoutschedulerDB.NbUpdatesFromFront {{BasicKind}} (to be completed)
+	// Declation for basic field checkoutschedulerDB.NbUpdatesFromFront
 	NbUpdatesFromFront_Data sql.NullInt64
 	// encoding of pointers
 	CheckoutSchedulerPointersEnconding
@@ -267,7 +267,7 @@ func (backRepoCheckoutScheduler *BackRepoCheckoutSchedulerStruct) CheckoutPhaseO
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	checkoutschedulerInstancesToBeRemovedFromTheStage := make(map[*models.CheckoutScheduler]struct{})
+	checkoutschedulerInstancesToBeRemovedFromTheStage := make(map[*models.CheckoutScheduler]any)
 	for key, value := range models.Stage.CheckoutSchedulers {
 		checkoutschedulerInstancesToBeRemovedFromTheStage[key] = value
 	}

@@ -58,36 +58,36 @@ type MapOptionsDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field mapoptionsDB.Lat {{BasicKind}} (to be completed)
+	// Declation for basic field mapoptionsDB.Lat
 	Lat_Data sql.NullFloat64
 
-	// Declation for basic field mapoptionsDB.Lng {{BasicKind}} (to be completed)
+	// Declation for basic field mapoptionsDB.Lng
 	Lng_Data sql.NullFloat64
 
-	// Declation for basic field mapoptionsDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field mapoptionsDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field mapoptionsDB.ZoomLevel {{BasicKind}} (to be completed)
+	// Declation for basic field mapoptionsDB.ZoomLevel
 	ZoomLevel_Data sql.NullFloat64
 
-	// Declation for basic field mapoptionsDB.UrlTemplate {{BasicKind}} (to be completed)
+	// Declation for basic field mapoptionsDB.UrlTemplate
 	UrlTemplate_Data sql.NullString
 
-	// Declation for basic field mapoptionsDB.Attribution {{BasicKind}} (to be completed)
+	// Declation for basic field mapoptionsDB.Attribution
 	Attribution_Data sql.NullString
 
-	// Declation for basic field mapoptionsDB.MaxZoom {{BasicKind}} (to be completed)
+	// Declation for basic field mapoptionsDB.MaxZoom
 	MaxZoom_Data sql.NullInt64
 
-	// Declation for basic field mapoptionsDB.ZoomControl bool (to be completed)
+	// Declation for basic field mapoptionsDB.ZoomControl
 	// provide the sql storage for the boolan
 	ZoomControl_Data sql.NullBool
 
-	// Declation for basic field mapoptionsDB.AttributionControl bool (to be completed)
+	// Declation for basic field mapoptionsDB.AttributionControl
 	// provide the sql storage for the boolan
 	AttributionControl_Data sql.NullBool
 
-	// Declation for basic field mapoptionsDB.ZoomSnap {{BasicKind}} (to be completed)
+	// Declation for basic field mapoptionsDB.ZoomSnap
 	ZoomSnap_Data sql.NullInt64
 	// encoding of pointers
 	MapOptionsPointersEnconding
@@ -336,7 +336,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseOne() (Error er
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	mapoptionsInstancesToBeRemovedFromTheStage := make(map[*models.MapOptions]struct{})
+	mapoptionsInstancesToBeRemovedFromTheStage := make(map[*models.MapOptions]any)
 	for key, value := range models.Stage.MapOptionss {
 		mapoptionsInstancesToBeRemovedFromTheStage[key] = value
 	}

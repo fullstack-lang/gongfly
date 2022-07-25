@@ -4,6 +4,7 @@ import (
 	"embed"
 	"flag"
 	"fmt"
+	"go/token"
 	"io/fs"
 	"log"
 	"net/http"
@@ -15,7 +16,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	// for the scenario reference
-	gongfly_ng_dist "github.com/fullstack-lang/gongfly"
+	gongfly "github.com/fullstack-lang/gongfly"
+	"github.com/fullstack-lang/gongfly/go/models"
 	"github.com/fullstack-lang/gongfly/go/reference"
 	gonglfy_engine "github.com/fullstack-lang/gongfly/go/simulation"
 	gongfly_visuals "github.com/fullstack-lang/gongfly/go/visuals"
@@ -105,20 +107,10 @@ func main() {
 
 	// add gongsim database
 	gongsim_orm.AutoMigrate(db)
-
-	// add gongdoc database
 	gongdoc_orm.AutoMigrate(db)
-
-	// add gong database
 	gong_orm.AutoMigrate(db)
-
-	// add gongdoc database
 	gongleaflet_orm.AutoMigrate(db)
-
-	// add document database
 	gongmarkdown_orm.AutoMigrate(db)
-
-	// add graph database
 	gongng2charts_orm.AutoMigrate(db)
 
 	// attach specific engine callback to the model
@@ -146,23 +138,47 @@ func main() {
 	// attach visual elements
 	gongfly_visuals.AttachVisualElementsToModelElements(defaultLayer)
 
-	// load package to analyse
-	modelPkg := &gong_models.ModelPkg{}
 	if *diagrams {
-		gong_models.Walk("../../models", modelPkg)
+
+		// Analyse package
+		modelPkg := &gong_models.ModelPkg{}
+
+		// since the source is embedded, one needs to
+		// compute the Abstract syntax tree in a special manner
+		pkgs := gong_models.ParseEmbedModel(gongfly.GoDir, "go/models")
+
+		gong_models.WalkParser(pkgs, modelPkg)
 		modelPkg.SerializeToStage()
-	}
+		gong_models.Stage.Commit()
 
-	// create the diagrams
-	// prepare the model views
-	pkgelt := new(gongdoc_models.Pkgelt)
+		// create the diagrams
+		// prepare the model views
+		pkgelt := new(gongdoc_models.Pkgelt)
 
-	// classdiagram can only be fully in memory when they are Unmarshalled
-	// for instance, the Name of diagrams or the Name of the Link
-	if *diagrams {
-		pkgelt.Unmarshall(modelPkg.PkgPath, "../../diagrams")
+		// first, get all gong struct in the model
+		for gongStruct := range gong_models.Stage.GongStructs {
+
+			// let create the gong struct in the gongdoc models
+			// and put the numbre of instances
+			gongStruct_ := (&gongdoc_models.GongStruct{Name: gongStruct.Name}).Stage()
+			nbInstances, ok := models.Stage.Map_GongStructName_InstancesNb[gongStruct.Name]
+			if ok {
+				gongStruct_.NbInstances = nbInstances
+			}
+		}
+
+		// classdiagram can only be fully in memory when they are Unmarshalled
+		// for instance, the Name of diagrams or the Name of the Link
+		fset := new(token.FileSet)
+		pkgsParser := gong_models.ParseEmbedModel(gongfly.GoDir, "go/diagrams")
+		if len(pkgsParser) != 1 {
+			log.Panic("Unable to parser, wrong number of parsers ", len(pkgsParser))
+		}
+		if pkgParser, ok := pkgsParser["diagrams"]; ok {
+			pkgelt.Unmarshall(modelPkg, pkgParser, fset, "go/diagrams")
+		}
+		pkgelt.SerializeToStage()
 	}
-	pkgelt.SerializeToStage()
 
 	gongfly_controllers.RegisterControllers(r)
 	gongsim_controllers.RegisterControllers(r)
@@ -187,7 +203,7 @@ func main() {
 	log.Print("Demoatc simulation is ready, waiting for client interactions (play/pause/...)")
 
 	// provide the static route for the angular pages
-	r.Use(static.Serve("/", EmbedFolder(gongfly_ng_dist.NgDistNg, "ng/dist/ng")))
+	r.Use(static.Serve("/", EmbedFolder(gongfly.NgDistNg, "ng/dist/ng")))
 	r.NoRoute(func(c *gin.Context) {
 		fmt.Println(c.Request.URL.Path, "doesn't exists, redirect on /")
 		c.Redirect(http.StatusMovedPermanently, "/")

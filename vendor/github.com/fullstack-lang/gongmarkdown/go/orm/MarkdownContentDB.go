@@ -62,10 +62,10 @@ type MarkdownContentDB struct {
 
 	// insertion for basic fields declaration
 
-	// Declation for basic field markdowncontentDB.Name {{BasicKind}} (to be completed)
+	// Declation for basic field markdowncontentDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field markdowncontentDB.Content {{BasicKind}} (to be completed)
+	// Declation for basic field markdowncontentDB.Content
 	Content_Data sql.NullString
 	// encoding of pointers
 	MarkdownContentPointersEnconding
@@ -280,7 +280,7 @@ func (backRepoMarkdownContent *BackRepoMarkdownContentStruct) CheckoutPhaseOne()
 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
-	markdowncontentInstancesToBeRemovedFromTheStage := make(map[*models.MarkdownContent]struct{})
+	markdowncontentInstancesToBeRemovedFromTheStage := make(map[*models.MarkdownContent]any)
 	for key, value := range models.Stage.MarkdownContents {
 		markdowncontentInstancesToBeRemovedFromTheStage[key] = value
 	}

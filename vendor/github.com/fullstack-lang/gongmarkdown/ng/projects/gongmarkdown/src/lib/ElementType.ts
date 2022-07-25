@@ -2,8 +2,8 @@
 export enum ElementType {
 	// insertion point	
 	PARAGRAPH = "Paragraph",
-	TABLE = "Table",
 	TITLE = "Title",
+	TABLE = "Table",
 }
 
 export interface ElementTypeSelect {
@@ -13,6 +13,6 @@ export interface ElementTypeSelect {
 
 export const ElementTypeList: ElementTypeSelect[] = [ // insertion point	
 	{ value: ElementType.PARAGRAPH, viewValue: "Paragraph" },
-	{ value: ElementType.TABLE, viewValue: "Table" },
 	{ value: ElementType.TITLE, viewValue: "Title" },
+	{ value: ElementType.TABLE, viewValue: "Table" },
 ];
