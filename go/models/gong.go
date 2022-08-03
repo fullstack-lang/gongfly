@@ -182,18 +182,6 @@ func (stage *StageStruct) RestoreXL(dirPath string) {
 }
 
 // insertion point for cumulative sub template with model space calls
-func (stage *StageStruct) getCivilianAirportOrderedStructWithNameField() []*CivilianAirport {
-	// have alphabetical order generation
-	civilianairportOrdered := []*CivilianAirport{}
-	for civilianairport := range stage.CivilianAirports {
-		civilianairportOrdered = append(civilianairportOrdered, civilianairport)
-	}
-	sort.Slice(civilianairportOrdered[:], func(i, j int) bool {
-		return civilianairportOrdered[i].Name < civilianairportOrdered[j].Name
-	})
-	return civilianairportOrdered
-}
-
 // Stage puts civilianairport to the model stage
 func (civilianairport *CivilianAirport) Stage() *CivilianAirport {
 	Stage.CivilianAirports[civilianairport] = __member
@@ -287,18 +275,6 @@ func DeleteORMCivilianAirport(civilianairport *CivilianAirport) {
 // for satisfaction of GongStruct interface
 func (civilianairport *CivilianAirport) GetName() (res string) {
 	return civilianairport.Name
-}
-
-func (stage *StageStruct) getLinerOrderedStructWithNameField() []*Liner {
-	// have alphabetical order generation
-	linerOrdered := []*Liner{}
-	for liner := range stage.Liners {
-		linerOrdered = append(linerOrdered, liner)
-	}
-	sort.Slice(linerOrdered[:], func(i, j int) bool {
-		return linerOrdered[i].Name < linerOrdered[j].Name
-	})
-	return linerOrdered
 }
 
 // Stage puts liner to the model stage
@@ -396,18 +372,6 @@ func (liner *Liner) GetName() (res string) {
 	return liner.Name
 }
 
-func (stage *StageStruct) getMessageOrderedStructWithNameField() []*Message {
-	// have alphabetical order generation
-	messageOrdered := []*Message{}
-	for message := range stage.Messages {
-		messageOrdered = append(messageOrdered, message)
-	}
-	sort.Slice(messageOrdered[:], func(i, j int) bool {
-		return messageOrdered[i].Name < messageOrdered[j].Name
-	})
-	return messageOrdered
-}
-
 // Stage puts message to the model stage
 func (message *Message) Stage() *Message {
 	Stage.Messages[message] = __member
@@ -501,18 +465,6 @@ func DeleteORMMessage(message *Message) {
 // for satisfaction of GongStruct interface
 func (message *Message) GetName() (res string) {
 	return message.Name
-}
-
-func (stage *StageStruct) getOpsLineOrderedStructWithNameField() []*OpsLine {
-	// have alphabetical order generation
-	opslineOrdered := []*OpsLine{}
-	for opsline := range stage.OpsLines {
-		opslineOrdered = append(opslineOrdered, opsline)
-	}
-	sort.Slice(opslineOrdered[:], func(i, j int) bool {
-		return opslineOrdered[i].Name < opslineOrdered[j].Name
-	})
-	return opslineOrdered
 }
 
 // Stage puts opsline to the model stage
@@ -610,18 +562,6 @@ func (opsline *OpsLine) GetName() (res string) {
 	return opsline.Name
 }
 
-func (stage *StageStruct) getRadarOrderedStructWithNameField() []*Radar {
-	// have alphabetical order generation
-	radarOrdered := []*Radar{}
-	for radar := range stage.Radars {
-		radarOrdered = append(radarOrdered, radar)
-	}
-	sort.Slice(radarOrdered[:], func(i, j int) bool {
-		return radarOrdered[i].Name < radarOrdered[j].Name
-	})
-	return radarOrdered
-}
-
 // Stage puts radar to the model stage
 func (radar *Radar) Stage() *Radar {
 	Stage.Radars[radar] = __member
@@ -717,18 +657,6 @@ func (radar *Radar) GetName() (res string) {
 	return radar.Name
 }
 
-func (stage *StageStruct) getSatelliteOrderedStructWithNameField() []*Satellite {
-	// have alphabetical order generation
-	satelliteOrdered := []*Satellite{}
-	for satellite := range stage.Satellites {
-		satelliteOrdered = append(satelliteOrdered, satellite)
-	}
-	sort.Slice(satelliteOrdered[:], func(i, j int) bool {
-		return satelliteOrdered[i].Name < satelliteOrdered[j].Name
-	})
-	return satelliteOrdered
-}
-
 // Stage puts satellite to the model stage
 func (satellite *Satellite) Stage() *Satellite {
 	Stage.Satellites[satellite] = __member
@@ -822,18 +750,6 @@ func DeleteORMSatellite(satellite *Satellite) {
 // for satisfaction of GongStruct interface
 func (satellite *Satellite) GetName() (res string) {
 	return satellite.Name
-}
-
-func (stage *StageStruct) getScenarioOrderedStructWithNameField() []*Scenario {
-	// have alphabetical order generation
-	scenarioOrdered := []*Scenario{}
-	for scenario := range stage.Scenarios {
-		scenarioOrdered = append(scenarioOrdered, scenario)
-	}
-	sort.Slice(scenarioOrdered[:], func(i, j int) bool {
-		return scenarioOrdered[i].Name < scenarioOrdered[j].Name
-	})
-	return scenarioOrdered
 }
 
 // Stage puts scenario to the model stage
@@ -1796,13 +1712,23 @@ func (stageStruct *StageStruct) CreateReverseMap_OpsLine_Scenario() (res map[*Sc
 
 // generate function for reverse association maps of Scenario
 
-// Gongstruct is the type paramter for generated generic function that allows
+// Gongstruct is the type parameter for generated generic function that allows
 // - access to staged instances
 // - navigation between staged instances by going backward association links between gongstruct
 // - full refactoring of Gongstruct identifiers / fields
 type Gongstruct interface {
 	// insertion point for generic types
 	CivilianAirport | Liner | Message | OpsLine | Radar | Satellite | Scenario
+}
+
+// Gongstruct is the type parameter for generated generic function that allows
+// - access to staged instances
+// - navigation between staged instances by going backward association links between gongstruct
+// - full refactoring of Gongstruct identifiers / fields
+type PointerToGongstruct interface {
+	// insertion point for generic types
+	*CivilianAirport | *Liner | *Message | *OpsLine | *Radar | *Satellite | *Scenario
+	GetName() string
 }
 
 type GongstructSet interface {
@@ -2612,3 +2538,4 @@ func (reportenum *ReportEnum) ToCodeString() (res string) {
 	return
 }
 
+// Last line of the template
