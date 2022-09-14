@@ -172,18 +172,6 @@ func (stage *StageStruct) RestoreXL(dirPath string) {
 }
 
 // insertion point for cumulative sub template with model space calls
-func (stage *StageStruct) getAnotherDummyDataOrderedStructWithNameField() []*AnotherDummyData {
-	// have alphabetical order generation
-	anotherdummydataOrdered := []*AnotherDummyData{}
-	for anotherdummydata := range stage.AnotherDummyDatas {
-		anotherdummydataOrdered = append(anotherdummydataOrdered, anotherdummydata)
-	}
-	sort.Slice(anotherdummydataOrdered[:], func(i, j int) bool {
-		return anotherdummydataOrdered[i].Name < anotherdummydataOrdered[j].Name
-	})
-	return anotherdummydataOrdered
-}
-
 // Stage puts anotherdummydata to the model stage
 func (anotherdummydata *AnotherDummyData) Stage() *AnotherDummyData {
 	Stage.AnotherDummyDatas[anotherdummydata] = __member
@@ -277,18 +265,6 @@ func DeleteORMAnotherDummyData(anotherdummydata *AnotherDummyData) {
 // for satisfaction of GongStruct interface
 func (anotherdummydata *AnotherDummyData) GetName() (res string) {
 	return anotherdummydata.Name
-}
-
-func (stage *StageStruct) getCellOrderedStructWithNameField() []*Cell {
-	// have alphabetical order generation
-	cellOrdered := []*Cell{}
-	for cell := range stage.Cells {
-		cellOrdered = append(cellOrdered, cell)
-	}
-	sort.Slice(cellOrdered[:], func(i, j int) bool {
-		return cellOrdered[i].Name < cellOrdered[j].Name
-	})
-	return cellOrdered
 }
 
 // Stage puts cell to the model stage
@@ -386,18 +362,6 @@ func (cell *Cell) GetName() (res string) {
 	return cell.Name
 }
 
-func (stage *StageStruct) getDummyDataOrderedStructWithNameField() []*DummyData {
-	// have alphabetical order generation
-	dummydataOrdered := []*DummyData{}
-	for dummydata := range stage.DummyDatas {
-		dummydataOrdered = append(dummydataOrdered, dummydata)
-	}
-	sort.Slice(dummydataOrdered[:], func(i, j int) bool {
-		return dummydataOrdered[i].Name < dummydataOrdered[j].Name
-	})
-	return dummydataOrdered
-}
-
 // Stage puts dummydata to the model stage
 func (dummydata *DummyData) Stage() *DummyData {
 	Stage.DummyDatas[dummydata] = __member
@@ -491,18 +455,6 @@ func DeleteORMDummyData(dummydata *DummyData) {
 // for satisfaction of GongStruct interface
 func (dummydata *DummyData) GetName() (res string) {
 	return dummydata.Name
-}
-
-func (stage *StageStruct) getElementOrderedStructWithNameField() []*Element {
-	// have alphabetical order generation
-	elementOrdered := []*Element{}
-	for element := range stage.Elements {
-		elementOrdered = append(elementOrdered, element)
-	}
-	sort.Slice(elementOrdered[:], func(i, j int) bool {
-		return elementOrdered[i].Name < elementOrdered[j].Name
-	})
-	return elementOrdered
 }
 
 // Stage puts element to the model stage
@@ -600,18 +552,6 @@ func (element *Element) GetName() (res string) {
 	return element.Name
 }
 
-func (stage *StageStruct) getMarkdownContentOrderedStructWithNameField() []*MarkdownContent {
-	// have alphabetical order generation
-	markdowncontentOrdered := []*MarkdownContent{}
-	for markdowncontent := range stage.MarkdownContents {
-		markdowncontentOrdered = append(markdowncontentOrdered, markdowncontent)
-	}
-	sort.Slice(markdowncontentOrdered[:], func(i, j int) bool {
-		return markdowncontentOrdered[i].Name < markdowncontentOrdered[j].Name
-	})
-	return markdowncontentOrdered
-}
-
 // Stage puts markdowncontent to the model stage
 func (markdowncontent *MarkdownContent) Stage() *MarkdownContent {
 	Stage.MarkdownContents[markdowncontent] = __member
@@ -705,18 +645,6 @@ func DeleteORMMarkdownContent(markdowncontent *MarkdownContent) {
 // for satisfaction of GongStruct interface
 func (markdowncontent *MarkdownContent) GetName() (res string) {
 	return markdowncontent.Name
-}
-
-func (stage *StageStruct) getRowOrderedStructWithNameField() []*Row {
-	// have alphabetical order generation
-	rowOrdered := []*Row{}
-	for row := range stage.Rows {
-		rowOrdered = append(rowOrdered, row)
-	}
-	sort.Slice(rowOrdered[:], func(i, j int) bool {
-		return rowOrdered[i].Name < rowOrdered[j].Name
-	})
-	return rowOrdered
 }
 
 // Stage puts row to the model stage
@@ -1425,13 +1353,23 @@ func (stageStruct *StageStruct) CreateReverseMap_Row_Cells() (res map[*Cell]*Row
 }
 
 
-// Gongstruct is the type paramter for generated generic function that allows
+// Gongstruct is the type parameter for generated generic function that allows
 // - access to staged instances
 // - navigation between staged instances by going backward association links between gongstruct
 // - full refactoring of Gongstruct identifiers / fields
 type Gongstruct interface {
 	// insertion point for generic types
 	AnotherDummyData | Cell | DummyData | Element | MarkdownContent | Row
+}
+
+// Gongstruct is the type parameter for generated generic function that allows
+// - access to staged instances
+// - navigation between staged instances by going backward association links between gongstruct
+// - full refactoring of Gongstruct identifiers / fields
+type PointerToGongstruct interface {
+	// insertion point for generic types
+	*AnotherDummyData | *Cell | *DummyData | *Element | *MarkdownContent | *Row
+	GetName() string
 }
 
 type GongstructSet interface {
@@ -1982,3 +1920,4 @@ func (elementtype *ElementType) ToCodeString() (res string) {
 	return
 }
 
+// Last line of the template

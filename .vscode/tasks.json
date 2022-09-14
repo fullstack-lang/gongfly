@@ -74,7 +74,7 @@
       "args": []
     },
     {
-      "label": "01 - gongc gongfly -backendOnly",
+      "label": "01 - gongc gongfly -skipNg",
       "type": "shell",
       "options": {
         "cwd": "${workspaceFolder}/go/models"
@@ -82,7 +82,7 @@
       "command": "gongc",
       "group": "build",
       "args": [
-        "-backendOnly"
+        "-skipNg"
       ]
     },
     {

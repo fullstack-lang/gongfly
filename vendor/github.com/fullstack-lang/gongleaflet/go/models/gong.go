@@ -212,18 +212,6 @@ func (stage *StageStruct) RestoreXL(dirPath string) {
 }
 
 // insertion point for cumulative sub template with model space calls
-func (stage *StageStruct) getCheckoutSchedulerOrderedStructWithNameField() []*CheckoutScheduler {
-	// have alphabetical order generation
-	checkoutschedulerOrdered := []*CheckoutScheduler{}
-	for checkoutscheduler := range stage.CheckoutSchedulers {
-		checkoutschedulerOrdered = append(checkoutschedulerOrdered, checkoutscheduler)
-	}
-	sort.Slice(checkoutschedulerOrdered[:], func(i, j int) bool {
-		return checkoutschedulerOrdered[i].Name < checkoutschedulerOrdered[j].Name
-	})
-	return checkoutschedulerOrdered
-}
-
 // Stage puts checkoutscheduler to the model stage
 func (checkoutscheduler *CheckoutScheduler) Stage() *CheckoutScheduler {
 	Stage.CheckoutSchedulers[checkoutscheduler] = __member
@@ -317,18 +305,6 @@ func DeleteORMCheckoutScheduler(checkoutscheduler *CheckoutScheduler) {
 // for satisfaction of GongStruct interface
 func (checkoutscheduler *CheckoutScheduler) GetName() (res string) {
 	return checkoutscheduler.Name
-}
-
-func (stage *StageStruct) getCircleOrderedStructWithNameField() []*Circle {
-	// have alphabetical order generation
-	circleOrdered := []*Circle{}
-	for circle := range stage.Circles {
-		circleOrdered = append(circleOrdered, circle)
-	}
-	sort.Slice(circleOrdered[:], func(i, j int) bool {
-		return circleOrdered[i].Name < circleOrdered[j].Name
-	})
-	return circleOrdered
 }
 
 // Stage puts circle to the model stage
@@ -426,18 +402,6 @@ func (circle *Circle) GetName() (res string) {
 	return circle.Name
 }
 
-func (stage *StageStruct) getDivIconOrderedStructWithNameField() []*DivIcon {
-	// have alphabetical order generation
-	diviconOrdered := []*DivIcon{}
-	for divicon := range stage.DivIcons {
-		diviconOrdered = append(diviconOrdered, divicon)
-	}
-	sort.Slice(diviconOrdered[:], func(i, j int) bool {
-		return diviconOrdered[i].Name < diviconOrdered[j].Name
-	})
-	return diviconOrdered
-}
-
 // Stage puts divicon to the model stage
 func (divicon *DivIcon) Stage() *DivIcon {
 	Stage.DivIcons[divicon] = __member
@@ -531,18 +495,6 @@ func DeleteORMDivIcon(divicon *DivIcon) {
 // for satisfaction of GongStruct interface
 func (divicon *DivIcon) GetName() (res string) {
 	return divicon.Name
-}
-
-func (stage *StageStruct) getLayerGroupOrderedStructWithNameField() []*LayerGroup {
-	// have alphabetical order generation
-	layergroupOrdered := []*LayerGroup{}
-	for layergroup := range stage.LayerGroups {
-		layergroupOrdered = append(layergroupOrdered, layergroup)
-	}
-	sort.Slice(layergroupOrdered[:], func(i, j int) bool {
-		return layergroupOrdered[i].Name < layergroupOrdered[j].Name
-	})
-	return layergroupOrdered
 }
 
 // Stage puts layergroup to the model stage
@@ -640,18 +592,6 @@ func (layergroup *LayerGroup) GetName() (res string) {
 	return layergroup.Name
 }
 
-func (stage *StageStruct) getLayerGroupUseOrderedStructWithNameField() []*LayerGroupUse {
-	// have alphabetical order generation
-	layergroupuseOrdered := []*LayerGroupUse{}
-	for layergroupuse := range stage.LayerGroupUses {
-		layergroupuseOrdered = append(layergroupuseOrdered, layergroupuse)
-	}
-	sort.Slice(layergroupuseOrdered[:], func(i, j int) bool {
-		return layergroupuseOrdered[i].Name < layergroupuseOrdered[j].Name
-	})
-	return layergroupuseOrdered
-}
-
 // Stage puts layergroupuse to the model stage
 func (layergroupuse *LayerGroupUse) Stage() *LayerGroupUse {
 	Stage.LayerGroupUses[layergroupuse] = __member
@@ -745,18 +685,6 @@ func DeleteORMLayerGroupUse(layergroupuse *LayerGroupUse) {
 // for satisfaction of GongStruct interface
 func (layergroupuse *LayerGroupUse) GetName() (res string) {
 	return layergroupuse.Name
-}
-
-func (stage *StageStruct) getMapOptionsOrderedStructWithNameField() []*MapOptions {
-	// have alphabetical order generation
-	mapoptionsOrdered := []*MapOptions{}
-	for mapoptions := range stage.MapOptionss {
-		mapoptionsOrdered = append(mapoptionsOrdered, mapoptions)
-	}
-	sort.Slice(mapoptionsOrdered[:], func(i, j int) bool {
-		return mapoptionsOrdered[i].Name < mapoptionsOrdered[j].Name
-	})
-	return mapoptionsOrdered
 }
 
 // Stage puts mapoptions to the model stage
@@ -854,18 +782,6 @@ func (mapoptions *MapOptions) GetName() (res string) {
 	return mapoptions.Name
 }
 
-func (stage *StageStruct) getMarkerOrderedStructWithNameField() []*Marker {
-	// have alphabetical order generation
-	markerOrdered := []*Marker{}
-	for marker := range stage.Markers {
-		markerOrdered = append(markerOrdered, marker)
-	}
-	sort.Slice(markerOrdered[:], func(i, j int) bool {
-		return markerOrdered[i].Name < markerOrdered[j].Name
-	})
-	return markerOrdered
-}
-
 // Stage puts marker to the model stage
 func (marker *Marker) Stage() *Marker {
 	Stage.Markers[marker] = __member
@@ -959,18 +875,6 @@ func DeleteORMMarker(marker *Marker) {
 // for satisfaction of GongStruct interface
 func (marker *Marker) GetName() (res string) {
 	return marker.Name
-}
-
-func (stage *StageStruct) getUserClickOrderedStructWithNameField() []*UserClick {
-	// have alphabetical order generation
-	userclickOrdered := []*UserClick{}
-	for userclick := range stage.UserClicks {
-		userclickOrdered = append(userclickOrdered, userclick)
-	}
-	sort.Slice(userclickOrdered[:], func(i, j int) bool {
-		return userclickOrdered[i].Name < userclickOrdered[j].Name
-	})
-	return userclickOrdered
 }
 
 // Stage puts userclick to the model stage
@@ -1068,18 +972,6 @@ func (userclick *UserClick) GetName() (res string) {
 	return userclick.Name
 }
 
-func (stage *StageStruct) getVLineOrderedStructWithNameField() []*VLine {
-	// have alphabetical order generation
-	vlineOrdered := []*VLine{}
-	for vline := range stage.VLines {
-		vlineOrdered = append(vlineOrdered, vline)
-	}
-	sort.Slice(vlineOrdered[:], func(i, j int) bool {
-		return vlineOrdered[i].Name < vlineOrdered[j].Name
-	})
-	return vlineOrdered
-}
-
 // Stage puts vline to the model stage
 func (vline *VLine) Stage() *VLine {
 	Stage.VLines[vline] = __member
@@ -1173,18 +1065,6 @@ func DeleteORMVLine(vline *VLine) {
 // for satisfaction of GongStruct interface
 func (vline *VLine) GetName() (res string) {
 	return vline.Name
-}
-
-func (stage *StageStruct) getVisualTrackOrderedStructWithNameField() []*VisualTrack {
-	// have alphabetical order generation
-	visualtrackOrdered := []*VisualTrack{}
-	for visualtrack := range stage.VisualTracks {
-		visualtrackOrdered = append(visualtrackOrdered, visualtrack)
-	}
-	sort.Slice(visualtrackOrdered[:], func(i, j int) bool {
-		return visualtrackOrdered[i].Name < visualtrackOrdered[j].Name
-	})
-	return visualtrackOrdered
 }
 
 // Stage puts visualtrack to the model stage
@@ -2405,13 +2285,23 @@ func (stageStruct *StageStruct) CreateReverseMap_VisualTrack_DivIcon() (res map[
 	return
 }
 
-// Gongstruct is the type paramter for generated generic function that allows
+// Gongstruct is the type parameter for generated generic function that allows
 // - access to staged instances
 // - navigation between staged instances by going backward association links between gongstruct
 // - full refactoring of Gongstruct identifiers / fields
 type Gongstruct interface {
 	// insertion point for generic types
 	CheckoutScheduler | Circle | DivIcon | LayerGroup | LayerGroupUse | MapOptions | Marker | UserClick | VLine | VisualTrack
+}
+
+// Gongstruct is the type parameter for generated generic function that allows
+// - access to staged instances
+// - navigation between staged instances by going backward association links between gongstruct
+// - full refactoring of Gongstruct identifiers / fields
+type PointerToGongstruct interface {
+	// insertion point for generic types
+	*CheckoutScheduler | *Circle | *DivIcon | *LayerGroup | *LayerGroupUse | *MapOptions | *Marker | *UserClick | *VLine | *VisualTrack
+	GetName() string
 }
 
 type GongstructSet interface {
@@ -3344,3 +3234,4 @@ func (transmittingenum *TransmittingEnum) ToCodeString() (res string) {
 	return
 }
 
+// Last line of the template

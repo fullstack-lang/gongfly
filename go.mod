@@ -1,16 +1,16 @@
 module github.com/fullstack-lang/gongfly
 
-go 1.18
+go 1.19
 
 require (
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
-	github.com/fullstack-lang/gong v0.0.0-20220702044335-15f4f5a852a2
-	github.com/fullstack-lang/gongdoc v0.0.0-20220719125232-a32bd9bd612f
-	github.com/fullstack-lang/gongleaflet v0.0.0-20220628055716-2ed5b33ad2d0
-	github.com/fullstack-lang/gongsim v0.0.0-20220628055718-7e3bd61fd5d8
-	github.com/gin-contrib/cors v1.3.1
+	github.com/fullstack-lang/gong v0.0.0-20220909154848-8e79c10d34be
+	github.com/fullstack-lang/gongdoc v0.0.0-20220909091506-479f6b7780b4
+	github.com/fullstack-lang/gongleaflet v0.0.0-20220914134147-9d4e8259075e
+	github.com/fullstack-lang/gongsim v0.0.0-20220914135418-66f9a4f7aba2
+	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/static v0.0.1
-	github.com/gin-gonic/gin v1.7.7
+	github.com/gin-gonic/gin v1.8.1
 	github.com/kellydunn/golang-geo v0.7.0
 	github.com/kylelemons/go-gypsy v1.0.0 // indirect
 	github.com/lib/pq v1.10.3 // indirect
@@ -22,12 +22,12 @@ require (
 require (
 	github.com/ajstarks/svgo v0.0.0-20210923152817-c3b6e2f0c527 // indirect
 	github.com/joshuaferrara/go-satellite v0.0.0-20210821043103-45fdd46b68be
-	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/mattn/go-isatty v0.0.16 // indirect
 )
 
 require (
-	github.com/fullstack-lang/gongmarkdown v0.0.0-20220628055718-6edfd7106935
-	github.com/fullstack-lang/gongng2charts v0.0.0-20220628055718-917f49bb56d1
+	github.com/fullstack-lang/gongmarkdown v0.0.0-20220914141932-5cbf1eacc949
+	github.com/fullstack-lang/gongng2charts v0.0.0-20220914153209-2453604d3007
 	github.com/glebarez/sqlite v1.4.1
 )
 
@@ -44,9 +44,9 @@ require (
 	github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
-	github.com/go-playground/validator/v10 v10.9.0 // indirect
+	github.com/go-playground/validator/v10 v10.11.0 // indirect
+	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
-	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/btree v1.0.1 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/uuid v1.3.0 // indirect
@@ -58,6 +58,7 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
@@ -67,15 +68,15 @@ require (
 	github.com/tdewolff/canvas v0.0.0-20210926234438-920f34634583 // indirect
 	github.com/tdewolff/minify/v2 v2.9.22 // indirect
 	github.com/tdewolff/parse/v2 v2.5.22 // indirect
-	github.com/ugorji/go/codec v1.2.6 // indirect
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
+	github.com/ugorji/go/codec v1.2.7 // indirect
+	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90 // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
 	golang.org/x/mod v0.5.1 // indirect
-	golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8 // indirect
+	golang.org/x/net v0.0.0-20220907135653-1e95f45603a7 // indirect
+	golang.org/x/sys v0.0.0-20220908164124-27713097b956 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
+	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	modernc.org/libc v1.14.12 // indirect
 	modernc.org/mathutil v1.4.1 // indirect

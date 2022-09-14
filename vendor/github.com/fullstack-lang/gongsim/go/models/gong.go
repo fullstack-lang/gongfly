@@ -162,18 +162,6 @@ func (stage *StageStruct) RestoreXL(dirPath string) {
 }
 
 // insertion point for cumulative sub template with model space calls
-func (stage *StageStruct) getDummyAgentOrderedStructWithNameField() []*DummyAgent {
-	// have alphabetical order generation
-	dummyagentOrdered := []*DummyAgent{}
-	for dummyagent := range stage.DummyAgents {
-		dummyagentOrdered = append(dummyagentOrdered, dummyagent)
-	}
-	sort.Slice(dummyagentOrdered[:], func(i, j int) bool {
-		return dummyagentOrdered[i].Name < dummyagentOrdered[j].Name
-	})
-	return dummyagentOrdered
-}
-
 // Stage puts dummyagent to the model stage
 func (dummyagent *DummyAgent) Stage() *DummyAgent {
 	Stage.DummyAgents[dummyagent] = __member
@@ -267,18 +255,6 @@ func DeleteORMDummyAgent(dummyagent *DummyAgent) {
 // for satisfaction of GongStruct interface
 func (dummyagent *DummyAgent) GetName() (res string) {
 	return dummyagent.Name
-}
-
-func (stage *StageStruct) getEngineOrderedStructWithNameField() []*Engine {
-	// have alphabetical order generation
-	engineOrdered := []*Engine{}
-	for engine := range stage.Engines {
-		engineOrdered = append(engineOrdered, engine)
-	}
-	sort.Slice(engineOrdered[:], func(i, j int) bool {
-		return engineOrdered[i].Name < engineOrdered[j].Name
-	})
-	return engineOrdered
 }
 
 // Stage puts engine to the model stage
@@ -376,18 +352,6 @@ func (engine *Engine) GetName() (res string) {
 	return engine.Name
 }
 
-func (stage *StageStruct) getEventOrderedStructWithNameField() []*Event {
-	// have alphabetical order generation
-	eventOrdered := []*Event{}
-	for event := range stage.Events {
-		eventOrdered = append(eventOrdered, event)
-	}
-	sort.Slice(eventOrdered[:], func(i, j int) bool {
-		return eventOrdered[i].Name < eventOrdered[j].Name
-	})
-	return eventOrdered
-}
-
 // Stage puts event to the model stage
 func (event *Event) Stage() *Event {
 	Stage.Events[event] = __member
@@ -483,18 +447,6 @@ func (event *Event) GetName() (res string) {
 	return event.Name
 }
 
-func (stage *StageStruct) getGongsimCommandOrderedStructWithNameField() []*GongsimCommand {
-	// have alphabetical order generation
-	gongsimcommandOrdered := []*GongsimCommand{}
-	for gongsimcommand := range stage.GongsimCommands {
-		gongsimcommandOrdered = append(gongsimcommandOrdered, gongsimcommand)
-	}
-	sort.Slice(gongsimcommandOrdered[:], func(i, j int) bool {
-		return gongsimcommandOrdered[i].Name < gongsimcommandOrdered[j].Name
-	})
-	return gongsimcommandOrdered
-}
-
 // Stage puts gongsimcommand to the model stage
 func (gongsimcommand *GongsimCommand) Stage() *GongsimCommand {
 	Stage.GongsimCommands[gongsimcommand] = __member
@@ -588,18 +540,6 @@ func DeleteORMGongsimCommand(gongsimcommand *GongsimCommand) {
 // for satisfaction of GongStruct interface
 func (gongsimcommand *GongsimCommand) GetName() (res string) {
 	return gongsimcommand.Name
-}
-
-func (stage *StageStruct) getGongsimStatusOrderedStructWithNameField() []*GongsimStatus {
-	// have alphabetical order generation
-	gongsimstatusOrdered := []*GongsimStatus{}
-	for gongsimstatus := range stage.GongsimStatuss {
-		gongsimstatusOrdered = append(gongsimstatusOrdered, gongsimstatus)
-	}
-	sort.Slice(gongsimstatusOrdered[:], func(i, j int) bool {
-		return gongsimstatusOrdered[i].Name < gongsimstatusOrdered[j].Name
-	})
-	return gongsimstatusOrdered
 }
 
 // Stage puts gongsimstatus to the model stage
@@ -1184,13 +1124,23 @@ func generatesIdentifier(gongStructName string, idx int, instanceName string) (i
 
 // generate function for reverse association maps of GongsimStatus
 
-// Gongstruct is the type paramter for generated generic function that allows
+// Gongstruct is the type parameter for generated generic function that allows
 // - access to staged instances
 // - navigation between staged instances by going backward association links between gongstruct
 // - full refactoring of Gongstruct identifiers / fields
 type Gongstruct interface {
 	// insertion point for generic types
 	DummyAgent | Engine | Event | GongsimCommand | GongsimStatus
+}
+
+// Gongstruct is the type parameter for generated generic function that allows
+// - access to staged instances
+// - navigation between staged instances by going backward association links between gongstruct
+// - full refactoring of Gongstruct identifiers / fields
+type PointerToGongstruct interface {
+	// insertion point for generic types
+	*DummyAgent | *Engine | *Event | *GongsimCommand | *GongsimStatus
+	GetName() string
 }
 
 type GongstructSet interface {
@@ -1874,3 +1824,4 @@ func (speedcommandtype *SpeedCommandType) ToCodeString() (res string) {
 	return
 }
 
+// Last line of the template
