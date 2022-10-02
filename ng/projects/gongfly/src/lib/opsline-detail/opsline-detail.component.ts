@@ -34,8 +34,8 @@ enum OpsLineDetailComponentState {
 export class OpsLineDetailComponent implements OnInit {
 
 	// insertion point for declarations
-	IsTransmittingFormControl = new FormControl(false);
-	IsTransmittingBackwardFormControl = new FormControl(false);
+	IsTransmittingFormControl: FormControl = new FormControl(false);
+	IsTransmittingBackwardFormControl: FormControl = new FormControl(false);
 	OperationalLineStateEnumList: OperationalLineStateEnumSelect[] = []
 
 	// the OpsLineDB of interest

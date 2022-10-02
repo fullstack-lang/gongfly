@@ -35,8 +35,8 @@ export class VisualTrackDetailComponent implements OnInit {
 
 	// insertion point for declarations
 	ColorEnumList: ColorEnumSelect[] = []
-	DisplayTrackHistoryFormControl = new FormControl(false);
-	DisplayLevelAndSpeedFormControl = new FormControl(false);
+	DisplayTrackHistoryFormControl: FormControl = new FormControl(false);
+	DisplayLevelAndSpeedFormControl: FormControl = new FormControl(false);
 
 	// the VisualTrackDB of interest
 	visualtrack: VisualTrackDB = new VisualTrackDB

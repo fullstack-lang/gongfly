@@ -33,8 +33,8 @@ enum MapOptionsDetailComponentState {
 export class MapOptionsDetailComponent implements OnInit {
 
 	// insertion point for declarations
-	ZoomControlFormControl = new FormControl(false);
-	AttributionControlFormControl = new FormControl(false);
+	ZoomControlFormControl: FormControl = new FormControl(false);
+	AttributionControlFormControl: FormControl = new FormControl(false);
 
 	// the MapOptionsDB of interest
 	mapoptions: MapOptionsDB = new MapOptionsDB

@@ -35,7 +35,7 @@ enum LayerGroupUseDetailComponentState {
 export class LayerGroupUseDetailComponent implements OnInit {
 
 	// insertion point for declarations
-	DisplayFormControl = new FormControl(false);
+	DisplayFormControl: FormControl = new FormControl(false);
 
 	// the LayerGroupUseDB of interest
 	layergroupuse: LayerGroupUseDB = new LayerGroupUseDB

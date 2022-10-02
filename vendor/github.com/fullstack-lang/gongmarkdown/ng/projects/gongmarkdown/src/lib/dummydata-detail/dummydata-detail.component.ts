@@ -35,7 +35,7 @@ enum DummyDataDetailComponentState {
 export class DummyDataDetailComponent implements OnInit {
 
 	// insertion point for declarations
-	DummyBoolFormControl = new FormControl(false);
+	DummyBoolFormControl: FormControl = new FormControl(false);
 	ElementTypeList: ElementTypeSelect[] = []
 	DummnyTypeIntList: DummnyTypeIntSelect[] = []
 	DummyDuration_Hours: number = 0

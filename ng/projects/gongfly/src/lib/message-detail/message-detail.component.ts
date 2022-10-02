@@ -38,7 +38,7 @@ export class MessageDetailComponent implements OnInit {
 	DurationSinceSimulationStart_Hours: number = 0
 	DurationSinceSimulationStart_Minutes: number = 0
 	DurationSinceSimulationStart_Seconds: number = 0
-	DisplayFormControl = new FormControl(false);
+	DisplayFormControl: FormControl = new FormControl(false);
 
 	// the MessageDB of interest
 	message: MessageDB = new MessageDB
