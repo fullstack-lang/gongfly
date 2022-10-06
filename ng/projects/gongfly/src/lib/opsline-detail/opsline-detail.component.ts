@@ -1,6 +1,6 @@
 // generated from NgDetailTemplateTS
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 import { OpsLineDB } from '../opsline-db'
 import { OpsLineService } from '../opsline.service'
@@ -34,8 +34,8 @@ enum OpsLineDetailComponentState {
 export class OpsLineDetailComponent implements OnInit {
 
 	// insertion point for declarations
-	IsTransmittingFormControl: FormControl = new FormControl(false);
-	IsTransmittingBackwardFormControl: FormControl = new FormControl(false);
+	IsTransmittingFormControl: UntypedFormControl = new UntypedFormControl(false);
+	IsTransmittingBackwardFormControl: UntypedFormControl = new UntypedFormControl(false);
 	OperationalLineStateEnumList: OperationalLineStateEnumSelect[] = []
 
 	// the OpsLineDB of interest

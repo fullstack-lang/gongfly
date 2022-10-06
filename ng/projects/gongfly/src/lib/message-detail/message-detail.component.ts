@@ -1,6 +1,6 @@
 // generated from NgDetailTemplateTS
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 import { MessageDB } from '../message-db'
 import { MessageService } from '../message.service'
@@ -38,7 +38,7 @@ export class MessageDetailComponent implements OnInit {
 	DurationSinceSimulationStart_Hours: number = 0
 	DurationSinceSimulationStart_Minutes: number = 0
 	DurationSinceSimulationStart_Seconds: number = 0
-	DisplayFormControl: FormControl = new FormControl(false);
+	DisplayFormControl: UntypedFormControl = new UntypedFormControl(false);
 
 	// the MessageDB of interest
 	message: MessageDB = new MessageDB
