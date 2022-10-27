@@ -449,6 +449,7 @@ func (backRepo *BackRepoStruct) CommitMessage(message *models.Message) {
 	if id, ok := (*backRepo.BackRepoMessage.Map_MessagePtr_MessageDBID)[message]; ok {
 		backRepo.BackRepoMessage.CommitPhaseTwoInstance(backRepo, id, message)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitMessage allows checkout of a single message (if already staged and with a BackRepo id)

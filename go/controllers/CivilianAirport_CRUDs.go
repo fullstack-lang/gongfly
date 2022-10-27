@@ -41,11 +41,12 @@ type CivilianAirportInput struct {
 //
 // swagger:route GET /civilianairports civilianairports getCivilianAirports
 //
-// Get all civilianairports
+// # Get all civilianairports
 //
 // Responses:
-//    default: genericError
-//        200: civilianairportDBsResponse
+// default: genericError
+//
+//	200: civilianairportDBResponse
 func GetCivilianAirports(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
 
@@ -85,14 +86,15 @@ func GetCivilianAirports(c *gin.Context) {
 // swagger:route POST /civilianairports civilianairports postCivilianAirport
 //
 // Creates a civilianairport
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: civilianairportDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostCivilianAirport(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
 
@@ -124,6 +126,14 @@ func PostCivilianAirport(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoCivilianAirport.CheckoutPhaseOneInstance(&civilianairportDB)
+	civilianairport := (*orm.BackRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
+
+	if civilianairport != nil {
+		models.AfterCreateFromFront(&models.Stage, civilianairport)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostCivilianAirport(c *gin.Context) {
 // Gets the details for a civilianairport.
 //
 // Responses:
-//    default: genericError
-//        200: civilianairportDBResponse
+// default: genericError
+//
+//	200: civilianairportDBResponse
 func GetCivilianAirport(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
 
@@ -166,11 +177,12 @@ func GetCivilianAirport(c *gin.Context) {
 //
 // swagger:route PATCH /civilianairports/{ID} civilianairports updateCivilianAirport
 //
-// Update a civilianairport
+// # Update a civilianairport
 //
 // Responses:
-//    default: genericError
-//        200: civilianairportDBResponse
+// default: genericError
+//
+//	200: civilianairportDBResponse
 func UpdateCivilianAirport(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateCivilianAirport(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	civilianairportNew := new(models.CivilianAirport)
+	civilianairportDB.CopyBasicFieldsToCivilianAirport(civilianairportNew)
+
+	// get stage instance from DB instance, and call callback function
+	civilianairportOld := (*orm.BackRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
+	if civilianairportOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, civilianairportOld, civilianairportNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the civilianairportDB
@@ -223,10 +247,11 @@ func UpdateCivilianAirport(c *gin.Context) {
 //
 // swagger:route DELETE /civilianairports/{ID} civilianairports deleteCivilianAirport
 //
-// Delete a civilianairport
+// # Delete a civilianairport
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: civilianairportDBResponse
 func DeleteCivilianAirport(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteCivilianAirport(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&civilianairportDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	civilianairportDeleted := new(models.CivilianAirport)
+	civilianairportDB.CopyBasicFieldsToCivilianAirport(civilianairportDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	civilianairportStaged := (*orm.BackRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
+	if civilianairportStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, civilianairportStaged, civilianairportDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

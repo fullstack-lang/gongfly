@@ -41,11 +41,12 @@ type OpsLineInput struct {
 //
 // swagger:route GET /opslines opslines getOpsLines
 //
-// Get all opslines
+// # Get all opslines
 //
 // Responses:
-//    default: genericError
-//        200: opslineDBsResponse
+// default: genericError
+//
+//	200: opslineDBResponse
 func GetOpsLines(c *gin.Context) {
 	db := orm.BackRepo.BackRepoOpsLine.GetDB()
 
@@ -85,14 +86,15 @@ func GetOpsLines(c *gin.Context) {
 // swagger:route POST /opslines opslines postOpsLine
 //
 // Creates a opsline
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: opslineDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostOpsLine(c *gin.Context) {
 	db := orm.BackRepo.BackRepoOpsLine.GetDB()
 
@@ -124,6 +126,14 @@ func PostOpsLine(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoOpsLine.CheckoutPhaseOneInstance(&opslineDB)
+	opsline := (*orm.BackRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
+
+	if opsline != nil {
+		models.AfterCreateFromFront(&models.Stage, opsline)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostOpsLine(c *gin.Context) {
 // Gets the details for a opsline.
 //
 // Responses:
-//    default: genericError
-//        200: opslineDBResponse
+// default: genericError
+//
+//	200: opslineDBResponse
 func GetOpsLine(c *gin.Context) {
 	db := orm.BackRepo.BackRepoOpsLine.GetDB()
 
@@ -166,11 +177,12 @@ func GetOpsLine(c *gin.Context) {
 //
 // swagger:route PATCH /opslines/{ID} opslines updateOpsLine
 //
-// Update a opsline
+// # Update a opsline
 //
 // Responses:
-//    default: genericError
-//        200: opslineDBResponse
+// default: genericError
+//
+//	200: opslineDBResponse
 func UpdateOpsLine(c *gin.Context) {
 	db := orm.BackRepo.BackRepoOpsLine.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateOpsLine(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	opslineNew := new(models.OpsLine)
+	opslineDB.CopyBasicFieldsToOpsLine(opslineNew)
+
+	// get stage instance from DB instance, and call callback function
+	opslineOld := (*orm.BackRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
+	if opslineOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, opslineOld, opslineNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the opslineDB
@@ -223,10 +247,11 @@ func UpdateOpsLine(c *gin.Context) {
 //
 // swagger:route DELETE /opslines/{ID} opslines deleteOpsLine
 //
-// Delete a opsline
+// # Delete a opsline
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: opslineDBResponse
 func DeleteOpsLine(c *gin.Context) {
 	db := orm.BackRepo.BackRepoOpsLine.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteOpsLine(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&opslineDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	opslineDeleted := new(models.OpsLine)
+	opslineDB.CopyBasicFieldsToOpsLine(opslineDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	opslineStaged := (*orm.BackRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
+	if opslineStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, opslineStaged, opslineDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

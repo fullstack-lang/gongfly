@@ -41,11 +41,12 @@ type SatelliteInput struct {
 //
 // swagger:route GET /satellites satellites getSatellites
 //
-// Get all satellites
+// # Get all satellites
 //
 // Responses:
-//    default: genericError
-//        200: satelliteDBsResponse
+// default: genericError
+//
+//	200: satelliteDBResponse
 func GetSatellites(c *gin.Context) {
 	db := orm.BackRepo.BackRepoSatellite.GetDB()
 
@@ -85,14 +86,15 @@ func GetSatellites(c *gin.Context) {
 // swagger:route POST /satellites satellites postSatellite
 //
 // Creates a satellite
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: satelliteDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostSatellite(c *gin.Context) {
 	db := orm.BackRepo.BackRepoSatellite.GetDB()
 
@@ -124,6 +126,14 @@ func PostSatellite(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoSatellite.CheckoutPhaseOneInstance(&satelliteDB)
+	satellite := (*orm.BackRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
+
+	if satellite != nil {
+		models.AfterCreateFromFront(&models.Stage, satellite)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostSatellite(c *gin.Context) {
 // Gets the details for a satellite.
 //
 // Responses:
-//    default: genericError
-//        200: satelliteDBResponse
+// default: genericError
+//
+//	200: satelliteDBResponse
 func GetSatellite(c *gin.Context) {
 	db := orm.BackRepo.BackRepoSatellite.GetDB()
 
@@ -166,11 +177,12 @@ func GetSatellite(c *gin.Context) {
 //
 // swagger:route PATCH /satellites/{ID} satellites updateSatellite
 //
-// Update a satellite
+// # Update a satellite
 //
 // Responses:
-//    default: genericError
-//        200: satelliteDBResponse
+// default: genericError
+//
+//	200: satelliteDBResponse
 func UpdateSatellite(c *gin.Context) {
 	db := orm.BackRepo.BackRepoSatellite.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateSatellite(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	satelliteNew := new(models.Satellite)
+	satelliteDB.CopyBasicFieldsToSatellite(satelliteNew)
+
+	// get stage instance from DB instance, and call callback function
+	satelliteOld := (*orm.BackRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
+	if satelliteOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, satelliteOld, satelliteNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the satelliteDB
@@ -223,10 +247,11 @@ func UpdateSatellite(c *gin.Context) {
 //
 // swagger:route DELETE /satellites/{ID} satellites deleteSatellite
 //
-// Delete a satellite
+// # Delete a satellite
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: satelliteDBResponse
 func DeleteSatellite(c *gin.Context) {
 	db := orm.BackRepo.BackRepoSatellite.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteSatellite(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&satelliteDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	satelliteDeleted := new(models.Satellite)
+	satelliteDB.CopyBasicFieldsToSatellite(satelliteDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	satelliteStaged := (*orm.BackRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
+	if satelliteStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, satelliteStaged, satelliteDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

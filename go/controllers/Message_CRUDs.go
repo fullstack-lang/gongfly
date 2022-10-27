@@ -41,11 +41,12 @@ type MessageInput struct {
 //
 // swagger:route GET /messages messages getMessages
 //
-// Get all messages
+// # Get all messages
 //
 // Responses:
-//    default: genericError
-//        200: messageDBsResponse
+// default: genericError
+//
+//	200: messageDBResponse
 func GetMessages(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMessage.GetDB()
 
@@ -85,14 +86,15 @@ func GetMessages(c *gin.Context) {
 // swagger:route POST /messages messages postMessage
 //
 // Creates a message
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: messageDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostMessage(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMessage.GetDB()
 
@@ -124,6 +126,14 @@ func PostMessage(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoMessage.CheckoutPhaseOneInstance(&messageDB)
+	message := (*orm.BackRepo.BackRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
+
+	if message != nil {
+		models.AfterCreateFromFront(&models.Stage, message)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostMessage(c *gin.Context) {
 // Gets the details for a message.
 //
 // Responses:
-//    default: genericError
-//        200: messageDBResponse
+// default: genericError
+//
+//	200: messageDBResponse
 func GetMessage(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMessage.GetDB()
 
@@ -166,11 +177,12 @@ func GetMessage(c *gin.Context) {
 //
 // swagger:route PATCH /messages/{ID} messages updateMessage
 //
-// Update a message
+// # Update a message
 //
 // Responses:
-//    default: genericError
-//        200: messageDBResponse
+// default: genericError
+//
+//	200: messageDBResponse
 func UpdateMessage(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMessage.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateMessage(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	messageNew := new(models.Message)
+	messageDB.CopyBasicFieldsToMessage(messageNew)
+
+	// get stage instance from DB instance, and call callback function
+	messageOld := (*orm.BackRepo.BackRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
+	if messageOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, messageOld, messageNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the messageDB
@@ -223,10 +247,11 @@ func UpdateMessage(c *gin.Context) {
 //
 // swagger:route DELETE /messages/{ID} messages deleteMessage
 //
-// Delete a message
+// # Delete a message
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: messageDBResponse
 func DeleteMessage(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMessage.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteMessage(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&messageDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	messageDeleted := new(models.Message)
+	messageDB.CopyBasicFieldsToMessage(messageDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	messageStaged := (*orm.BackRepo.BackRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
+	if messageStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, messageStaged, messageDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

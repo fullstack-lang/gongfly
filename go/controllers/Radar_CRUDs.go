@@ -41,11 +41,12 @@ type RadarInput struct {
 //
 // swagger:route GET /radars radars getRadars
 //
-// Get all radars
+// # Get all radars
 //
 // Responses:
-//    default: genericError
-//        200: radarDBsResponse
+// default: genericError
+//
+//	200: radarDBResponse
 func GetRadars(c *gin.Context) {
 	db := orm.BackRepo.BackRepoRadar.GetDB()
 
@@ -85,14 +86,15 @@ func GetRadars(c *gin.Context) {
 // swagger:route POST /radars radars postRadar
 //
 // Creates a radar
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: radarDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostRadar(c *gin.Context) {
 	db := orm.BackRepo.BackRepoRadar.GetDB()
 
@@ -124,6 +126,14 @@ func PostRadar(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoRadar.CheckoutPhaseOneInstance(&radarDB)
+	radar := (*orm.BackRepo.BackRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
+
+	if radar != nil {
+		models.AfterCreateFromFront(&models.Stage, radar)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostRadar(c *gin.Context) {
 // Gets the details for a radar.
 //
 // Responses:
-//    default: genericError
-//        200: radarDBResponse
+// default: genericError
+//
+//	200: radarDBResponse
 func GetRadar(c *gin.Context) {
 	db := orm.BackRepo.BackRepoRadar.GetDB()
 
@@ -166,11 +177,12 @@ func GetRadar(c *gin.Context) {
 //
 // swagger:route PATCH /radars/{ID} radars updateRadar
 //
-// Update a radar
+// # Update a radar
 //
 // Responses:
-//    default: genericError
-//        200: radarDBResponse
+// default: genericError
+//
+//	200: radarDBResponse
 func UpdateRadar(c *gin.Context) {
 	db := orm.BackRepo.BackRepoRadar.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateRadar(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	radarNew := new(models.Radar)
+	radarDB.CopyBasicFieldsToRadar(radarNew)
+
+	// get stage instance from DB instance, and call callback function
+	radarOld := (*orm.BackRepo.BackRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
+	if radarOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, radarOld, radarNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the radarDB
@@ -223,10 +247,11 @@ func UpdateRadar(c *gin.Context) {
 //
 // swagger:route DELETE /radars/{ID} radars deleteRadar
 //
-// Delete a radar
+// # Delete a radar
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: radarDBResponse
 func DeleteRadar(c *gin.Context) {
 	db := orm.BackRepo.BackRepoRadar.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteRadar(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&radarDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	radarDeleted := new(models.Radar)
+	radarDB.CopyBasicFieldsToRadar(radarDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	radarStaged := (*orm.BackRepo.BackRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
+	if radarStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, radarStaged, radarDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

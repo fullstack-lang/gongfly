@@ -400,6 +400,7 @@ func (backRepo *BackRepoStruct) CommitSatellite(satellite *models.Satellite) {
 	if id, ok := (*backRepo.BackRepoSatellite.Map_SatellitePtr_SatelliteDBID)[satellite]; ok {
 		backRepo.BackRepoSatellite.CommitPhaseTwoInstance(backRepo, id, satellite)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitSatellite allows checkout of a single satellite (if already staged and with a BackRepo id)

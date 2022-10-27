@@ -370,6 +370,7 @@ func (backRepo *BackRepoStruct) CommitScenario(scenario *models.Scenario) {
 	if id, ok := (*backRepo.BackRepoScenario.Map_ScenarioPtr_ScenarioDBID)[scenario]; ok {
 		backRepo.BackRepoScenario.CommitPhaseTwoInstance(backRepo, id, scenario)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitScenario allows checkout of a single scenario (if already staged and with a BackRepo id)

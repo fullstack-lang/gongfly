@@ -41,11 +41,12 @@ type LinerInput struct {
 //
 // swagger:route GET /liners liners getLiners
 //
-// Get all liners
+// # Get all liners
 //
 // Responses:
-//    default: genericError
-//        200: linerDBsResponse
+// default: genericError
+//
+//	200: linerDBResponse
 func GetLiners(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLiner.GetDB()
 
@@ -85,14 +86,15 @@ func GetLiners(c *gin.Context) {
 // swagger:route POST /liners liners postLiner
 //
 // Creates a liner
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: linerDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostLiner(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLiner.GetDB()
 
@@ -124,6 +126,14 @@ func PostLiner(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoLiner.CheckoutPhaseOneInstance(&linerDB)
+	liner := (*orm.BackRepo.BackRepoLiner.Map_LinerDBID_LinerPtr)[linerDB.ID]
+
+	if liner != nil {
+		models.AfterCreateFromFront(&models.Stage, liner)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostLiner(c *gin.Context) {
 // Gets the details for a liner.
 //
 // Responses:
-//    default: genericError
-//        200: linerDBResponse
+// default: genericError
+//
+//	200: linerDBResponse
 func GetLiner(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLiner.GetDB()
 
@@ -166,11 +177,12 @@ func GetLiner(c *gin.Context) {
 //
 // swagger:route PATCH /liners/{ID} liners updateLiner
 //
-// Update a liner
+// # Update a liner
 //
 // Responses:
-//    default: genericError
-//        200: linerDBResponse
+// default: genericError
+//
+//	200: linerDBResponse
 func UpdateLiner(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLiner.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateLiner(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	linerNew := new(models.Liner)
+	linerDB.CopyBasicFieldsToLiner(linerNew)
+
+	// get stage instance from DB instance, and call callback function
+	linerOld := (*orm.BackRepo.BackRepoLiner.Map_LinerDBID_LinerPtr)[linerDB.ID]
+	if linerOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, linerOld, linerNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the linerDB
@@ -223,10 +247,11 @@ func UpdateLiner(c *gin.Context) {
 //
 // swagger:route DELETE /liners/{ID} liners deleteLiner
 //
-// Delete a liner
+// # Delete a liner
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: linerDBResponse
 func DeleteLiner(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLiner.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteLiner(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&linerDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	linerDeleted := new(models.Liner)
+	linerDB.CopyBasicFieldsToLiner(linerDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	linerStaged := (*orm.BackRepo.BackRepoLiner.Map_LinerDBID_LinerPtr)[linerDB.ID]
+	if linerStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, linerStaged, linerDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

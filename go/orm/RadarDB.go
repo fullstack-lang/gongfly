@@ -370,6 +370,7 @@ func (backRepo *BackRepoStruct) CommitRadar(radar *models.Radar) {
 	if id, ok := (*backRepo.BackRepoRadar.Map_RadarPtr_RadarDBID)[radar]; ok {
 		backRepo.BackRepoRadar.CommitPhaseTwoInstance(backRepo, id, radar)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitRadar allows checkout of a single radar (if already staged and with a BackRepo id)

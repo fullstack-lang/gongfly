@@ -395,6 +395,7 @@ func (backRepo *BackRepoStruct) CommitOpsLine(opsline *models.OpsLine) {
 	if id, ok := (*backRepo.BackRepoOpsLine.Map_OpsLinePtr_OpsLineDBID)[opsline]; ok {
 		backRepo.BackRepoOpsLine.CommitPhaseTwoInstance(backRepo, id, opsline)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitOpsLine allows checkout of a single opsline (if already staged and with a BackRepo id)

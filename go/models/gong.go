@@ -2,6 +2,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -10,6 +11,9 @@ import (
 	"sort"
 	"strings"
 )
+
+// errUnkownEnum is returns when a value cannot match enum values
+var errUnkownEnum = errors.New("unkown enum")
 
 // swagger:ignore
 type __void any
@@ -31,23 +35,65 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	CivilianAirports           map[*CivilianAirport]any
 	CivilianAirports_mapString map[string]*CivilianAirport
 
+	OnAfterCivilianAirportCreateCallback OnAfterCreateInterface[CivilianAirport]
+	OnAfterCivilianAirportUpdateCallback OnAfterUpdateInterface[CivilianAirport]
+	OnAfterCivilianAirportDeleteCallback OnAfterDeleteInterface[CivilianAirport]
+	OnAfterCivilianAirportReadCallback   OnAfterReadInterface[CivilianAirport]
+
+
 	Liners           map[*Liner]any
 	Liners_mapString map[string]*Liner
+
+	OnAfterLinerCreateCallback OnAfterCreateInterface[Liner]
+	OnAfterLinerUpdateCallback OnAfterUpdateInterface[Liner]
+	OnAfterLinerDeleteCallback OnAfterDeleteInterface[Liner]
+	OnAfterLinerReadCallback   OnAfterReadInterface[Liner]
+
 
 	Messages           map[*Message]any
 	Messages_mapString map[string]*Message
 
+	OnAfterMessageCreateCallback OnAfterCreateInterface[Message]
+	OnAfterMessageUpdateCallback OnAfterUpdateInterface[Message]
+	OnAfterMessageDeleteCallback OnAfterDeleteInterface[Message]
+	OnAfterMessageReadCallback   OnAfterReadInterface[Message]
+
+
 	OpsLines           map[*OpsLine]any
 	OpsLines_mapString map[string]*OpsLine
+
+	OnAfterOpsLineCreateCallback OnAfterCreateInterface[OpsLine]
+	OnAfterOpsLineUpdateCallback OnAfterUpdateInterface[OpsLine]
+	OnAfterOpsLineDeleteCallback OnAfterDeleteInterface[OpsLine]
+	OnAfterOpsLineReadCallback   OnAfterReadInterface[OpsLine]
+
 
 	Radars           map[*Radar]any
 	Radars_mapString map[string]*Radar
 
+	OnAfterRadarCreateCallback OnAfterCreateInterface[Radar]
+	OnAfterRadarUpdateCallback OnAfterUpdateInterface[Radar]
+	OnAfterRadarDeleteCallback OnAfterDeleteInterface[Radar]
+	OnAfterRadarReadCallback   OnAfterReadInterface[Radar]
+
+
 	Satellites           map[*Satellite]any
 	Satellites_mapString map[string]*Satellite
 
+	OnAfterSatelliteCreateCallback OnAfterCreateInterface[Satellite]
+	OnAfterSatelliteUpdateCallback OnAfterUpdateInterface[Satellite]
+	OnAfterSatelliteDeleteCallback OnAfterDeleteInterface[Satellite]
+	OnAfterSatelliteReadCallback   OnAfterReadInterface[Satellite]
+
+
 	Scenarios           map[*Scenario]any
 	Scenarios_mapString map[string]*Scenario
+
+	OnAfterScenarioCreateCallback OnAfterCreateInterface[Scenario]
+	OnAfterScenarioUpdateCallback OnAfterUpdateInterface[Scenario]
+	OnAfterScenarioDeleteCallback OnAfterDeleteInterface[Scenario]
+	OnAfterScenarioReadCallback   OnAfterReadInterface[Scenario]
+
 
 	AllModelsStructCreateCallback AllModelsStructCreateInterface
 
@@ -66,6 +112,29 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 
 type OnInitCommitInterface interface {
 	BeforeCommit(stage *StageStruct)
+}
+
+// OnAfterCreateInterface callback when an instance is updated from the front
+type OnAfterCreateInterface[Type Gongstruct] interface {
+	OnAfterCreate(stage *StageStruct,
+		instance *Type)
+}
+
+// OnAfterReadInterface callback when an instance is updated from the front
+type OnAfterReadInterface[Type Gongstruct] interface {
+	OnAfterRead(stage *StageStruct,
+		instance *Type)
+}
+
+// OnAfterUpdateInterface callback when an instance is updated from the front
+type OnAfterUpdateInterface[Type Gongstruct] interface {
+	OnAfterUpdate(stage *StageStruct, old, new *Type)
+}
+
+// OnAfterDeleteInterface callback when an instance is updated from the front
+type OnAfterDeleteInterface[Type Gongstruct] interface {
+	OnAfterDelete(stage *StageStruct,
+		staged, front *Type)
 }
 
 type BackRepoInterface interface {
@@ -2287,7 +2356,7 @@ func (conceptenum ConceptEnum) ToString() (res string) {
 	return
 }
 
-func (conceptenum *ConceptEnum) FromString(input string) {
+func (conceptenum *ConceptEnum) FromString(input string) (err error) {
 
 	switch input {
 	// insertion code per enum code
@@ -2301,7 +2370,10 @@ func (conceptenum *ConceptEnum) FromString(input string) {
 		*conceptenum = Center_
 	case "Systems":
 		*conceptenum = System_
+	default:
+		return errUnkownEnum
 	}
+	return
 }
 
 func (conceptenum *ConceptEnum) ToCodeString() (res string) {
@@ -2338,7 +2410,7 @@ func (linerstateenum LinerStateEnum) ToString() (res string) {
 	return
 }
 
-func (linerstateenum *LinerStateEnum) FromString(input string) {
+func (linerstateenum *LinerStateEnum) FromString(input string) (err error) {
 
 	switch input {
 	// insertion code per enum code
@@ -2346,7 +2418,10 @@ func (linerstateenum *LinerStateEnum) FromString(input string) {
 		*linerstateenum = EN_ROUTE_NOMINAL
 	case "LANDED":
 		*linerstateenum = LANDED
+	default:
+		return errUnkownEnum
 	}
+	return
 }
 
 func (linerstateenum *LinerStateEnum) ToCodeString() (res string) {
@@ -2377,7 +2452,7 @@ func (messagestateenum MessageStateEnum) ToString() (res string) {
 	return
 }
 
-func (messagestateenum *MessageStateEnum) FromString(input string) {
+func (messagestateenum *MessageStateEnum) FromString(input string) (err error) {
 
 	switch input {
 	// insertion code per enum code
@@ -2385,7 +2460,10 @@ func (messagestateenum *MessageStateEnum) FromString(input string) {
 		*messagestateenum = MESSAGE_EN_ROUTE
 	case "MESSAGE_ARRIVED":
 		*messagestateenum = MESSAGE_ARRIVED
+	default:
+		return errUnkownEnum
 	}
+	return
 }
 
 func (messagestateenum *MessageStateEnum) ToCodeString() (res string) {
@@ -2416,7 +2494,7 @@ func (operationallinestateenum OperationalLineStateEnum) ToString() (res string)
 	return
 }
 
-func (operationallinestateenum *OperationalLineStateEnum) FromString(input string) {
+func (operationallinestateenum *OperationalLineStateEnum) FromString(input string) (err error) {
 
 	switch input {
 	// insertion code per enum code
@@ -2424,7 +2502,10 @@ func (operationallinestateenum *OperationalLineStateEnum) FromString(input strin
 		*operationallinestateenum = OPS_COM_LINK_OPERATIONAL_LINE_WORKING
 	case "OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING":
 		*operationallinestateenum = OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING
+	default:
+		return errUnkownEnum
 	}
+	return
 }
 
 func (operationallinestateenum *OperationalLineStateEnum) ToCodeString() (res string) {
@@ -2453,13 +2534,16 @@ func (orderenum OrderEnum) ToString() (res string) {
 	return
 }
 
-func (orderenum *OrderEnum) FromString(input string) {
+func (orderenum *OrderEnum) FromString(input string) (err error) {
 
 	switch input {
 	// insertion code per enum code
 	case "TAKE_OFF":
 		*orderenum = TAKE_OFF
+	default:
+		return errUnkownEnum
 	}
+	return
 }
 
 func (orderenum *OrderEnum) ToCodeString() (res string) {
@@ -2486,13 +2570,16 @@ func (radarstateenum RadarStateEnum) ToString() (res string) {
 	return
 }
 
-func (radarstateenum *RadarStateEnum) FromString(input string) {
+func (radarstateenum *RadarStateEnum) FromString(input string) (err error) {
 
 	switch input {
 	// insertion code per enum code
 	case "WORKING":
 		*radarstateenum = WORKING
+	default:
+		return errUnkownEnum
 	}
+	return
 }
 
 func (radarstateenum *RadarStateEnum) ToCodeString() (res string) {
@@ -2519,13 +2606,16 @@ func (reportenum ReportEnum) ToString() (res string) {
 	return
 }
 
-func (reportenum *ReportEnum) FromString(input string) {
+func (reportenum *ReportEnum) FromString(input string) (err error) {
 
 	switch input {
 	// insertion code per enum code
 	case "TAKE_OFF_COMPLETED":
 		*reportenum = TAKE_OFF_COMPLETED
+	default:
+		return errUnkownEnum
 	}
+	return
 }
 
 func (reportenum *ReportEnum) ToCodeString() (res string) {

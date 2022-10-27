@@ -358,6 +358,7 @@ func (backRepo *BackRepoStruct) CommitCivilianAirport(civilianairport *models.Ci
 	if id, ok := (*backRepo.BackRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID)[civilianairport]; ok {
 		backRepo.BackRepoCivilianAirport.CommitPhaseTwoInstance(backRepo, id, civilianairport)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitCivilianAirport allows checkout of a single civilianairport (if already staged and with a BackRepo id)
