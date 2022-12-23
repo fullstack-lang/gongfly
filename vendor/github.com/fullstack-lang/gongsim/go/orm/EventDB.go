@@ -352,6 +352,7 @@ func (backRepo *BackRepoStruct) CommitEvent(event *models.Event) {
 	if id, ok := (*backRepo.BackRepoEvent.Map_EventPtr_EventDBID)[event]; ok {
 		backRepo.BackRepoEvent.CommitPhaseTwoInstance(backRepo, id, event)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitEvent allows checkout of a single event (if already staged and with a BackRepo id)

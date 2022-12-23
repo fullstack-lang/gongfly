@@ -1,6 +1,6 @@
 // generated from NgDetailTemplateTS
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 import { MapOptionsDB } from '../mapoptions-db'
 import { MapOptionsService } from '../mapoptions.service'
@@ -33,8 +33,8 @@ enum MapOptionsDetailComponentState {
 export class MapOptionsDetailComponent implements OnInit {
 
 	// insertion point for declarations
-	ZoomControlFormControl: FormControl = new FormControl(false);
-	AttributionControlFormControl: FormControl = new FormControl(false);
+	ZoomControlFormControl: UntypedFormControl = new UntypedFormControl(false);
+	AttributionControlFormControl: UntypedFormControl = new UntypedFormControl(false);
 
 	// the MapOptionsDB of interest
 	mapoptions: MapOptionsDB = new MapOptionsDB

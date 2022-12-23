@@ -370,6 +370,7 @@ func (backRepo *BackRepoStruct) CommitGongsimCommand(gongsimcommand *models.Gong
 	if id, ok := (*backRepo.BackRepoGongsimCommand.Map_GongsimCommandPtr_GongsimCommandDBID)[gongsimcommand]; ok {
 		backRepo.BackRepoGongsimCommand.CommitPhaseTwoInstance(backRepo, id, gongsimcommand)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitGongsimCommand allows checkout of a single gongsimcommand (if already staged and with a BackRepo id)

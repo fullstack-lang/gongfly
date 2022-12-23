@@ -364,6 +364,7 @@ func (backRepo *BackRepoStruct) CommitUserClick(userclick *models.UserClick) {
 	if id, ok := (*backRepo.BackRepoUserClick.Map_UserClickPtr_UserClickDBID)[userclick]; ok {
 		backRepo.BackRepoUserClick.CommitPhaseTwoInstance(backRepo, id, userclick)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitUserClick allows checkout of a single userclick (if already staged and with a BackRepo id)

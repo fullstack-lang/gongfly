@@ -25,7 +25,7 @@ export class GongmarkdownspecificTextareaComponent implements OnInit {
   currTime: number = 0
 
   constructor(
-    private gongmarkdownCommitNbService: gongmarkdown.CommitNbService,
+    private gongmarkdownCommitNbService: gongmarkdown.CommitNbFromBackService,
     private gongmarkdownPushFromFrontNbService: gongmarkdown.PushFromFrontNbService,
     private gongmarkdownMarkdownContentService: gongmarkdown.MarkdownContentService
   ) { }
@@ -37,7 +37,7 @@ export class GongmarkdownspecificTextareaComponent implements OnInit {
         this.currTime = currTime
 
         // see above for the explanation
-        this.gongmarkdownCommitNbService.getCommitNb().subscribe(
+        this.gongmarkdownCommitNbService.getCommitNbFromBack().subscribe(
           commitNb => {
             if (this.lastCommitNb < commitNb) {
 

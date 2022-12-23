@@ -1,6 +1,6 @@
 // generated from NgDetailTemplateTS
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 import { LayerGroupUseDB } from '../layergroupuse-db'
 import { LayerGroupUseService } from '../layergroupuse.service'
@@ -35,7 +35,7 @@ enum LayerGroupUseDetailComponentState {
 export class LayerGroupUseDetailComponent implements OnInit {
 
 	// insertion point for declarations
-	DisplayFormControl: FormControl = new FormControl(false);
+	DisplayFormControl: UntypedFormControl = new UntypedFormControl(false);
 
 	// the LayerGroupUseDB of interest
 	layergroupuse: LayerGroupUseDB = new LayerGroupUseDB

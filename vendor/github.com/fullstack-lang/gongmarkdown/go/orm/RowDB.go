@@ -398,6 +398,7 @@ func (backRepo *BackRepoStruct) CommitRow(row *models.Row) {
 	if id, ok := (*backRepo.BackRepoRow.Map_RowPtr_RowDBID)[row]; ok {
 		backRepo.BackRepoRow.CommitPhaseTwoInstance(backRepo, id, row)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitRow allows checkout of a single row (if already staged and with a BackRepo id)

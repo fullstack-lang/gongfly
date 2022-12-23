@@ -352,6 +352,7 @@ func (backRepo *BackRepoStruct) CommitCell(cell *models.Cell) {
 	if id, ok := (*backRepo.BackRepoCell.Map_CellPtr_CellDBID)[cell]; ok {
 		backRepo.BackRepoCell.CommitPhaseTwoInstance(backRepo, id, cell)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitCell allows checkout of a single cell (if already staged and with a BackRepo id)

@@ -1,5 +1,6 @@
 {
     "go.lintFlags": [
         "MD022:false",
-    ]
+    ],
+    "go.diagnostic.vulncheck": "Imports"
 }

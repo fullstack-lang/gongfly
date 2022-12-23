@@ -10,7 +10,7 @@ import (
 var gongfly uml.Classdiagram = uml.Classdiagram{
 	Classshapes: []*uml.Classshape{
 		{
-			Struct: &(models.Liner{}),
+			ReferencedGong: &(models.Liner{}),
 			Position: &uml.Position{
 				X: 20.000000,
 				Y: 20.000000,
@@ -77,7 +77,7 @@ var gongfly uml.Classdiagram = uml.Classdiagram{
 			},
 		},
 		{
-			Struct: &(models.OpsLine{}),
+			ReferencedGong: &(models.OpsLine{}),
 			Position: &uml.Position{
 				X: 440.000000,
 				Y: 40.000000,
@@ -120,7 +120,7 @@ var gongfly uml.Classdiagram = uml.Classdiagram{
 			},
 		},
 		{
-			Struct: &(models.Satellite{}),
+			ReferencedGong: &(models.Satellite{}),
 			Position: &uml.Position{
 				X: 20.000000,
 				Y: 310.000000,
@@ -140,7 +140,7 @@ var gongfly uml.Classdiagram = uml.Classdiagram{
 			},
 		},
 		{
-			Struct: &(models.Scenario{}),
+			ReferencedGong: &(models.Scenario{}),
 			Position: &uml.Position{
 				X: 20.000000,
 				Y: 440.000000,

@@ -398,6 +398,7 @@ func (backRepo *BackRepoStruct) CommitMarker(marker *models.Marker) {
 	if id, ok := (*backRepo.BackRepoMarker.Map_MarkerPtr_MarkerDBID)[marker]; ok {
 		backRepo.BackRepoMarker.CommitPhaseTwoInstance(backRepo, id, marker)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitMarker allows checkout of a single marker (if already staged and with a BackRepo id)

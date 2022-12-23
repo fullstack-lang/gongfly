@@ -448,6 +448,7 @@ func (backRepo *BackRepoStruct) CommitMapOptions(mapoptions *models.MapOptions) 
 	if id, ok := (*backRepo.BackRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID)[mapoptions]; ok {
 		backRepo.BackRepoMapOptions.CommitPhaseTwoInstance(backRepo, id, mapoptions)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitMapOptions allows checkout of a single mapoptions (if already staged and with a BackRepo id)

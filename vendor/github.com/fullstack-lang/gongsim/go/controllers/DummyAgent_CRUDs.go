@@ -41,11 +41,12 @@ type DummyAgentInput struct {
 //
 // swagger:route GET /dummyagents dummyagents getDummyAgents
 //
-// Get all dummyagents
+// # Get all dummyagents
 //
 // Responses:
-//    default: genericError
-//        200: dummyagentDBsResponse
+// default: genericError
+//
+//	200: dummyagentDBResponse
 func GetDummyAgents(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDummyAgent.GetDB()
 
@@ -85,14 +86,15 @@ func GetDummyAgents(c *gin.Context) {
 // swagger:route POST /dummyagents dummyagents postDummyAgent
 //
 // Creates a dummyagent
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: dummyagentDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostDummyAgent(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDummyAgent.GetDB()
 
@@ -124,6 +126,14 @@ func PostDummyAgent(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoDummyAgent.CheckoutPhaseOneInstance(&dummyagentDB)
+	dummyagent := (*orm.BackRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
+
+	if dummyagent != nil {
+		models.AfterCreateFromFront(&models.Stage, dummyagent)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostDummyAgent(c *gin.Context) {
 // Gets the details for a dummyagent.
 //
 // Responses:
-//    default: genericError
-//        200: dummyagentDBResponse
+// default: genericError
+//
+//	200: dummyagentDBResponse
 func GetDummyAgent(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDummyAgent.GetDB()
 
@@ -166,11 +177,12 @@ func GetDummyAgent(c *gin.Context) {
 //
 // swagger:route PATCH /dummyagents/{ID} dummyagents updateDummyAgent
 //
-// Update a dummyagent
+// # Update a dummyagent
 //
 // Responses:
-//    default: genericError
-//        200: dummyagentDBResponse
+// default: genericError
+//
+//	200: dummyagentDBResponse
 func UpdateDummyAgent(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDummyAgent.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateDummyAgent(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	dummyagentNew := new(models.DummyAgent)
+	dummyagentDB.CopyBasicFieldsToDummyAgent(dummyagentNew)
+
+	// get stage instance from DB instance, and call callback function
+	dummyagentOld := (*orm.BackRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
+	if dummyagentOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, dummyagentOld, dummyagentNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the dummyagentDB
@@ -223,10 +247,11 @@ func UpdateDummyAgent(c *gin.Context) {
 //
 // swagger:route DELETE /dummyagents/{ID} dummyagents deleteDummyAgent
 //
-// Delete a dummyagent
+// # Delete a dummyagent
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: dummyagentDBResponse
 func DeleteDummyAgent(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDummyAgent.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteDummyAgent(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&dummyagentDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	dummyagentDeleted := new(models.DummyAgent)
+	dummyagentDB.CopyBasicFieldsToDummyAgent(dummyagentDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	dummyagentStaged := (*orm.BackRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
+	if dummyagentStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, dummyagentStaged, dummyagentDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

@@ -41,11 +41,12 @@ type ElementInput struct {
 //
 // swagger:route GET /elements elements getElements
 //
-// Get all elements
+// # Get all elements
 //
 // Responses:
-//    default: genericError
-//        200: elementDBsResponse
+// default: genericError
+//
+//	200: elementDBResponse
 func GetElements(c *gin.Context) {
 	db := orm.BackRepo.BackRepoElement.GetDB()
 
@@ -85,14 +86,15 @@ func GetElements(c *gin.Context) {
 // swagger:route POST /elements elements postElement
 //
 // Creates a element
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: elementDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostElement(c *gin.Context) {
 	db := orm.BackRepo.BackRepoElement.GetDB()
 
@@ -124,6 +126,14 @@ func PostElement(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoElement.CheckoutPhaseOneInstance(&elementDB)
+	element := (*orm.BackRepo.BackRepoElement.Map_ElementDBID_ElementPtr)[elementDB.ID]
+
+	if element != nil {
+		models.AfterCreateFromFront(&models.Stage, element)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostElement(c *gin.Context) {
 // Gets the details for a element.
 //
 // Responses:
-//    default: genericError
-//        200: elementDBResponse
+// default: genericError
+//
+//	200: elementDBResponse
 func GetElement(c *gin.Context) {
 	db := orm.BackRepo.BackRepoElement.GetDB()
 
@@ -166,11 +177,12 @@ func GetElement(c *gin.Context) {
 //
 // swagger:route PATCH /elements/{ID} elements updateElement
 //
-// Update a element
+// # Update a element
 //
 // Responses:
-//    default: genericError
-//        200: elementDBResponse
+// default: genericError
+//
+//	200: elementDBResponse
 func UpdateElement(c *gin.Context) {
 	db := orm.BackRepo.BackRepoElement.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateElement(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	elementNew := new(models.Element)
+	elementDB.CopyBasicFieldsToElement(elementNew)
+
+	// get stage instance from DB instance, and call callback function
+	elementOld := (*orm.BackRepo.BackRepoElement.Map_ElementDBID_ElementPtr)[elementDB.ID]
+	if elementOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, elementOld, elementNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the elementDB
@@ -223,10 +247,11 @@ func UpdateElement(c *gin.Context) {
 //
 // swagger:route DELETE /elements/{ID} elements deleteElement
 //
-// Delete a element
+// # Delete a element
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: elementDBResponse
 func DeleteElement(c *gin.Context) {
 	db := orm.BackRepo.BackRepoElement.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteElement(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&elementDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	elementDeleted := new(models.Element)
+	elementDB.CopyBasicFieldsToElement(elementDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	elementStaged := (*orm.BackRepo.BackRepoElement.Map_ElementDBID_ElementPtr)[elementDB.ID]
+	if elementStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, elementStaged, elementDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

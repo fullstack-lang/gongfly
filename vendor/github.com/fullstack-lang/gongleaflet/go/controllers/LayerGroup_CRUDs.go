@@ -41,11 +41,12 @@ type LayerGroupInput struct {
 //
 // swagger:route GET /layergroups layergroups getLayerGroups
 //
-// Get all layergroups
+// # Get all layergroups
 //
 // Responses:
-//    default: genericError
-//        200: layergroupDBsResponse
+// default: genericError
+//
+//	200: layergroupDBResponse
 func GetLayerGroups(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLayerGroup.GetDB()
 
@@ -85,14 +86,15 @@ func GetLayerGroups(c *gin.Context) {
 // swagger:route POST /layergroups layergroups postLayerGroup
 //
 // Creates a layergroup
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: layergroupDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostLayerGroup(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLayerGroup.GetDB()
 
@@ -124,6 +126,14 @@ func PostLayerGroup(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoLayerGroup.CheckoutPhaseOneInstance(&layergroupDB)
+	layergroup := (*orm.BackRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
+
+	if layergroup != nil {
+		models.AfterCreateFromFront(&models.Stage, layergroup)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostLayerGroup(c *gin.Context) {
 // Gets the details for a layergroup.
 //
 // Responses:
-//    default: genericError
-//        200: layergroupDBResponse
+// default: genericError
+//
+//	200: layergroupDBResponse
 func GetLayerGroup(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLayerGroup.GetDB()
 
@@ -166,11 +177,12 @@ func GetLayerGroup(c *gin.Context) {
 //
 // swagger:route PATCH /layergroups/{ID} layergroups updateLayerGroup
 //
-// Update a layergroup
+// # Update a layergroup
 //
 // Responses:
-//    default: genericError
-//        200: layergroupDBResponse
+// default: genericError
+//
+//	200: layergroupDBResponse
 func UpdateLayerGroup(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLayerGroup.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateLayerGroup(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	layergroupNew := new(models.LayerGroup)
+	layergroupDB.CopyBasicFieldsToLayerGroup(layergroupNew)
+
+	// get stage instance from DB instance, and call callback function
+	layergroupOld := (*orm.BackRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
+	if layergroupOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, layergroupOld, layergroupNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the layergroupDB
@@ -223,10 +247,11 @@ func UpdateLayerGroup(c *gin.Context) {
 //
 // swagger:route DELETE /layergroups/{ID} layergroups deleteLayerGroup
 //
-// Delete a layergroup
+// # Delete a layergroup
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: layergroupDBResponse
 func DeleteLayerGroup(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLayerGroup.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteLayerGroup(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&layergroupDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	layergroupDeleted := new(models.LayerGroup)
+	layergroupDB.CopyBasicFieldsToLayerGroup(layergroupDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	layergroupStaged := (*orm.BackRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
+	if layergroupStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, layergroupStaged, layergroupDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

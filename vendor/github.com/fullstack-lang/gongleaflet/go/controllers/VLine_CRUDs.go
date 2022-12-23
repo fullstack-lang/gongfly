@@ -41,11 +41,12 @@ type VLineInput struct {
 //
 // swagger:route GET /vlines vlines getVLines
 //
-// Get all vlines
+// # Get all vlines
 //
 // Responses:
-//    default: genericError
-//        200: vlineDBsResponse
+// default: genericError
+//
+//	200: vlineDBResponse
 func GetVLines(c *gin.Context) {
 	db := orm.BackRepo.BackRepoVLine.GetDB()
 
@@ -85,14 +86,15 @@ func GetVLines(c *gin.Context) {
 // swagger:route POST /vlines vlines postVLine
 //
 // Creates a vline
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: vlineDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostVLine(c *gin.Context) {
 	db := orm.BackRepo.BackRepoVLine.GetDB()
 
@@ -124,6 +126,14 @@ func PostVLine(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoVLine.CheckoutPhaseOneInstance(&vlineDB)
+	vline := (*orm.BackRepo.BackRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
+
+	if vline != nil {
+		models.AfterCreateFromFront(&models.Stage, vline)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostVLine(c *gin.Context) {
 // Gets the details for a vline.
 //
 // Responses:
-//    default: genericError
-//        200: vlineDBResponse
+// default: genericError
+//
+//	200: vlineDBResponse
 func GetVLine(c *gin.Context) {
 	db := orm.BackRepo.BackRepoVLine.GetDB()
 
@@ -166,11 +177,12 @@ func GetVLine(c *gin.Context) {
 //
 // swagger:route PATCH /vlines/{ID} vlines updateVLine
 //
-// Update a vline
+// # Update a vline
 //
 // Responses:
-//    default: genericError
-//        200: vlineDBResponse
+// default: genericError
+//
+//	200: vlineDBResponse
 func UpdateVLine(c *gin.Context) {
 	db := orm.BackRepo.BackRepoVLine.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateVLine(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	vlineNew := new(models.VLine)
+	vlineDB.CopyBasicFieldsToVLine(vlineNew)
+
+	// get stage instance from DB instance, and call callback function
+	vlineOld := (*orm.BackRepo.BackRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
+	if vlineOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, vlineOld, vlineNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the vlineDB
@@ -223,10 +247,11 @@ func UpdateVLine(c *gin.Context) {
 //
 // swagger:route DELETE /vlines/{ID} vlines deleteVLine
 //
-// Delete a vline
+// # Delete a vline
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: vlineDBResponse
 func DeleteVLine(c *gin.Context) {
 	db := orm.BackRepo.BackRepoVLine.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteVLine(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&vlineDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	vlineDeleted := new(models.VLine)
+	vlineDB.CopyBasicFieldsToVLine(vlineDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	vlineStaged := (*orm.BackRepo.BackRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
+	if vlineStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, vlineStaged, vlineDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

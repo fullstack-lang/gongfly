@@ -393,6 +393,7 @@ func (backRepo *BackRepoStruct) CommitCircle(circle *models.Circle) {
 	if id, ok := (*backRepo.BackRepoCircle.Map_CirclePtr_CircleDBID)[circle]; ok {
 		backRepo.BackRepoCircle.CommitPhaseTwoInstance(backRepo, id, circle)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitCircle allows checkout of a single circle (if already staged and with a BackRepo id)

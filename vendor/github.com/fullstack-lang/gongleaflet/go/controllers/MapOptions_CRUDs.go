@@ -41,11 +41,12 @@ type MapOptionsInput struct {
 //
 // swagger:route GET /mapoptionss mapoptionss getMapOptionss
 //
-// Get all mapoptionss
+// # Get all mapoptionss
 //
 // Responses:
-//    default: genericError
-//        200: mapoptionsDBsResponse
+// default: genericError
+//
+//	200: mapoptionsDBResponse
 func GetMapOptionss(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMapOptions.GetDB()
 
@@ -85,14 +86,15 @@ func GetMapOptionss(c *gin.Context) {
 // swagger:route POST /mapoptionss mapoptionss postMapOptions
 //
 // Creates a mapoptions
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: mapoptionsDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostMapOptions(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMapOptions.GetDB()
 
@@ -124,6 +126,14 @@ func PostMapOptions(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoMapOptions.CheckoutPhaseOneInstance(&mapoptionsDB)
+	mapoptions := (*orm.BackRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
+
+	if mapoptions != nil {
+		models.AfterCreateFromFront(&models.Stage, mapoptions)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostMapOptions(c *gin.Context) {
 // Gets the details for a mapoptions.
 //
 // Responses:
-//    default: genericError
-//        200: mapoptionsDBResponse
+// default: genericError
+//
+//	200: mapoptionsDBResponse
 func GetMapOptions(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMapOptions.GetDB()
 
@@ -166,11 +177,12 @@ func GetMapOptions(c *gin.Context) {
 //
 // swagger:route PATCH /mapoptionss/{ID} mapoptionss updateMapOptions
 //
-// Update a mapoptions
+// # Update a mapoptions
 //
 // Responses:
-//    default: genericError
-//        200: mapoptionsDBResponse
+// default: genericError
+//
+//	200: mapoptionsDBResponse
 func UpdateMapOptions(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMapOptions.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateMapOptions(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	mapoptionsNew := new(models.MapOptions)
+	mapoptionsDB.CopyBasicFieldsToMapOptions(mapoptionsNew)
+
+	// get stage instance from DB instance, and call callback function
+	mapoptionsOld := (*orm.BackRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
+	if mapoptionsOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, mapoptionsOld, mapoptionsNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the mapoptionsDB
@@ -223,10 +247,11 @@ func UpdateMapOptions(c *gin.Context) {
 //
 // swagger:route DELETE /mapoptionss/{ID} mapoptionss deleteMapOptions
 //
-// Delete a mapoptions
+// # Delete a mapoptions
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: mapoptionsDBResponse
 func DeleteMapOptions(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMapOptions.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteMapOptions(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&mapoptionsDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	mapoptionsDeleted := new(models.MapOptions)
+	mapoptionsDB.CopyBasicFieldsToMapOptions(mapoptionsDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	mapoptionsStaged := (*orm.BackRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
+	if mapoptionsStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, mapoptionsStaged, mapoptionsDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

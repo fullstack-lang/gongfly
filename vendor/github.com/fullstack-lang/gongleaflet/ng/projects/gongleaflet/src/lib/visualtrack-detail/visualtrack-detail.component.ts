@@ -1,6 +1,6 @@
 // generated from NgDetailTemplateTS
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 import { VisualTrackDB } from '../visualtrack-db'
 import { VisualTrackService } from '../visualtrack.service'
@@ -35,8 +35,8 @@ export class VisualTrackDetailComponent implements OnInit {
 
 	// insertion point for declarations
 	ColorEnumList: ColorEnumSelect[] = []
-	DisplayTrackHistoryFormControl: FormControl = new FormControl(false);
-	DisplayLevelAndSpeedFormControl: FormControl = new FormControl(false);
+	DisplayTrackHistoryFormControl: UntypedFormControl = new UntypedFormControl(false);
+	DisplayLevelAndSpeedFormControl: UntypedFormControl = new UntypedFormControl(false);
 
 	// the VisualTrackDB of interest
 	visualtrack: VisualTrackDB = new VisualTrackDB

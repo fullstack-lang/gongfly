@@ -369,6 +369,7 @@ func (backRepo *BackRepoStruct) CommitMarkdownContent(markdowncontent *models.Ma
 	if id, ok := (*backRepo.BackRepoMarkdownContent.Map_MarkdownContentPtr_MarkdownContentDBID)[markdowncontent]; ok {
 		backRepo.BackRepoMarkdownContent.CommitPhaseTwoInstance(backRepo, id, markdowncontent)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitMarkdownContent allows checkout of a single markdowncontent (if already staged and with a BackRepo id)

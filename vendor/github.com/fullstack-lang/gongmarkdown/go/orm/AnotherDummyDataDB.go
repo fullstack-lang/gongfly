@@ -346,6 +346,7 @@ func (backRepo *BackRepoStruct) CommitAnotherDummyData(anotherdummydata *models.
 	if id, ok := (*backRepo.BackRepoAnotherDummyData.Map_AnotherDummyDataPtr_AnotherDummyDataDBID)[anotherdummydata]; ok {
 		backRepo.BackRepoAnotherDummyData.CommitPhaseTwoInstance(backRepo, id, anotherdummydata)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitAnotherDummyData allows checkout of a single anotherdummydata (if already staged and with a BackRepo id)

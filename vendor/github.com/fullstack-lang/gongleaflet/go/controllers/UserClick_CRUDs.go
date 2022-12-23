@@ -41,11 +41,12 @@ type UserClickInput struct {
 //
 // swagger:route GET /userclicks userclicks getUserClicks
 //
-// Get all userclicks
+// # Get all userclicks
 //
 // Responses:
-//    default: genericError
-//        200: userclickDBsResponse
+// default: genericError
+//
+//	200: userclickDBResponse
 func GetUserClicks(c *gin.Context) {
 	db := orm.BackRepo.BackRepoUserClick.GetDB()
 
@@ -85,14 +86,15 @@ func GetUserClicks(c *gin.Context) {
 // swagger:route POST /userclicks userclicks postUserClick
 //
 // Creates a userclick
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: userclickDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostUserClick(c *gin.Context) {
 	db := orm.BackRepo.BackRepoUserClick.GetDB()
 
@@ -124,6 +126,14 @@ func PostUserClick(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoUserClick.CheckoutPhaseOneInstance(&userclickDB)
+	userclick := (*orm.BackRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
+
+	if userclick != nil {
+		models.AfterCreateFromFront(&models.Stage, userclick)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostUserClick(c *gin.Context) {
 // Gets the details for a userclick.
 //
 // Responses:
-//    default: genericError
-//        200: userclickDBResponse
+// default: genericError
+//
+//	200: userclickDBResponse
 func GetUserClick(c *gin.Context) {
 	db := orm.BackRepo.BackRepoUserClick.GetDB()
 
@@ -166,11 +177,12 @@ func GetUserClick(c *gin.Context) {
 //
 // swagger:route PATCH /userclicks/{ID} userclicks updateUserClick
 //
-// Update a userclick
+// # Update a userclick
 //
 // Responses:
-//    default: genericError
-//        200: userclickDBResponse
+// default: genericError
+//
+//	200: userclickDBResponse
 func UpdateUserClick(c *gin.Context) {
 	db := orm.BackRepo.BackRepoUserClick.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateUserClick(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	userclickNew := new(models.UserClick)
+	userclickDB.CopyBasicFieldsToUserClick(userclickNew)
+
+	// get stage instance from DB instance, and call callback function
+	userclickOld := (*orm.BackRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
+	if userclickOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, userclickOld, userclickNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the userclickDB
@@ -223,10 +247,11 @@ func UpdateUserClick(c *gin.Context) {
 //
 // swagger:route DELETE /userclicks/{ID} userclicks deleteUserClick
 //
-// Delete a userclick
+// # Delete a userclick
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: userclickDBResponse
 func DeleteUserClick(c *gin.Context) {
 	db := orm.BackRepo.BackRepoUserClick.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteUserClick(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&userclickDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	userclickDeleted := new(models.UserClick)
+	userclickDB.CopyBasicFieldsToUserClick(userclickDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	userclickStaged := (*orm.BackRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
+	if userclickStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, userclickStaged, userclickDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

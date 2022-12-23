@@ -352,6 +352,7 @@ func (backRepo *BackRepoStruct) CommitDivIcon(divicon *models.DivIcon) {
 	if id, ok := (*backRepo.BackRepoDivIcon.Map_DivIconPtr_DivIconDBID)[divicon]; ok {
 		backRepo.BackRepoDivIcon.CommitPhaseTwoInstance(backRepo, id, divicon)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitDivIcon allows checkout of a single divicon (if already staged and with a BackRepo id)

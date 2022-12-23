@@ -423,6 +423,7 @@ func (backRepo *BackRepoStruct) CommitVLine(vline *models.VLine) {
 	if id, ok := (*backRepo.BackRepoVLine.Map_VLinePtr_VLineDBID)[vline]; ok {
 		backRepo.BackRepoVLine.CommitPhaseTwoInstance(backRepo, id, vline)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitVLine allows checkout of a single vline (if already staged and with a BackRepo id)

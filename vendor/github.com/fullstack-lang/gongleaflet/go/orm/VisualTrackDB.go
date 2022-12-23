@@ -436,6 +436,7 @@ func (backRepo *BackRepoStruct) CommitVisualTrack(visualtrack *models.VisualTrac
 	if id, ok := (*backRepo.BackRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID)[visualtrack]; ok {
 		backRepo.BackRepoVisualTrack.CommitPhaseTwoInstance(backRepo, id, visualtrack)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitVisualTrack allows checkout of a single visualtrack (if already staged and with a BackRepo id)

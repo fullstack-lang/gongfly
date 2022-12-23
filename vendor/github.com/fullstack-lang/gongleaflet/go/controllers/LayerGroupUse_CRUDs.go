@@ -41,11 +41,12 @@ type LayerGroupUseInput struct {
 //
 // swagger:route GET /layergroupuses layergroupuses getLayerGroupUses
 //
-// Get all layergroupuses
+// # Get all layergroupuses
 //
 // Responses:
-//    default: genericError
-//        200: layergroupuseDBsResponse
+// default: genericError
+//
+//	200: layergroupuseDBResponse
 func GetLayerGroupUses(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLayerGroupUse.GetDB()
 
@@ -85,14 +86,15 @@ func GetLayerGroupUses(c *gin.Context) {
 // swagger:route POST /layergroupuses layergroupuses postLayerGroupUse
 //
 // Creates a layergroupuse
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: layergroupuseDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostLayerGroupUse(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLayerGroupUse.GetDB()
 
@@ -124,6 +126,14 @@ func PostLayerGroupUse(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoLayerGroupUse.CheckoutPhaseOneInstance(&layergroupuseDB)
+	layergroupuse := (*orm.BackRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr)[layergroupuseDB.ID]
+
+	if layergroupuse != nil {
+		models.AfterCreateFromFront(&models.Stage, layergroupuse)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostLayerGroupUse(c *gin.Context) {
 // Gets the details for a layergroupuse.
 //
 // Responses:
-//    default: genericError
-//        200: layergroupuseDBResponse
+// default: genericError
+//
+//	200: layergroupuseDBResponse
 func GetLayerGroupUse(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLayerGroupUse.GetDB()
 
@@ -166,11 +177,12 @@ func GetLayerGroupUse(c *gin.Context) {
 //
 // swagger:route PATCH /layergroupuses/{ID} layergroupuses updateLayerGroupUse
 //
-// Update a layergroupuse
+// # Update a layergroupuse
 //
 // Responses:
-//    default: genericError
-//        200: layergroupuseDBResponse
+// default: genericError
+//
+//	200: layergroupuseDBResponse
 func UpdateLayerGroupUse(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLayerGroupUse.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateLayerGroupUse(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	layergroupuseNew := new(models.LayerGroupUse)
+	layergroupuseDB.CopyBasicFieldsToLayerGroupUse(layergroupuseNew)
+
+	// get stage instance from DB instance, and call callback function
+	layergroupuseOld := (*orm.BackRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr)[layergroupuseDB.ID]
+	if layergroupuseOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, layergroupuseOld, layergroupuseNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the layergroupuseDB
@@ -223,10 +247,11 @@ func UpdateLayerGroupUse(c *gin.Context) {
 //
 // swagger:route DELETE /layergroupuses/{ID} layergroupuses deleteLayerGroupUse
 //
-// Delete a layergroupuse
+// # Delete a layergroupuse
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: layergroupuseDBResponse
 func DeleteLayerGroupUse(c *gin.Context) {
 	db := orm.BackRepo.BackRepoLayerGroupUse.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteLayerGroupUse(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&layergroupuseDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	layergroupuseDeleted := new(models.LayerGroupUse)
+	layergroupuseDB.CopyBasicFieldsToLayerGroupUse(layergroupuseDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	layergroupuseStaged := (*orm.BackRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr)[layergroupuseDB.ID]
+	if layergroupuseStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, layergroupuseStaged, layergroupuseDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

@@ -456,6 +456,7 @@ func (backRepo *BackRepoStruct) CommitElement(element *models.Element) {
 	if id, ok := (*backRepo.BackRepoElement.Map_ElementPtr_ElementDBID)[element]; ok {
 		backRepo.BackRepoElement.CommitPhaseTwoInstance(backRepo, id, element)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitElement allows checkout of a single element (if already staged and with a BackRepo id)

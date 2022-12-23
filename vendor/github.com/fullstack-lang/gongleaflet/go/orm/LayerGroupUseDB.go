@@ -376,6 +376,7 @@ func (backRepo *BackRepoStruct) CommitLayerGroupUse(layergroupuse *models.LayerG
 	if id, ok := (*backRepo.BackRepoLayerGroupUse.Map_LayerGroupUsePtr_LayerGroupUseDBID)[layergroupuse]; ok {
 		backRepo.BackRepoLayerGroupUse.CommitPhaseTwoInstance(backRepo, id, layergroupuse)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitLayerGroupUse allows checkout of a single layergroupuse (if already staged and with a BackRepo id)

@@ -41,11 +41,12 @@ type CellInput struct {
 //
 // swagger:route GET /cells cells getCells
 //
-// Get all cells
+// # Get all cells
 //
 // Responses:
-//    default: genericError
-//        200: cellDBsResponse
+// default: genericError
+//
+//	200: cellDBResponse
 func GetCells(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCell.GetDB()
 
@@ -85,14 +86,15 @@ func GetCells(c *gin.Context) {
 // swagger:route POST /cells cells postCell
 //
 // Creates a cell
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: cellDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostCell(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCell.GetDB()
 
@@ -124,6 +126,14 @@ func PostCell(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoCell.CheckoutPhaseOneInstance(&cellDB)
+	cell := (*orm.BackRepo.BackRepoCell.Map_CellDBID_CellPtr)[cellDB.ID]
+
+	if cell != nil {
+		models.AfterCreateFromFront(&models.Stage, cell)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostCell(c *gin.Context) {
 // Gets the details for a cell.
 //
 // Responses:
-//    default: genericError
-//        200: cellDBResponse
+// default: genericError
+//
+//	200: cellDBResponse
 func GetCell(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCell.GetDB()
 
@@ -166,11 +177,12 @@ func GetCell(c *gin.Context) {
 //
 // swagger:route PATCH /cells/{ID} cells updateCell
 //
-// Update a cell
+// # Update a cell
 //
 // Responses:
-//    default: genericError
-//        200: cellDBResponse
+// default: genericError
+//
+//	200: cellDBResponse
 func UpdateCell(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCell.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateCell(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	cellNew := new(models.Cell)
+	cellDB.CopyBasicFieldsToCell(cellNew)
+
+	// get stage instance from DB instance, and call callback function
+	cellOld := (*orm.BackRepo.BackRepoCell.Map_CellDBID_CellPtr)[cellDB.ID]
+	if cellOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, cellOld, cellNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the cellDB
@@ -223,10 +247,11 @@ func UpdateCell(c *gin.Context) {
 //
 // swagger:route DELETE /cells/{ID} cells deleteCell
 //
-// Delete a cell
+// # Delete a cell
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: cellDBResponse
 func DeleteCell(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCell.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteCell(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&cellDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	cellDeleted := new(models.Cell)
+	cellDB.CopyBasicFieldsToCell(cellDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	cellStaged := (*orm.BackRepo.BackRepoCell.Map_CellDBID_CellPtr)[cellDB.ID]
+	if cellStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, cellStaged, cellDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

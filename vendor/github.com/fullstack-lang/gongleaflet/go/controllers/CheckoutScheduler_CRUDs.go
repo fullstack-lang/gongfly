@@ -41,11 +41,12 @@ type CheckoutSchedulerInput struct {
 //
 // swagger:route GET /checkoutschedulers checkoutschedulers getCheckoutSchedulers
 //
-// Get all checkoutschedulers
+// # Get all checkoutschedulers
 //
 // Responses:
-//    default: genericError
-//        200: checkoutschedulerDBsResponse
+// default: genericError
+//
+//	200: checkoutschedulerDBResponse
 func GetCheckoutSchedulers(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCheckoutScheduler.GetDB()
 
@@ -85,14 +86,15 @@ func GetCheckoutSchedulers(c *gin.Context) {
 // swagger:route POST /checkoutschedulers checkoutschedulers postCheckoutScheduler
 //
 // Creates a checkoutscheduler
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: checkoutschedulerDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostCheckoutScheduler(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCheckoutScheduler.GetDB()
 
@@ -124,6 +126,14 @@ func PostCheckoutScheduler(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoCheckoutScheduler.CheckoutPhaseOneInstance(&checkoutschedulerDB)
+	checkoutscheduler := (*orm.BackRepo.BackRepoCheckoutScheduler.Map_CheckoutSchedulerDBID_CheckoutSchedulerPtr)[checkoutschedulerDB.ID]
+
+	if checkoutscheduler != nil {
+		models.AfterCreateFromFront(&models.Stage, checkoutscheduler)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostCheckoutScheduler(c *gin.Context) {
 // Gets the details for a checkoutscheduler.
 //
 // Responses:
-//    default: genericError
-//        200: checkoutschedulerDBResponse
+// default: genericError
+//
+//	200: checkoutschedulerDBResponse
 func GetCheckoutScheduler(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCheckoutScheduler.GetDB()
 
@@ -166,11 +177,12 @@ func GetCheckoutScheduler(c *gin.Context) {
 //
 // swagger:route PATCH /checkoutschedulers/{ID} checkoutschedulers updateCheckoutScheduler
 //
-// Update a checkoutscheduler
+// # Update a checkoutscheduler
 //
 // Responses:
-//    default: genericError
-//        200: checkoutschedulerDBResponse
+// default: genericError
+//
+//	200: checkoutschedulerDBResponse
 func UpdateCheckoutScheduler(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCheckoutScheduler.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateCheckoutScheduler(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	checkoutschedulerNew := new(models.CheckoutScheduler)
+	checkoutschedulerDB.CopyBasicFieldsToCheckoutScheduler(checkoutschedulerNew)
+
+	// get stage instance from DB instance, and call callback function
+	checkoutschedulerOld := (*orm.BackRepo.BackRepoCheckoutScheduler.Map_CheckoutSchedulerDBID_CheckoutSchedulerPtr)[checkoutschedulerDB.ID]
+	if checkoutschedulerOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, checkoutschedulerOld, checkoutschedulerNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the checkoutschedulerDB
@@ -223,10 +247,11 @@ func UpdateCheckoutScheduler(c *gin.Context) {
 //
 // swagger:route DELETE /checkoutschedulers/{ID} checkoutschedulers deleteCheckoutScheduler
 //
-// Delete a checkoutscheduler
+// # Delete a checkoutscheduler
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: checkoutschedulerDBResponse
 func DeleteCheckoutScheduler(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCheckoutScheduler.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteCheckoutScheduler(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&checkoutschedulerDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	checkoutschedulerDeleted := new(models.CheckoutScheduler)
+	checkoutschedulerDB.CopyBasicFieldsToCheckoutScheduler(checkoutschedulerDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	checkoutschedulerStaged := (*orm.BackRepo.BackRepoCheckoutScheduler.Map_CheckoutSchedulerDBID_CheckoutSchedulerPtr)[checkoutschedulerDB.ID]
+	if checkoutschedulerStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, checkoutschedulerStaged, checkoutschedulerDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

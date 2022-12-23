@@ -352,6 +352,7 @@ func (backRepo *BackRepoStruct) CommitDummyAgent(dummyagent *models.DummyAgent) 
 	if id, ok := (*backRepo.BackRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID)[dummyagent]; ok {
 		backRepo.BackRepoDummyAgent.CommitPhaseTwoInstance(backRepo, id, dummyagent)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitDummyAgent allows checkout of a single dummyagent (if already staged and with a BackRepo id)

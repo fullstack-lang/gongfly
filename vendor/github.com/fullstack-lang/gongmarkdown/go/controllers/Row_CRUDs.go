@@ -41,11 +41,12 @@ type RowInput struct {
 //
 // swagger:route GET /rows rows getRows
 //
-// Get all rows
+// # Get all rows
 //
 // Responses:
-//    default: genericError
-//        200: rowDBsResponse
+// default: genericError
+//
+//	200: rowDBResponse
 func GetRows(c *gin.Context) {
 	db := orm.BackRepo.BackRepoRow.GetDB()
 
@@ -85,14 +86,15 @@ func GetRows(c *gin.Context) {
 // swagger:route POST /rows rows postRow
 //
 // Creates a row
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: rowDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostRow(c *gin.Context) {
 	db := orm.BackRepo.BackRepoRow.GetDB()
 
@@ -124,6 +126,14 @@ func PostRow(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoRow.CheckoutPhaseOneInstance(&rowDB)
+	row := (*orm.BackRepo.BackRepoRow.Map_RowDBID_RowPtr)[rowDB.ID]
+
+	if row != nil {
+		models.AfterCreateFromFront(&models.Stage, row)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostRow(c *gin.Context) {
 // Gets the details for a row.
 //
 // Responses:
-//    default: genericError
-//        200: rowDBResponse
+// default: genericError
+//
+//	200: rowDBResponse
 func GetRow(c *gin.Context) {
 	db := orm.BackRepo.BackRepoRow.GetDB()
 
@@ -166,11 +177,12 @@ func GetRow(c *gin.Context) {
 //
 // swagger:route PATCH /rows/{ID} rows updateRow
 //
-// Update a row
+// # Update a row
 //
 // Responses:
-//    default: genericError
-//        200: rowDBResponse
+// default: genericError
+//
+//	200: rowDBResponse
 func UpdateRow(c *gin.Context) {
 	db := orm.BackRepo.BackRepoRow.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateRow(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	rowNew := new(models.Row)
+	rowDB.CopyBasicFieldsToRow(rowNew)
+
+	// get stage instance from DB instance, and call callback function
+	rowOld := (*orm.BackRepo.BackRepoRow.Map_RowDBID_RowPtr)[rowDB.ID]
+	if rowOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, rowOld, rowNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the rowDB
@@ -223,10 +247,11 @@ func UpdateRow(c *gin.Context) {
 //
 // swagger:route DELETE /rows/{ID} rows deleteRow
 //
-// Delete a row
+// # Delete a row
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: rowDBResponse
 func DeleteRow(c *gin.Context) {
 	db := orm.BackRepo.BackRepoRow.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteRow(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&rowDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	rowDeleted := new(models.Row)
+	rowDB.CopyBasicFieldsToRow(rowDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	rowStaged := (*orm.BackRepo.BackRepoRow.Map_RowDBID_RowPtr)[rowDB.ID]
+	if rowStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, rowStaged, rowDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

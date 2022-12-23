@@ -352,6 +352,7 @@ func (backRepo *BackRepoStruct) CommitLayerGroup(layergroup *models.LayerGroup) 
 	if id, ok := (*backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[layergroup]; ok {
 		backRepo.BackRepoLayerGroup.CommitPhaseTwoInstance(backRepo, id, layergroup)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitLayerGroup allows checkout of a single layergroup (if already staged and with a BackRepo id)

@@ -1,6 +1,6 @@
 // generated from NgDetailTemplateTS
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 import { DummyDataDB } from '../dummydata-db'
 import { DummyDataService } from '../dummydata.service'
@@ -35,7 +35,7 @@ enum DummyDataDetailComponentState {
 export class DummyDataDetailComponent implements OnInit {
 
 	// insertion point for declarations
-	DummyBoolFormControl: FormControl = new FormControl(false);
+	DummyBoolFormControl: UntypedFormControl = new UntypedFormControl(false);
 	ElementTypeList: ElementTypeSelect[] = []
 	DummnyTypeIntList: DummnyTypeIntSelect[] = []
 	DummyDuration_Hours: number = 0

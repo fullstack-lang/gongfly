@@ -388,6 +388,7 @@ func (backRepo *BackRepoStruct) CommitEngine(engine *models.Engine) {
 	if id, ok := (*backRepo.BackRepoEngine.Map_EnginePtr_EngineDBID)[engine]; ok {
 		backRepo.BackRepoEngine.CommitPhaseTwoInstance(backRepo, id, engine)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitEngine allows checkout of a single engine (if already staged and with a BackRepo id)

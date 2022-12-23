@@ -41,11 +41,12 @@ type EventInput struct {
 //
 // swagger:route GET /events events getEvents
 //
-// Get all events
+// # Get all events
 //
 // Responses:
-//    default: genericError
-//        200: eventDBsResponse
+// default: genericError
+//
+//	200: eventDBResponse
 func GetEvents(c *gin.Context) {
 	db := orm.BackRepo.BackRepoEvent.GetDB()
 
@@ -85,14 +86,15 @@ func GetEvents(c *gin.Context) {
 // swagger:route POST /events events postEvent
 //
 // Creates a event
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: eventDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostEvent(c *gin.Context) {
 	db := orm.BackRepo.BackRepoEvent.GetDB()
 
@@ -124,6 +126,14 @@ func PostEvent(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoEvent.CheckoutPhaseOneInstance(&eventDB)
+	event := (*orm.BackRepo.BackRepoEvent.Map_EventDBID_EventPtr)[eventDB.ID]
+
+	if event != nil {
+		models.AfterCreateFromFront(&models.Stage, event)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostEvent(c *gin.Context) {
 // Gets the details for a event.
 //
 // Responses:
-//    default: genericError
-//        200: eventDBResponse
+// default: genericError
+//
+//	200: eventDBResponse
 func GetEvent(c *gin.Context) {
 	db := orm.BackRepo.BackRepoEvent.GetDB()
 
@@ -166,11 +177,12 @@ func GetEvent(c *gin.Context) {
 //
 // swagger:route PATCH /events/{ID} events updateEvent
 //
-// Update a event
+// # Update a event
 //
 // Responses:
-//    default: genericError
-//        200: eventDBResponse
+// default: genericError
+//
+//	200: eventDBResponse
 func UpdateEvent(c *gin.Context) {
 	db := orm.BackRepo.BackRepoEvent.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateEvent(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	eventNew := new(models.Event)
+	eventDB.CopyBasicFieldsToEvent(eventNew)
+
+	// get stage instance from DB instance, and call callback function
+	eventOld := (*orm.BackRepo.BackRepoEvent.Map_EventDBID_EventPtr)[eventDB.ID]
+	if eventOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, eventOld, eventNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the eventDB
@@ -223,10 +247,11 @@ func UpdateEvent(c *gin.Context) {
 //
 // swagger:route DELETE /events/{ID} events deleteEvent
 //
-// Delete a event
+// # Delete a event
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: eventDBResponse
 func DeleteEvent(c *gin.Context) {
 	db := orm.BackRepo.BackRepoEvent.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteEvent(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&eventDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	eventDeleted := new(models.Event)
+	eventDB.CopyBasicFieldsToEvent(eventDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	eventStaged := (*orm.BackRepo.BackRepoEvent.Map_EventDBID_EventPtr)[eventDB.ID]
+	if eventStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, eventStaged, eventDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

@@ -41,11 +41,12 @@ type CircleInput struct {
 //
 // swagger:route GET /circles circles getCircles
 //
-// Get all circles
+// # Get all circles
 //
 // Responses:
-//    default: genericError
-//        200: circleDBsResponse
+// default: genericError
+//
+//	200: circleDBResponse
 func GetCircles(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCircle.GetDB()
 
@@ -85,14 +86,15 @@ func GetCircles(c *gin.Context) {
 // swagger:route POST /circles circles postCircle
 //
 // Creates a circle
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: circleDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostCircle(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCircle.GetDB()
 
@@ -124,6 +126,14 @@ func PostCircle(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoCircle.CheckoutPhaseOneInstance(&circleDB)
+	circle := (*orm.BackRepo.BackRepoCircle.Map_CircleDBID_CirclePtr)[circleDB.ID]
+
+	if circle != nil {
+		models.AfterCreateFromFront(&models.Stage, circle)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostCircle(c *gin.Context) {
 // Gets the details for a circle.
 //
 // Responses:
-//    default: genericError
-//        200: circleDBResponse
+// default: genericError
+//
+//	200: circleDBResponse
 func GetCircle(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCircle.GetDB()
 
@@ -166,11 +177,12 @@ func GetCircle(c *gin.Context) {
 //
 // swagger:route PATCH /circles/{ID} circles updateCircle
 //
-// Update a circle
+// # Update a circle
 //
 // Responses:
-//    default: genericError
-//        200: circleDBResponse
+// default: genericError
+//
+//	200: circleDBResponse
 func UpdateCircle(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCircle.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateCircle(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	circleNew := new(models.Circle)
+	circleDB.CopyBasicFieldsToCircle(circleNew)
+
+	// get stage instance from DB instance, and call callback function
+	circleOld := (*orm.BackRepo.BackRepoCircle.Map_CircleDBID_CirclePtr)[circleDB.ID]
+	if circleOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, circleOld, circleNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the circleDB
@@ -223,10 +247,11 @@ func UpdateCircle(c *gin.Context) {
 //
 // swagger:route DELETE /circles/{ID} circles deleteCircle
 //
-// Delete a circle
+// # Delete a circle
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: circleDBResponse
 func DeleteCircle(c *gin.Context) {
 	db := orm.BackRepo.BackRepoCircle.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteCircle(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&circleDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	circleDeleted := new(models.Circle)
+	circleDB.CopyBasicFieldsToCircle(circleDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	circleStaged := (*orm.BackRepo.BackRepoCircle.Map_CircleDBID_CirclePtr)[circleDB.ID]
+	if circleStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, circleStaged, circleDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

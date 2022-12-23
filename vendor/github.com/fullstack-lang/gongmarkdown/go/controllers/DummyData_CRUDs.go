@@ -41,11 +41,12 @@ type DummyDataInput struct {
 //
 // swagger:route GET /dummydatas dummydatas getDummyDatas
 //
-// Get all dummydatas
+// # Get all dummydatas
 //
 // Responses:
-//    default: genericError
-//        200: dummydataDBsResponse
+// default: genericError
+//
+//	200: dummydataDBResponse
 func GetDummyDatas(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDummyData.GetDB()
 
@@ -85,14 +86,15 @@ func GetDummyDatas(c *gin.Context) {
 // swagger:route POST /dummydatas dummydatas postDummyData
 //
 // Creates a dummydata
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: dummydataDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostDummyData(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDummyData.GetDB()
 
@@ -124,6 +126,14 @@ func PostDummyData(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoDummyData.CheckoutPhaseOneInstance(&dummydataDB)
+	dummydata := (*orm.BackRepo.BackRepoDummyData.Map_DummyDataDBID_DummyDataPtr)[dummydataDB.ID]
+
+	if dummydata != nil {
+		models.AfterCreateFromFront(&models.Stage, dummydata)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostDummyData(c *gin.Context) {
 // Gets the details for a dummydata.
 //
 // Responses:
-//    default: genericError
-//        200: dummydataDBResponse
+// default: genericError
+//
+//	200: dummydataDBResponse
 func GetDummyData(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDummyData.GetDB()
 
@@ -166,11 +177,12 @@ func GetDummyData(c *gin.Context) {
 //
 // swagger:route PATCH /dummydatas/{ID} dummydatas updateDummyData
 //
-// Update a dummydata
+// # Update a dummydata
 //
 // Responses:
-//    default: genericError
-//        200: dummydataDBResponse
+// default: genericError
+//
+//	200: dummydataDBResponse
 func UpdateDummyData(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDummyData.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateDummyData(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	dummydataNew := new(models.DummyData)
+	dummydataDB.CopyBasicFieldsToDummyData(dummydataNew)
+
+	// get stage instance from DB instance, and call callback function
+	dummydataOld := (*orm.BackRepo.BackRepoDummyData.Map_DummyDataDBID_DummyDataPtr)[dummydataDB.ID]
+	if dummydataOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, dummydataOld, dummydataNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the dummydataDB
@@ -223,10 +247,11 @@ func UpdateDummyData(c *gin.Context) {
 //
 // swagger:route DELETE /dummydatas/{ID} dummydatas deleteDummyData
 //
-// Delete a dummydata
+// # Delete a dummydata
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: dummydataDBResponse
 func DeleteDummyData(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDummyData.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteDummyData(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&dummydataDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	dummydataDeleted := new(models.DummyData)
+	dummydataDB.CopyBasicFieldsToDummyData(dummydataDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	dummydataStaged := (*orm.BackRepo.BackRepoDummyData.Map_DummyDataDBID_DummyDataPtr)[dummydataDB.ID]
+	if dummydataStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, dummydataStaged, dummydataDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

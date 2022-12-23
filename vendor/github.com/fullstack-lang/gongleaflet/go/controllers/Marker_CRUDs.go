@@ -41,11 +41,12 @@ type MarkerInput struct {
 //
 // swagger:route GET /markers markers getMarkers
 //
-// Get all markers
+// # Get all markers
 //
 // Responses:
-//    default: genericError
-//        200: markerDBsResponse
+// default: genericError
+//
+//	200: markerDBResponse
 func GetMarkers(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMarker.GetDB()
 
@@ -85,14 +86,15 @@ func GetMarkers(c *gin.Context) {
 // swagger:route POST /markers markers postMarker
 //
 // Creates a marker
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: markerDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostMarker(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMarker.GetDB()
 
@@ -124,6 +126,14 @@ func PostMarker(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoMarker.CheckoutPhaseOneInstance(&markerDB)
+	marker := (*orm.BackRepo.BackRepoMarker.Map_MarkerDBID_MarkerPtr)[markerDB.ID]
+
+	if marker != nil {
+		models.AfterCreateFromFront(&models.Stage, marker)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostMarker(c *gin.Context) {
 // Gets the details for a marker.
 //
 // Responses:
-//    default: genericError
-//        200: markerDBResponse
+// default: genericError
+//
+//	200: markerDBResponse
 func GetMarker(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMarker.GetDB()
 
@@ -166,11 +177,12 @@ func GetMarker(c *gin.Context) {
 //
 // swagger:route PATCH /markers/{ID} markers updateMarker
 //
-// Update a marker
+// # Update a marker
 //
 // Responses:
-//    default: genericError
-//        200: markerDBResponse
+// default: genericError
+//
+//	200: markerDBResponse
 func UpdateMarker(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMarker.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateMarker(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	markerNew := new(models.Marker)
+	markerDB.CopyBasicFieldsToMarker(markerNew)
+
+	// get stage instance from DB instance, and call callback function
+	markerOld := (*orm.BackRepo.BackRepoMarker.Map_MarkerDBID_MarkerPtr)[markerDB.ID]
+	if markerOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, markerOld, markerNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the markerDB
@@ -223,10 +247,11 @@ func UpdateMarker(c *gin.Context) {
 //
 // swagger:route DELETE /markers/{ID} markers deleteMarker
 //
-// Delete a marker
+// # Delete a marker
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: markerDBResponse
 func DeleteMarker(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMarker.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteMarker(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&markerDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	markerDeleted := new(models.Marker)
+	markerDB.CopyBasicFieldsToMarker(markerDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	markerStaged := (*orm.BackRepo.BackRepoMarker.Map_MarkerDBID_MarkerPtr)[markerDB.ID]
+	if markerStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, markerStaged, markerDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

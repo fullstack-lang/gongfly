@@ -352,6 +352,7 @@ func (backRepo *BackRepoStruct) CommitCheckoutScheduler(checkoutscheduler *model
 	if id, ok := (*backRepo.BackRepoCheckoutScheduler.Map_CheckoutSchedulerPtr_CheckoutSchedulerDBID)[checkoutscheduler]; ok {
 		backRepo.BackRepoCheckoutScheduler.CommitPhaseTwoInstance(backRepo, id, checkoutscheduler)
 	}
+	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 }
 
 // CommitCheckoutScheduler allows checkout of a single checkoutscheduler (if already staged and with a BackRepo id)

@@ -40,7 +40,6 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	OnAfterCivilianAirportDeleteCallback OnAfterDeleteInterface[CivilianAirport]
 	OnAfterCivilianAirportReadCallback   OnAfterReadInterface[CivilianAirport]
 
-
 	Liners           map[*Liner]any
 	Liners_mapString map[string]*Liner
 
@@ -48,7 +47,6 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	OnAfterLinerUpdateCallback OnAfterUpdateInterface[Liner]
 	OnAfterLinerDeleteCallback OnAfterDeleteInterface[Liner]
 	OnAfterLinerReadCallback   OnAfterReadInterface[Liner]
-
 
 	Messages           map[*Message]any
 	Messages_mapString map[string]*Message
@@ -58,7 +56,6 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	OnAfterMessageDeleteCallback OnAfterDeleteInterface[Message]
 	OnAfterMessageReadCallback   OnAfterReadInterface[Message]
 
-
 	OpsLines           map[*OpsLine]any
 	OpsLines_mapString map[string]*OpsLine
 
@@ -66,7 +63,6 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	OnAfterOpsLineUpdateCallback OnAfterUpdateInterface[OpsLine]
 	OnAfterOpsLineDeleteCallback OnAfterDeleteInterface[OpsLine]
 	OnAfterOpsLineReadCallback   OnAfterReadInterface[OpsLine]
-
 
 	Radars           map[*Radar]any
 	Radars_mapString map[string]*Radar
@@ -76,7 +72,6 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	OnAfterRadarDeleteCallback OnAfterDeleteInterface[Radar]
 	OnAfterRadarReadCallback   OnAfterReadInterface[Radar]
 
-
 	Satellites           map[*Satellite]any
 	Satellites_mapString map[string]*Satellite
 
@@ -85,7 +80,6 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	OnAfterSatelliteDeleteCallback OnAfterDeleteInterface[Satellite]
 	OnAfterSatelliteReadCallback   OnAfterReadInterface[Satellite]
 
-
 	Scenarios           map[*Scenario]any
 	Scenarios_mapString map[string]*Scenario
 
@@ -93,7 +87,6 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	OnAfterScenarioUpdateCallback OnAfterUpdateInterface[Scenario]
 	OnAfterScenarioDeleteCallback OnAfterDeleteInterface[Scenario]
 	OnAfterScenarioReadCallback   OnAfterReadInterface[Scenario]
-
 
 	AllModelsStructCreateCallback AllModelsStructCreateInterface
 
@@ -993,11 +986,17 @@ import (
 	"{{ModelsPackageName}}"
 )
 
-func init() {
-	var __Dummy_time_variable time.Time
-	_ = __Dummy_time_variable
-	InjectionGateway["{{databaseName}}"] = {{databaseName}}Injection
-}
+// generated in order to avoid error in the package import
+// if there are no elements in the stage to marshall
+var ___dummy__Stage models.StageStruct
+var ___dummy__Time time.Time
+
+// init might be handy if one want to have the data embedded in the binary
+// but it has to properly reference the Injection gateway in the main package
+// func init() {
+// 	_ = __Dummy_time_variable
+// 	InjectionGateway["{{databaseName}}"] = {{databaseName}}Injection
+// }
 
 // {{databaseName}}Injection will stage objects of database "{{databaseName}}"
 func {{databaseName}}Injection() {
@@ -1012,7 +1011,7 @@ func {{databaseName}}Injection() {
 `
 
 const IdentifiersDecls = `
-	{{Identifier}} := (&models.{{GeneratedStructName}}{Name: "{{GeneratedFieldNameValue}}"}).Stage()`
+	{{Identifier}} := (&models.{{GeneratedStructName}}{Name: ` + "`" + `{{GeneratedFieldNameValue}}` + "`" + `}).Stage()`
 
 const StringInitStatement = `
 	{{Identifier}}.{{GeneratedFieldName}} = ` + "`" + `{{GeneratedFieldNameValue}}` + "`"
@@ -1081,7 +1080,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", civilianairport.Name)
 		identifiersDecl += decl
 
-		initializerStatements += fmt.Sprintf("\n\n	// CivilianAirport %s values setup", civilianairport.Name)
+		initializerStatements += "\n\n	// CivilianAirport values setup"
 		// Initialisation of values
 		setValueField = NumberInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1125,7 +1124,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", liner.Name)
 		identifiersDecl += decl
 
-		initializerStatements += fmt.Sprintf("\n\n	// Liner %s values setup", liner.Name)
+		initializerStatements += "\n\n	// Liner values setup"
 		// Initialisation of values
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1237,7 +1236,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", message.Name)
 		identifiersDecl += decl
 
-		initializerStatements += fmt.Sprintf("\n\n	// Message %s values setup", message.Name)
+		initializerStatements += "\n\n	// Message values setup"
 		// Initialisation of values
 		setValueField = NumberInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1373,7 +1372,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", opsline.Name)
 		identifiersDecl += decl
 
-		initializerStatements += fmt.Sprintf("\n\n	// OpsLine %s values setup", opsline.Name)
+		initializerStatements += "\n\n	// OpsLine values setup"
 		// Initialisation of values
 		setValueField = NumberInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1437,7 +1436,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", radar.Name)
 		identifiersDecl += decl
 
-		initializerStatements += fmt.Sprintf("\n\n	// Radar %s values setup", radar.Name)
+		initializerStatements += "\n\n	// Radar values setup"
 		// Initialisation of values
 		if radar.State != "" {
 			setValueField = StringEnumInitStatement
@@ -1495,7 +1494,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", satellite.Name)
 		identifiersDecl += decl
 
-		initializerStatements += fmt.Sprintf("\n\n	// Satellite %s values setup", satellite.Name)
+		initializerStatements += "\n\n	// Satellite values setup"
 		// Initialisation of values
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -1581,7 +1580,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", scenario.Name)
 		identifiersDecl += decl
 
-		initializerStatements += fmt.Sprintf("\n\n	// Scenario %s values setup", scenario.Name)
+		initializerStatements += "\n\n	// Scenario values setup"
 		// Initialisation of values
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -2376,6 +2375,26 @@ func (conceptenum *ConceptEnum) FromString(input string) (err error) {
 	return
 }
 
+func (conceptenum *ConceptEnum) FromCodeString(input string) (err error) {
+
+	switch input {
+	// insertion code per enum code
+	case "Aircraft_":
+		*conceptenum = Aircraft_
+	case "Satellite_":
+		*conceptenum = Satellite_
+	case "Network_":
+		*conceptenum = Network_
+	case "Center_":
+		*conceptenum = Center_
+	case "System_":
+		*conceptenum = System_
+	default:
+		return errUnkownEnum
+	}
+	return
+}
+
 func (conceptenum *ConceptEnum) ToCodeString() (res string) {
 
 	switch *conceptenum {
@@ -2411,6 +2430,20 @@ func (linerstateenum LinerStateEnum) ToString() (res string) {
 }
 
 func (linerstateenum *LinerStateEnum) FromString(input string) (err error) {
+
+	switch input {
+	// insertion code per enum code
+	case "EN_ROUTE_NOMINAL":
+		*linerstateenum = EN_ROUTE_NOMINAL
+	case "LANDED":
+		*linerstateenum = LANDED
+	default:
+		return errUnkownEnum
+	}
+	return
+}
+
+func (linerstateenum *LinerStateEnum) FromCodeString(input string) (err error) {
 
 	switch input {
 	// insertion code per enum code
@@ -2466,6 +2499,20 @@ func (messagestateenum *MessageStateEnum) FromString(input string) (err error) {
 	return
 }
 
+func (messagestateenum *MessageStateEnum) FromCodeString(input string) (err error) {
+
+	switch input {
+	// insertion code per enum code
+	case "MESSAGE_EN_ROUTE":
+		*messagestateenum = MESSAGE_EN_ROUTE
+	case "MESSAGE_ARRIVED":
+		*messagestateenum = MESSAGE_ARRIVED
+	default:
+		return errUnkownEnum
+	}
+	return
+}
+
 func (messagestateenum *MessageStateEnum) ToCodeString() (res string) {
 
 	switch *messagestateenum {
@@ -2495,6 +2542,20 @@ func (operationallinestateenum OperationalLineStateEnum) ToString() (res string)
 }
 
 func (operationallinestateenum *OperationalLineStateEnum) FromString(input string) (err error) {
+
+	switch input {
+	// insertion code per enum code
+	case "OPS_COM_LINK_OPERATIONAL_LINE_WORKING":
+		*operationallinestateenum = OPS_COM_LINK_OPERATIONAL_LINE_WORKING
+	case "OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING":
+		*operationallinestateenum = OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING
+	default:
+		return errUnkownEnum
+	}
+	return
+}
+
+func (operationallinestateenum *OperationalLineStateEnum) FromCodeString(input string) (err error) {
 
 	switch input {
 	// insertion code per enum code
@@ -2546,6 +2607,18 @@ func (orderenum *OrderEnum) FromString(input string) (err error) {
 	return
 }
 
+func (orderenum *OrderEnum) FromCodeString(input string) (err error) {
+
+	switch input {
+	// insertion code per enum code
+	case "TAKE_OFF":
+		*orderenum = TAKE_OFF
+	default:
+		return errUnkownEnum
+	}
+	return
+}
+
 func (orderenum *OrderEnum) ToCodeString() (res string) {
 
 	switch *orderenum {
@@ -2582,6 +2655,18 @@ func (radarstateenum *RadarStateEnum) FromString(input string) (err error) {
 	return
 }
 
+func (radarstateenum *RadarStateEnum) FromCodeString(input string) (err error) {
+
+	switch input {
+	// insertion code per enum code
+	case "WORKING":
+		*radarstateenum = WORKING
+	default:
+		return errUnkownEnum
+	}
+	return
+}
+
 func (radarstateenum *RadarStateEnum) ToCodeString() (res string) {
 
 	switch *radarstateenum {
@@ -2607,6 +2692,18 @@ func (reportenum ReportEnum) ToString() (res string) {
 }
 
 func (reportenum *ReportEnum) FromString(input string) (err error) {
+
+	switch input {
+	// insertion code per enum code
+	case "TAKE_OFF_COMPLETED":
+		*reportenum = TAKE_OFF_COMPLETED
+	default:
+		return errUnkownEnum
+	}
+	return
+}
+
+func (reportenum *ReportEnum) FromCodeString(input string) (err error) {
 
 	switch input {
 	// insertion code per enum code

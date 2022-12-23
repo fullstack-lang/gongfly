@@ -4,11 +4,11 @@ import (
 	"embed"
 	"flag"
 	"fmt"
-	"go/token"
 	"io/fs"
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -17,54 +17,42 @@ import (
 
 	// for the scenario reference
 	gongfly "github.com/fullstack-lang/gongfly"
+
 	"github.com/fullstack-lang/gongfly/go/models"
 	"github.com/fullstack-lang/gongfly/go/reference"
 	gonglfy_engine "github.com/fullstack-lang/gongfly/go/simulation"
 	gongfly_visuals "github.com/fullstack-lang/gongfly/go/visuals"
 
 	// demoatc gong stack
-	gongfly_controllers "github.com/fullstack-lang/gongfly/go/controllers"
+
 	gongfly_models "github.com/fullstack-lang/gongfly/go/models"
-	gongly_orm "github.com/fullstack-lang/gongfly/go/orm"
 
 	// gongsim stack
-	gongsim_controllers "github.com/fullstack-lang/gongsim/go/controllers"
+	gongsim_fullstack "github.com/fullstack-lang/gongsim/go/fullstack"
 	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
-	gongsim_orm "github.com/fullstack-lang/gongsim/go/orm"
-	_ "github.com/fullstack-lang/gongsim/ng"
+
+	gongmarkdown_fullstack "github.com/fullstack-lang/gongmarkdown/go/fullstack"
+	gongmarkdown_models "github.com/fullstack-lang/gongmarkdown/go/models"
+
+	gongng2charts_fullstack "github.com/fullstack-lang/gongng2charts/go/fullstack"
+	gongng2charts_models "github.com/fullstack-lang/gongng2charts/go/models"
 
 	// gong stack for model analysis
-	gong_controllers "github.com/fullstack-lang/gong/go/controllers"
+	gong_fullstack "github.com/fullstack-lang/gong/go/fullstack"
 	gong_models "github.com/fullstack-lang/gong/go/models"
-	gong_orm "github.com/fullstack-lang/gong/go/orm"
-	_ "github.com/fullstack-lang/gong/ng"
 
 	// for diagrams
-	gongdoc_controllers "github.com/fullstack-lang/gongdoc/go/controllers"
+	gongdoc_fullstack "github.com/fullstack-lang/gongdoc/go/fullstack"
 	gongdoc_models "github.com/fullstack-lang/gongdoc/go/models"
-	gongdoc_orm "github.com/fullstack-lang/gongdoc/go/orm"
-	_ "github.com/fullstack-lang/gongdoc/ng"
 
 	// for carto display
-	gongleaflet_controllers "github.com/fullstack-lang/gongleaflet/go/controllers"
+	gongleaflet_fullstack "github.com/fullstack-lang/gongleaflet/go/fullstack"
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
-	gongleaflet_orm "github.com/fullstack-lang/gongleaflet/go/orm"
-	_ "github.com/fullstack-lang/gongleaflet/ng"
 
 	// for document display
-	gongmarkdown_controllers "github.com/fullstack-lang/gongmarkdown/go/controllers"
-	gongmarkdown_models "github.com/fullstack-lang/gongmarkdown/go/models"
-	gongmarkdown_orm "github.com/fullstack-lang/gongmarkdown/go/orm"
-	_ "github.com/fullstack-lang/gongmarkdown/ng"
 
 	// for the scheduler
 	"github.com/fullstack-lang/gongfly/go/gongfly2markdown"
-
-	// for graph display
-	gongng2charts_controllers "github.com/fullstack-lang/gongng2charts/go/controllers"
-	gongng2charts_models "github.com/fullstack-lang/gongng2charts/go/models"
-	gongng2charts_orm "github.com/fullstack-lang/gongng2charts/go/orm"
-	_ "github.com/fullstack-lang/gongng2charts/ng"
 
 	// for the scheduler
 	"github.com/fullstack-lang/gongfly/go/gongfly2gongng2charts"
@@ -75,7 +63,8 @@ var (
 	logGINFlag = flag.Bool("logGIN", false, "log mode for gin")
 	apiFlag    = flag.Bool("api", false, "it true, use api controllers instead of default controllers")
 
-	diagrams = flag.Bool("diagrams", true, "parse diagrams (takes a few seconds)")
+	diagrams         = flag.Bool("diagrams", true, "parse/analysis go/models and go/diagrams")
+	embeddedDiagrams = flag.Bool("embeddedDiagrams", false, "parse/analysis go/models and go/embeddedDiagrams")
 )
 
 func main() {
@@ -94,24 +83,10 @@ func main() {
 	r := gin.Default()
 	r.Use(cors.Default())
 
-	// setup GORM with the
-	db := gongly_orm.SetupModels(*logDBFlag, ":memory:")
-	dbDB, err := db.DB()
-
-	// since gongsim is a multi threaded application. It is important to set up
-	// only one open connexion at a time
-	if err != nil {
-		panic("cannot access DB of db" + err.Error())
-	}
-	dbDB.SetMaxOpenConns(1)
-
-	// add gongsim database
-	gongsim_orm.AutoMigrate(db)
-	gongdoc_orm.AutoMigrate(db)
-	gong_orm.AutoMigrate(db)
-	gongleaflet_orm.AutoMigrate(db)
-	gongmarkdown_orm.AutoMigrate(db)
-	gongng2charts_orm.AutoMigrate(db)
+	gongsim_fullstack.Init(r)
+	gongleaflet_fullstack.Init(r)
+	gongmarkdown_fullstack.Init(r)
+	gongng2charts_fullstack.Init(r)
 
 	// attach specific engine callback to the model
 	simulation := gonglfy_engine.NewSimulation()
@@ -141,58 +116,39 @@ func main() {
 	if *diagrams {
 
 		// Analyse package
-		modelPkg := &gong_models.ModelPkg{}
-
-		// since the source is embedded, one needs to
-		// compute the Abstract syntax tree in a special manner
-		pkgs := gong_models.ParseEmbedModel(gongfly.GoDir, "go/models")
-
-		gong_models.WalkParser(pkgs, modelPkg)
-		modelPkg.SerializeToStage()
-		gong_models.Stage.Commit()
+		gong_fullstack.Init(r)
+		gongdoc_fullstack.Init(r)
+		modelPackage, _ := gong_models.LoadEmbedded(gongfly.GoDir)
 
 		// create the diagrams
 		// prepare the model views
-		pkgelt := new(gongdoc_models.Pkgelt)
+		var diagramPackage *gongdoc_models.DiagramPackage
 
 		// first, get all gong struct in the model
 		for gongStruct := range gong_models.Stage.GongStructs {
 
 			// let create the gong struct in the gongdoc models
 			// and put the numbre of instances
-			gongStruct_ := (&gongdoc_models.GongStruct{Name: gongStruct.Name}).Stage()
+			reference := (&gongdoc_models.Reference{Name: gongStruct.Name}).Stage()
+			reference.Type = gongdoc_models.REFERENCE_GONG_STRUCT
 			nbInstances, ok := models.Stage.Map_GongStructName_InstancesNb[gongStruct.Name]
 			if ok {
-				gongStruct_.NbInstances = nbInstances
+				reference.NbInstances = nbInstances
 			}
 		}
 
-		// classdiagram can only be fully in memory when they are Unmarshalled
-		// for instance, the Name of diagrams or the Name of the Link
-		fset := new(token.FileSet)
-		pkgsParser := gong_models.ParseEmbedModel(gongfly.GoDir, "go/diagrams")
-		if len(pkgsParser) != 1 {
-			log.Panic("Unable to parser, wrong number of parsers ", len(pkgsParser))
+		if *embeddedDiagrams {
+			diagramPackage, _ = gongdoc_models.LoadEmbedded(gongfly.GoDir, modelPackage)
+		} else {
+			diagramPackage, _ = gongdoc_models.Load(filepath.Join("../../diagrams"), modelPackage, true)
 		}
-		if pkgParser, ok := pkgsParser["diagrams"]; ok {
-			pkgelt.Unmarshall(modelPkg, pkgParser, fset, "go/diagrams")
-		}
-		pkgelt.SerializeToStage()
-	}
 
-	gongfly_controllers.RegisterControllers(r)
-	gongsim_controllers.RegisterControllers(r)
-	gongdoc_controllers.RegisterControllers(r)
-	gong_controllers.RegisterControllers(r)
-	gongleaflet_controllers.RegisterControllers(r)
-	gongmarkdown_controllers.RegisterControllers(r)
-	gongng2charts_controllers.RegisterControllers(r)
+		diagramPackage.GongModelPath = "gongd3/go/models"
+	}
 
 	// put all to database
 	gongfly_models.Stage.Commit()
 	gongsim_models.Stage.Commit()
-	gongdoc_models.Stage.Commit()
-	gong_models.Stage.Commit()
 	gongleaflet_models.Stage.Commit()
 	gongmarkdown_models.Stage.Commit()
 	gongng2charts_models.Stage.Commit()

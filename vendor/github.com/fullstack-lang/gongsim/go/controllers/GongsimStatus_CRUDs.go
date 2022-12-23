@@ -41,11 +41,12 @@ type GongsimStatusInput struct {
 //
 // swagger:route GET /gongsimstatuss gongsimstatuss getGongsimStatuss
 //
-// Get all gongsimstatuss
+// # Get all gongsimstatuss
 //
 // Responses:
-//    default: genericError
-//        200: gongsimstatusDBsResponse
+// default: genericError
+//
+//	200: gongsimstatusDBResponse
 func GetGongsimStatuss(c *gin.Context) {
 	db := orm.BackRepo.BackRepoGongsimStatus.GetDB()
 
@@ -85,14 +86,15 @@ func GetGongsimStatuss(c *gin.Context) {
 // swagger:route POST /gongsimstatuss gongsimstatuss postGongsimStatus
 //
 // Creates a gongsimstatus
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: gongsimstatusDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostGongsimStatus(c *gin.Context) {
 	db := orm.BackRepo.BackRepoGongsimStatus.GetDB()
 
@@ -124,6 +126,14 @@ func PostGongsimStatus(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoGongsimStatus.CheckoutPhaseOneInstance(&gongsimstatusDB)
+	gongsimstatus := (*orm.BackRepo.BackRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr)[gongsimstatusDB.ID]
+
+	if gongsimstatus != nil {
+		models.AfterCreateFromFront(&models.Stage, gongsimstatus)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostGongsimStatus(c *gin.Context) {
 // Gets the details for a gongsimstatus.
 //
 // Responses:
-//    default: genericError
-//        200: gongsimstatusDBResponse
+// default: genericError
+//
+//	200: gongsimstatusDBResponse
 func GetGongsimStatus(c *gin.Context) {
 	db := orm.BackRepo.BackRepoGongsimStatus.GetDB()
 
@@ -166,11 +177,12 @@ func GetGongsimStatus(c *gin.Context) {
 //
 // swagger:route PATCH /gongsimstatuss/{ID} gongsimstatuss updateGongsimStatus
 //
-// Update a gongsimstatus
+// # Update a gongsimstatus
 //
 // Responses:
-//    default: genericError
-//        200: gongsimstatusDBResponse
+// default: genericError
+//
+//	200: gongsimstatusDBResponse
 func UpdateGongsimStatus(c *gin.Context) {
 	db := orm.BackRepo.BackRepoGongsimStatus.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateGongsimStatus(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	gongsimstatusNew := new(models.GongsimStatus)
+	gongsimstatusDB.CopyBasicFieldsToGongsimStatus(gongsimstatusNew)
+
+	// get stage instance from DB instance, and call callback function
+	gongsimstatusOld := (*orm.BackRepo.BackRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr)[gongsimstatusDB.ID]
+	if gongsimstatusOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, gongsimstatusOld, gongsimstatusNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the gongsimstatusDB
@@ -223,10 +247,11 @@ func UpdateGongsimStatus(c *gin.Context) {
 //
 // swagger:route DELETE /gongsimstatuss/{ID} gongsimstatuss deleteGongsimStatus
 //
-// Delete a gongsimstatus
+// # Delete a gongsimstatus
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: gongsimstatusDBResponse
 func DeleteGongsimStatus(c *gin.Context) {
 	db := orm.BackRepo.BackRepoGongsimStatus.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteGongsimStatus(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&gongsimstatusDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	gongsimstatusDeleted := new(models.GongsimStatus)
+	gongsimstatusDB.CopyBasicFieldsToGongsimStatus(gongsimstatusDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	gongsimstatusStaged := (*orm.BackRepo.BackRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr)[gongsimstatusDB.ID]
+	if gongsimstatusStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, gongsimstatusStaged, gongsimstatusDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

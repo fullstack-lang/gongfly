@@ -41,11 +41,12 @@ type DivIconInput struct {
 //
 // swagger:route GET /divicons divicons getDivIcons
 //
-// Get all divicons
+// # Get all divicons
 //
 // Responses:
-//    default: genericError
-//        200: diviconDBsResponse
+// default: genericError
+//
+//	200: diviconDBResponse
 func GetDivIcons(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDivIcon.GetDB()
 
@@ -85,14 +86,15 @@ func GetDivIcons(c *gin.Context) {
 // swagger:route POST /divicons divicons postDivIcon
 //
 // Creates a divicon
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: diviconDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostDivIcon(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDivIcon.GetDB()
 
@@ -124,6 +126,14 @@ func PostDivIcon(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoDivIcon.CheckoutPhaseOneInstance(&diviconDB)
+	divicon := (*orm.BackRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr)[diviconDB.ID]
+
+	if divicon != nil {
+		models.AfterCreateFromFront(&models.Stage, divicon)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostDivIcon(c *gin.Context) {
 // Gets the details for a divicon.
 //
 // Responses:
-//    default: genericError
-//        200: diviconDBResponse
+// default: genericError
+//
+//	200: diviconDBResponse
 func GetDivIcon(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDivIcon.GetDB()
 
@@ -166,11 +177,12 @@ func GetDivIcon(c *gin.Context) {
 //
 // swagger:route PATCH /divicons/{ID} divicons updateDivIcon
 //
-// Update a divicon
+// # Update a divicon
 //
 // Responses:
-//    default: genericError
-//        200: diviconDBResponse
+// default: genericError
+//
+//	200: diviconDBResponse
 func UpdateDivIcon(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDivIcon.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateDivIcon(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	diviconNew := new(models.DivIcon)
+	diviconDB.CopyBasicFieldsToDivIcon(diviconNew)
+
+	// get stage instance from DB instance, and call callback function
+	diviconOld := (*orm.BackRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr)[diviconDB.ID]
+	if diviconOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, diviconOld, diviconNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the diviconDB
@@ -223,10 +247,11 @@ func UpdateDivIcon(c *gin.Context) {
 //
 // swagger:route DELETE /divicons/{ID} divicons deleteDivIcon
 //
-// Delete a divicon
+// # Delete a divicon
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: diviconDBResponse
 func DeleteDivIcon(c *gin.Context) {
 	db := orm.BackRepo.BackRepoDivIcon.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteDivIcon(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&diviconDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	diviconDeleted := new(models.DivIcon)
+	diviconDB.CopyBasicFieldsToDivIcon(diviconDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	diviconStaged := (*orm.BackRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr)[diviconDB.ID]
+	if diviconStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, diviconStaged, diviconDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)

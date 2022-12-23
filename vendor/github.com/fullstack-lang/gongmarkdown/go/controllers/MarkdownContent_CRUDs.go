@@ -41,11 +41,12 @@ type MarkdownContentInput struct {
 //
 // swagger:route GET /markdowncontents markdowncontents getMarkdownContents
 //
-// Get all markdowncontents
+// # Get all markdowncontents
 //
 // Responses:
-//    default: genericError
-//        200: markdowncontentDBsResponse
+// default: genericError
+//
+//	200: markdowncontentDBResponse
 func GetMarkdownContents(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMarkdownContent.GetDB()
 
@@ -85,14 +86,15 @@ func GetMarkdownContents(c *gin.Context) {
 // swagger:route POST /markdowncontents markdowncontents postMarkdownContent
 //
 // Creates a markdowncontent
-//     Consumes:
-//     - application/json
 //
-//     Produces:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Responses:
-//       200: markdowncontentDBResponse
+//	Produces:
+//	- application/json
+//
+//	Responses:
+//	  200: nodeDBResponse
 func PostMarkdownContent(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMarkdownContent.GetDB()
 
@@ -124,6 +126,14 @@ func PostMarkdownContent(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	orm.BackRepo.BackRepoMarkdownContent.CheckoutPhaseOneInstance(&markdowncontentDB)
+	markdowncontent := (*orm.BackRepo.BackRepoMarkdownContent.Map_MarkdownContentDBID_MarkdownContentPtr)[markdowncontentDB.ID]
+
+	if markdowncontent != nil {
+		models.AfterCreateFromFront(&models.Stage, markdowncontent)
+	}
+
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	orm.BackRepo.IncrementPushFromFrontNb()
@@ -138,8 +148,9 @@ func PostMarkdownContent(c *gin.Context) {
 // Gets the details for a markdowncontent.
 //
 // Responses:
-//    default: genericError
-//        200: markdowncontentDBResponse
+// default: genericError
+//
+//	200: markdowncontentDBResponse
 func GetMarkdownContent(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMarkdownContent.GetDB()
 
@@ -166,11 +177,12 @@ func GetMarkdownContent(c *gin.Context) {
 //
 // swagger:route PATCH /markdowncontents/{ID} markdowncontents updateMarkdownContent
 //
-// Update a markdowncontent
+// # Update a markdowncontent
 //
 // Responses:
-//    default: genericError
-//        200: markdowncontentDBResponse
+// default: genericError
+//
+//	200: markdowncontentDBResponse
 func UpdateMarkdownContent(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMarkdownContent.GetDB()
 
@@ -211,8 +223,20 @@ func UpdateMarkdownContent(c *gin.Context) {
 		return
 	}
 
+	// get an instance (not staged) from DB instance, and call callback function
+	markdowncontentNew := new(models.MarkdownContent)
+	markdowncontentDB.CopyBasicFieldsToMarkdownContent(markdowncontentNew)
+
+	// get stage instance from DB instance, and call callback function
+	markdowncontentOld := (*orm.BackRepo.BackRepoMarkdownContent.Map_MarkdownContentDBID_MarkdownContentPtr)[markdowncontentDB.ID]
+	if markdowncontentOld != nil {
+		models.AfterUpdateFromFront(&models.Stage, markdowncontentOld, markdowncontentNew)
+	}
+
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
+	// in some cases, with the marshalling of the stage, this operation might
+	// generates a checkout
 	orm.BackRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the markdowncontentDB
@@ -223,10 +247,11 @@ func UpdateMarkdownContent(c *gin.Context) {
 //
 // swagger:route DELETE /markdowncontents/{ID} markdowncontents deleteMarkdownContent
 //
-// Delete a markdowncontent
+// # Delete a markdowncontent
 //
-// Responses:
-//    default: genericError
+// default: genericError
+//
+//	200: markdowncontentDBResponse
 func DeleteMarkdownContent(c *gin.Context) {
 	db := orm.BackRepo.BackRepoMarkdownContent.GetDB()
 
@@ -243,6 +268,16 @@ func DeleteMarkdownContent(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped().Delete(&markdowncontentDB)
+
+	// get an instance (not staged) from DB instance, and call callback function
+	markdowncontentDeleted := new(models.MarkdownContent)
+	markdowncontentDB.CopyBasicFieldsToMarkdownContent(markdowncontentDeleted)
+
+	// get stage instance from DB instance, and call callback function
+	markdowncontentStaged := (*orm.BackRepo.BackRepoMarkdownContent.Map_MarkdownContentDBID_MarkdownContentPtr)[markdowncontentDB.ID]
+	if markdowncontentStaged != nil {
+		models.AfterDeleteFromFront(&models.Stage, markdowncontentStaged, markdowncontentDeleted)
+	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
