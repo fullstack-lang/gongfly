@@ -66,9 +66,6 @@ var gongfly uml.Classdiagram = uml.Classdiagram{
 					Field: models.Liner{}.TargetLocationLng,
 				},
 				{
-					Field: models.Liner{}.TechName,
-				},
-				{
 					Field: models.Liner{}.Timestampstring,
 				},
 				{
@@ -107,9 +104,6 @@ var gongfly uml.Classdiagram = uml.Classdiagram{
 				},
 				{
 					Field: models.OpsLine{}.State,
-				},
-				{
-					Field: models.OpsLine{}.TechName,
 				},
 				{
 					Field: models.OpsLine{}.TransmissionMessage,
