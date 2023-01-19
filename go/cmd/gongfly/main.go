@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -36,10 +35,6 @@ import (
 
 	gongng2charts_fullstack "github.com/fullstack-lang/gongng2charts/go/fullstack"
 	gongng2charts_models "github.com/fullstack-lang/gongng2charts/go/models"
-
-	// gong stack for model analysis
-	gong_fullstack "github.com/fullstack-lang/gong/go/fullstack"
-	gong_models "github.com/fullstack-lang/gong/go/models"
 
 	// for diagrams
 	gongdoc_load "github.com/fullstack-lang/gongdoc/go/load"
