@@ -273,8 +273,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseTwoInstance(backRepo 
 // BackRepoScenario.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseOne() (Error error) {
 
 	scenarioDBArray := make([]ScenarioDB, 0)
@@ -332,6 +331,9 @@ func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseOneInstance(scenari
 		scenario.Stage()
 	}
 	scenarioDB.CopyBasicFieldsToScenario(scenario)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	scenario.Stage()
 
 	// preserve pointer to scenarioDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_ScenarioDBID_ScenarioDB)[scenarioDB hold variable pointers

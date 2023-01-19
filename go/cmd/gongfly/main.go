@@ -42,8 +42,7 @@ import (
 	gong_models "github.com/fullstack-lang/gong/go/models"
 
 	// for diagrams
-	gongdoc_fullstack "github.com/fullstack-lang/gongdoc/go/fullstack"
-	gongdoc_models "github.com/fullstack-lang/gongdoc/go/models"
+	gongdoc_load "github.com/fullstack-lang/gongdoc/go/load"
 
 	// for carto display
 	gongleaflet_fullstack "github.com/fullstack-lang/gongleaflet/go/fullstack"
@@ -114,36 +113,13 @@ func main() {
 	gongfly_visuals.AttachVisualElementsToModelElements(defaultLayer)
 
 	if *diagrams {
-
-		// Analyse package
-		gong_fullstack.Init(r)
-		gongdoc_fullstack.Init(r)
-		modelPackage, _ := gong_models.LoadEmbedded(gongfly.GoDir)
-
-		// create the diagrams
-		// prepare the model views
-		var diagramPackage *gongdoc_models.DiagramPackage
-
-		// first, get all gong struct in the model
-		for gongStruct := range gong_models.Stage.GongStructs {
-
-			// let create the gong struct in the gongdoc models
-			// and put the numbre of instances
-			reference := (&gongdoc_models.Reference{Name: gongStruct.Name}).Stage()
-			reference.Type = gongdoc_models.REFERENCE_GONG_STRUCT
-			nbInstances, ok := models.Stage.Map_GongStructName_InstancesNb[gongStruct.Name]
-			if ok {
-				reference.NbInstances = nbInstances
-			}
-		}
-
-		if *embeddedDiagrams {
-			diagramPackage, _ = gongdoc_models.LoadEmbedded(gongfly.GoDir, modelPackage)
-		} else {
-			diagramPackage, _ = gongdoc_models.Load(filepath.Join("../../diagrams"), modelPackage, true)
-		}
-
-		diagramPackage.GongModelPath = "gongd3/go/models"
+		gongdoc_load.Load(
+			"gongfly",
+			"gongfly/go/models",
+			gongfly.GoDir,
+			r,
+			*embeddedDiagrams,
+			&models.Stage.Map_GongStructName_InstancesNb)
 	}
 
 	// put all to database

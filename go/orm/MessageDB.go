@@ -352,8 +352,7 @@ func (backRepoMessage *BackRepoMessageStruct) CommitPhaseTwoInstance(backRepo *B
 // BackRepoMessage.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseOne() (Error error) {
 
 	messageDBArray := make([]MessageDB, 0)
@@ -411,6 +410,9 @@ func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseOneInstance(messageDB
 		message.Stage()
 	}
 	messageDB.CopyBasicFieldsToMessage(message)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	message.Stage()
 
 	// preserve pointer to messageDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_MessageDBID_MessageDB)[messageDB hold variable pointers

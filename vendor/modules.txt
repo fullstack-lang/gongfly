@@ -39,14 +39,14 @@ github.com/erikstmartin/go-testdb
 # github.com/frankban/quicktest v1.13.1
 ## explicit; go 1.13
 github.com/frankban/quicktest
-# github.com/fullstack-lang/gong v0.0.0-20230114171553-a45cfa15a9c8
+# github.com/fullstack-lang/gong v0.0.0-20230119145155-a181f3eb1dec
 ## explicit; go 1.19
 github.com/fullstack-lang/gong/go/controllers
 github.com/fullstack-lang/gong/go/fullstack
 github.com/fullstack-lang/gong/go/models
 github.com/fullstack-lang/gong/go/orm
 github.com/fullstack-lang/gong/ng/projects
-# github.com/fullstack-lang/gongdoc v0.0.0-20230113144132-036dabf1a5bb
+# github.com/fullstack-lang/gongdoc v0.0.0-20230119144130-6270ec04e6a8
 ## explicit; go 1.19
 github.com/fullstack-lang/gongdoc/go/controllers
 github.com/fullstack-lang/gongdoc/go/fullstack

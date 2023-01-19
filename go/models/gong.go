@@ -980,6 +980,37 @@ func (stage *StageStruct) Nil() { // insertion point for array nil
 
 }
 
+func (stage *StageStruct) Unstage() { // insertion point for array nil
+	for civilianairport := range stage.CivilianAirports {
+		civilianairport.Unstage()
+	}
+
+	for liner := range stage.Liners {
+		liner.Unstage()
+	}
+
+	for message := range stage.Messages {
+		message.Unstage()
+	}
+
+	for opsline := range stage.OpsLines {
+		opsline.Unstage()
+	}
+
+	for radar := range stage.Radars {
+		radar.Unstage()
+	}
+
+	for satellite := range stage.Satellites {
+		satellite.Unstage()
+	}
+
+	for scenario := range stage.Scenarios {
+		scenario.Unstage()
+	}
+
+}
+
 // insertion point of functions that provide maps for reverse associations
 
 // generate function for reverse association maps of CivilianAirport

@@ -273,8 +273,7 @@ func (backRepoRadar *BackRepoRadarStruct) CommitPhaseTwoInstance(backRepo *BackR
 // BackRepoRadar.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseOne() (Error error) {
 
 	radarDBArray := make([]RadarDB, 0)
@@ -332,6 +331,9 @@ func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseOneInstance(radarDB *Rada
 		radar.Stage()
 	}
 	radarDB.CopyBasicFieldsToRadar(radar)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	radar.Stage()
 
 	// preserve pointer to radarDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_RadarDBID_RadarDB)[radarDB hold variable pointers
