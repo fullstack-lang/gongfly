@@ -12,7 +12,7 @@ import { MapOfSortingComponents } from '../map-components'
 // insertion point for imports
 import { MessageStateEnumSelect, MessageStateEnumList } from '../MessageStateEnum'
 
-import { Router, RouterState, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 
@@ -66,19 +66,24 @@ export class MessageDetailComponent implements OnInit {
 		private messageService: MessageService,
 		private frontRepoService: FrontRepoService,
 		public dialog: MatDialog,
-		private route: ActivatedRoute,
+		private activatedRoute: ActivatedRoute,
 		private router: Router,
 	) {
 	}
 
 	ngOnInit(): void {
+		this.activatedRoute.params.subscribe(params => {
+			this.onChangedActivatedRoute()
+		});
+	}
+	onChangedActivatedRoute(): void {
 
 		// compute state
-		this.id = +this.route.snapshot.paramMap.get('id')!;
-		this.originStruct = this.route.snapshot.paramMap.get('originStruct')!;
-		this.originStructFieldName = this.route.snapshot.paramMap.get('originStructFieldName')!;
+		this.id = +this.activatedRoute.snapshot.paramMap.get('id')!;
+		this.originStruct = this.activatedRoute.snapshot.paramMap.get('originStruct')!;
+		this.originStructFieldName = this.activatedRoute.snapshot.paramMap.get('originStructFieldName')!;
 
-		const association = this.route.snapshot.paramMap.get('association');
+		const association = this.activatedRoute.snapshot.paramMap.get('association');
 		if (this.id == 0) {
 			this.state = MessageDetailComponentState.CREATE_INSTANCE
 		} else {

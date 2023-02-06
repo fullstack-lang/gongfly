@@ -1,7 +1,7 @@
 <form *ngIf="satellite" class="details">
     <h2 class="details__title">satellite</h2>
     <!-- insertion point for fields specific code -->
-    <mat-grid-list *ngIf='!isATextArea("Name")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Name")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Name</mat-label>
@@ -21,7 +21,7 @@
         <textarea name="" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="satellite.Name"></textarea>
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("Line1")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Line1")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Line1</mat-label>
@@ -41,7 +41,7 @@
         <textarea name="" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="satellite.Line1"></textarea>
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("Line2")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Line2")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Line2</mat-label>
@@ -97,7 +97,7 @@
         <input type="number" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="satellite.VerticalSpeed" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("Timestampstring")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Timestampstring")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Timestampstring</mat-label>

@@ -41,7 +41,7 @@
         </mat-select>
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("Name")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Name")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Name</mat-label>
@@ -79,7 +79,7 @@
         <input type="number" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="message.DistanceToTarget" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("Timestampstring")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Timestampstring")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Timestampstring</mat-label>
@@ -100,28 +100,28 @@
     </mat-form-field>
 
     <!-- -->
-    <mat-grid-list cols="3" rowHeight="4:1">
+    <mat-grid-list cols="3" rowHeight="1:1">
         <mat-grid-tile>
             <mat-form-field class="details_hours_width">
-                <mat-label>DurationSinceSimulationStart Hours</mat-label>
+                <mat-label>Hrs. DurationSinceSimulationStart</mat-label>
                 <input type="number" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="DurationSinceSimulationStart_Hours">
             </mat-form-field>
         </mat-grid-tile>
         <mat-grid-tile>
             <mat-form-field class="details_minutes_width">
-                <mat-label>DurationSinceSimulationStart Minutes</mat-label>
+                <mat-label>Min. DurationSinceSimulationStart</mat-label>
                 <input type="number" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="DurationSinceSimulationStart_Minutes">
             </mat-form-field>
         </mat-grid-tile>
         <mat-grid-tile>
             <mat-form-field class="details_seconds_width">
-                <mat-label>DurationSinceSimulationStart Seconds</mat-label>
+                <mat-label>Sec. DurationSinceSimulationStart</mat-label>
                 <input type="number" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="DurationSinceSimulationStart_Seconds">
             </mat-form-field>
         </mat-grid-tile>
     </mat-grid-list>
 
-    <mat-grid-list *ngIf='!isATextArea("Timestampstartstring")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Timestampstartstring")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Timestampstartstring</mat-label>
@@ -141,7 +141,7 @@
         <textarea name="" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="message.Timestampstartstring"></textarea>
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("Source")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Source")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Source</mat-label>
@@ -161,7 +161,7 @@
         <textarea name="" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="message.Source"></textarea>
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("Destination")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Destination")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Destination</mat-label>
@@ -181,7 +181,7 @@
         <textarea name="" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="message.Destination"></textarea>
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("Content")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Content")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Content</mat-label>
@@ -201,7 +201,7 @@
         <textarea name="" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="message.Content"></textarea>
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("About_string")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("About_string")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>About_string</mat-label>

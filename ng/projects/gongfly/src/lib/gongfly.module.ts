@@ -42,37 +42,30 @@ import { GongstructSelectionService } from './gongstruct-selection.service'
 import { CivilianAirportsTableComponent } from './civilianairports-table/civilianairports-table.component'
 import { CivilianAirportSortingComponent } from './civilianairport-sorting/civilianairport-sorting.component'
 import { CivilianAirportDetailComponent } from './civilianairport-detail/civilianairport-detail.component'
-import { CivilianAirportPresentationComponent } from './civilianairport-presentation/civilianairport-presentation.component'
 
 import { LinersTableComponent } from './liners-table/liners-table.component'
 import { LinerSortingComponent } from './liner-sorting/liner-sorting.component'
 import { LinerDetailComponent } from './liner-detail/liner-detail.component'
-import { LinerPresentationComponent } from './liner-presentation/liner-presentation.component'
 
 import { MessagesTableComponent } from './messages-table/messages-table.component'
 import { MessageSortingComponent } from './message-sorting/message-sorting.component'
 import { MessageDetailComponent } from './message-detail/message-detail.component'
-import { MessagePresentationComponent } from './message-presentation/message-presentation.component'
 
 import { OpsLinesTableComponent } from './opslines-table/opslines-table.component'
 import { OpsLineSortingComponent } from './opsline-sorting/opsline-sorting.component'
 import { OpsLineDetailComponent } from './opsline-detail/opsline-detail.component'
-import { OpsLinePresentationComponent } from './opsline-presentation/opsline-presentation.component'
 
 import { RadarsTableComponent } from './radars-table/radars-table.component'
 import { RadarSortingComponent } from './radar-sorting/radar-sorting.component'
 import { RadarDetailComponent } from './radar-detail/radar-detail.component'
-import { RadarPresentationComponent } from './radar-presentation/radar-presentation.component'
 
 import { SatellitesTableComponent } from './satellites-table/satellites-table.component'
 import { SatelliteSortingComponent } from './satellite-sorting/satellite-sorting.component'
 import { SatelliteDetailComponent } from './satellite-detail/satellite-detail.component'
-import { SatellitePresentationComponent } from './satellite-presentation/satellite-presentation.component'
 
 import { ScenariosTableComponent } from './scenarios-table/scenarios-table.component'
 import { ScenarioSortingComponent } from './scenario-sorting/scenario-sorting.component'
 import { ScenarioDetailComponent } from './scenario-detail/scenario-detail.component'
-import { ScenarioPresentationComponent } from './scenario-presentation/scenario-presentation.component'
 
 
 @NgModule({
@@ -81,37 +74,30 @@ import { ScenarioPresentationComponent } from './scenario-presentation/scenario-
 		CivilianAirportsTableComponent,
 		CivilianAirportSortingComponent,
 		CivilianAirportDetailComponent,
-		CivilianAirportPresentationComponent,
 
 		LinersTableComponent,
 		LinerSortingComponent,
 		LinerDetailComponent,
-		LinerPresentationComponent,
 
 		MessagesTableComponent,
 		MessageSortingComponent,
 		MessageDetailComponent,
-		MessagePresentationComponent,
 
 		OpsLinesTableComponent,
 		OpsLineSortingComponent,
 		OpsLineDetailComponent,
-		OpsLinePresentationComponent,
 
 		RadarsTableComponent,
 		RadarSortingComponent,
 		RadarDetailComponent,
-		RadarPresentationComponent,
 
 		SatellitesTableComponent,
 		SatelliteSortingComponent,
 		SatelliteDetailComponent,
-		SatellitePresentationComponent,
 
 		ScenariosTableComponent,
 		ScenarioSortingComponent,
 		ScenarioDetailComponent,
-		ScenarioPresentationComponent,
 
 
 		SplitterComponent,
@@ -155,37 +141,30 @@ import { ScenarioPresentationComponent } from './scenario-presentation/scenario-
 		CivilianAirportsTableComponent,
 		CivilianAirportSortingComponent,
 		CivilianAirportDetailComponent,
-		CivilianAirportPresentationComponent,
 
 		LinersTableComponent,
 		LinerSortingComponent,
 		LinerDetailComponent,
-		LinerPresentationComponent,
 
 		MessagesTableComponent,
 		MessageSortingComponent,
 		MessageDetailComponent,
-		MessagePresentationComponent,
 
 		OpsLinesTableComponent,
 		OpsLineSortingComponent,
 		OpsLineDetailComponent,
-		OpsLinePresentationComponent,
 
 		RadarsTableComponent,
 		RadarSortingComponent,
 		RadarDetailComponent,
-		RadarPresentationComponent,
 
 		SatellitesTableComponent,
 		SatelliteSortingComponent,
 		SatelliteDetailComponent,
-		SatellitePresentationComponent,
 
 		ScenariosTableComponent,
 		ScenarioSortingComponent,
 		ScenarioDetailComponent,
-		ScenarioPresentationComponent,
 
 
 		SplitterComponent,

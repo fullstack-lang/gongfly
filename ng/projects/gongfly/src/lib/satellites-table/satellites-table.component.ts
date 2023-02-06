@@ -171,7 +171,7 @@ export class SatellitesTableComponent implements OnInit {
       }
     )
     if (this.mode == TableComponentMode.DISPLAY_MODE) {
-      this.displayedColumns = ['ID', 'Edit', 'Delete', // insertion point for columns to display
+      this.displayedColumns = ['ID', 'Delete', // insertion point for columns to display
         "Name",
         "Line1",
         "Line2",
@@ -278,15 +278,6 @@ export class SatellitesTableComponent implements OnInit {
     this.router.navigate([{
       outlets: {
         github_com_fullstack_lang_gongfly_go_editor: ["github_com_fullstack_lang_gongfly_go-" + "satellite-detail", satelliteID]
-      }
-    }]);
-  }
-
-  // set presentation outlet
-  setPresentationRouterOutlet(satelliteID: number) {
-    this.router.navigate([{
-      outlets: {
-        github_com_fullstack_lang_gongfly_go_presentation: ["github_com_fullstack_lang_gongfly_go-" + "satellite-presentation", satelliteID]
       }
     }]);
   }

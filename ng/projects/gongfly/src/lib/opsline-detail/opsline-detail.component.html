@@ -4,7 +4,7 @@
     <!-- -->
     <mat-checkbox [formControl]="IsTransmittingFormControl">IsTransmitting</mat-checkbox>
 
-    <mat-grid-list *ngIf='!isATextArea("TransmissionMessage")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("TransmissionMessage")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>TransmissionMessage</mat-label>
@@ -27,7 +27,7 @@
     <!-- -->
     <mat-checkbox [formControl]="IsTransmittingBackwardFormControl">IsTransmittingBackward</mat-checkbox>
 
-    <mat-grid-list *ngIf='!isATextArea("TransmissionMessageBackward")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("TransmissionMessageBackward")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>TransmissionMessageBackward</mat-label>
@@ -67,7 +67,7 @@
         </mat-select>
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("Name")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Name")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Name</mat-label>

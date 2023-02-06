@@ -193,7 +193,7 @@ export class LinersTableComponent implements OnInit {
       }
     )
     if (this.mode == TableComponentMode.DISPLAY_MODE) {
-      this.displayedColumns = ['ID', 'Edit', 'Delete', // insertion point for columns to display
+      this.displayedColumns = ['ID', 'Delete', // insertion point for columns to display
         "Name",
         "Lat",
         "Lng",
@@ -310,15 +310,6 @@ export class LinersTableComponent implements OnInit {
     this.router.navigate([{
       outlets: {
         github_com_fullstack_lang_gongfly_go_editor: ["github_com_fullstack_lang_gongfly_go-" + "liner-detail", linerID]
-      }
-    }]);
-  }
-
-  // set presentation outlet
-  setPresentationRouterOutlet(linerID: number) {
-    this.router.navigate([{
-      outlets: {
-        github_com_fullstack_lang_gongfly_go_presentation: ["github_com_fullstack_lang_gongfly_go-" + "liner-presentation", linerID]
       }
     }]);
   }

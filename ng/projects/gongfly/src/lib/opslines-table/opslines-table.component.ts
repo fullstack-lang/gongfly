@@ -159,7 +159,7 @@ export class OpsLinesTableComponent implements OnInit {
       }
     )
     if (this.mode == TableComponentMode.DISPLAY_MODE) {
-      this.displayedColumns = ['ID', 'Edit', 'Delete', // insertion point for columns to display
+      this.displayedColumns = ['ID', 'Delete', // insertion point for columns to display
         "IsTransmitting",
         "TransmissionMessage",
         "IsTransmittingBackward",
@@ -260,15 +260,6 @@ export class OpsLinesTableComponent implements OnInit {
     this.router.navigate([{
       outlets: {
         github_com_fullstack_lang_gongfly_go_editor: ["github_com_fullstack_lang_gongfly_go-" + "opsline-detail", opslineID]
-      }
-    }]);
-  }
-
-  // set presentation outlet
-  setPresentationRouterOutlet(opslineID: number) {
-    this.router.navigate([{
-      outlets: {
-        github_com_fullstack_lang_gongfly_go_presentation: ["github_com_fullstack_lang_gongfly_go-" + "opsline-presentation", opslineID]
       }
     }]);
   }

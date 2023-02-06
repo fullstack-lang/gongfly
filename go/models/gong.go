@@ -103,9 +103,19 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	MetaPackageImportPath  string
 	MetaPackageImportAlias string
 	Map_DocLink_Renaming   map[string]GONG__Identifier
+
+	// map_Gongstruct_BackPointer is storage of back pointers
+	map_Gongstruct_BackPointer map[any]any
 }
 
-// swagger:ignore
+func SetBackPointer[T Gongstruct](stageStruct *StageStruct, instance *T, backPointer any) {
+	stageStruct.map_Gongstruct_BackPointer[instance] = backPointer
+}
+func GetBackPointer[T Gongstruct](stageStruct *StageStruct, instance *T) (backPointer any) {
+	backPointer, _ = stageStruct.map_Gongstruct_BackPointer[instance]
+	return
+}
+
 type GONG__Identifier struct {
 	Ident string
 	Type  GONG__ExpressionType
@@ -189,6 +199,7 @@ var Stage StageStruct = StageStruct{ // insertion point for array initiatialisat
 
 	// end of insertion point
 	Map_GongStructName_InstancesNb: make(map[string]int),
+	map_Gongstruct_BackPointer:     make(map[any]any),
 }
 
 func (stage *StageStruct) Commit() {
@@ -1016,62 +1027,6 @@ func (stage *StageStruct) Unstage() { // insertion point for array nil
 	}
 
 }
-
-// insertion point of functions that provide maps for reverse associations
-
-// generate function for reverse association maps of CivilianAirport
-
-// generate function for reverse association maps of Liner
-func (stageStruct *StageStruct) CreateReverseMap_Liner_ReporingLine() (res map[*OpsLine][]*Liner) {
-	res = make(map[*OpsLine][]*Liner)
-
-	for liner := range stageStruct.Liners {
-		if liner.ReporingLine != nil {
-			opsline_ := liner.ReporingLine
-			var liners []*Liner
-			_, ok := res[opsline_]
-			if ok {
-				liners = res[opsline_]
-			} else {
-				liners = make([]*Liner, 0)
-			}
-			liners = append(liners, liner)
-			res[opsline_] = liners
-		}
-	}
-
-	return
-}
-
-// generate function for reverse association maps of Message
-
-// generate function for reverse association maps of OpsLine
-func (stageStruct *StageStruct) CreateReverseMap_OpsLine_Scenario() (res map[*Scenario][]*OpsLine) {
-	res = make(map[*Scenario][]*OpsLine)
-
-	for opsline := range stageStruct.OpsLines {
-		if opsline.Scenario != nil {
-			scenario_ := opsline.Scenario
-			var opslines []*OpsLine
-			_, ok := res[scenario_]
-			if ok {
-				opslines = res[scenario_]
-			} else {
-				opslines = make([]*OpsLine, 0)
-			}
-			opslines = append(opslines, opsline)
-			res[scenario_] = opslines
-		}
-	}
-
-	return
-}
-
-// generate function for reverse association maps of Radar
-
-// generate function for reverse association maps of Satellite
-
-// generate function for reverse association maps of Scenario
 
 // Gongstruct is the type parameter for generated generic function that allows
 // - access to staged instances
