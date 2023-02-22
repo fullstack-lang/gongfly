@@ -59,7 +59,6 @@ export * from './lib/scenario.service'
 
 
 export * from './lib/ConceptEnum'
-export * from './lib/GONG__ExpressionType'
 export * from './lib/LinerStateEnum'
 export * from './lib/MessageStateEnum'
 export * from './lib/OperationalLineStateEnum'

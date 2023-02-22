@@ -52,6 +52,19 @@ func GetMessages(c *gin.Context) {
 
 	// source slice
 	var messageDBs []orm.MessageDB
+
+	// type Values map[string][]string
+	values := c.Request.URL.Query()
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			// we have a single parameter
+			// we assume it is the stack
+			stackParam := value[0]
+			log.Println("GONG__StackPath", stackParam)
+		}
+	}
+
 	query := db.Find(&messageDBs)
 	if query.Error != nil {
 		var returnError GenericError
@@ -96,7 +109,6 @@ func GetMessages(c *gin.Context) {
 //	Responses:
 //	  200: nodeDBResponse
 func PostMessage(c *gin.Context) {
-	db := orm.BackRepo.BackRepoMessage.GetDB()
 
 	// Validate input
 	var input orm.MessageAPI
@@ -116,6 +128,7 @@ func PostMessage(c *gin.Context) {
 	messageDB.MessagePointersEnconding = input.MessagePointersEnconding
 	messageDB.CopyBasicFieldsFromMessage(&input.Message)
 
+	db := orm.BackRepo.BackRepoMessage.GetDB()
 	query := db.Create(&messageDB)
 	if query.Error != nil {
 		var returnError GenericError
@@ -152,6 +165,19 @@ func PostMessage(c *gin.Context) {
 //
 //	200: messageDBResponse
 func GetMessage(c *gin.Context) {
+
+	// type Values map[string][]string
+	values := c.Request.URL.Query()
+	if len(values) == 1 {
+		value := values["stack"]
+		if len(value) == 1 {
+			// we have a single parameter
+			// we assume it is the stack
+			stackParam := value[0]
+			log.Println("GET params", stackParam)
+		}
+	}
+
 	db := orm.BackRepo.BackRepoMessage.GetDB()
 
 	// Get messageDB in DB
@@ -184,6 +210,15 @@ func GetMessage(c *gin.Context) {
 //
 //	200: messageDBResponse
 func UpdateMessage(c *gin.Context) {
+
+	// Validate input
+	var input orm.MessageAPI
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	db := orm.BackRepo.BackRepoMessage.GetDB()
 
 	// Get model if exist
@@ -198,14 +233,6 @@ func UpdateMessage(c *gin.Context) {
 		returnError.Body.Message = query.Error.Error()
 		log.Println(query.Error.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
-		return
-	}
-
-	// Validate input
-	var input orm.MessageAPI
-	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 

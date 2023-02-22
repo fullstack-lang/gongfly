@@ -52,6 +52,19 @@ func GetCivilianAirports(c *gin.Context) {
 
 	// source slice
 	var civilianairportDBs []orm.CivilianAirportDB
+
+	// type Values map[string][]string
+	values := c.Request.URL.Query()
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			// we have a single parameter
+			// we assume it is the stack
+			stackParam := value[0]
+			log.Println("GONG__StackPath", stackParam)
+		}
+	}
+
 	query := db.Find(&civilianairportDBs)
 	if query.Error != nil {
 		var returnError GenericError
@@ -96,7 +109,6 @@ func GetCivilianAirports(c *gin.Context) {
 //	Responses:
 //	  200: nodeDBResponse
 func PostCivilianAirport(c *gin.Context) {
-	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
 
 	// Validate input
 	var input orm.CivilianAirportAPI
@@ -116,6 +128,7 @@ func PostCivilianAirport(c *gin.Context) {
 	civilianairportDB.CivilianAirportPointersEnconding = input.CivilianAirportPointersEnconding
 	civilianairportDB.CopyBasicFieldsFromCivilianAirport(&input.CivilianAirport)
 
+	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
 	query := db.Create(&civilianairportDB)
 	if query.Error != nil {
 		var returnError GenericError
@@ -152,6 +165,19 @@ func PostCivilianAirport(c *gin.Context) {
 //
 //	200: civilianairportDBResponse
 func GetCivilianAirport(c *gin.Context) {
+
+	// type Values map[string][]string
+	values := c.Request.URL.Query()
+	if len(values) == 1 {
+		value := values["stack"]
+		if len(value) == 1 {
+			// we have a single parameter
+			// we assume it is the stack
+			stackParam := value[0]
+			log.Println("GET params", stackParam)
+		}
+	}
+
 	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
 
 	// Get civilianairportDB in DB
@@ -184,6 +210,15 @@ func GetCivilianAirport(c *gin.Context) {
 //
 //	200: civilianairportDBResponse
 func UpdateCivilianAirport(c *gin.Context) {
+
+	// Validate input
+	var input orm.CivilianAirportAPI
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
 
 	// Get model if exist
@@ -198,14 +233,6 @@ func UpdateCivilianAirport(c *gin.Context) {
 		returnError.Body.Message = query.Error.Error()
 		log.Println(query.Error.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
-		return
-	}
-
-	// Validate input
-	var input orm.CivilianAirportAPI
-	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 

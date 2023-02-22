@@ -52,6 +52,19 @@ func GetLiners(c *gin.Context) {
 
 	// source slice
 	var linerDBs []orm.LinerDB
+
+	// type Values map[string][]string
+	values := c.Request.URL.Query()
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			// we have a single parameter
+			// we assume it is the stack
+			stackParam := value[0]
+			log.Println("GONG__StackPath", stackParam)
+		}
+	}
+
 	query := db.Find(&linerDBs)
 	if query.Error != nil {
 		var returnError GenericError
@@ -96,7 +109,6 @@ func GetLiners(c *gin.Context) {
 //	Responses:
 //	  200: nodeDBResponse
 func PostLiner(c *gin.Context) {
-	db := orm.BackRepo.BackRepoLiner.GetDB()
 
 	// Validate input
 	var input orm.LinerAPI
@@ -116,6 +128,7 @@ func PostLiner(c *gin.Context) {
 	linerDB.LinerPointersEnconding = input.LinerPointersEnconding
 	linerDB.CopyBasicFieldsFromLiner(&input.Liner)
 
+	db := orm.BackRepo.BackRepoLiner.GetDB()
 	query := db.Create(&linerDB)
 	if query.Error != nil {
 		var returnError GenericError
@@ -152,6 +165,19 @@ func PostLiner(c *gin.Context) {
 //
 //	200: linerDBResponse
 func GetLiner(c *gin.Context) {
+
+	// type Values map[string][]string
+	values := c.Request.URL.Query()
+	if len(values) == 1 {
+		value := values["stack"]
+		if len(value) == 1 {
+			// we have a single parameter
+			// we assume it is the stack
+			stackParam := value[0]
+			log.Println("GET params", stackParam)
+		}
+	}
+
 	db := orm.BackRepo.BackRepoLiner.GetDB()
 
 	// Get linerDB in DB
@@ -184,6 +210,15 @@ func GetLiner(c *gin.Context) {
 //
 //	200: linerDBResponse
 func UpdateLiner(c *gin.Context) {
+
+	// Validate input
+	var input orm.LinerAPI
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	db := orm.BackRepo.BackRepoLiner.GetDB()
 
 	// Get model if exist
@@ -198,14 +233,6 @@ func UpdateLiner(c *gin.Context) {
 		returnError.Body.Message = query.Error.Error()
 		log.Println(query.Error.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
-		return
-	}
-
-	// Validate input
-	var input orm.LinerAPI
-	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 

@@ -86,6 +86,8 @@ export class DialogData {
   IntermediateStruct: string = "" // the "AclassBclassUse" 
   IntermediateStructField: string = "" // the "Bclass" as field
   NextAssociationStruct: string = "" // the "Bclass"
+
+  GONG__StackPath: string = ""
 }
 
 export enum SelectionMode {
@@ -100,6 +102,8 @@ export enum SelectionMode {
   providedIn: 'root'
 })
 export class FrontRepoService {
+
+  GONG__StackPath: string = ""
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -151,14 +155,14 @@ export class FrontRepoService {
     Observable<RadarDB[]>,
     Observable<SatelliteDB[]>,
     Observable<ScenarioDB[]>,
-  ] = [ // insertion point sub template 
-      this.civilianairportService.getCivilianAirports(),
-      this.linerService.getLiners(),
-      this.messageService.getMessages(),
-      this.opslineService.getOpsLines(),
-      this.radarService.getRadars(),
-      this.satelliteService.getSatellites(),
-      this.scenarioService.getScenarios(),
+  ] = [ // insertion point sub template
+      this.civilianairportService.getCivilianAirports(this.GONG__StackPath),
+      this.linerService.getLiners(this.GONG__StackPath),
+      this.messageService.getMessages(this.GONG__StackPath),
+      this.opslineService.getOpsLines(this.GONG__StackPath),
+      this.radarService.getRadars(this.GONG__StackPath),
+      this.satelliteService.getSatellites(this.GONG__StackPath),
+      this.scenarioService.getScenarios(this.GONG__StackPath),
     ];
 
   //
@@ -167,7 +171,20 @@ export class FrontRepoService {
   // This is an observable. Therefore, the control flow forks with
   // - pull() return immediatly the observable
   // - the observable observer, if it subscribe, is called when all GET calls are performs
-  pull(): Observable<FrontRepo> {
+  pull(GONG__StackPath: string = ""): Observable<FrontRepo> {
+
+    this.GONG__StackPath = GONG__StackPath
+
+    this.observableFrontRepo = [ // insertion point sub template
+      this.civilianairportService.getCivilianAirports(this.GONG__StackPath),
+      this.linerService.getLiners(this.GONG__StackPath),
+      this.messageService.getMessages(this.GONG__StackPath),
+      this.opslineService.getOpsLines(this.GONG__StackPath),
+      this.radarService.getRadars(this.GONG__StackPath),
+      this.satelliteService.getSatellites(this.GONG__StackPath),
+      this.scenarioService.getScenarios(this.GONG__StackPath),
+    ]
+
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest(

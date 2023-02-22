@@ -52,6 +52,19 @@ func GetSatellites(c *gin.Context) {
 
 	// source slice
 	var satelliteDBs []orm.SatelliteDB
+
+	// type Values map[string][]string
+	values := c.Request.URL.Query()
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			// we have a single parameter
+			// we assume it is the stack
+			stackParam := value[0]
+			log.Println("GONG__StackPath", stackParam)
+		}
+	}
+
 	query := db.Find(&satelliteDBs)
 	if query.Error != nil {
 		var returnError GenericError
@@ -96,7 +109,6 @@ func GetSatellites(c *gin.Context) {
 //	Responses:
 //	  200: nodeDBResponse
 func PostSatellite(c *gin.Context) {
-	db := orm.BackRepo.BackRepoSatellite.GetDB()
 
 	// Validate input
 	var input orm.SatelliteAPI
@@ -116,6 +128,7 @@ func PostSatellite(c *gin.Context) {
 	satelliteDB.SatellitePointersEnconding = input.SatellitePointersEnconding
 	satelliteDB.CopyBasicFieldsFromSatellite(&input.Satellite)
 
+	db := orm.BackRepo.BackRepoSatellite.GetDB()
 	query := db.Create(&satelliteDB)
 	if query.Error != nil {
 		var returnError GenericError
@@ -152,6 +165,19 @@ func PostSatellite(c *gin.Context) {
 //
 //	200: satelliteDBResponse
 func GetSatellite(c *gin.Context) {
+
+	// type Values map[string][]string
+	values := c.Request.URL.Query()
+	if len(values) == 1 {
+		value := values["stack"]
+		if len(value) == 1 {
+			// we have a single parameter
+			// we assume it is the stack
+			stackParam := value[0]
+			log.Println("GET params", stackParam)
+		}
+	}
+
 	db := orm.BackRepo.BackRepoSatellite.GetDB()
 
 	// Get satelliteDB in DB
@@ -184,6 +210,15 @@ func GetSatellite(c *gin.Context) {
 //
 //	200: satelliteDBResponse
 func UpdateSatellite(c *gin.Context) {
+
+	// Validate input
+	var input orm.SatelliteAPI
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	db := orm.BackRepo.BackRepoSatellite.GetDB()
 
 	// Get model if exist
@@ -198,14 +233,6 @@ func UpdateSatellite(c *gin.Context) {
 		returnError.Body.Message = query.Error.Error()
 		log.Println(query.Error.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
-		return
-	}
-
-	// Validate input
-	var input orm.SatelliteAPI
-	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
