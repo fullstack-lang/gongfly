@@ -47,11 +47,23 @@ type UserClickInput struct {
 // default: genericError
 //
 //	200: userclickDBResponse
-func GetUserClicks(c *gin.Context) {
-	db := orm.BackRepo.BackRepoUserClick.GetDB()
+func (controller *Controller) GetUserClicks(c *gin.Context) {
 
 	// source slice
 	var userclickDBs []orm.UserClickDB
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetUserClicks", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoUserClick.GetDB()
+
 	query := db.Find(&userclickDBs)
 	if query.Error != nil {
 		var returnError GenericError
@@ -95,8 +107,19 @@ func GetUserClicks(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func PostUserClick(c *gin.Context) {
-	db := orm.BackRepo.BackRepoUserClick.GetDB()
+func (controller *Controller) PostUserClick(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("PostUserClicks", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoUserClick.GetDB()
 
 	// Validate input
 	var input orm.UserClickAPI
@@ -127,16 +150,16 @@ func PostUserClick(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	orm.BackRepo.BackRepoUserClick.CheckoutPhaseOneInstance(&userclickDB)
-	userclick := (*orm.BackRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
+	backRepo.BackRepoUserClick.CheckoutPhaseOneInstance(&userclickDB)
+	userclick := (*backRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
 
 	if userclick != nil {
-		models.AfterCreateFromFront(&models.Stage, userclick)
+		models.AfterCreateFromFront(backRepo.GetStage(), userclick)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, userclickDB)
 }
@@ -151,8 +174,19 @@ func PostUserClick(c *gin.Context) {
 // default: genericError
 //
 //	200: userclickDBResponse
-func GetUserClick(c *gin.Context) {
-	db := orm.BackRepo.BackRepoUserClick.GetDB()
+func (controller *Controller) GetUserClick(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetUserClick", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoUserClick.GetDB()
 
 	// Get userclickDB in DB
 	var userclickDB orm.UserClickDB
@@ -183,8 +217,27 @@ func GetUserClick(c *gin.Context) {
 // default: genericError
 //
 //	200: userclickDBResponse
-func UpdateUserClick(c *gin.Context) {
-	db := orm.BackRepo.BackRepoUserClick.GetDB()
+func (controller *Controller) UpdateUserClick(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("UpdateUserClick", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoUserClick.GetDB()
+
+	// Validate input
+	var input orm.UserClickAPI
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	// Get model if exist
 	var userclickDB orm.UserClickDB
@@ -198,14 +251,6 @@ func UpdateUserClick(c *gin.Context) {
 		returnError.Body.Message = query.Error.Error()
 		log.Println(query.Error.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
-		return
-	}
-
-	// Validate input
-	var input orm.UserClickAPI
-	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -228,16 +273,16 @@ func UpdateUserClick(c *gin.Context) {
 	userclickDB.CopyBasicFieldsToUserClick(userclickNew)
 
 	// get stage instance from DB instance, and call callback function
-	userclickOld := (*orm.BackRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
+	userclickOld := (*backRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
 	if userclickOld != nil {
-		models.AfterUpdateFromFront(&models.Stage, userclickOld, userclickNew)
+		models.AfterUpdateFromFront(backRepo.GetStage(), userclickOld, userclickNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	// in some cases, with the marshalling of the stage, this operation might
 	// generates a checkout
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the userclickDB
 	c.JSON(http.StatusOK, userclickDB)
@@ -252,8 +297,19 @@ func UpdateUserClick(c *gin.Context) {
 // default: genericError
 //
 //	200: userclickDBResponse
-func DeleteUserClick(c *gin.Context) {
-	db := orm.BackRepo.BackRepoUserClick.GetDB()
+func (controller *Controller) DeleteUserClick(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("DeleteUserClick", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoUserClick.GetDB()
 
 	// Get model if exist
 	var userclickDB orm.UserClickDB
@@ -274,14 +330,14 @@ func DeleteUserClick(c *gin.Context) {
 	userclickDB.CopyBasicFieldsToUserClick(userclickDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	userclickStaged := (*orm.BackRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
+	userclickStaged := (*backRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
 	if userclickStaged != nil {
-		models.AfterDeleteFromFront(&models.Stage, userclickStaged, userclickDeleted)
+		models.AfterDeleteFromFront(backRepo.GetStage(), userclickStaged, userclickDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

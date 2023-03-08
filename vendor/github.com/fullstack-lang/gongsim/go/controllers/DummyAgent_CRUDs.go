@@ -47,11 +47,23 @@ type DummyAgentInput struct {
 // default: genericError
 //
 //	200: dummyagentDBResponse
-func GetDummyAgents(c *gin.Context) {
-	db := orm.BackRepo.BackRepoDummyAgent.GetDB()
+func (controller *Controller) GetDummyAgents(c *gin.Context) {
 
 	// source slice
 	var dummyagentDBs []orm.DummyAgentDB
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetDummyAgents", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoDummyAgent.GetDB()
+
 	query := db.Find(&dummyagentDBs)
 	if query.Error != nil {
 		var returnError GenericError
@@ -95,8 +107,19 @@ func GetDummyAgents(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func PostDummyAgent(c *gin.Context) {
-	db := orm.BackRepo.BackRepoDummyAgent.GetDB()
+func (controller *Controller) PostDummyAgent(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("PostDummyAgents", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoDummyAgent.GetDB()
 
 	// Validate input
 	var input orm.DummyAgentAPI
@@ -127,16 +150,16 @@ func PostDummyAgent(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	orm.BackRepo.BackRepoDummyAgent.CheckoutPhaseOneInstance(&dummyagentDB)
-	dummyagent := (*orm.BackRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
+	backRepo.BackRepoDummyAgent.CheckoutPhaseOneInstance(&dummyagentDB)
+	dummyagent := (*backRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
 
 	if dummyagent != nil {
-		models.AfterCreateFromFront(&models.Stage, dummyagent)
+		models.AfterCreateFromFront(backRepo.GetStage(), dummyagent)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, dummyagentDB)
 }
@@ -151,8 +174,19 @@ func PostDummyAgent(c *gin.Context) {
 // default: genericError
 //
 //	200: dummyagentDBResponse
-func GetDummyAgent(c *gin.Context) {
-	db := orm.BackRepo.BackRepoDummyAgent.GetDB()
+func (controller *Controller) GetDummyAgent(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetDummyAgent", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoDummyAgent.GetDB()
 
 	// Get dummyagentDB in DB
 	var dummyagentDB orm.DummyAgentDB
@@ -183,8 +217,27 @@ func GetDummyAgent(c *gin.Context) {
 // default: genericError
 //
 //	200: dummyagentDBResponse
-func UpdateDummyAgent(c *gin.Context) {
-	db := orm.BackRepo.BackRepoDummyAgent.GetDB()
+func (controller *Controller) UpdateDummyAgent(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("UpdateDummyAgent", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoDummyAgent.GetDB()
+
+	// Validate input
+	var input orm.DummyAgentAPI
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	// Get model if exist
 	var dummyagentDB orm.DummyAgentDB
@@ -198,14 +251,6 @@ func UpdateDummyAgent(c *gin.Context) {
 		returnError.Body.Message = query.Error.Error()
 		log.Println(query.Error.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
-		return
-	}
-
-	// Validate input
-	var input orm.DummyAgentAPI
-	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -228,16 +273,16 @@ func UpdateDummyAgent(c *gin.Context) {
 	dummyagentDB.CopyBasicFieldsToDummyAgent(dummyagentNew)
 
 	// get stage instance from DB instance, and call callback function
-	dummyagentOld := (*orm.BackRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
+	dummyagentOld := (*backRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
 	if dummyagentOld != nil {
-		models.AfterUpdateFromFront(&models.Stage, dummyagentOld, dummyagentNew)
+		models.AfterUpdateFromFront(backRepo.GetStage(), dummyagentOld, dummyagentNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	// in some cases, with the marshalling of the stage, this operation might
 	// generates a checkout
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the dummyagentDB
 	c.JSON(http.StatusOK, dummyagentDB)
@@ -252,8 +297,19 @@ func UpdateDummyAgent(c *gin.Context) {
 // default: genericError
 //
 //	200: dummyagentDBResponse
-func DeleteDummyAgent(c *gin.Context) {
-	db := orm.BackRepo.BackRepoDummyAgent.GetDB()
+func (controller *Controller) DeleteDummyAgent(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("DeleteDummyAgent", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoDummyAgent.GetDB()
 
 	// Get model if exist
 	var dummyagentDB orm.DummyAgentDB
@@ -274,14 +330,14 @@ func DeleteDummyAgent(c *gin.Context) {
 	dummyagentDB.CopyBasicFieldsToDummyAgent(dummyagentDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	dummyagentStaged := (*orm.BackRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
+	dummyagentStaged := (*backRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
 	if dummyagentStaged != nil {
-		models.AfterDeleteFromFront(&models.Stage, dummyagentStaged, dummyagentDeleted)
+		models.AfterDeleteFromFront(backRepo.GetStage(), dummyagentStaged, dummyagentDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

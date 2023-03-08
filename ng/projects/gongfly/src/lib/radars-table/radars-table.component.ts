@@ -177,7 +177,7 @@ export class RadarsTableComponent implements OnInit {
 
   ngOnInit(): void {
     let stackPath = this.activatedRoute.snapshot.paramMap.get('GONG__StackPath')
-    if ( stackPath != undefined) {
+    if (stackPath != undefined) {
       this.GONG__StackPath = stackPath
     }
 
@@ -213,10 +213,14 @@ export class RadarsTableComponent implements OnInit {
           let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s" as keyof FrontRepo] as Map<number, RadarDB>
           let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)!
 
-          let sourceField = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as RadarDB[]
-          for (let associationInstance of sourceField) {
-            let radar = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as RadarDB
-            this.initialSelection.push(radar)
+          // we associates on sourceInstance of type SourceStruct with a MANY MANY associations to RadarDB
+          // the field name is sourceField
+          let sourceFieldArray = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as RadarDB[]
+          if (sourceFieldArray != null) {
+            for (let associationInstance of sourceFieldArray) {
+              let radar = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as RadarDB
+              this.initialSelection.push(radar)
+            }
           }
 
           this.selection = new SelectionModel<RadarDB>(allowMultiSelect, this.initialSelection);
@@ -237,7 +241,7 @@ export class RadarsTableComponent implements OnInit {
     // list of radars is truncated of radar before the delete
     this.radars = this.radars.filter(h => h !== radar);
 
-    this.radarService.deleteRadar(radarID).subscribe(
+    this.radarService.deleteRadar(radarID, this.GONG__StackPath).subscribe(
       radar => {
         this.radarService.RadarServiceChanged.next("delete")
       }
@@ -303,7 +307,7 @@ export class RadarsTableComponent implements OnInit {
 
       // update all radar (only update selection & initial selection)
       for (let radar of toUpdate) {
-        this.radarService.updateRadar(radar)
+        this.radarService.updateRadar(radar, this.GONG__StackPath)
           .subscribe(radar => {
             this.radarService.RadarServiceChanged.next("update")
           });

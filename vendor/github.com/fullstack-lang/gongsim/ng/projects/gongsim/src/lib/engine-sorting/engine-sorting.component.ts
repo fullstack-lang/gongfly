@@ -46,7 +46,7 @@ export class EngineSortingComponent implements OnInit {
   }
 
   getEngines(): void {
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.dialogData.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 
@@ -100,13 +100,13 @@ export class EngineSortingComponent implements OnInit {
 
     this.associatedEngines.forEach(
       engine => {
-        this.engineService.updateEngine(engine)
+        this.engineService.updateEngine(engine, this.dialogData.GONG__StackPath)
           .subscribe(engine => {
             this.engineService.EngineServiceChanged.next("update")
           });
       }
     )
 
-    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer +' done');
+    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer + ' done');
   }
 }

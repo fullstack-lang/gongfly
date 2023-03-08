@@ -100,7 +100,7 @@ export class RadarSortingComponent implements OnInit {
 
     this.associatedRadars.forEach(
       radar => {
-        this.radarService.updateRadar(radar)
+        this.radarService.updateRadar(radar, this.dialogData.GONG__StackPath)
           .subscribe(radar => {
             this.radarService.RadarServiceChanged.next("update")
           });

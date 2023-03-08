@@ -47,23 +47,22 @@ type ScenarioInput struct {
 // default: genericError
 //
 //	200: scenarioDBResponse
-func GetScenarios(c *gin.Context) {
-	db := orm.BackRepo.BackRepoScenario.GetDB()
+func (controller *Controller) GetScenarios(c *gin.Context) {
 
 	// source slice
 	var scenarioDBs []orm.ScenarioDB
 
-	// type Values map[string][]string
 	values := c.Request.URL.Query()
+	stackPath := ""
 	if len(values) == 1 {
 		value := values["GONG__StackPath"]
 		if len(value) == 1 {
-			// we have a single parameter
-			// we assume it is the stack
-			stackParam := value[0]
-			log.Println("GONG__StackPath", stackParam)
+			stackPath = value[0]
+			log.Println("GetScenarios", "GONG__StackPath", stackPath)
 		}
 	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoScenario.GetDB()
 
 	query := db.Find(&scenarioDBs)
 	if query.Error != nil {
@@ -108,7 +107,19 @@ func GetScenarios(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func PostScenario(c *gin.Context) {
+func (controller *Controller) PostScenario(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("PostScenarios", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoScenario.GetDB()
 
 	// Validate input
 	var input orm.ScenarioAPI
@@ -128,7 +139,6 @@ func PostScenario(c *gin.Context) {
 	scenarioDB.ScenarioPointersEnconding = input.ScenarioPointersEnconding
 	scenarioDB.CopyBasicFieldsFromScenario(&input.Scenario)
 
-	db := orm.BackRepo.BackRepoScenario.GetDB()
 	query := db.Create(&scenarioDB)
 	if query.Error != nil {
 		var returnError GenericError
@@ -140,16 +150,16 @@ func PostScenario(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	orm.BackRepo.BackRepoScenario.CheckoutPhaseOneInstance(&scenarioDB)
-	scenario := (*orm.BackRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID]
+	backRepo.BackRepoScenario.CheckoutPhaseOneInstance(&scenarioDB)
+	scenario := (*backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID]
 
 	if scenario != nil {
-		models.AfterCreateFromFront(&models.Stage, scenario)
+		models.AfterCreateFromFront(backRepo.GetStage(), scenario)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, scenarioDB)
 }
@@ -164,21 +174,19 @@ func PostScenario(c *gin.Context) {
 // default: genericError
 //
 //	200: scenarioDBResponse
-func GetScenario(c *gin.Context) {
+func (controller *Controller) GetScenario(c *gin.Context) {
 
-	// type Values map[string][]string
 	values := c.Request.URL.Query()
+	stackPath := ""
 	if len(values) == 1 {
-		value := values["stack"]
+		value := values["GONG__StackPath"]
 		if len(value) == 1 {
-			// we have a single parameter
-			// we assume it is the stack
-			stackParam := value[0]
-			log.Println("GET params", stackParam)
+			stackPath = value[0]
+			log.Println("GetScenario", "GONG__StackPath", stackPath)
 		}
 	}
-
-	db := orm.BackRepo.BackRepoScenario.GetDB()
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoScenario.GetDB()
 
 	// Get scenarioDB in DB
 	var scenarioDB orm.ScenarioDB
@@ -209,7 +217,19 @@ func GetScenario(c *gin.Context) {
 // default: genericError
 //
 //	200: scenarioDBResponse
-func UpdateScenario(c *gin.Context) {
+func (controller *Controller) UpdateScenario(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("UpdateScenario", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoScenario.GetDB()
 
 	// Validate input
 	var input orm.ScenarioAPI
@@ -218,8 +238,6 @@ func UpdateScenario(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	db := orm.BackRepo.BackRepoScenario.GetDB()
 
 	// Get model if exist
 	var scenarioDB orm.ScenarioDB
@@ -255,16 +273,16 @@ func UpdateScenario(c *gin.Context) {
 	scenarioDB.CopyBasicFieldsToScenario(scenarioNew)
 
 	// get stage instance from DB instance, and call callback function
-	scenarioOld := (*orm.BackRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID]
+	scenarioOld := (*backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID]
 	if scenarioOld != nil {
-		models.AfterUpdateFromFront(&models.Stage, scenarioOld, scenarioNew)
+		models.AfterUpdateFromFront(backRepo.GetStage(), scenarioOld, scenarioNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	// in some cases, with the marshalling of the stage, this operation might
 	// generates a checkout
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the scenarioDB
 	c.JSON(http.StatusOK, scenarioDB)
@@ -279,8 +297,19 @@ func UpdateScenario(c *gin.Context) {
 // default: genericError
 //
 //	200: scenarioDBResponse
-func DeleteScenario(c *gin.Context) {
-	db := orm.BackRepo.BackRepoScenario.GetDB()
+func (controller *Controller) DeleteScenario(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("DeleteScenario", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoScenario.GetDB()
 
 	// Get model if exist
 	var scenarioDB orm.ScenarioDB
@@ -301,14 +330,14 @@ func DeleteScenario(c *gin.Context) {
 	scenarioDB.CopyBasicFieldsToScenario(scenarioDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	scenarioStaged := (*orm.BackRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID]
+	scenarioStaged := (*backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID]
 	if scenarioStaged != nil {
-		models.AfterDeleteFromFront(&models.Stage, scenarioStaged, scenarioDeleted)
+		models.AfterDeleteFromFront(backRepo.GetStage(), scenarioStaged, scenarioDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

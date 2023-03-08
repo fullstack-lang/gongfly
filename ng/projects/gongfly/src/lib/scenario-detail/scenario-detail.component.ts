@@ -152,13 +152,13 @@ export class ScenarioDetailComponent implements OnInit {
 
 		switch (this.state) {
 			case ScenarioDetailComponentState.UPDATE_INSTANCE:
-				this.scenarioService.updateScenario(this.scenario)
+				this.scenarioService.updateScenario(this.scenario, this.GONG__StackPath)
 					.subscribe(scenario => {
 						this.scenarioService.ScenarioServiceChanged.next("update")
 					});
 				break;
 			default:
-				this.scenarioService.postScenario(this.scenario).subscribe(scenario => {
+				this.scenarioService.postScenario(this.scenario, this.GONG__StackPath).subscribe(scenario => {
 					this.scenarioService.ScenarioServiceChanged.next("post")
 					this.scenario = new (ScenarioDB) // reset fields
 				});

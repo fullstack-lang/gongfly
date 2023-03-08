@@ -158,6 +158,13 @@ type BackRepoMapOptionsStruct struct {
 	Map_MapOptionsDBID_MapOptionsPtr *map[uint]*models.MapOptions
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoMapOptions *BackRepoMapOptionsStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoMapOptions.stage
+	return
 }
 
 func (backRepoMapOptions *BackRepoMapOptionsStruct) GetDB() *gorm.DB {
@@ -172,7 +179,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) GetMapOptionsDBFromMapOption
 }
 
 // BackRepoMapOptions.Init set up the BackRepo of the MapOptions
-func (backRepoMapOptions *BackRepoMapOptionsStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoMapOptions *BackRepoMapOptionsStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr != nil {
 		err := errors.New("In Init, backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr should be nil")
@@ -199,6 +206,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) Init(db *gorm.DB) (Error err
 	backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID = &tmpID
 
 	backRepoMapOptions.db = db
+	backRepoMapOptions.stage = stage
 	return
 }
 
@@ -324,8 +332,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitPhaseTwoInstance(backR
 // BackRepoMapOptions.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseOne() (Error error) {
 
 	mapoptionsDBArray := make([]MapOptionsDB, 0)
@@ -337,7 +344,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseOne() (Error er
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	mapoptionsInstancesToBeRemovedFromTheStage := make(map[*models.MapOptions]any)
-	for key, value := range models.Stage.MapOptionss {
+	for key, value := range backRepoMapOptions.stage.MapOptionss {
 		mapoptionsInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -355,7 +362,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseOne() (Error er
 
 	// remove from stage and back repo's 3 maps all mapoptionss that are not in the checkout
 	for mapoptions := range mapoptionsInstancesToBeRemovedFromTheStage {
-		mapoptions.Unstage()
+		mapoptions.Unstage(backRepoMapOptions.GetStage())
 
 		// remove instance from the back repo 3 maps
 		mapoptionsID := (*backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID)[mapoptions]
@@ -380,9 +387,12 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseOneInstance(map
 
 		// append model store with the new element
 		mapoptions.Name = mapoptionsDB.Name_Data.String
-		mapoptions.Stage()
+		mapoptions.Stage(backRepoMapOptions.GetStage())
 	}
 	mapoptionsDB.CopyBasicFieldsToMapOptions(mapoptions)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	mapoptions.Stage(backRepoMapOptions.GetStage())
 
 	// preserve pointer to mapoptionsDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_MapOptionsDBID_MapOptionsDB)[mapoptionsDB hold variable pointers

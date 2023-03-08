@@ -126,6 +126,13 @@ type BackRepoScenarioStruct struct {
 	Map_ScenarioDBID_ScenarioPtr *map[uint]*models.Scenario
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoScenario *BackRepoScenarioStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoScenario.stage
+	return
 }
 
 func (backRepoScenario *BackRepoScenarioStruct) GetDB() *gorm.DB {
@@ -140,7 +147,7 @@ func (backRepoScenario *BackRepoScenarioStruct) GetScenarioDBFromScenarioPtr(sce
 }
 
 // BackRepoScenario.Init set up the BackRepo of the Scenario
-func (backRepoScenario *BackRepoScenarioStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoScenario *BackRepoScenarioStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoScenario.Map_ScenarioDBID_ScenarioPtr != nil {
 		err := errors.New("In Init, backRepoScenario.Map_ScenarioDBID_ScenarioPtr should be nil")
@@ -167,6 +174,7 @@ func (backRepoScenario *BackRepoScenarioStruct) Init(db *gorm.DB) (Error error) 
 	backRepoScenario.Map_ScenarioPtr_ScenarioDBID = &tmpID
 
 	backRepoScenario.db = db
+	backRepoScenario.stage = stage
 	return
 }
 
@@ -285,7 +293,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseOne() (Error error)
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	scenarioInstancesToBeRemovedFromTheStage := make(map[*models.Scenario]any)
-	for key, value := range models.Stage.Scenarios {
+	for key, value := range backRepoScenario.stage.Scenarios {
 		scenarioInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -303,7 +311,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseOne() (Error error)
 
 	// remove from stage and back repo's 3 maps all scenarios that are not in the checkout
 	for scenario := range scenarioInstancesToBeRemovedFromTheStage {
-		scenario.Unstage()
+		scenario.Unstage(backRepoScenario.GetStage())
 
 		// remove instance from the back repo 3 maps
 		scenarioID := (*backRepoScenario.Map_ScenarioPtr_ScenarioDBID)[scenario]
@@ -328,12 +336,12 @@ func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseOneInstance(scenari
 
 		// append model store with the new element
 		scenario.Name = scenarioDB.Name_Data.String
-		scenario.Stage()
+		scenario.Stage(backRepoScenario.GetStage())
 	}
 	scenarioDB.CopyBasicFieldsToScenario(scenario)
 
 	// in some cases, the instance might have been unstaged. It is necessary to stage it again
-	scenario.Stage()
+	scenario.Stage(backRepoScenario.GetStage())
 
 	// preserve pointer to scenarioDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_ScenarioDBID_ScenarioDB)[scenarioDB hold variable pointers

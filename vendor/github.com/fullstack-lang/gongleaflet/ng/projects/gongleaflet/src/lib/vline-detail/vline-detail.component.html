@@ -25,7 +25,7 @@
         <input type="number" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="vline.EndLng" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("Name")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Name")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Name</mat-label>
@@ -85,7 +85,7 @@
         </mat-select>
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("Message")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Message")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Message</mat-label>
@@ -115,7 +115,7 @@
         </mat-select>
     </mat-form-field>
 
-    <mat-grid-list *ngIf='!isATextArea("MessageBackward")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("MessageBackward")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>MessageBackward</mat-label>

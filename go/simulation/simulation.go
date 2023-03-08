@@ -72,7 +72,7 @@ func (engineSpecific *Simulation) CommitAgents(engine *gongsim_models.Engine) {
 	// if there are new messages, attach them to visual tracks
 	for message := range target_models.Stage.Messages {
 		if message.Display == true && MapMessageVisualTrack[message] == nil {
-			visualTrack := new(gongleaflet_models.VisualTrack).Stage()
+			visualTrack := new(gongleaflet_models.VisualTrack).Stage(&gongleaflet_models.Stage)
 			visualTrack.Name = message.Content
 			visualTrack.VisualTrackInterface = message
 			visualTrack.DivIcon = icons.Arrow
@@ -98,7 +98,7 @@ func (engineSpecific *Simulation) CommitAgents(engine *gongsim_models.Engine) {
 	for message := range target_models.Stage.Messages {
 		if message.Display == false {
 			if visualTrack := MapMessageVisualTrack[message]; visualTrack != nil {
-				visualTrack.Unstage()
+				visualTrack.Unstage(&gongleaflet_models.Stage)
 				delete(MapMessageVisualTrack, message)
 			}
 		}
@@ -140,9 +140,9 @@ func (simulation *Simulation) Reset(engine *gongsim_models.Engine) {
 
 	// remove all message and their VisualTracks
 	for message := range target_models.Stage.Messages {
-		message.Unstage()
+		message.Unstage(&models.Stage)
 		if visualTrack := MapMessageVisualTrack[message]; visualTrack != nil {
-			visualTrack.Unstage()
+			visualTrack.Unstage(&gongleaflet_models.Stage)
 			delete(MapMessageVisualTrack, message)
 		}
 	}

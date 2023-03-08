@@ -29,10 +29,10 @@ const (
 
 // ParseAstFile Parse pathToFile and stages all instances
 // declared in the file
-func ParseAstFile(pathToFile string) error {
+func ParseAstFile(stage *StageStruct, pathToFile string) error {
 	// map to store renaming docLink
 	// to be removed after fix of [issue](https://github.com/golang/go/issues/57559)
-	Stage.Map_DocLink_Renaming = make(map[string]GONG__Identifier, 0)
+	stage.Map_DocLink_Renaming = make(map[string]GONG__Identifier, 0)
 
 	fileOfInterest, err := filepath.Abs(pathToFile)
 	if err != nil {
@@ -48,21 +48,19 @@ func ParseAstFile(pathToFile string) error {
 		return errors.New("Unable to parser " + errParser.Error())
 	}
 
-	return ParseAstFileFromAst(inFile, fset)
+	return ParseAstFileFromAst(stage, inFile, fset)
 }
 
 // ParseAstFile Parse pathToFile and stages all instances
 // declared in the file
-func ParseAstFileFromAst(inFile *ast.File, fset *token.FileSet) error {
+func ParseAstFileFromAst(stage *StageStruct, inFile *ast.File, fset *token.FileSet) error {
 	// if there is a meta package import, it is the third import
 	if len(inFile.Imports) > 3 {
 		log.Fatalln("Too many imports in file", inFile.Name)
 	}
-	stage := &Stage
-	_ = stage
 	if len(inFile.Imports) == 3 {
-		Stage.MetaPackageImportAlias = inFile.Imports[2].Name.Name
-		Stage.MetaPackageImportPath = inFile.Imports[2].Path.Value
+		stage.MetaPackageImportAlias = inFile.Imports[2].Name.Name
+		stage.MetaPackageImportPath = inFile.Imports[2].Path.Value
 	}
 
 	// astCoordinate := "File "
@@ -116,7 +114,7 @@ func ParseAstFileFromAst(inFile *ast.File, fset *token.FileSet) error {
 						assignStmt := stmt
 						instance, id, gongstruct, fieldName :=
 							UnmarshallGongstructStaging(
-								&cmap, assignStmt, astCoordinate)
+								stage, &cmap, assignStmt, astCoordinate)
 						_ = instance
 						_ = id
 						_ = gongstruct
@@ -294,7 +292,7 @@ func ParseAstFileFromAst(inFile *ast.File, fset *token.FileSet) error {
 							// otherwise, one stores the new ident (after renaming) in the
 							// renaming map
 							docLink.Type = expressionType
-							Stage.Map_DocLink_Renaming[key] = docLink
+							stage.Map_DocLink_Renaming[key] = docLink
 						}
 					}
 				}
@@ -321,10 +319,7 @@ var __gong__map_Scenario = make(map[string]*Scenario)
 // While this was introduced in go 1.19, it is not yet implemented in
 // gopls (see [issue](https://github.com/golang/go/issues/57559)
 func lookupPackage(name string) (importPath string, ok bool) {
-	if name == Stage.MetaPackageImportAlias {
-		return Stage.MetaPackageImportAlias, true
-	}
-	return comment.DefaultLookupPackage(name)
+	return name, true
 }
 func lookupSym(recv, name string) (ok bool) {
 	if recv == "" {
@@ -334,7 +329,7 @@ func lookupSym(recv, name string) (ok bool) {
 }
 
 // UnmarshallGoStaging unmarshall a go assign statement
-func UnmarshallGongstructStaging(cmap *ast.CommentMap, assignStmt *ast.AssignStmt, astCoordinate_ string) (
+func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assignStmt *ast.AssignStmt, astCoordinate_ string) (
 	instance any,
 	identifier string,
 	gongstructName string,
@@ -385,7 +380,7 @@ func UnmarshallGongstructStaging(cmap *ast.CommentMap, assignStmt *ast.AssignStm
 
 						// we check wether the doc link has been renamed
 						// to be removed after fix of [issue](https://github.com/golang/go/issues/57559)
-						if renamed, ok := (Stage.Map_DocLink_Renaming)[docLinkText]; ok {
+						if renamed, ok := (stage.Map_DocLink_Renaming)[docLinkText]; ok {
 							docLinkText = renamed.Ident
 						}
 					}
@@ -491,31 +486,31 @@ func UnmarshallGongstructStaging(cmap *ast.CommentMap, assignStmt *ast.AssignStm
 									switch gongstructName {
 									// insertion point for identifiers
 									case "CivilianAirport":
-										instanceCivilianAirport := (&CivilianAirport{Name: instanceName}).Stage()
+										instanceCivilianAirport := (&CivilianAirport{Name: instanceName}).Stage(stage)
 										instance = any(instanceCivilianAirport)
 										__gong__map_CivilianAirport[identifier] = instanceCivilianAirport
 									case "Liner":
-										instanceLiner := (&Liner{Name: instanceName}).Stage()
+										instanceLiner := (&Liner{Name: instanceName}).Stage(stage)
 										instance = any(instanceLiner)
 										__gong__map_Liner[identifier] = instanceLiner
 									case "Message":
-										instanceMessage := (&Message{Name: instanceName}).Stage()
+										instanceMessage := (&Message{Name: instanceName}).Stage(stage)
 										instance = any(instanceMessage)
 										__gong__map_Message[identifier] = instanceMessage
 									case "OpsLine":
-										instanceOpsLine := (&OpsLine{Name: instanceName}).Stage()
+										instanceOpsLine := (&OpsLine{Name: instanceName}).Stage(stage)
 										instance = any(instanceOpsLine)
 										__gong__map_OpsLine[identifier] = instanceOpsLine
 									case "Radar":
-										instanceRadar := (&Radar{Name: instanceName}).Stage()
+										instanceRadar := (&Radar{Name: instanceName}).Stage(stage)
 										instance = any(instanceRadar)
 										__gong__map_Radar[identifier] = instanceRadar
 									case "Satellite":
-										instanceSatellite := (&Satellite{Name: instanceName}).Stage()
+										instanceSatellite := (&Satellite{Name: instanceName}).Stage(stage)
 										instance = any(instanceSatellite)
 										__gong__map_Satellite[identifier] = instanceSatellite
 									case "Scenario":
-										instanceScenario := (&Scenario{Name: instanceName}).Stage()
+										instanceScenario := (&Scenario{Name: instanceName}).Stage(stage)
 										instance = any(instanceScenario)
 										__gong__map_Scenario[identifier] = instanceScenario
 									}

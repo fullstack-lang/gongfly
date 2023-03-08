@@ -126,6 +126,13 @@ type BackRepoGongsimCommandStruct struct {
 	Map_GongsimCommandDBID_GongsimCommandPtr *map[uint]*models.GongsimCommand
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoGongsimCommand.stage
+	return
 }
 
 func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) GetDB() *gorm.DB {
@@ -140,7 +147,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) GetGongsimCommandDBF
 }
 
 // BackRepoGongsimCommand.Init set up the BackRepo of the GongsimCommand
-func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandPtr != nil {
 		err := errors.New("In Init, backRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandPtr should be nil")
@@ -167,6 +174,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) Init(db *gorm.DB) (E
 	backRepoGongsimCommand.Map_GongsimCommandPtr_GongsimCommandDBID = &tmpID
 
 	backRepoGongsimCommand.db = db
+	backRepoGongsimCommand.stage = stage
 	return
 }
 
@@ -273,8 +281,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) CommitPhaseTwoInstan
 // BackRepoGongsimCommand.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) CheckoutPhaseOne() (Error error) {
 
 	gongsimcommandDBArray := make([]GongsimCommandDB, 0)
@@ -286,7 +293,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) CheckoutPhaseOne() (
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	gongsimcommandInstancesToBeRemovedFromTheStage := make(map[*models.GongsimCommand]any)
-	for key, value := range models.Stage.GongsimCommands {
+	for key, value := range backRepoGongsimCommand.stage.GongsimCommands {
 		gongsimcommandInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -304,7 +311,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) CheckoutPhaseOne() (
 
 	// remove from stage and back repo's 3 maps all gongsimcommands that are not in the checkout
 	for gongsimcommand := range gongsimcommandInstancesToBeRemovedFromTheStage {
-		gongsimcommand.Unstage()
+		gongsimcommand.Unstage(backRepoGongsimCommand.GetStage())
 
 		// remove instance from the back repo 3 maps
 		gongsimcommandID := (*backRepoGongsimCommand.Map_GongsimCommandPtr_GongsimCommandDBID)[gongsimcommand]
@@ -329,9 +336,12 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) CheckoutPhaseOneInst
 
 		// append model store with the new element
 		gongsimcommand.Name = gongsimcommandDB.Name_Data.String
-		gongsimcommand.Stage()
+		gongsimcommand.Stage(backRepoGongsimCommand.GetStage())
 	}
 	gongsimcommandDB.CopyBasicFieldsToGongsimCommand(gongsimcommand)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	gongsimcommand.Stage(backRepoGongsimCommand.GetStage())
 
 	// preserve pointer to gongsimcommandDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_GongsimCommandDBID_GongsimCommandDB)[gongsimcommandDB hold variable pointers

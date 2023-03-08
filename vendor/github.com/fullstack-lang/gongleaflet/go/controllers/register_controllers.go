@@ -2,11 +2,10 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/fullstack-lang/gongleaflet/go/orm"
 )
 
 // genQuery return the name of the column
@@ -43,91 +42,111 @@ type ValidationError struct {
 func RegisterControllers(r *gin.Engine) {
 	v1 := r.Group("/api/github.com/fullstack-lang/gongleaflet/go")
 	{ // insertion point for registrations
-		v1.GET("/v1/checkoutschedulers", GetCheckoutSchedulers)
-		v1.GET("/v1/checkoutschedulers/:id", GetCheckoutScheduler)
-		v1.POST("/v1/checkoutschedulers", PostCheckoutScheduler)
-		v1.PATCH("/v1/checkoutschedulers/:id", UpdateCheckoutScheduler)
-		v1.PUT("/v1/checkoutschedulers/:id", UpdateCheckoutScheduler)
-		v1.DELETE("/v1/checkoutschedulers/:id", DeleteCheckoutScheduler)
+		v1.GET("/v1/checkoutschedulers", GetController().GetCheckoutSchedulers)
+		v1.GET("/v1/checkoutschedulers/:id", GetController().GetCheckoutScheduler)
+		v1.POST("/v1/checkoutschedulers", GetController().PostCheckoutScheduler)
+		v1.PATCH("/v1/checkoutschedulers/:id", GetController().UpdateCheckoutScheduler)
+		v1.PUT("/v1/checkoutschedulers/:id", GetController().UpdateCheckoutScheduler)
+		v1.DELETE("/v1/checkoutschedulers/:id", GetController().DeleteCheckoutScheduler)
 
-		v1.GET("/v1/circles", GetCircles)
-		v1.GET("/v1/circles/:id", GetCircle)
-		v1.POST("/v1/circles", PostCircle)
-		v1.PATCH("/v1/circles/:id", UpdateCircle)
-		v1.PUT("/v1/circles/:id", UpdateCircle)
-		v1.DELETE("/v1/circles/:id", DeleteCircle)
+		v1.GET("/v1/circles", GetController().GetCircles)
+		v1.GET("/v1/circles/:id", GetController().GetCircle)
+		v1.POST("/v1/circles", GetController().PostCircle)
+		v1.PATCH("/v1/circles/:id", GetController().UpdateCircle)
+		v1.PUT("/v1/circles/:id", GetController().UpdateCircle)
+		v1.DELETE("/v1/circles/:id", GetController().DeleteCircle)
 
-		v1.GET("/v1/divicons", GetDivIcons)
-		v1.GET("/v1/divicons/:id", GetDivIcon)
-		v1.POST("/v1/divicons", PostDivIcon)
-		v1.PATCH("/v1/divicons/:id", UpdateDivIcon)
-		v1.PUT("/v1/divicons/:id", UpdateDivIcon)
-		v1.DELETE("/v1/divicons/:id", DeleteDivIcon)
+		v1.GET("/v1/divicons", GetController().GetDivIcons)
+		v1.GET("/v1/divicons/:id", GetController().GetDivIcon)
+		v1.POST("/v1/divicons", GetController().PostDivIcon)
+		v1.PATCH("/v1/divicons/:id", GetController().UpdateDivIcon)
+		v1.PUT("/v1/divicons/:id", GetController().UpdateDivIcon)
+		v1.DELETE("/v1/divicons/:id", GetController().DeleteDivIcon)
 
-		v1.GET("/v1/layergroups", GetLayerGroups)
-		v1.GET("/v1/layergroups/:id", GetLayerGroup)
-		v1.POST("/v1/layergroups", PostLayerGroup)
-		v1.PATCH("/v1/layergroups/:id", UpdateLayerGroup)
-		v1.PUT("/v1/layergroups/:id", UpdateLayerGroup)
-		v1.DELETE("/v1/layergroups/:id", DeleteLayerGroup)
+		v1.GET("/v1/layergroups", GetController().GetLayerGroups)
+		v1.GET("/v1/layergroups/:id", GetController().GetLayerGroup)
+		v1.POST("/v1/layergroups", GetController().PostLayerGroup)
+		v1.PATCH("/v1/layergroups/:id", GetController().UpdateLayerGroup)
+		v1.PUT("/v1/layergroups/:id", GetController().UpdateLayerGroup)
+		v1.DELETE("/v1/layergroups/:id", GetController().DeleteLayerGroup)
 
-		v1.GET("/v1/layergroupuses", GetLayerGroupUses)
-		v1.GET("/v1/layergroupuses/:id", GetLayerGroupUse)
-		v1.POST("/v1/layergroupuses", PostLayerGroupUse)
-		v1.PATCH("/v1/layergroupuses/:id", UpdateLayerGroupUse)
-		v1.PUT("/v1/layergroupuses/:id", UpdateLayerGroupUse)
-		v1.DELETE("/v1/layergroupuses/:id", DeleteLayerGroupUse)
+		v1.GET("/v1/layergroupuses", GetController().GetLayerGroupUses)
+		v1.GET("/v1/layergroupuses/:id", GetController().GetLayerGroupUse)
+		v1.POST("/v1/layergroupuses", GetController().PostLayerGroupUse)
+		v1.PATCH("/v1/layergroupuses/:id", GetController().UpdateLayerGroupUse)
+		v1.PUT("/v1/layergroupuses/:id", GetController().UpdateLayerGroupUse)
+		v1.DELETE("/v1/layergroupuses/:id", GetController().DeleteLayerGroupUse)
 
-		v1.GET("/v1/mapoptionss", GetMapOptionss)
-		v1.GET("/v1/mapoptionss/:id", GetMapOptions)
-		v1.POST("/v1/mapoptionss", PostMapOptions)
-		v1.PATCH("/v1/mapoptionss/:id", UpdateMapOptions)
-		v1.PUT("/v1/mapoptionss/:id", UpdateMapOptions)
-		v1.DELETE("/v1/mapoptionss/:id", DeleteMapOptions)
+		v1.GET("/v1/mapoptionss", GetController().GetMapOptionss)
+		v1.GET("/v1/mapoptionss/:id", GetController().GetMapOptions)
+		v1.POST("/v1/mapoptionss", GetController().PostMapOptions)
+		v1.PATCH("/v1/mapoptionss/:id", GetController().UpdateMapOptions)
+		v1.PUT("/v1/mapoptionss/:id", GetController().UpdateMapOptions)
+		v1.DELETE("/v1/mapoptionss/:id", GetController().DeleteMapOptions)
 
-		v1.GET("/v1/markers", GetMarkers)
-		v1.GET("/v1/markers/:id", GetMarker)
-		v1.POST("/v1/markers", PostMarker)
-		v1.PATCH("/v1/markers/:id", UpdateMarker)
-		v1.PUT("/v1/markers/:id", UpdateMarker)
-		v1.DELETE("/v1/markers/:id", DeleteMarker)
+		v1.GET("/v1/markers", GetController().GetMarkers)
+		v1.GET("/v1/markers/:id", GetController().GetMarker)
+		v1.POST("/v1/markers", GetController().PostMarker)
+		v1.PATCH("/v1/markers/:id", GetController().UpdateMarker)
+		v1.PUT("/v1/markers/:id", GetController().UpdateMarker)
+		v1.DELETE("/v1/markers/:id", GetController().DeleteMarker)
 
-		v1.GET("/v1/userclicks", GetUserClicks)
-		v1.GET("/v1/userclicks/:id", GetUserClick)
-		v1.POST("/v1/userclicks", PostUserClick)
-		v1.PATCH("/v1/userclicks/:id", UpdateUserClick)
-		v1.PUT("/v1/userclicks/:id", UpdateUserClick)
-		v1.DELETE("/v1/userclicks/:id", DeleteUserClick)
+		v1.GET("/v1/userclicks", GetController().GetUserClicks)
+		v1.GET("/v1/userclicks/:id", GetController().GetUserClick)
+		v1.POST("/v1/userclicks", GetController().PostUserClick)
+		v1.PATCH("/v1/userclicks/:id", GetController().UpdateUserClick)
+		v1.PUT("/v1/userclicks/:id", GetController().UpdateUserClick)
+		v1.DELETE("/v1/userclicks/:id", GetController().DeleteUserClick)
 
-		v1.GET("/v1/vlines", GetVLines)
-		v1.GET("/v1/vlines/:id", GetVLine)
-		v1.POST("/v1/vlines", PostVLine)
-		v1.PATCH("/v1/vlines/:id", UpdateVLine)
-		v1.PUT("/v1/vlines/:id", UpdateVLine)
-		v1.DELETE("/v1/vlines/:id", DeleteVLine)
+		v1.GET("/v1/vlines", GetController().GetVLines)
+		v1.GET("/v1/vlines/:id", GetController().GetVLine)
+		v1.POST("/v1/vlines", GetController().PostVLine)
+		v1.PATCH("/v1/vlines/:id", GetController().UpdateVLine)
+		v1.PUT("/v1/vlines/:id", GetController().UpdateVLine)
+		v1.DELETE("/v1/vlines/:id", GetController().DeleteVLine)
 
-		v1.GET("/v1/visualtracks", GetVisualTracks)
-		v1.GET("/v1/visualtracks/:id", GetVisualTrack)
-		v1.POST("/v1/visualtracks", PostVisualTrack)
-		v1.PATCH("/v1/visualtracks/:id", UpdateVisualTrack)
-		v1.PUT("/v1/visualtracks/:id", UpdateVisualTrack)
-		v1.DELETE("/v1/visualtracks/:id", DeleteVisualTrack)
+		v1.GET("/v1/visualtracks", GetController().GetVisualTracks)
+		v1.GET("/v1/visualtracks/:id", GetController().GetVisualTrack)
+		v1.POST("/v1/visualtracks", GetController().PostVisualTrack)
+		v1.PATCH("/v1/visualtracks/:id", GetController().UpdateVisualTrack)
+		v1.PUT("/v1/visualtracks/:id", GetController().UpdateVisualTrack)
+		v1.DELETE("/v1/visualtracks/:id", GetController().DeleteVisualTrack)
 
-		v1.GET("/commitfrombacknb", GetLastCommitFromBackNb)
-		v1.GET("/pushfromfrontnb", GetLastPushFromFrontNb)
+		v1.GET("/v1/commitfrombacknb", GetController().GetLastCommitFromBackNb)
+		v1.GET("/v1/pushfromfrontnb", GetController().GetLastPushFromFrontNb)
 	}
 }
 
 // swagger:route GET /commitfrombacknb backrepo GetLastCommitFromBackNb
-func GetLastCommitFromBackNb(c *gin.Context) {
-	res := orm.GetLastCommitFromBackNb()
+func (controller *Controller) GetLastCommitFromBackNb(c *gin.Context) {
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetLastCommitFromBackNb", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	res := backRepo.GetLastCommitFromBackNb()
 
 	c.JSON(http.StatusOK, res)
 }
 
 // swagger:route GET /pushfromfrontnb backrepo GetLastPushFromFrontNb
-func GetLastPushFromFrontNb(c *gin.Context) {
-	res := orm.GetLastPushFromFrontNb()
+func(controller *Controller) GetLastPushFromFrontNb(c *gin.Context) {
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetLastPushFromFrontNb", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	res := backRepo.GetLastPushFromFrontNb()
 
 	c.JSON(http.StatusOK, res)
 }

@@ -46,7 +46,7 @@ export class DivIconSortingComponent implements OnInit {
   }
 
   getDivIcons(): void {
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.dialogData.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 
@@ -100,13 +100,13 @@ export class DivIconSortingComponent implements OnInit {
 
     this.associatedDivIcons.forEach(
       divicon => {
-        this.diviconService.updateDivIcon(divicon)
+        this.diviconService.updateDivIcon(divicon, this.dialogData.GONG__StackPath)
           .subscribe(divicon => {
             this.diviconService.DivIconServiceChanged.next("update")
           });
       }
     )
 
-    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer +' done');
+    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer + ' done');
   }
 }

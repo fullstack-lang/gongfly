@@ -15,7 +15,7 @@ var Scenario1 = (&models.Scenario{
 	Lng: CDG_LFPG.Lng,
 
 	MessageVisualSpeed: 5000,
-}).Stage()
+}).Stage(&models.Stage)
 
 func init() {
 	Scenario1.SetStart(time.Date(2020, time.January, 1, 6, 0, 0, 0, time.UTC))

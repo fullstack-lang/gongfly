@@ -47,11 +47,23 @@ type LayerGroupInput struct {
 // default: genericError
 //
 //	200: layergroupDBResponse
-func GetLayerGroups(c *gin.Context) {
-	db := orm.BackRepo.BackRepoLayerGroup.GetDB()
+func (controller *Controller) GetLayerGroups(c *gin.Context) {
 
 	// source slice
 	var layergroupDBs []orm.LayerGroupDB
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetLayerGroups", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoLayerGroup.GetDB()
+
 	query := db.Find(&layergroupDBs)
 	if query.Error != nil {
 		var returnError GenericError
@@ -95,8 +107,19 @@ func GetLayerGroups(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func PostLayerGroup(c *gin.Context) {
-	db := orm.BackRepo.BackRepoLayerGroup.GetDB()
+func (controller *Controller) PostLayerGroup(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("PostLayerGroups", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoLayerGroup.GetDB()
 
 	// Validate input
 	var input orm.LayerGroupAPI
@@ -127,16 +150,16 @@ func PostLayerGroup(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	orm.BackRepo.BackRepoLayerGroup.CheckoutPhaseOneInstance(&layergroupDB)
-	layergroup := (*orm.BackRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
+	backRepo.BackRepoLayerGroup.CheckoutPhaseOneInstance(&layergroupDB)
+	layergroup := (*backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
 
 	if layergroup != nil {
-		models.AfterCreateFromFront(&models.Stage, layergroup)
+		models.AfterCreateFromFront(backRepo.GetStage(), layergroup)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, layergroupDB)
 }
@@ -151,8 +174,19 @@ func PostLayerGroup(c *gin.Context) {
 // default: genericError
 //
 //	200: layergroupDBResponse
-func GetLayerGroup(c *gin.Context) {
-	db := orm.BackRepo.BackRepoLayerGroup.GetDB()
+func (controller *Controller) GetLayerGroup(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetLayerGroup", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoLayerGroup.GetDB()
 
 	// Get layergroupDB in DB
 	var layergroupDB orm.LayerGroupDB
@@ -183,8 +217,27 @@ func GetLayerGroup(c *gin.Context) {
 // default: genericError
 //
 //	200: layergroupDBResponse
-func UpdateLayerGroup(c *gin.Context) {
-	db := orm.BackRepo.BackRepoLayerGroup.GetDB()
+func (controller *Controller) UpdateLayerGroup(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("UpdateLayerGroup", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoLayerGroup.GetDB()
+
+	// Validate input
+	var input orm.LayerGroupAPI
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	// Get model if exist
 	var layergroupDB orm.LayerGroupDB
@@ -198,14 +251,6 @@ func UpdateLayerGroup(c *gin.Context) {
 		returnError.Body.Message = query.Error.Error()
 		log.Println(query.Error.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
-		return
-	}
-
-	// Validate input
-	var input orm.LayerGroupAPI
-	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -228,16 +273,16 @@ func UpdateLayerGroup(c *gin.Context) {
 	layergroupDB.CopyBasicFieldsToLayerGroup(layergroupNew)
 
 	// get stage instance from DB instance, and call callback function
-	layergroupOld := (*orm.BackRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
+	layergroupOld := (*backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
 	if layergroupOld != nil {
-		models.AfterUpdateFromFront(&models.Stage, layergroupOld, layergroupNew)
+		models.AfterUpdateFromFront(backRepo.GetStage(), layergroupOld, layergroupNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	// in some cases, with the marshalling of the stage, this operation might
 	// generates a checkout
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the layergroupDB
 	c.JSON(http.StatusOK, layergroupDB)
@@ -252,8 +297,19 @@ func UpdateLayerGroup(c *gin.Context) {
 // default: genericError
 //
 //	200: layergroupDBResponse
-func DeleteLayerGroup(c *gin.Context) {
-	db := orm.BackRepo.BackRepoLayerGroup.GetDB()
+func (controller *Controller) DeleteLayerGroup(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("DeleteLayerGroup", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoLayerGroup.GetDB()
 
 	// Get model if exist
 	var layergroupDB orm.LayerGroupDB
@@ -274,14 +330,14 @@ func DeleteLayerGroup(c *gin.Context) {
 	layergroupDB.CopyBasicFieldsToLayerGroup(layergroupDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	layergroupStaged := (*orm.BackRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
+	layergroupStaged := (*backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
 	if layergroupStaged != nil {
-		models.AfterDeleteFromFront(&models.Stage, layergroupStaged, layergroupDeleted)
+		models.AfterDeleteFromFront(backRepo.GetStage(), layergroupStaged, layergroupDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

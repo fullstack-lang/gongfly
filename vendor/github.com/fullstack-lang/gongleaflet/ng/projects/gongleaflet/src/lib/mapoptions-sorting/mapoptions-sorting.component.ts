@@ -46,7 +46,7 @@ export class MapOptionsSortingComponent implements OnInit {
   }
 
   getMapOptionss(): void {
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.dialogData.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 
@@ -100,13 +100,13 @@ export class MapOptionsSortingComponent implements OnInit {
 
     this.associatedMapOptionss.forEach(
       mapoptions => {
-        this.mapoptionsService.updateMapOptions(mapoptions)
+        this.mapoptionsService.updateMapOptions(mapoptions, this.dialogData.GONG__StackPath)
           .subscribe(mapoptions => {
             this.mapoptionsService.MapOptionsServiceChanged.next("update")
           });
       }
     )
 
-    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer +' done');
+    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer + ' done');
   }
 }

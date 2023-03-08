@@ -189,7 +189,7 @@ export class OpsLinesTableComponent implements OnInit {
 
   ngOnInit(): void {
     let stackPath = this.activatedRoute.snapshot.paramMap.get('GONG__StackPath')
-    if ( stackPath != undefined) {
+    if (stackPath != undefined) {
       this.GONG__StackPath = stackPath
     }
 
@@ -225,10 +225,14 @@ export class OpsLinesTableComponent implements OnInit {
           let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s" as keyof FrontRepo] as Map<number, OpsLineDB>
           let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)!
 
-          let sourceField = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as OpsLineDB[]
-          for (let associationInstance of sourceField) {
-            let opsline = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as OpsLineDB
-            this.initialSelection.push(opsline)
+          // we associates on sourceInstance of type SourceStruct with a MANY MANY associations to OpsLineDB
+          // the field name is sourceField
+          let sourceFieldArray = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as OpsLineDB[]
+          if (sourceFieldArray != null) {
+            for (let associationInstance of sourceFieldArray) {
+              let opsline = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as OpsLineDB
+              this.initialSelection.push(opsline)
+            }
           }
 
           this.selection = new SelectionModel<OpsLineDB>(allowMultiSelect, this.initialSelection);
@@ -249,7 +253,7 @@ export class OpsLinesTableComponent implements OnInit {
     // list of opslines is truncated of opsline before the delete
     this.opslines = this.opslines.filter(h => h !== opsline);
 
-    this.opslineService.deleteOpsLine(opslineID).subscribe(
+    this.opslineService.deleteOpsLine(opslineID, this.GONG__StackPath).subscribe(
       opsline => {
         this.opslineService.OpsLineServiceChanged.next("delete")
       }
@@ -315,7 +319,7 @@ export class OpsLinesTableComponent implements OnInit {
 
       // update all opsline (only update selection & initial selection)
       for (let opsline of toUpdate) {
-        this.opslineService.updateOpsLine(opsline)
+        this.opslineService.updateOpsLine(opsline, this.GONG__StackPath)
           .subscribe(opsline => {
             this.opslineService.OpsLineServiceChanged.next("update")
           });

@@ -169,13 +169,13 @@ export class MessageDetailComponent implements OnInit {
 
 		switch (this.state) {
 			case MessageDetailComponentState.UPDATE_INSTANCE:
-				this.messageService.updateMessage(this.message)
+				this.messageService.updateMessage(this.message, this.GONG__StackPath)
 					.subscribe(message => {
 						this.messageService.MessageServiceChanged.next("update")
 					});
 				break;
 			default:
-				this.messageService.postMessage(this.message).subscribe(message => {
+				this.messageService.postMessage(this.message, this.GONG__StackPath).subscribe(message => {
 					this.messageService.MessageServiceChanged.next("post")
 					this.message = new (MessageDB) // reset fields
 				});

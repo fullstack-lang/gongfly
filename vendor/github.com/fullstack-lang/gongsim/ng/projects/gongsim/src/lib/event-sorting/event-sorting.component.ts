@@ -46,7 +46,7 @@ export class EventSortingComponent implements OnInit {
   }
 
   getEvents(): void {
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.dialogData.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 
@@ -100,13 +100,13 @@ export class EventSortingComponent implements OnInit {
 
     this.associatedEvents.forEach(
       event => {
-        this.eventService.updateEvent(event)
+        this.eventService.updateEvent(event, this.dialogData.GONG__StackPath)
           .subscribe(event => {
             this.eventService.EventServiceChanged.next("update")
           });
       }
     )
 
-    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer +' done');
+    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer + ' done');
   }
 }

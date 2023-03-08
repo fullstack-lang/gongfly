@@ -41,6 +41,4 @@ func computeLayerGroupFromLayerGroupName(layerGroupName string) (layerGroup *Lay
 	return
 }
 
-var DefaultLayerGroup = (&LayerGroup{
-	Name: "Default",
-}).StageCopy()
+var DefaultLayerGroup *LayerGroup

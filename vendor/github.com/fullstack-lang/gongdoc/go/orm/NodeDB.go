@@ -46,10 +46,6 @@ type NodeAPI struct {
 type NodePointersEnconding struct {
 	// insertion for pointer fields encoding declaration
 
-	// field Classdiagram is a pointer to another Struct (optional or 0..1)
-	// This field is generated into another field to enable AS ONE association
-	ClassdiagramID sql.NullInt64
-
 	// Implementation of a reverse ID for field Node{}.Children []*Node
 	Node_ChildrenDBID sql.NullInt64
 
@@ -76,9 +72,6 @@ type NodeDB struct {
 
 	// Declation for basic field nodeDB.Name
 	Name_Data sql.NullString
-
-	// Declation for basic field nodeDB.Type
-	Type_Data sql.NullString
 
 	// Declation for basic field nodeDB.IsExpanded
 	// provide the sql storage for the boolan
@@ -150,31 +143,29 @@ type NodeWOP struct {
 
 	Name string `xlsx:"1"`
 
-	Type models.GongdocNodeType `xlsx:"2"`
+	IsExpanded bool `xlsx:"2"`
 
-	IsExpanded bool `xlsx:"3"`
+	HasCheckboxButton bool `xlsx:"3"`
 
-	HasCheckboxButton bool `xlsx:"4"`
+	IsChecked bool `xlsx:"4"`
 
-	IsChecked bool `xlsx:"5"`
+	IsCheckboxDisabled bool `xlsx:"5"`
 
-	IsCheckboxDisabled bool `xlsx:"6"`
+	HasAddChildButton bool `xlsx:"6"`
 
-	HasAddChildButton bool `xlsx:"7"`
+	HasEditButton bool `xlsx:"7"`
 
-	HasEditButton bool `xlsx:"8"`
+	IsInEditMode bool `xlsx:"8"`
 
-	IsInEditMode bool `xlsx:"9"`
+	HasDrawButton bool `xlsx:"9"`
 
-	HasDrawButton bool `xlsx:"10"`
+	HasDrawOffButton bool `xlsx:"10"`
 
-	HasDrawOffButton bool `xlsx:"11"`
+	IsInDrawMode bool `xlsx:"11"`
 
-	IsInDrawMode bool `xlsx:"12"`
+	IsSaved bool `xlsx:"12"`
 
-	IsSaved bool `xlsx:"13"`
-
-	HasDeleteButton bool `xlsx:"14"`
+	HasDeleteButton bool `xlsx:"13"`
 	// insertion for WOP pointer fields
 }
 
@@ -182,7 +173,6 @@ var Node_Fields = []string{
 	// insertion for WOP basic fields
 	"ID",
 	"Name",
-	"Type",
 	"IsExpanded",
 	"HasCheckboxButton",
 	"IsChecked",
@@ -208,6 +198,13 @@ type BackRepoNodeStruct struct {
 	Map_NodeDBID_NodePtr *map[uint]*models.Node
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoNode *BackRepoNodeStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoNode.stage
+	return
 }
 
 func (backRepoNode *BackRepoNodeStruct) GetDB() *gorm.DB {
@@ -222,7 +219,7 @@ func (backRepoNode *BackRepoNodeStruct) GetNodeDBFromNodePtr(node *models.Node) 
 }
 
 // BackRepoNode.Init set up the BackRepo of the Node
-func (backRepoNode *BackRepoNodeStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoNode *BackRepoNodeStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoNode.Map_NodeDBID_NodePtr != nil {
 		err := errors.New("In Init, backRepoNode.Map_NodeDBID_NodePtr should be nil")
@@ -249,6 +246,7 @@ func (backRepoNode *BackRepoNodeStruct) Init(db *gorm.DB) (Error error) {
 	backRepoNode.Map_NodePtr_NodeDBID = &tmpID
 
 	backRepoNode.db = db
+	backRepoNode.stage = stage
 	return
 }
 
@@ -338,15 +336,6 @@ func (backRepoNode *BackRepoNodeStruct) CommitPhaseTwoInstance(backRepo *BackRep
 		nodeDB.CopyBasicFieldsFromNode(node)
 
 		// insertion point for translating pointers encodings into actual pointers
-		// commit pointer value node.Classdiagram translates to updating the node.ClassdiagramID
-		nodeDB.ClassdiagramID.Valid = true // allow for a 0 value (nil association)
-		if node.Classdiagram != nil {
-			if ClassdiagramId, ok := (*backRepo.BackRepoClassdiagram.Map_ClassdiagramPtr_ClassdiagramDBID)[node.Classdiagram]; ok {
-				nodeDB.ClassdiagramID.Int64 = int64(ClassdiagramId)
-				nodeDB.ClassdiagramID.Valid = true
-			}
-		}
-
 		// This loop encodes the slice of pointers node.Children into the back repo.
 		// Each back repo instance at the end of the association encode the ID of the association start
 		// into a dedicated field for coding the association. The back repo instance is then saved to the db
@@ -395,7 +384,7 @@ func (backRepoNode *BackRepoNodeStruct) CheckoutPhaseOne() (Error error) {
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	nodeInstancesToBeRemovedFromTheStage := make(map[*models.Node]any)
-	for key, value := range models.Stage.Nodes {
+	for key, value := range backRepoNode.stage.Nodes {
 		nodeInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -413,7 +402,7 @@ func (backRepoNode *BackRepoNodeStruct) CheckoutPhaseOne() (Error error) {
 
 	// remove from stage and back repo's 3 maps all nodes that are not in the checkout
 	for node := range nodeInstancesToBeRemovedFromTheStage {
-		node.Unstage()
+		node.Unstage(backRepoNode.GetStage())
 
 		// remove instance from the back repo 3 maps
 		nodeID := (*backRepoNode.Map_NodePtr_NodeDBID)[node]
@@ -438,12 +427,12 @@ func (backRepoNode *BackRepoNodeStruct) CheckoutPhaseOneInstance(nodeDB *NodeDB)
 
 		// append model store with the new element
 		node.Name = nodeDB.Name_Data.String
-		node.Stage()
+		node.Stage(backRepoNode.GetStage())
 	}
 	nodeDB.CopyBasicFieldsToNode(node)
 
 	// in some cases, the instance might have been unstaged. It is necessary to stage it again
-	node.Stage()
+	node.Stage(backRepoNode.GetStage())
 
 	// preserve pointer to nodeDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_NodeDBID_NodeDB)[nodeDB hold variable pointers
@@ -473,10 +462,6 @@ func (backRepoNode *BackRepoNodeStruct) CheckoutPhaseTwoInstance(backRepo *BackR
 	_ = node // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
-	// Classdiagram field
-	if nodeDB.ClassdiagramID.Int64 != 0 {
-		node.Classdiagram = (*backRepo.BackRepoClassdiagram.Map_ClassdiagramDBID_ClassdiagramPtr)[uint(nodeDB.ClassdiagramID.Int64)]
-	}
 	// This loop redeem node.Children in the stage from the encode in the back repo
 	// It parses all NodeDB in the back repo and if the reverse pointer encoding matches the back repo ID
 	// it appends the stage instance
@@ -541,9 +526,6 @@ func (nodeDB *NodeDB) CopyBasicFieldsFromNode(node *models.Node) {
 	nodeDB.Name_Data.String = node.Name
 	nodeDB.Name_Data.Valid = true
 
-	nodeDB.Type_Data.String = node.Type.ToString()
-	nodeDB.Type_Data.Valid = true
-
 	nodeDB.IsExpanded_Data.Bool = node.IsExpanded
 	nodeDB.IsExpanded_Data.Valid = true
 
@@ -588,9 +570,6 @@ func (nodeDB *NodeDB) CopyBasicFieldsFromNodeWOP(node *NodeWOP) {
 	nodeDB.Name_Data.String = node.Name
 	nodeDB.Name_Data.Valid = true
 
-	nodeDB.Type_Data.String = node.Type.ToString()
-	nodeDB.Type_Data.Valid = true
-
 	nodeDB.IsExpanded_Data.Bool = node.IsExpanded
 	nodeDB.IsExpanded_Data.Valid = true
 
@@ -632,7 +611,6 @@ func (nodeDB *NodeDB) CopyBasicFieldsFromNodeWOP(node *NodeWOP) {
 func (nodeDB *NodeDB) CopyBasicFieldsToNode(node *models.Node) {
 	// insertion point for checkout of basic fields (back repo to stage)
 	node.Name = nodeDB.Name_Data.String
-	node.Type.FromString(nodeDB.Type_Data.String)
 	node.IsExpanded = nodeDB.IsExpanded_Data.Bool
 	node.HasCheckboxButton = nodeDB.HasCheckboxButton_Data.Bool
 	node.IsChecked = nodeDB.IsChecked_Data.Bool
@@ -652,7 +630,6 @@ func (nodeDB *NodeDB) CopyBasicFieldsToNodeWOP(node *NodeWOP) {
 	node.ID = int(nodeDB.ID)
 	// insertion point for checkout of basic fields (back repo to stage)
 	node.Name = nodeDB.Name_Data.String
-	node.Type.FromString(nodeDB.Type_Data.String)
 	node.IsExpanded = nodeDB.IsExpanded_Data.Bool
 	node.HasCheckboxButton = nodeDB.HasCheckboxButton_Data.Bool
 	node.IsChecked = nodeDB.IsChecked_Data.Bool
@@ -822,12 +799,6 @@ func (backRepoNode *BackRepoNodeStruct) RestorePhaseTwo() {
 		_ = nodeDB
 
 		// insertion point for reindexing pointers encoding
-		// reindexing Classdiagram field
-		if nodeDB.ClassdiagramID.Int64 != 0 {
-			nodeDB.ClassdiagramID.Int64 = int64(BackRepoClassdiagramid_atBckpTime_newID[uint(nodeDB.ClassdiagramID.Int64)])
-			nodeDB.ClassdiagramID.Valid = true
-		}
-
 		// This reindex node.Children
 		if nodeDB.Node_ChildrenDBID.Int64 != 0 {
 			nodeDB.Node_ChildrenDBID.Int64 =

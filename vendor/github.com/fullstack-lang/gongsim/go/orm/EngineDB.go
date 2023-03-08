@@ -144,6 +144,13 @@ type BackRepoEngineStruct struct {
 	Map_EngineDBID_EnginePtr *map[uint]*models.Engine
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoEngine *BackRepoEngineStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoEngine.stage
+	return
 }
 
 func (backRepoEngine *BackRepoEngineStruct) GetDB() *gorm.DB {
@@ -158,7 +165,7 @@ func (backRepoEngine *BackRepoEngineStruct) GetEngineDBFromEnginePtr(engine *mod
 }
 
 // BackRepoEngine.Init set up the BackRepo of the Engine
-func (backRepoEngine *BackRepoEngineStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoEngine *BackRepoEngineStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoEngine.Map_EngineDBID_EnginePtr != nil {
 		err := errors.New("In Init, backRepoEngine.Map_EngineDBID_EnginePtr should be nil")
@@ -185,6 +192,7 @@ func (backRepoEngine *BackRepoEngineStruct) Init(db *gorm.DB) (Error error) {
 	backRepoEngine.Map_EnginePtr_EngineDBID = &tmpID
 
 	backRepoEngine.db = db
+	backRepoEngine.stage = stage
 	return
 }
 
@@ -291,8 +299,7 @@ func (backRepoEngine *BackRepoEngineStruct) CommitPhaseTwoInstance(backRepo *Bac
 // BackRepoEngine.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseOne() (Error error) {
 
 	engineDBArray := make([]EngineDB, 0)
@@ -304,7 +311,7 @@ func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseOne() (Error error) {
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	engineInstancesToBeRemovedFromTheStage := make(map[*models.Engine]any)
-	for key, value := range models.Stage.Engines {
+	for key, value := range backRepoEngine.stage.Engines {
 		engineInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -322,7 +329,7 @@ func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseOne() (Error error) {
 
 	// remove from stage and back repo's 3 maps all engines that are not in the checkout
 	for engine := range engineInstancesToBeRemovedFromTheStage {
-		engine.Unstage()
+		engine.Unstage(backRepoEngine.GetStage())
 
 		// remove instance from the back repo 3 maps
 		engineID := (*backRepoEngine.Map_EnginePtr_EngineDBID)[engine]
@@ -347,9 +354,12 @@ func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseOneInstance(engineDB *E
 
 		// append model store with the new element
 		engine.Name = engineDB.Name_Data.String
-		engine.Stage()
+		engine.Stage(backRepoEngine.GetStage())
 	}
 	engineDB.CopyBasicFieldsToEngine(engine)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	engine.Stage(backRepoEngine.GetStage())
 
 	// preserve pointer to engineDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_EngineDBID_EngineDB)[engineDB hold variable pointers

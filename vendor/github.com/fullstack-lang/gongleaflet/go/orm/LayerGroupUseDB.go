@@ -119,6 +119,13 @@ type BackRepoLayerGroupUseStruct struct {
 	Map_LayerGroupUseDBID_LayerGroupUsePtr *map[uint]*models.LayerGroupUse
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoLayerGroupUse.stage
+	return
 }
 
 func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) GetDB() *gorm.DB {
@@ -133,7 +140,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) GetLayerGroupUseDBFrom
 }
 
 // BackRepoLayerGroupUse.Init set up the BackRepo of the LayerGroupUse
-func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr != nil {
 		err := errors.New("In Init, backRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr should be nil")
@@ -160,6 +167,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) Init(db *gorm.DB) (Err
 	backRepoLayerGroupUse.Map_LayerGroupUsePtr_LayerGroupUseDBID = &tmpID
 
 	backRepoLayerGroupUse.db = db
+	backRepoLayerGroupUse.stage = stage
 	return
 }
 
@@ -275,8 +283,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CommitPhaseTwoInstance
 // BackRepoLayerGroupUse.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CheckoutPhaseOne() (Error error) {
 
 	layergroupuseDBArray := make([]LayerGroupUseDB, 0)
@@ -288,7 +295,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CheckoutPhaseOne() (Er
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	layergroupuseInstancesToBeRemovedFromTheStage := make(map[*models.LayerGroupUse]any)
-	for key, value := range models.Stage.LayerGroupUses {
+	for key, value := range backRepoLayerGroupUse.stage.LayerGroupUses {
 		layergroupuseInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -306,7 +313,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CheckoutPhaseOne() (Er
 
 	// remove from stage and back repo's 3 maps all layergroupuses that are not in the checkout
 	for layergroupuse := range layergroupuseInstancesToBeRemovedFromTheStage {
-		layergroupuse.Unstage()
+		layergroupuse.Unstage(backRepoLayerGroupUse.GetStage())
 
 		// remove instance from the back repo 3 maps
 		layergroupuseID := (*backRepoLayerGroupUse.Map_LayerGroupUsePtr_LayerGroupUseDBID)[layergroupuse]
@@ -331,9 +338,12 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CheckoutPhaseOneInstan
 
 		// append model store with the new element
 		layergroupuse.Name = layergroupuseDB.Name_Data.String
-		layergroupuse.Stage()
+		layergroupuse.Stage(backRepoLayerGroupUse.GetStage())
 	}
 	layergroupuseDB.CopyBasicFieldsToLayerGroupUse(layergroupuse)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	layergroupuse.Stage(backRepoLayerGroupUse.GetStage())
 
 	// preserve pointer to layergroupuseDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_LayerGroupUseDBID_LayerGroupUseDB)[layergroupuseDB hold variable pointers

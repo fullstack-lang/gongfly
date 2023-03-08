@@ -100,7 +100,7 @@ export class ScenarioSortingComponent implements OnInit {
 
     this.associatedScenarios.forEach(
       scenario => {
-        this.scenarioService.updateScenario(scenario)
+        this.scenarioService.updateScenario(scenario, this.dialogData.GONG__StackPath)
           .subscribe(scenario => {
             this.scenarioService.ScenarioServiceChanged.next("update")
           });

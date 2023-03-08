@@ -20,10 +20,6 @@ import { CivilianAirportDB } from './civilianairport-db';
 })
 export class CivilianAirportService {
 
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-  };
-
   // Kamar Raïmo: Adding a way to communicate between components that share information
   // so that they are notified of a change.
   CivilianAirportServiceChanged: BehaviorSubject<string> = new BehaviorSubject("");
@@ -32,7 +28,6 @@ export class CivilianAirportService {
 
   constructor(
     private http: HttpClient,
-    private location: Location,
     @Inject(DOCUMENT) private document: Document
   ) {
     // path to the service share the same origin with the path to the document
@@ -67,14 +62,18 @@ export class CivilianAirportService {
     );
   }
 
-  //////// Save methods //////////
-
   /** POST: add a new civilianairport to the server */
-  postCivilianAirport(civilianairportdb: CivilianAirportDB): Observable<CivilianAirportDB> {
+  postCivilianAirport(civilianairportdb: CivilianAirportDB, GONG__StackPath: string): Observable<CivilianAirportDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.post<CivilianAirportDB>(this.civilianairportsUrl, civilianairportdb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+	return this.http.post<CivilianAirportDB>(this.civilianairportsUrl, civilianairportdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`posted civilianairportdb id=${civilianairportdb.ID}`)
@@ -84,24 +83,36 @@ export class CivilianAirportService {
   }
 
   /** DELETE: delete the civilianairportdb from the server */
-  deleteCivilianAirport(civilianairportdb: CivilianAirportDB | number): Observable<CivilianAirportDB> {
+  deleteCivilianAirport(civilianairportdb: CivilianAirportDB | number, GONG__StackPath: string): Observable<CivilianAirportDB> {
     const id = typeof civilianairportdb === 'number' ? civilianairportdb : civilianairportdb.ID;
     const url = `${this.civilianairportsUrl}/${id}`;
 
-    return this.http.delete<CivilianAirportDB>(url, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.delete<CivilianAirportDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted civilianairportdb id=${id}`)),
       catchError(this.handleError<CivilianAirportDB>('deleteCivilianAirport'))
     );
   }
 
   /** PUT: update the civilianairportdb on the server */
-  updateCivilianAirport(civilianairportdb: CivilianAirportDB): Observable<CivilianAirportDB> {
+  updateCivilianAirport(civilianairportdb: CivilianAirportDB, GONG__StackPath: string): Observable<CivilianAirportDB> {
     const id = typeof civilianairportdb === 'number' ? civilianairportdb : civilianairportdb.ID;
     const url = `${this.civilianairportsUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.put<CivilianAirportDB>(url, civilianairportdb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.put<CivilianAirportDB>(url, civilianairportdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated civilianairportdb id=${civilianairportdb.ID}`)

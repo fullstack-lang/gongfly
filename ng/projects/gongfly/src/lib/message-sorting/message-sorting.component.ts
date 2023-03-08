@@ -100,7 +100,7 @@ export class MessageSortingComponent implements OnInit {
 
     this.associatedMessages.forEach(
       message => {
-        this.messageService.updateMessage(message)
+        this.messageService.updateMessage(message, this.dialogData.GONG__StackPath)
           .subscribe(message => {
             this.messageService.MessageServiceChanged.next("update")
           });

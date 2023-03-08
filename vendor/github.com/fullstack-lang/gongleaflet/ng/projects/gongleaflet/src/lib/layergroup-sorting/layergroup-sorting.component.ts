@@ -46,7 +46,7 @@ export class LayerGroupSortingComponent implements OnInit {
   }
 
   getLayerGroups(): void {
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.dialogData.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 
@@ -100,13 +100,13 @@ export class LayerGroupSortingComponent implements OnInit {
 
     this.associatedLayerGroups.forEach(
       layergroup => {
-        this.layergroupService.updateLayerGroup(layergroup)
+        this.layergroupService.updateLayerGroup(layergroup, this.dialogData.GONG__StackPath)
           .subscribe(layergroup => {
             this.layergroupService.LayerGroupServiceChanged.next("update")
           });
       }
     )
 
-    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer +' done');
+    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer + ' done');
   }
 }

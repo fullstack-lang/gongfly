@@ -114,7 +114,7 @@ export class EngineControlComponent implements OnInit {
   fireEventTillStateChange(): void {
     this.gongsimCommandSingloton.Command = gongsim.GongsimCommandType.COMMAND_FIRE_EVENT_TILL_STATES_CHANGE
     this.gongsimCommandSingloton.CommandDate = Date.now().toString()
-    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton).subscribe(
+    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton, "").subscribe(
       gongsimCommand => {
         console.log("FIRE_EVENT_TILL_STATES_CHANGE sent to the backRepo")
       }
@@ -125,7 +125,7 @@ export class EngineControlComponent implements OnInit {
   fireEvent(): void {
     this.gongsimCommandSingloton.Command = gongsim.GongsimCommandType.COMMAND_FIRE_NEXT_EVENT
     this.gongsimCommandSingloton.CommandDate = Date.now().toString()
-    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton).subscribe(
+    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton, "").subscribe(
       gongsimCommand => {
         console.log("FIRCOMMAND_FIRE_NEXT_EVENT sent to the backRepo")
       }
@@ -137,7 +137,7 @@ export class EngineControlComponent implements OnInit {
 
     this.gongsimCommandSingloton.Command = gongsim.GongsimCommandType.COMMAND_RESET
     this.gongsimCommandSingloton.CommandDate = Date.now().toString()
-    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton).subscribe(
+    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton, "").subscribe(
       gongsimCommand => {
         console.log("RESCOMMAND_RESET sent to the backRepo")
       }
@@ -149,7 +149,7 @@ export class EngineControlComponent implements OnInit {
 
     this.gongsimCommandSingloton.Command = gongsim.GongsimCommandType.COMMAND_PLAY
     this.gongsimCommandSingloton.CommandDate = Date.now().toString()
-    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton).subscribe(
+    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton, "").subscribe(
       gongsimCommand => {
         console.log("PLAY sent to the backRepo")
       }
@@ -159,7 +159,7 @@ export class EngineControlComponent implements OnInit {
   pause(): void {
     this.gongsimCommandSingloton.Command = gongsim.GongsimCommandType.COMMAND_PAUSE
     this.gongsimCommandSingloton.CommandDate = Date.now().toString()
-    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton).subscribe(
+    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton, "").subscribe(
       gongsimCommand => {
         console.log("PAUSE sent to the backRepo")
       }
@@ -169,7 +169,7 @@ export class EngineControlComponent implements OnInit {
   increaseSpeed100percent(): void {
     this.gongsimCommandSingloton.SpeedCommandType = gongsim.SpeedCommandType.COMMAND_INCREASE_SPEED_100_PERCENTS
     this.gongsimCommandSingloton.DateSpeedCommand = Date.now().toString()
-    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton).subscribe(
+    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton, "").subscribe(
       gongsimCommand => {
         console.log("INCCOMMAND_INCREASE_SPEED_100_PERCENTS sent to the backRepo")
       }
@@ -181,7 +181,7 @@ export class EngineControlComponent implements OnInit {
   decreaseSpeed50percent(): void {
     this.gongsimCommandSingloton.SpeedCommandType = gongsim.SpeedCommandType.COMMAND_DECREASE_SPEED_50_PERCENTS
     this.gongsimCommandSingloton.DateSpeedCommand = Date.now().toString()
-    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton).subscribe(
+    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton, "").subscribe(
       gongsimCommand => {
         console.log("DECCOMMAND_DECREASE_SPEED_50_PERCENTS sent to the backRepo")
       }
@@ -196,7 +196,7 @@ export class EngineControlComponent implements OnInit {
   publishAdvance10Minutes(): void {
     this.gongsimCommandSingloton.Command = gongsim.GongsimCommandType.COMMAND_ADVANCE_10_MIN
     this.gongsimCommandSingloton.CommandDate = Date.now().toString()
-    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton).subscribe(
+    this.gongsimCommandService.updateGongsimCommand(this.gongsimCommandSingloton, "").subscribe(
       gongsimCommand => {
         console.log("ADCOMMAND_ADVANCE_10_MIN sent to the backRepo")
       }

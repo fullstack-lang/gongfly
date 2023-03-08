@@ -47,23 +47,22 @@ type CivilianAirportInput struct {
 // default: genericError
 //
 //	200: civilianairportDBResponse
-func GetCivilianAirports(c *gin.Context) {
-	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
+func (controller *Controller) GetCivilianAirports(c *gin.Context) {
 
 	// source slice
 	var civilianairportDBs []orm.CivilianAirportDB
 
-	// type Values map[string][]string
 	values := c.Request.URL.Query()
+	stackPath := ""
 	if len(values) == 1 {
 		value := values["GONG__StackPath"]
 		if len(value) == 1 {
-			// we have a single parameter
-			// we assume it is the stack
-			stackParam := value[0]
-			log.Println("GONG__StackPath", stackParam)
+			stackPath = value[0]
+			log.Println("GetCivilianAirports", "GONG__StackPath", stackPath)
 		}
 	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoCivilianAirport.GetDB()
 
 	query := db.Find(&civilianairportDBs)
 	if query.Error != nil {
@@ -108,7 +107,19 @@ func GetCivilianAirports(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func PostCivilianAirport(c *gin.Context) {
+func (controller *Controller) PostCivilianAirport(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("PostCivilianAirports", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoCivilianAirport.GetDB()
 
 	// Validate input
 	var input orm.CivilianAirportAPI
@@ -128,7 +139,6 @@ func PostCivilianAirport(c *gin.Context) {
 	civilianairportDB.CivilianAirportPointersEnconding = input.CivilianAirportPointersEnconding
 	civilianairportDB.CopyBasicFieldsFromCivilianAirport(&input.CivilianAirport)
 
-	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
 	query := db.Create(&civilianairportDB)
 	if query.Error != nil {
 		var returnError GenericError
@@ -140,16 +150,16 @@ func PostCivilianAirport(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	orm.BackRepo.BackRepoCivilianAirport.CheckoutPhaseOneInstance(&civilianairportDB)
-	civilianairport := (*orm.BackRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
+	backRepo.BackRepoCivilianAirport.CheckoutPhaseOneInstance(&civilianairportDB)
+	civilianairport := (*backRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
 
 	if civilianairport != nil {
-		models.AfterCreateFromFront(&models.Stage, civilianairport)
+		models.AfterCreateFromFront(backRepo.GetStage(), civilianairport)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, civilianairportDB)
 }
@@ -164,21 +174,19 @@ func PostCivilianAirport(c *gin.Context) {
 // default: genericError
 //
 //	200: civilianairportDBResponse
-func GetCivilianAirport(c *gin.Context) {
+func (controller *Controller) GetCivilianAirport(c *gin.Context) {
 
-	// type Values map[string][]string
 	values := c.Request.URL.Query()
+	stackPath := ""
 	if len(values) == 1 {
-		value := values["stack"]
+		value := values["GONG__StackPath"]
 		if len(value) == 1 {
-			// we have a single parameter
-			// we assume it is the stack
-			stackParam := value[0]
-			log.Println("GET params", stackParam)
+			stackPath = value[0]
+			log.Println("GetCivilianAirport", "GONG__StackPath", stackPath)
 		}
 	}
-
-	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoCivilianAirport.GetDB()
 
 	// Get civilianairportDB in DB
 	var civilianairportDB orm.CivilianAirportDB
@@ -209,7 +217,19 @@ func GetCivilianAirport(c *gin.Context) {
 // default: genericError
 //
 //	200: civilianairportDBResponse
-func UpdateCivilianAirport(c *gin.Context) {
+func (controller *Controller) UpdateCivilianAirport(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("UpdateCivilianAirport", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoCivilianAirport.GetDB()
 
 	// Validate input
 	var input orm.CivilianAirportAPI
@@ -218,8 +238,6 @@ func UpdateCivilianAirport(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
 
 	// Get model if exist
 	var civilianairportDB orm.CivilianAirportDB
@@ -255,16 +273,16 @@ func UpdateCivilianAirport(c *gin.Context) {
 	civilianairportDB.CopyBasicFieldsToCivilianAirport(civilianairportNew)
 
 	// get stage instance from DB instance, and call callback function
-	civilianairportOld := (*orm.BackRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
+	civilianairportOld := (*backRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
 	if civilianairportOld != nil {
-		models.AfterUpdateFromFront(&models.Stage, civilianairportOld, civilianairportNew)
+		models.AfterUpdateFromFront(backRepo.GetStage(), civilianairportOld, civilianairportNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	// in some cases, with the marshalling of the stage, this operation might
 	// generates a checkout
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the civilianairportDB
 	c.JSON(http.StatusOK, civilianairportDB)
@@ -279,8 +297,19 @@ func UpdateCivilianAirport(c *gin.Context) {
 // default: genericError
 //
 //	200: civilianairportDBResponse
-func DeleteCivilianAirport(c *gin.Context) {
-	db := orm.BackRepo.BackRepoCivilianAirport.GetDB()
+func (controller *Controller) DeleteCivilianAirport(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("DeleteCivilianAirport", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoCivilianAirport.GetDB()
 
 	// Get model if exist
 	var civilianairportDB orm.CivilianAirportDB
@@ -301,14 +330,14 @@ func DeleteCivilianAirport(c *gin.Context) {
 	civilianairportDB.CopyBasicFieldsToCivilianAirport(civilianairportDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	civilianairportStaged := (*orm.BackRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
+	civilianairportStaged := (*backRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
 	if civilianairportStaged != nil {
-		models.AfterDeleteFromFront(&models.Stage, civilianairportStaged, civilianairportDeleted)
+		models.AfterDeleteFromFront(backRepo.GetStage(), civilianairportStaged, civilianairportDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

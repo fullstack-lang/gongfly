@@ -12,7 +12,7 @@ import { MapOfSortingComponents } from '../map-components'
 // insertion point for imports
 import { ColorEnumSelect, ColorEnumList } from '../ColorEnum'
 
-import { Router, RouterState, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 
@@ -60,23 +60,34 @@ export class VisualTrackDetailComponent implements OnInit {
 	originStruct: string = ""
 	originStructFieldName: string = ""
 
+	GONG__StackPath: string = ""
+
 	constructor(
 		private visualtrackService: VisualTrackService,
 		private frontRepoService: FrontRepoService,
 		public dialog: MatDialog,
-		private route: ActivatedRoute,
+		private activatedRoute: ActivatedRoute,
 		private router: Router,
 	) {
 	}
 
 	ngOnInit(): void {
+		this.GONG__StackPath = this.activatedRoute.snapshot.paramMap.get('GONG__StackPath')!;
+
+		this.activatedRoute.params.subscribe(params => {
+			this.onChangedActivatedRoute()
+		});
+	}
+	onChangedActivatedRoute(): void {
 
 		// compute state
-		this.id = +this.route.snapshot.paramMap.get('id')!;
-		this.originStruct = this.route.snapshot.paramMap.get('originStruct')!;
-		this.originStructFieldName = this.route.snapshot.paramMap.get('originStructFieldName')!;
+		this.id = +this.activatedRoute.snapshot.paramMap.get('id')!;
+		this.originStruct = this.activatedRoute.snapshot.paramMap.get('originStruct')!;
+		this.originStructFieldName = this.activatedRoute.snapshot.paramMap.get('originStructFieldName')!;
 
-		const association = this.route.snapshot.paramMap.get('association');
+		this.GONG__StackPath = this.activatedRoute.snapshot.paramMap.get('GONG__StackPath')!;
+
+		const association = this.activatedRoute.snapshot.paramMap.get('association');
 		if (this.id == 0) {
 			this.state = VisualTrackDetailComponentState.CREATE_INSTANCE
 		} else {
@@ -108,7 +119,7 @@ export class VisualTrackDetailComponent implements OnInit {
 
 	getVisualTrack(): void {
 
-		this.frontRepoService.pull().subscribe(
+		this.frontRepoService.pull(this.GONG__StackPath).subscribe(
 			frontRepo => {
 				this.frontRepo = frontRepo
 
@@ -170,13 +181,13 @@ export class VisualTrackDetailComponent implements OnInit {
 
 		switch (this.state) {
 			case VisualTrackDetailComponentState.UPDATE_INSTANCE:
-				this.visualtrackService.updateVisualTrack(this.visualtrack)
+				this.visualtrackService.updateVisualTrack(this.visualtrack, this.GONG__StackPath)
 					.subscribe(visualtrack => {
 						this.visualtrackService.VisualTrackServiceChanged.next("update")
 					});
 				break;
 			default:
-				this.visualtrackService.postVisualTrack(this.visualtrack).subscribe(visualtrack => {
+				this.visualtrackService.postVisualTrack(this.visualtrack, this.GONG__StackPath).subscribe(visualtrack => {
 					this.visualtrackService.VisualTrackServiceChanged.next("post")
 					this.visualtrack = new (VisualTrackDB) // reset fields
 				});
@@ -205,6 +216,7 @@ export class VisualTrackDetailComponent implements OnInit {
 			dialogData.ReversePointer = reverseField
 			dialogData.OrderingMode = false
 			dialogData.SelectionMode = selectionMode
+			dialogData.GONG__StackPath = this.GONG__StackPath
 
 			dialogConfig.data = dialogData
 			const dialogRef: MatDialogRef<string, any> = this.dialog.open(
@@ -221,6 +233,7 @@ export class VisualTrackDetailComponent implements OnInit {
 			dialogData.ReversePointer = reverseField
 			dialogData.OrderingMode = false
 			dialogData.SelectionMode = selectionMode
+			dialogData.GONG__StackPath = this.GONG__StackPath
 
 			// set up the source
 			dialogData.SourceStruct = "VisualTrack"
@@ -256,6 +269,7 @@ export class VisualTrackDetailComponent implements OnInit {
 			ID: this.visualtrack.ID,
 			ReversePointer: reverseField,
 			OrderingMode: true,
+			GONG__StackPath: this.GONG__StackPath,
 		};
 		const dialogRef: MatDialogRef<string, any> = this.dialog.open(
 			MapOfSortingComponents.get(AssociatedStruct).get(

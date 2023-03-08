@@ -136,6 +136,13 @@ type BackRepoCircleStruct struct {
 	Map_CircleDBID_CirclePtr *map[uint]*models.Circle
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoCircle *BackRepoCircleStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoCircle.stage
+	return
 }
 
 func (backRepoCircle *BackRepoCircleStruct) GetDB() *gorm.DB {
@@ -150,7 +157,7 @@ func (backRepoCircle *BackRepoCircleStruct) GetCircleDBFromCirclePtr(circle *mod
 }
 
 // BackRepoCircle.Init set up the BackRepo of the Circle
-func (backRepoCircle *BackRepoCircleStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoCircle *BackRepoCircleStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoCircle.Map_CircleDBID_CirclePtr != nil {
 		err := errors.New("In Init, backRepoCircle.Map_CircleDBID_CirclePtr should be nil")
@@ -177,6 +184,7 @@ func (backRepoCircle *BackRepoCircleStruct) Init(db *gorm.DB) (Error error) {
 	backRepoCircle.Map_CirclePtr_CircleDBID = &tmpID
 
 	backRepoCircle.db = db
+	backRepoCircle.stage = stage
 	return
 }
 
@@ -292,8 +300,7 @@ func (backRepoCircle *BackRepoCircleStruct) CommitPhaseTwoInstance(backRepo *Bac
 // BackRepoCircle.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoCircle *BackRepoCircleStruct) CheckoutPhaseOne() (Error error) {
 
 	circleDBArray := make([]CircleDB, 0)
@@ -305,7 +312,7 @@ func (backRepoCircle *BackRepoCircleStruct) CheckoutPhaseOne() (Error error) {
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	circleInstancesToBeRemovedFromTheStage := make(map[*models.Circle]any)
-	for key, value := range models.Stage.Circles {
+	for key, value := range backRepoCircle.stage.Circles {
 		circleInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -323,7 +330,7 @@ func (backRepoCircle *BackRepoCircleStruct) CheckoutPhaseOne() (Error error) {
 
 	// remove from stage and back repo's 3 maps all circles that are not in the checkout
 	for circle := range circleInstancesToBeRemovedFromTheStage {
-		circle.Unstage()
+		circle.Unstage(backRepoCircle.GetStage())
 
 		// remove instance from the back repo 3 maps
 		circleID := (*backRepoCircle.Map_CirclePtr_CircleDBID)[circle]
@@ -348,9 +355,12 @@ func (backRepoCircle *BackRepoCircleStruct) CheckoutPhaseOneInstance(circleDB *C
 
 		// append model store with the new element
 		circle.Name = circleDB.Name_Data.String
-		circle.Stage()
+		circle.Stage(backRepoCircle.GetStage())
 	}
 	circleDB.CopyBasicFieldsToCircle(circle)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	circle.Stage(backRepoCircle.GetStage())
 
 	// preserve pointer to circleDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_CircleDBID_CircleDB)[circleDB hold variable pointers

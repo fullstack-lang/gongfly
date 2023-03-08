@@ -102,7 +102,7 @@ func (opsLine *OpsLine) FireNextEvent() {
 		}
 
 		// Does not work yet
-		message.Stage().Register().QueueUpdateEvent(1 * time.Second)
+		message.Stage(&Stage).Register().QueueUpdateEvent(1 * time.Second)
 		_ = message
 
 		// display the message
@@ -150,7 +150,7 @@ func (opsLine *OpsLine) FireNextEvent() {
 			message.Speed = opsLine.Scenario.MessageVisualSpeed
 		}
 		// Does not work yet
-		message.Stage().Register().QueueUpdateEvent(1 * time.Second)
+		message.Stage(&Stage).Register().QueueUpdateEvent(1 * time.Second)
 		_ = message
 
 		// display message

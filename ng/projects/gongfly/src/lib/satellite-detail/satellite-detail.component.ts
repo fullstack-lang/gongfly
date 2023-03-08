@@ -152,13 +152,13 @@ export class SatelliteDetailComponent implements OnInit {
 
 		switch (this.state) {
 			case SatelliteDetailComponentState.UPDATE_INSTANCE:
-				this.satelliteService.updateSatellite(this.satellite)
+				this.satelliteService.updateSatellite(this.satellite, this.GONG__StackPath)
 					.subscribe(satellite => {
 						this.satelliteService.SatelliteServiceChanged.next("update")
 					});
 				break;
 			default:
-				this.satelliteService.postSatellite(this.satellite).subscribe(satellite => {
+				this.satelliteService.postSatellite(this.satellite, this.GONG__StackPath).subscribe(satellite => {
 					this.satelliteService.SatelliteServiceChanged.next("post")
 					this.satellite = new (SatelliteDB) // reset fields
 				});

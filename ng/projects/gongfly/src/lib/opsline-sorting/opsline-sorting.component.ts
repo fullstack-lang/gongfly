@@ -100,7 +100,7 @@ export class OpsLineSortingComponent implements OnInit {
 
     this.associatedOpsLines.forEach(
       opsline => {
-        this.opslineService.updateOpsLine(opsline)
+        this.opslineService.updateOpsLine(opsline, this.dialogData.GONG__StackPath)
           .subscribe(opsline => {
             this.opslineService.OpsLineServiceChanged.next("update")
           });

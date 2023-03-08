@@ -46,7 +46,7 @@ export class GongsimStatusSortingComponent implements OnInit {
   }
 
   getGongsimStatuss(): void {
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.dialogData.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 
@@ -100,13 +100,13 @@ export class GongsimStatusSortingComponent implements OnInit {
 
     this.associatedGongsimStatuss.forEach(
       gongsimstatus => {
-        this.gongsimstatusService.updateGongsimStatus(gongsimstatus)
+        this.gongsimstatusService.updateGongsimStatus(gongsimstatus, this.dialogData.GONG__StackPath)
           .subscribe(gongsimstatus => {
             this.gongsimstatusService.GongsimStatusServiceChanged.next("update")
           });
       }
     )
 
-    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer +' done');
+    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer + ' done');
   }
 }

@@ -205,6 +205,13 @@ type BackRepoMessageStruct struct {
 	Map_MessageDBID_MessagePtr *map[uint]*models.Message
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoMessage *BackRepoMessageStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoMessage.stage
+	return
 }
 
 func (backRepoMessage *BackRepoMessageStruct) GetDB() *gorm.DB {
@@ -219,7 +226,7 @@ func (backRepoMessage *BackRepoMessageStruct) GetMessageDBFromMessagePtr(message
 }
 
 // BackRepoMessage.Init set up the BackRepo of the Message
-func (backRepoMessage *BackRepoMessageStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoMessage *BackRepoMessageStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoMessage.Map_MessageDBID_MessagePtr != nil {
 		err := errors.New("In Init, backRepoMessage.Map_MessageDBID_MessagePtr should be nil")
@@ -246,6 +253,7 @@ func (backRepoMessage *BackRepoMessageStruct) Init(db *gorm.DB) (Error error) {
 	backRepoMessage.Map_MessagePtr_MessageDBID = &tmpID
 
 	backRepoMessage.db = db
+	backRepoMessage.stage = stage
 	return
 }
 
@@ -364,7 +372,7 @@ func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseOne() (Error error) {
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	messageInstancesToBeRemovedFromTheStage := make(map[*models.Message]any)
-	for key, value := range models.Stage.Messages {
+	for key, value := range backRepoMessage.stage.Messages {
 		messageInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -382,7 +390,7 @@ func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseOne() (Error error) {
 
 	// remove from stage and back repo's 3 maps all messages that are not in the checkout
 	for message := range messageInstancesToBeRemovedFromTheStage {
-		message.Unstage()
+		message.Unstage(backRepoMessage.GetStage())
 
 		// remove instance from the back repo 3 maps
 		messageID := (*backRepoMessage.Map_MessagePtr_MessageDBID)[message]
@@ -407,12 +415,12 @@ func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseOneInstance(messageDB
 
 		// append model store with the new element
 		message.Name = messageDB.Name_Data.String
-		message.Stage()
+		message.Stage(backRepoMessage.GetStage())
 	}
 	messageDB.CopyBasicFieldsToMessage(message)
 
 	// in some cases, the instance might have been unstaged. It is necessary to stage it again
-	message.Stage()
+	message.Stage(backRepoMessage.GetStage())
 
 	// preserve pointer to messageDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_MessageDBID_MessageDB)[messageDB hold variable pointers

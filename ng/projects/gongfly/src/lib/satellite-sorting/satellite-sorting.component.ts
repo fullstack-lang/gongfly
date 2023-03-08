@@ -100,7 +100,7 @@ export class SatelliteSortingComponent implements OnInit {
 
     this.associatedSatellites.forEach(
       satellite => {
-        this.satelliteService.updateSatellite(satellite)
+        this.satelliteService.updateSatellite(satellite, this.dialogData.GONG__StackPath)
           .subscribe(satellite => {
             this.satelliteService.SatelliteServiceChanged.next("update")
           });

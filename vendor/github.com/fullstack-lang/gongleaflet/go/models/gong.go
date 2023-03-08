@@ -126,7 +126,23 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	// store meta package import
 	MetaPackageImportPath  string
 	MetaPackageImportAlias string
-	Map_DocLink_Renaming   map[string]string
+	Map_DocLink_Renaming   map[string]GONG__Identifier
+
+	// map_Gongstruct_BackPointer is storage of back pointers
+	map_Gongstruct_BackPointer map[any]any
+}
+
+func SetBackPointer[T Gongstruct](stageStruct *StageStruct, instance *T, backPointer any) {
+	stageStruct.map_Gongstruct_BackPointer[instance] = backPointer
+}
+func GetBackPointer[T Gongstruct](stageStruct *StageStruct, instance *T) (backPointer any) {
+	backPointer, _ = stageStruct.map_Gongstruct_BackPointer[instance]
+	return
+}
+
+type GONG__Identifier struct {
+	Ident string
+	Type  GONG__ExpressionType
 }
 
 type OnInitCommitInterface interface {
@@ -222,6 +238,7 @@ var Stage StageStruct = StageStruct{ // insertion point for array initiatialisat
 
 	// end of insertion point
 	Map_GongStructName_InstancesNb: make(map[string]int),
+	map_Gongstruct_BackPointer:     make(map[any]any),
 }
 
 func (stage *StageStruct) Commit() {
@@ -292,93 +309,38 @@ func (stage *StageStruct) RestoreXL(dirPath string) {
 
 // insertion point for cumulative sub template with model space calls
 // Stage puts checkoutscheduler to the model stage
-func (checkoutscheduler *CheckoutScheduler) Stage() *CheckoutScheduler {
-	Stage.CheckoutSchedulers[checkoutscheduler] = __member
-	Stage.CheckoutSchedulers_mapString[checkoutscheduler.Name] = checkoutscheduler
+func (checkoutscheduler *CheckoutScheduler) Stage(stage *StageStruct) *CheckoutScheduler {
+	stage.CheckoutSchedulers[checkoutscheduler] = __member
+	stage.CheckoutSchedulers_mapString[checkoutscheduler.Name] = checkoutscheduler
 
 	return checkoutscheduler
 }
 
 // Unstage removes checkoutscheduler off the model stage
-func (checkoutscheduler *CheckoutScheduler) Unstage() *CheckoutScheduler {
-	delete(Stage.CheckoutSchedulers, checkoutscheduler)
-	delete(Stage.CheckoutSchedulers_mapString, checkoutscheduler.Name)
+func (checkoutscheduler *CheckoutScheduler) Unstage(stage *StageStruct) *CheckoutScheduler {
+	delete(stage.CheckoutSchedulers, checkoutscheduler)
+	delete(stage.CheckoutSchedulers_mapString, checkoutscheduler.Name)
 	return checkoutscheduler
 }
 
 // commit checkoutscheduler to the back repo (if it is already staged)
-func (checkoutscheduler *CheckoutScheduler) Commit() *CheckoutScheduler {
-	if _, ok := Stage.CheckoutSchedulers[checkoutscheduler]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitCheckoutScheduler(checkoutscheduler)
+func (checkoutscheduler *CheckoutScheduler) Commit(stage *StageStruct) *CheckoutScheduler {
+	if _, ok := stage.CheckoutSchedulers[checkoutscheduler]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitCheckoutScheduler(checkoutscheduler)
 		}
 	}
 	return checkoutscheduler
 }
 
 // Checkout checkoutscheduler to the back repo (if it is already staged)
-func (checkoutscheduler *CheckoutScheduler) Checkout() *CheckoutScheduler {
-	if _, ok := Stage.CheckoutSchedulers[checkoutscheduler]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutCheckoutScheduler(checkoutscheduler)
+func (checkoutscheduler *CheckoutScheduler) Checkout(stage *StageStruct) *CheckoutScheduler {
+	if _, ok := stage.CheckoutSchedulers[checkoutscheduler]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutCheckoutScheduler(checkoutscheduler)
 		}
 	}
 	return checkoutscheduler
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of checkoutscheduler to the model stage
-func (checkoutscheduler *CheckoutScheduler) StageCopy() *CheckoutScheduler {
-	_checkoutscheduler := new(CheckoutScheduler)
-	*_checkoutscheduler = *checkoutscheduler
-	_checkoutscheduler.Stage()
-	return _checkoutscheduler
-}
-
-// StageAndCommit appends checkoutscheduler to the model stage and commit to the orm repo
-func (checkoutscheduler *CheckoutScheduler) StageAndCommit() *CheckoutScheduler {
-	checkoutscheduler.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMCheckoutScheduler(checkoutscheduler)
-	}
-	return checkoutscheduler
-}
-
-// DeleteStageAndCommit appends checkoutscheduler to the model stage and commit to the orm repo
-func (checkoutscheduler *CheckoutScheduler) DeleteStageAndCommit() *CheckoutScheduler {
-	checkoutscheduler.Unstage()
-	DeleteORMCheckoutScheduler(checkoutscheduler)
-	return checkoutscheduler
-}
-
-// StageCopyAndCommit appends a copy of checkoutscheduler to the model stage and commit to the orm repo
-func (checkoutscheduler *CheckoutScheduler) StageCopyAndCommit() *CheckoutScheduler {
-	_checkoutscheduler := new(CheckoutScheduler)
-	*_checkoutscheduler = *checkoutscheduler
-	_checkoutscheduler.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMCheckoutScheduler(checkoutscheduler)
-	}
-	return _checkoutscheduler
-}
-
-// CreateORMCheckoutScheduler enables dynamic staging of a CheckoutScheduler instance
-func CreateORMCheckoutScheduler(checkoutscheduler *CheckoutScheduler) {
-	checkoutscheduler.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMCheckoutScheduler(checkoutscheduler)
-	}
-}
-
-// DeleteORMCheckoutScheduler enables dynamic staging of a CheckoutScheduler instance
-func DeleteORMCheckoutScheduler(checkoutscheduler *CheckoutScheduler) {
-	checkoutscheduler.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMCheckoutScheduler(checkoutscheduler)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -387,93 +349,38 @@ func (checkoutscheduler *CheckoutScheduler) GetName() (res string) {
 }
 
 // Stage puts circle to the model stage
-func (circle *Circle) Stage() *Circle {
-	Stage.Circles[circle] = __member
-	Stage.Circles_mapString[circle.Name] = circle
+func (circle *Circle) Stage(stage *StageStruct) *Circle {
+	stage.Circles[circle] = __member
+	stage.Circles_mapString[circle.Name] = circle
 
 	return circle
 }
 
 // Unstage removes circle off the model stage
-func (circle *Circle) Unstage() *Circle {
-	delete(Stage.Circles, circle)
-	delete(Stage.Circles_mapString, circle.Name)
+func (circle *Circle) Unstage(stage *StageStruct) *Circle {
+	delete(stage.Circles, circle)
+	delete(stage.Circles_mapString, circle.Name)
 	return circle
 }
 
 // commit circle to the back repo (if it is already staged)
-func (circle *Circle) Commit() *Circle {
-	if _, ok := Stage.Circles[circle]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitCircle(circle)
+func (circle *Circle) Commit(stage *StageStruct) *Circle {
+	if _, ok := stage.Circles[circle]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitCircle(circle)
 		}
 	}
 	return circle
 }
 
 // Checkout circle to the back repo (if it is already staged)
-func (circle *Circle) Checkout() *Circle {
-	if _, ok := Stage.Circles[circle]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutCircle(circle)
+func (circle *Circle) Checkout(stage *StageStruct) *Circle {
+	if _, ok := stage.Circles[circle]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutCircle(circle)
 		}
 	}
 	return circle
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of circle to the model stage
-func (circle *Circle) StageCopy() *Circle {
-	_circle := new(Circle)
-	*_circle = *circle
-	_circle.Stage()
-	return _circle
-}
-
-// StageAndCommit appends circle to the model stage and commit to the orm repo
-func (circle *Circle) StageAndCommit() *Circle {
-	circle.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMCircle(circle)
-	}
-	return circle
-}
-
-// DeleteStageAndCommit appends circle to the model stage and commit to the orm repo
-func (circle *Circle) DeleteStageAndCommit() *Circle {
-	circle.Unstage()
-	DeleteORMCircle(circle)
-	return circle
-}
-
-// StageCopyAndCommit appends a copy of circle to the model stage and commit to the orm repo
-func (circle *Circle) StageCopyAndCommit() *Circle {
-	_circle := new(Circle)
-	*_circle = *circle
-	_circle.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMCircle(circle)
-	}
-	return _circle
-}
-
-// CreateORMCircle enables dynamic staging of a Circle instance
-func CreateORMCircle(circle *Circle) {
-	circle.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMCircle(circle)
-	}
-}
-
-// DeleteORMCircle enables dynamic staging of a Circle instance
-func DeleteORMCircle(circle *Circle) {
-	circle.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMCircle(circle)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -482,93 +389,38 @@ func (circle *Circle) GetName() (res string) {
 }
 
 // Stage puts divicon to the model stage
-func (divicon *DivIcon) Stage() *DivIcon {
-	Stage.DivIcons[divicon] = __member
-	Stage.DivIcons_mapString[divicon.Name] = divicon
+func (divicon *DivIcon) Stage(stage *StageStruct) *DivIcon {
+	stage.DivIcons[divicon] = __member
+	stage.DivIcons_mapString[divicon.Name] = divicon
 
 	return divicon
 }
 
 // Unstage removes divicon off the model stage
-func (divicon *DivIcon) Unstage() *DivIcon {
-	delete(Stage.DivIcons, divicon)
-	delete(Stage.DivIcons_mapString, divicon.Name)
+func (divicon *DivIcon) Unstage(stage *StageStruct) *DivIcon {
+	delete(stage.DivIcons, divicon)
+	delete(stage.DivIcons_mapString, divicon.Name)
 	return divicon
 }
 
 // commit divicon to the back repo (if it is already staged)
-func (divicon *DivIcon) Commit() *DivIcon {
-	if _, ok := Stage.DivIcons[divicon]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitDivIcon(divicon)
+func (divicon *DivIcon) Commit(stage *StageStruct) *DivIcon {
+	if _, ok := stage.DivIcons[divicon]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitDivIcon(divicon)
 		}
 	}
 	return divicon
 }
 
 // Checkout divicon to the back repo (if it is already staged)
-func (divicon *DivIcon) Checkout() *DivIcon {
-	if _, ok := Stage.DivIcons[divicon]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutDivIcon(divicon)
+func (divicon *DivIcon) Checkout(stage *StageStruct) *DivIcon {
+	if _, ok := stage.DivIcons[divicon]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutDivIcon(divicon)
 		}
 	}
 	return divicon
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of divicon to the model stage
-func (divicon *DivIcon) StageCopy() *DivIcon {
-	_divicon := new(DivIcon)
-	*_divicon = *divicon
-	_divicon.Stage()
-	return _divicon
-}
-
-// StageAndCommit appends divicon to the model stage and commit to the orm repo
-func (divicon *DivIcon) StageAndCommit() *DivIcon {
-	divicon.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMDivIcon(divicon)
-	}
-	return divicon
-}
-
-// DeleteStageAndCommit appends divicon to the model stage and commit to the orm repo
-func (divicon *DivIcon) DeleteStageAndCommit() *DivIcon {
-	divicon.Unstage()
-	DeleteORMDivIcon(divicon)
-	return divicon
-}
-
-// StageCopyAndCommit appends a copy of divicon to the model stage and commit to the orm repo
-func (divicon *DivIcon) StageCopyAndCommit() *DivIcon {
-	_divicon := new(DivIcon)
-	*_divicon = *divicon
-	_divicon.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMDivIcon(divicon)
-	}
-	return _divicon
-}
-
-// CreateORMDivIcon enables dynamic staging of a DivIcon instance
-func CreateORMDivIcon(divicon *DivIcon) {
-	divicon.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMDivIcon(divicon)
-	}
-}
-
-// DeleteORMDivIcon enables dynamic staging of a DivIcon instance
-func DeleteORMDivIcon(divicon *DivIcon) {
-	divicon.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMDivIcon(divicon)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -577,93 +429,38 @@ func (divicon *DivIcon) GetName() (res string) {
 }
 
 // Stage puts layergroup to the model stage
-func (layergroup *LayerGroup) Stage() *LayerGroup {
-	Stage.LayerGroups[layergroup] = __member
-	Stage.LayerGroups_mapString[layergroup.Name] = layergroup
+func (layergroup *LayerGroup) Stage(stage *StageStruct) *LayerGroup {
+	stage.LayerGroups[layergroup] = __member
+	stage.LayerGroups_mapString[layergroup.Name] = layergroup
 
 	return layergroup
 }
 
 // Unstage removes layergroup off the model stage
-func (layergroup *LayerGroup) Unstage() *LayerGroup {
-	delete(Stage.LayerGroups, layergroup)
-	delete(Stage.LayerGroups_mapString, layergroup.Name)
+func (layergroup *LayerGroup) Unstage(stage *StageStruct) *LayerGroup {
+	delete(stage.LayerGroups, layergroup)
+	delete(stage.LayerGroups_mapString, layergroup.Name)
 	return layergroup
 }
 
 // commit layergroup to the back repo (if it is already staged)
-func (layergroup *LayerGroup) Commit() *LayerGroup {
-	if _, ok := Stage.LayerGroups[layergroup]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitLayerGroup(layergroup)
+func (layergroup *LayerGroup) Commit(stage *StageStruct) *LayerGroup {
+	if _, ok := stage.LayerGroups[layergroup]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitLayerGroup(layergroup)
 		}
 	}
 	return layergroup
 }
 
 // Checkout layergroup to the back repo (if it is already staged)
-func (layergroup *LayerGroup) Checkout() *LayerGroup {
-	if _, ok := Stage.LayerGroups[layergroup]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutLayerGroup(layergroup)
+func (layergroup *LayerGroup) Checkout(stage *StageStruct) *LayerGroup {
+	if _, ok := stage.LayerGroups[layergroup]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutLayerGroup(layergroup)
 		}
 	}
 	return layergroup
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of layergroup to the model stage
-func (layergroup *LayerGroup) StageCopy() *LayerGroup {
-	_layergroup := new(LayerGroup)
-	*_layergroup = *layergroup
-	_layergroup.Stage()
-	return _layergroup
-}
-
-// StageAndCommit appends layergroup to the model stage and commit to the orm repo
-func (layergroup *LayerGroup) StageAndCommit() *LayerGroup {
-	layergroup.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMLayerGroup(layergroup)
-	}
-	return layergroup
-}
-
-// DeleteStageAndCommit appends layergroup to the model stage and commit to the orm repo
-func (layergroup *LayerGroup) DeleteStageAndCommit() *LayerGroup {
-	layergroup.Unstage()
-	DeleteORMLayerGroup(layergroup)
-	return layergroup
-}
-
-// StageCopyAndCommit appends a copy of layergroup to the model stage and commit to the orm repo
-func (layergroup *LayerGroup) StageCopyAndCommit() *LayerGroup {
-	_layergroup := new(LayerGroup)
-	*_layergroup = *layergroup
-	_layergroup.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMLayerGroup(layergroup)
-	}
-	return _layergroup
-}
-
-// CreateORMLayerGroup enables dynamic staging of a LayerGroup instance
-func CreateORMLayerGroup(layergroup *LayerGroup) {
-	layergroup.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMLayerGroup(layergroup)
-	}
-}
-
-// DeleteORMLayerGroup enables dynamic staging of a LayerGroup instance
-func DeleteORMLayerGroup(layergroup *LayerGroup) {
-	layergroup.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMLayerGroup(layergroup)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -672,93 +469,38 @@ func (layergroup *LayerGroup) GetName() (res string) {
 }
 
 // Stage puts layergroupuse to the model stage
-func (layergroupuse *LayerGroupUse) Stage() *LayerGroupUse {
-	Stage.LayerGroupUses[layergroupuse] = __member
-	Stage.LayerGroupUses_mapString[layergroupuse.Name] = layergroupuse
+func (layergroupuse *LayerGroupUse) Stage(stage *StageStruct) *LayerGroupUse {
+	stage.LayerGroupUses[layergroupuse] = __member
+	stage.LayerGroupUses_mapString[layergroupuse.Name] = layergroupuse
 
 	return layergroupuse
 }
 
 // Unstage removes layergroupuse off the model stage
-func (layergroupuse *LayerGroupUse) Unstage() *LayerGroupUse {
-	delete(Stage.LayerGroupUses, layergroupuse)
-	delete(Stage.LayerGroupUses_mapString, layergroupuse.Name)
+func (layergroupuse *LayerGroupUse) Unstage(stage *StageStruct) *LayerGroupUse {
+	delete(stage.LayerGroupUses, layergroupuse)
+	delete(stage.LayerGroupUses_mapString, layergroupuse.Name)
 	return layergroupuse
 }
 
 // commit layergroupuse to the back repo (if it is already staged)
-func (layergroupuse *LayerGroupUse) Commit() *LayerGroupUse {
-	if _, ok := Stage.LayerGroupUses[layergroupuse]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitLayerGroupUse(layergroupuse)
+func (layergroupuse *LayerGroupUse) Commit(stage *StageStruct) *LayerGroupUse {
+	if _, ok := stage.LayerGroupUses[layergroupuse]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitLayerGroupUse(layergroupuse)
 		}
 	}
 	return layergroupuse
 }
 
 // Checkout layergroupuse to the back repo (if it is already staged)
-func (layergroupuse *LayerGroupUse) Checkout() *LayerGroupUse {
-	if _, ok := Stage.LayerGroupUses[layergroupuse]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutLayerGroupUse(layergroupuse)
+func (layergroupuse *LayerGroupUse) Checkout(stage *StageStruct) *LayerGroupUse {
+	if _, ok := stage.LayerGroupUses[layergroupuse]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutLayerGroupUse(layergroupuse)
 		}
 	}
 	return layergroupuse
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of layergroupuse to the model stage
-func (layergroupuse *LayerGroupUse) StageCopy() *LayerGroupUse {
-	_layergroupuse := new(LayerGroupUse)
-	*_layergroupuse = *layergroupuse
-	_layergroupuse.Stage()
-	return _layergroupuse
-}
-
-// StageAndCommit appends layergroupuse to the model stage and commit to the orm repo
-func (layergroupuse *LayerGroupUse) StageAndCommit() *LayerGroupUse {
-	layergroupuse.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMLayerGroupUse(layergroupuse)
-	}
-	return layergroupuse
-}
-
-// DeleteStageAndCommit appends layergroupuse to the model stage and commit to the orm repo
-func (layergroupuse *LayerGroupUse) DeleteStageAndCommit() *LayerGroupUse {
-	layergroupuse.Unstage()
-	DeleteORMLayerGroupUse(layergroupuse)
-	return layergroupuse
-}
-
-// StageCopyAndCommit appends a copy of layergroupuse to the model stage and commit to the orm repo
-func (layergroupuse *LayerGroupUse) StageCopyAndCommit() *LayerGroupUse {
-	_layergroupuse := new(LayerGroupUse)
-	*_layergroupuse = *layergroupuse
-	_layergroupuse.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMLayerGroupUse(layergroupuse)
-	}
-	return _layergroupuse
-}
-
-// CreateORMLayerGroupUse enables dynamic staging of a LayerGroupUse instance
-func CreateORMLayerGroupUse(layergroupuse *LayerGroupUse) {
-	layergroupuse.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMLayerGroupUse(layergroupuse)
-	}
-}
-
-// DeleteORMLayerGroupUse enables dynamic staging of a LayerGroupUse instance
-func DeleteORMLayerGroupUse(layergroupuse *LayerGroupUse) {
-	layergroupuse.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMLayerGroupUse(layergroupuse)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -767,93 +509,38 @@ func (layergroupuse *LayerGroupUse) GetName() (res string) {
 }
 
 // Stage puts mapoptions to the model stage
-func (mapoptions *MapOptions) Stage() *MapOptions {
-	Stage.MapOptionss[mapoptions] = __member
-	Stage.MapOptionss_mapString[mapoptions.Name] = mapoptions
+func (mapoptions *MapOptions) Stage(stage *StageStruct) *MapOptions {
+	stage.MapOptionss[mapoptions] = __member
+	stage.MapOptionss_mapString[mapoptions.Name] = mapoptions
 
 	return mapoptions
 }
 
 // Unstage removes mapoptions off the model stage
-func (mapoptions *MapOptions) Unstage() *MapOptions {
-	delete(Stage.MapOptionss, mapoptions)
-	delete(Stage.MapOptionss_mapString, mapoptions.Name)
+func (mapoptions *MapOptions) Unstage(stage *StageStruct) *MapOptions {
+	delete(stage.MapOptionss, mapoptions)
+	delete(stage.MapOptionss_mapString, mapoptions.Name)
 	return mapoptions
 }
 
 // commit mapoptions to the back repo (if it is already staged)
-func (mapoptions *MapOptions) Commit() *MapOptions {
-	if _, ok := Stage.MapOptionss[mapoptions]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitMapOptions(mapoptions)
+func (mapoptions *MapOptions) Commit(stage *StageStruct) *MapOptions {
+	if _, ok := stage.MapOptionss[mapoptions]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitMapOptions(mapoptions)
 		}
 	}
 	return mapoptions
 }
 
 // Checkout mapoptions to the back repo (if it is already staged)
-func (mapoptions *MapOptions) Checkout() *MapOptions {
-	if _, ok := Stage.MapOptionss[mapoptions]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutMapOptions(mapoptions)
+func (mapoptions *MapOptions) Checkout(stage *StageStruct) *MapOptions {
+	if _, ok := stage.MapOptionss[mapoptions]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutMapOptions(mapoptions)
 		}
 	}
 	return mapoptions
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of mapoptions to the model stage
-func (mapoptions *MapOptions) StageCopy() *MapOptions {
-	_mapoptions := new(MapOptions)
-	*_mapoptions = *mapoptions
-	_mapoptions.Stage()
-	return _mapoptions
-}
-
-// StageAndCommit appends mapoptions to the model stage and commit to the orm repo
-func (mapoptions *MapOptions) StageAndCommit() *MapOptions {
-	mapoptions.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMMapOptions(mapoptions)
-	}
-	return mapoptions
-}
-
-// DeleteStageAndCommit appends mapoptions to the model stage and commit to the orm repo
-func (mapoptions *MapOptions) DeleteStageAndCommit() *MapOptions {
-	mapoptions.Unstage()
-	DeleteORMMapOptions(mapoptions)
-	return mapoptions
-}
-
-// StageCopyAndCommit appends a copy of mapoptions to the model stage and commit to the orm repo
-func (mapoptions *MapOptions) StageCopyAndCommit() *MapOptions {
-	_mapoptions := new(MapOptions)
-	*_mapoptions = *mapoptions
-	_mapoptions.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMMapOptions(mapoptions)
-	}
-	return _mapoptions
-}
-
-// CreateORMMapOptions enables dynamic staging of a MapOptions instance
-func CreateORMMapOptions(mapoptions *MapOptions) {
-	mapoptions.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMMapOptions(mapoptions)
-	}
-}
-
-// DeleteORMMapOptions enables dynamic staging of a MapOptions instance
-func DeleteORMMapOptions(mapoptions *MapOptions) {
-	mapoptions.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMMapOptions(mapoptions)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -862,93 +549,38 @@ func (mapoptions *MapOptions) GetName() (res string) {
 }
 
 // Stage puts marker to the model stage
-func (marker *Marker) Stage() *Marker {
-	Stage.Markers[marker] = __member
-	Stage.Markers_mapString[marker.Name] = marker
+func (marker *Marker) Stage(stage *StageStruct) *Marker {
+	stage.Markers[marker] = __member
+	stage.Markers_mapString[marker.Name] = marker
 
 	return marker
 }
 
 // Unstage removes marker off the model stage
-func (marker *Marker) Unstage() *Marker {
-	delete(Stage.Markers, marker)
-	delete(Stage.Markers_mapString, marker.Name)
+func (marker *Marker) Unstage(stage *StageStruct) *Marker {
+	delete(stage.Markers, marker)
+	delete(stage.Markers_mapString, marker.Name)
 	return marker
 }
 
 // commit marker to the back repo (if it is already staged)
-func (marker *Marker) Commit() *Marker {
-	if _, ok := Stage.Markers[marker]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitMarker(marker)
+func (marker *Marker) Commit(stage *StageStruct) *Marker {
+	if _, ok := stage.Markers[marker]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitMarker(marker)
 		}
 	}
 	return marker
 }
 
 // Checkout marker to the back repo (if it is already staged)
-func (marker *Marker) Checkout() *Marker {
-	if _, ok := Stage.Markers[marker]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutMarker(marker)
+func (marker *Marker) Checkout(stage *StageStruct) *Marker {
+	if _, ok := stage.Markers[marker]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutMarker(marker)
 		}
 	}
 	return marker
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of marker to the model stage
-func (marker *Marker) StageCopy() *Marker {
-	_marker := new(Marker)
-	*_marker = *marker
-	_marker.Stage()
-	return _marker
-}
-
-// StageAndCommit appends marker to the model stage and commit to the orm repo
-func (marker *Marker) StageAndCommit() *Marker {
-	marker.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMMarker(marker)
-	}
-	return marker
-}
-
-// DeleteStageAndCommit appends marker to the model stage and commit to the orm repo
-func (marker *Marker) DeleteStageAndCommit() *Marker {
-	marker.Unstage()
-	DeleteORMMarker(marker)
-	return marker
-}
-
-// StageCopyAndCommit appends a copy of marker to the model stage and commit to the orm repo
-func (marker *Marker) StageCopyAndCommit() *Marker {
-	_marker := new(Marker)
-	*_marker = *marker
-	_marker.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMMarker(marker)
-	}
-	return _marker
-}
-
-// CreateORMMarker enables dynamic staging of a Marker instance
-func CreateORMMarker(marker *Marker) {
-	marker.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMMarker(marker)
-	}
-}
-
-// DeleteORMMarker enables dynamic staging of a Marker instance
-func DeleteORMMarker(marker *Marker) {
-	marker.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMMarker(marker)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -957,93 +589,38 @@ func (marker *Marker) GetName() (res string) {
 }
 
 // Stage puts userclick to the model stage
-func (userclick *UserClick) Stage() *UserClick {
-	Stage.UserClicks[userclick] = __member
-	Stage.UserClicks_mapString[userclick.Name] = userclick
+func (userclick *UserClick) Stage(stage *StageStruct) *UserClick {
+	stage.UserClicks[userclick] = __member
+	stage.UserClicks_mapString[userclick.Name] = userclick
 
 	return userclick
 }
 
 // Unstage removes userclick off the model stage
-func (userclick *UserClick) Unstage() *UserClick {
-	delete(Stage.UserClicks, userclick)
-	delete(Stage.UserClicks_mapString, userclick.Name)
+func (userclick *UserClick) Unstage(stage *StageStruct) *UserClick {
+	delete(stage.UserClicks, userclick)
+	delete(stage.UserClicks_mapString, userclick.Name)
 	return userclick
 }
 
 // commit userclick to the back repo (if it is already staged)
-func (userclick *UserClick) Commit() *UserClick {
-	if _, ok := Stage.UserClicks[userclick]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitUserClick(userclick)
+func (userclick *UserClick) Commit(stage *StageStruct) *UserClick {
+	if _, ok := stage.UserClicks[userclick]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitUserClick(userclick)
 		}
 	}
 	return userclick
 }
 
 // Checkout userclick to the back repo (if it is already staged)
-func (userclick *UserClick) Checkout() *UserClick {
-	if _, ok := Stage.UserClicks[userclick]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutUserClick(userclick)
+func (userclick *UserClick) Checkout(stage *StageStruct) *UserClick {
+	if _, ok := stage.UserClicks[userclick]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutUserClick(userclick)
 		}
 	}
 	return userclick
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of userclick to the model stage
-func (userclick *UserClick) StageCopy() *UserClick {
-	_userclick := new(UserClick)
-	*_userclick = *userclick
-	_userclick.Stage()
-	return _userclick
-}
-
-// StageAndCommit appends userclick to the model stage and commit to the orm repo
-func (userclick *UserClick) StageAndCommit() *UserClick {
-	userclick.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMUserClick(userclick)
-	}
-	return userclick
-}
-
-// DeleteStageAndCommit appends userclick to the model stage and commit to the orm repo
-func (userclick *UserClick) DeleteStageAndCommit() *UserClick {
-	userclick.Unstage()
-	DeleteORMUserClick(userclick)
-	return userclick
-}
-
-// StageCopyAndCommit appends a copy of userclick to the model stage and commit to the orm repo
-func (userclick *UserClick) StageCopyAndCommit() *UserClick {
-	_userclick := new(UserClick)
-	*_userclick = *userclick
-	_userclick.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMUserClick(userclick)
-	}
-	return _userclick
-}
-
-// CreateORMUserClick enables dynamic staging of a UserClick instance
-func CreateORMUserClick(userclick *UserClick) {
-	userclick.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMUserClick(userclick)
-	}
-}
-
-// DeleteORMUserClick enables dynamic staging of a UserClick instance
-func DeleteORMUserClick(userclick *UserClick) {
-	userclick.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMUserClick(userclick)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -1052,93 +629,38 @@ func (userclick *UserClick) GetName() (res string) {
 }
 
 // Stage puts vline to the model stage
-func (vline *VLine) Stage() *VLine {
-	Stage.VLines[vline] = __member
-	Stage.VLines_mapString[vline.Name] = vline
+func (vline *VLine) Stage(stage *StageStruct) *VLine {
+	stage.VLines[vline] = __member
+	stage.VLines_mapString[vline.Name] = vline
 
 	return vline
 }
 
 // Unstage removes vline off the model stage
-func (vline *VLine) Unstage() *VLine {
-	delete(Stage.VLines, vline)
-	delete(Stage.VLines_mapString, vline.Name)
+func (vline *VLine) Unstage(stage *StageStruct) *VLine {
+	delete(stage.VLines, vline)
+	delete(stage.VLines_mapString, vline.Name)
 	return vline
 }
 
 // commit vline to the back repo (if it is already staged)
-func (vline *VLine) Commit() *VLine {
-	if _, ok := Stage.VLines[vline]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitVLine(vline)
+func (vline *VLine) Commit(stage *StageStruct) *VLine {
+	if _, ok := stage.VLines[vline]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitVLine(vline)
 		}
 	}
 	return vline
 }
 
 // Checkout vline to the back repo (if it is already staged)
-func (vline *VLine) Checkout() *VLine {
-	if _, ok := Stage.VLines[vline]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutVLine(vline)
+func (vline *VLine) Checkout(stage *StageStruct) *VLine {
+	if _, ok := stage.VLines[vline]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutVLine(vline)
 		}
 	}
 	return vline
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of vline to the model stage
-func (vline *VLine) StageCopy() *VLine {
-	_vline := new(VLine)
-	*_vline = *vline
-	_vline.Stage()
-	return _vline
-}
-
-// StageAndCommit appends vline to the model stage and commit to the orm repo
-func (vline *VLine) StageAndCommit() *VLine {
-	vline.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMVLine(vline)
-	}
-	return vline
-}
-
-// DeleteStageAndCommit appends vline to the model stage and commit to the orm repo
-func (vline *VLine) DeleteStageAndCommit() *VLine {
-	vline.Unstage()
-	DeleteORMVLine(vline)
-	return vline
-}
-
-// StageCopyAndCommit appends a copy of vline to the model stage and commit to the orm repo
-func (vline *VLine) StageCopyAndCommit() *VLine {
-	_vline := new(VLine)
-	*_vline = *vline
-	_vline.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMVLine(vline)
-	}
-	return _vline
-}
-
-// CreateORMVLine enables dynamic staging of a VLine instance
-func CreateORMVLine(vline *VLine) {
-	vline.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMVLine(vline)
-	}
-}
-
-// DeleteORMVLine enables dynamic staging of a VLine instance
-func DeleteORMVLine(vline *VLine) {
-	vline.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMVLine(vline)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -1147,93 +669,38 @@ func (vline *VLine) GetName() (res string) {
 }
 
 // Stage puts visualtrack to the model stage
-func (visualtrack *VisualTrack) Stage() *VisualTrack {
-	Stage.VisualTracks[visualtrack] = __member
-	Stage.VisualTracks_mapString[visualtrack.Name] = visualtrack
+func (visualtrack *VisualTrack) Stage(stage *StageStruct) *VisualTrack {
+	stage.VisualTracks[visualtrack] = __member
+	stage.VisualTracks_mapString[visualtrack.Name] = visualtrack
 
 	return visualtrack
 }
 
 // Unstage removes visualtrack off the model stage
-func (visualtrack *VisualTrack) Unstage() *VisualTrack {
-	delete(Stage.VisualTracks, visualtrack)
-	delete(Stage.VisualTracks_mapString, visualtrack.Name)
+func (visualtrack *VisualTrack) Unstage(stage *StageStruct) *VisualTrack {
+	delete(stage.VisualTracks, visualtrack)
+	delete(stage.VisualTracks_mapString, visualtrack.Name)
 	return visualtrack
 }
 
 // commit visualtrack to the back repo (if it is already staged)
-func (visualtrack *VisualTrack) Commit() *VisualTrack {
-	if _, ok := Stage.VisualTracks[visualtrack]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitVisualTrack(visualtrack)
+func (visualtrack *VisualTrack) Commit(stage *StageStruct) *VisualTrack {
+	if _, ok := stage.VisualTracks[visualtrack]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitVisualTrack(visualtrack)
 		}
 	}
 	return visualtrack
 }
 
 // Checkout visualtrack to the back repo (if it is already staged)
-func (visualtrack *VisualTrack) Checkout() *VisualTrack {
-	if _, ok := Stage.VisualTracks[visualtrack]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutVisualTrack(visualtrack)
+func (visualtrack *VisualTrack) Checkout(stage *StageStruct) *VisualTrack {
+	if _, ok := stage.VisualTracks[visualtrack]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutVisualTrack(visualtrack)
 		}
 	}
 	return visualtrack
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of visualtrack to the model stage
-func (visualtrack *VisualTrack) StageCopy() *VisualTrack {
-	_visualtrack := new(VisualTrack)
-	*_visualtrack = *visualtrack
-	_visualtrack.Stage()
-	return _visualtrack
-}
-
-// StageAndCommit appends visualtrack to the model stage and commit to the orm repo
-func (visualtrack *VisualTrack) StageAndCommit() *VisualTrack {
-	visualtrack.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMVisualTrack(visualtrack)
-	}
-	return visualtrack
-}
-
-// DeleteStageAndCommit appends visualtrack to the model stage and commit to the orm repo
-func (visualtrack *VisualTrack) DeleteStageAndCommit() *VisualTrack {
-	visualtrack.Unstage()
-	DeleteORMVisualTrack(visualtrack)
-	return visualtrack
-}
-
-// StageCopyAndCommit appends a copy of visualtrack to the model stage and commit to the orm repo
-func (visualtrack *VisualTrack) StageCopyAndCommit() *VisualTrack {
-	_visualtrack := new(VisualTrack)
-	*_visualtrack = *visualtrack
-	_visualtrack.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMVisualTrack(visualtrack)
-	}
-	return _visualtrack
-}
-
-// CreateORMVisualTrack enables dynamic staging of a VisualTrack instance
-func CreateORMVisualTrack(visualtrack *VisualTrack) {
-	visualtrack.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMVisualTrack(visualtrack)
-	}
-}
-
-// DeleteORMVisualTrack enables dynamic staging of a VisualTrack instance
-func DeleteORMVisualTrack(visualtrack *VisualTrack) {
-	visualtrack.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMVisualTrack(visualtrack)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -1334,178 +801,47 @@ func (stage *StageStruct) Nil() { // insertion point for array nil
 
 }
 
-// insertion point of functions that provide maps for reverse associations
-
-// generate function for reverse association maps of CheckoutScheduler
-
-// generate function for reverse association maps of Circle
-func (stageStruct *StageStruct) CreateReverseMap_Circle_LayerGroup() (res map[*LayerGroup][]*Circle) {
-	res = make(map[*LayerGroup][]*Circle)
-
-	for circle := range stageStruct.Circles {
-		if circle.LayerGroup != nil {
-			layergroup_ := circle.LayerGroup
-			var circles []*Circle
-			_, ok := res[layergroup_]
-			if ok {
-				circles = res[layergroup_]
-			} else {
-				circles = make([]*Circle, 0)
-			}
-			circles = append(circles, circle)
-			res[layergroup_] = circles
-		}
+func (stage *StageStruct) Unstage() { // insertion point for array nil
+	for checkoutscheduler := range stage.CheckoutSchedulers {
+		checkoutscheduler.Unstage(stage)
 	}
 
-	return
-}
-
-// generate function for reverse association maps of DivIcon
-
-// generate function for reverse association maps of LayerGroup
-
-// generate function for reverse association maps of LayerGroupUse
-func (stageStruct *StageStruct) CreateReverseMap_LayerGroupUse_LayerGroup() (res map[*LayerGroup][]*LayerGroupUse) {
-	res = make(map[*LayerGroup][]*LayerGroupUse)
-
-	for layergroupuse := range stageStruct.LayerGroupUses {
-		if layergroupuse.LayerGroup != nil {
-			layergroup_ := layergroupuse.LayerGroup
-			var layergroupuses []*LayerGroupUse
-			_, ok := res[layergroup_]
-			if ok {
-				layergroupuses = res[layergroup_]
-			} else {
-				layergroupuses = make([]*LayerGroupUse, 0)
-			}
-			layergroupuses = append(layergroupuses, layergroupuse)
-			res[layergroup_] = layergroupuses
-		}
+	for circle := range stage.Circles {
+		circle.Unstage(stage)
 	}
 
-	return
-}
-
-// generate function for reverse association maps of MapOptions
-func (stageStruct *StageStruct) CreateReverseMap_MapOptions_LayerGroupUses() (res map[*LayerGroupUse]*MapOptions) {
-	res = make(map[*LayerGroupUse]*MapOptions)
-
-	for mapoptions := range stageStruct.MapOptionss {
-		for _, layergroupuse_ := range mapoptions.LayerGroupUses {
-			res[layergroupuse_] = mapoptions
-		}
+	for divicon := range stage.DivIcons {
+		divicon.Unstage(stage)
 	}
 
-	return
-}
-
-
-// generate function for reverse association maps of Marker
-func (stageStruct *StageStruct) CreateReverseMap_Marker_LayerGroup() (res map[*LayerGroup][]*Marker) {
-	res = make(map[*LayerGroup][]*Marker)
-
-	for marker := range stageStruct.Markers {
-		if marker.LayerGroup != nil {
-			layergroup_ := marker.LayerGroup
-			var markers []*Marker
-			_, ok := res[layergroup_]
-			if ok {
-				markers = res[layergroup_]
-			} else {
-				markers = make([]*Marker, 0)
-			}
-			markers = append(markers, marker)
-			res[layergroup_] = markers
-		}
+	for layergroup := range stage.LayerGroups {
+		layergroup.Unstage(stage)
 	}
 
-	return
-}
-func (stageStruct *StageStruct) CreateReverseMap_Marker_DivIcon() (res map[*DivIcon][]*Marker) {
-	res = make(map[*DivIcon][]*Marker)
-
-	for marker := range stageStruct.Markers {
-		if marker.DivIcon != nil {
-			divicon_ := marker.DivIcon
-			var markers []*Marker
-			_, ok := res[divicon_]
-			if ok {
-				markers = res[divicon_]
-			} else {
-				markers = make([]*Marker, 0)
-			}
-			markers = append(markers, marker)
-			res[divicon_] = markers
-		}
+	for layergroupuse := range stage.LayerGroupUses {
+		layergroupuse.Unstage(stage)
 	}
 
-	return
-}
-
-// generate function for reverse association maps of UserClick
-
-// generate function for reverse association maps of VLine
-func (stageStruct *StageStruct) CreateReverseMap_VLine_LayerGroup() (res map[*LayerGroup][]*VLine) {
-	res = make(map[*LayerGroup][]*VLine)
-
-	for vline := range stageStruct.VLines {
-		if vline.LayerGroup != nil {
-			layergroup_ := vline.LayerGroup
-			var vlines []*VLine
-			_, ok := res[layergroup_]
-			if ok {
-				vlines = res[layergroup_]
-			} else {
-				vlines = make([]*VLine, 0)
-			}
-			vlines = append(vlines, vline)
-			res[layergroup_] = vlines
-		}
+	for mapoptions := range stage.MapOptionss {
+		mapoptions.Unstage(stage)
 	}
 
-	return
-}
-
-// generate function for reverse association maps of VisualTrack
-func (stageStruct *StageStruct) CreateReverseMap_VisualTrack_LayerGroup() (res map[*LayerGroup][]*VisualTrack) {
-	res = make(map[*LayerGroup][]*VisualTrack)
-
-	for visualtrack := range stageStruct.VisualTracks {
-		if visualtrack.LayerGroup != nil {
-			layergroup_ := visualtrack.LayerGroup
-			var visualtracks []*VisualTrack
-			_, ok := res[layergroup_]
-			if ok {
-				visualtracks = res[layergroup_]
-			} else {
-				visualtracks = make([]*VisualTrack, 0)
-			}
-			visualtracks = append(visualtracks, visualtrack)
-			res[layergroup_] = visualtracks
-		}
+	for marker := range stage.Markers {
+		marker.Unstage(stage)
 	}
 
-	return
-}
-func (stageStruct *StageStruct) CreateReverseMap_VisualTrack_DivIcon() (res map[*DivIcon][]*VisualTrack) {
-	res = make(map[*DivIcon][]*VisualTrack)
-
-	for visualtrack := range stageStruct.VisualTracks {
-		if visualtrack.DivIcon != nil {
-			divicon_ := visualtrack.DivIcon
-			var visualtracks []*VisualTrack
-			_, ok := res[divicon_]
-			if ok {
-				visualtracks = res[divicon_]
-			} else {
-				visualtracks = make([]*VisualTrack, 0)
-			}
-			visualtracks = append(visualtracks, visualtrack)
-			res[divicon_] = visualtracks
-		}
+	for userclick := range stage.UserClicks {
+		userclick.Unstage(stage)
 	}
 
-	return
+	for vline := range stage.VLines {
+		vline.Unstage(stage)
+	}
+
+	for visualtrack := range stage.VisualTracks {
+		visualtrack.Unstage(stage)
+	}
+
 }
 
 // Gongstruct is the type parameter for generated generic function that allows
@@ -1561,31 +897,39 @@ type GongstructMapString interface {
 
 // GongGetSet returns the set staged GongstructType instances
 // it is usefull because it allows refactoring of gong struct identifier
-func GongGetSet[Type GongstructSet]() *Type {
+func GongGetSet[Type GongstructSet](stages ...*StageStruct) *Type {
 	var ret Type
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
 	case map[*CheckoutScheduler]any:
-		return any(&Stage.CheckoutSchedulers).(*Type)
+		return any(&stage.CheckoutSchedulers).(*Type)
 	case map[*Circle]any:
-		return any(&Stage.Circles).(*Type)
+		return any(&stage.Circles).(*Type)
 	case map[*DivIcon]any:
-		return any(&Stage.DivIcons).(*Type)
+		return any(&stage.DivIcons).(*Type)
 	case map[*LayerGroup]any:
-		return any(&Stage.LayerGroups).(*Type)
+		return any(&stage.LayerGroups).(*Type)
 	case map[*LayerGroupUse]any:
-		return any(&Stage.LayerGroupUses).(*Type)
+		return any(&stage.LayerGroupUses).(*Type)
 	case map[*MapOptions]any:
-		return any(&Stage.MapOptionss).(*Type)
+		return any(&stage.MapOptionss).(*Type)
 	case map[*Marker]any:
-		return any(&Stage.Markers).(*Type)
+		return any(&stage.Markers).(*Type)
 	case map[*UserClick]any:
-		return any(&Stage.UserClicks).(*Type)
+		return any(&stage.UserClicks).(*Type)
 	case map[*VLine]any:
-		return any(&Stage.VLines).(*Type)
+		return any(&stage.VLines).(*Type)
 	case map[*VisualTrack]any:
-		return any(&Stage.VisualTracks).(*Type)
+		return any(&stage.VisualTracks).(*Type)
 	default:
 		return nil
 	}
@@ -1593,31 +937,39 @@ func GongGetSet[Type GongstructSet]() *Type {
 
 // GongGetMap returns the map of staged GongstructType instances
 // it is usefull because it allows refactoring of gong struct identifier
-func GongGetMap[Type GongstructMapString]() *Type {
+func GongGetMap[Type GongstructMapString](stages ...*StageStruct) *Type {
 	var ret Type
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
 	case map[string]*CheckoutScheduler:
-		return any(&Stage.CheckoutSchedulers_mapString).(*Type)
+		return any(&stage.CheckoutSchedulers_mapString).(*Type)
 	case map[string]*Circle:
-		return any(&Stage.Circles_mapString).(*Type)
+		return any(&stage.Circles_mapString).(*Type)
 	case map[string]*DivIcon:
-		return any(&Stage.DivIcons_mapString).(*Type)
+		return any(&stage.DivIcons_mapString).(*Type)
 	case map[string]*LayerGroup:
-		return any(&Stage.LayerGroups_mapString).(*Type)
+		return any(&stage.LayerGroups_mapString).(*Type)
 	case map[string]*LayerGroupUse:
-		return any(&Stage.LayerGroupUses_mapString).(*Type)
+		return any(&stage.LayerGroupUses_mapString).(*Type)
 	case map[string]*MapOptions:
-		return any(&Stage.MapOptionss_mapString).(*Type)
+		return any(&stage.MapOptionss_mapString).(*Type)
 	case map[string]*Marker:
-		return any(&Stage.Markers_mapString).(*Type)
+		return any(&stage.Markers_mapString).(*Type)
 	case map[string]*UserClick:
-		return any(&Stage.UserClicks_mapString).(*Type)
+		return any(&stage.UserClicks_mapString).(*Type)
 	case map[string]*VLine:
-		return any(&Stage.VLines_mapString).(*Type)
+		return any(&stage.VLines_mapString).(*Type)
 	case map[string]*VisualTrack:
-		return any(&Stage.VisualTracks_mapString).(*Type)
+		return any(&stage.VisualTracks_mapString).(*Type)
 	default:
 		return nil
 	}
@@ -1625,31 +977,39 @@ func GongGetMap[Type GongstructMapString]() *Type {
 
 // GetGongstructInstancesSet returns the set staged GongstructType instances
 // it is usefull because it allows refactoring of gongstruct identifier
-func GetGongstructInstancesSet[Type Gongstruct]() *map[*Type]any {
+func GetGongstructInstancesSet[Type Gongstruct](stages ...*StageStruct) *map[*Type]any {
 	var ret Type
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
 	case CheckoutScheduler:
-		return any(&Stage.CheckoutSchedulers).(*map[*Type]any)
+		return any(&stage.CheckoutSchedulers).(*map[*Type]any)
 	case Circle:
-		return any(&Stage.Circles).(*map[*Type]any)
+		return any(&stage.Circles).(*map[*Type]any)
 	case DivIcon:
-		return any(&Stage.DivIcons).(*map[*Type]any)
+		return any(&stage.DivIcons).(*map[*Type]any)
 	case LayerGroup:
-		return any(&Stage.LayerGroups).(*map[*Type]any)
+		return any(&stage.LayerGroups).(*map[*Type]any)
 	case LayerGroupUse:
-		return any(&Stage.LayerGroupUses).(*map[*Type]any)
+		return any(&stage.LayerGroupUses).(*map[*Type]any)
 	case MapOptions:
-		return any(&Stage.MapOptionss).(*map[*Type]any)
+		return any(&stage.MapOptionss).(*map[*Type]any)
 	case Marker:
-		return any(&Stage.Markers).(*map[*Type]any)
+		return any(&stage.Markers).(*map[*Type]any)
 	case UserClick:
-		return any(&Stage.UserClicks).(*map[*Type]any)
+		return any(&stage.UserClicks).(*map[*Type]any)
 	case VLine:
-		return any(&Stage.VLines).(*map[*Type]any)
+		return any(&stage.VLines).(*map[*Type]any)
 	case VisualTrack:
-		return any(&Stage.VisualTracks).(*map[*Type]any)
+		return any(&stage.VisualTracks).(*map[*Type]any)
 	default:
 		return nil
 	}
@@ -1657,31 +1017,39 @@ func GetGongstructInstancesSet[Type Gongstruct]() *map[*Type]any {
 
 // GetGongstructInstancesMap returns the map of staged GongstructType instances
 // it is usefull because it allows refactoring of gong struct identifier
-func GetGongstructInstancesMap[Type Gongstruct]() *map[string]*Type {
+func GetGongstructInstancesMap[Type Gongstruct](stages ...*StageStruct) *map[string]*Type {
 	var ret Type
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
 	case CheckoutScheduler:
-		return any(&Stage.CheckoutSchedulers_mapString).(*map[string]*Type)
+		return any(&stage.CheckoutSchedulers_mapString).(*map[string]*Type)
 	case Circle:
-		return any(&Stage.Circles_mapString).(*map[string]*Type)
+		return any(&stage.Circles_mapString).(*map[string]*Type)
 	case DivIcon:
-		return any(&Stage.DivIcons_mapString).(*map[string]*Type)
+		return any(&stage.DivIcons_mapString).(*map[string]*Type)
 	case LayerGroup:
-		return any(&Stage.LayerGroups_mapString).(*map[string]*Type)
+		return any(&stage.LayerGroups_mapString).(*map[string]*Type)
 	case LayerGroupUse:
-		return any(&Stage.LayerGroupUses_mapString).(*map[string]*Type)
+		return any(&stage.LayerGroupUses_mapString).(*map[string]*Type)
 	case MapOptions:
-		return any(&Stage.MapOptionss_mapString).(*map[string]*Type)
+		return any(&stage.MapOptionss_mapString).(*map[string]*Type)
 	case Marker:
-		return any(&Stage.Markers_mapString).(*map[string]*Type)
+		return any(&stage.Markers_mapString).(*map[string]*Type)
 	case UserClick:
-		return any(&Stage.UserClicks_mapString).(*map[string]*Type)
+		return any(&stage.UserClicks_mapString).(*map[string]*Type)
 	case VLine:
-		return any(&Stage.VLines_mapString).(*map[string]*Type)
+		return any(&stage.VLines_mapString).(*map[string]*Type)
 	case VisualTrack:
-		return any(&Stage.VisualTracks_mapString).(*map[string]*Type)
+		return any(&stage.VisualTracks_mapString).(*map[string]*Type)
 	default:
 		return nil
 	}
@@ -1764,7 +1132,16 @@ func GetAssociationName[Type Gongstruct]() *Type {
 // The function provides a map with keys as instances of End and values to arrays of *Start
 // the map is construed by iterating over all Start instances and populationg keys with End instances
 // and values with slice of Start instances
-func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*Start {
+func GetPointerReverseMap[Start, End Gongstruct](fieldname string, stages ...*StageStruct) map[*End][]*Start {
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
+
 	var ret Start
 
 	switch any(ret).(type) {
@@ -1780,7 +1157,7 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*S
 		// insertion point for per direct association field
 		case "LayerGroup":
 			res := make(map[*LayerGroup][]*Circle)
-			for circle := range Stage.Circles {
+			for circle := range stage.Circles {
 				if circle.LayerGroup != nil {
 					layergroup_ := circle.LayerGroup
 					var circles []*Circle
@@ -1812,7 +1189,7 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*S
 		// insertion point for per direct association field
 		case "LayerGroup":
 			res := make(map[*LayerGroup][]*LayerGroupUse)
-			for layergroupuse := range Stage.LayerGroupUses {
+			for layergroupuse := range stage.LayerGroupUses {
 				if layergroupuse.LayerGroup != nil {
 					layergroup_ := layergroupuse.LayerGroup
 					var layergroupuses []*LayerGroupUse
@@ -1839,7 +1216,7 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*S
 		// insertion point for per direct association field
 		case "LayerGroup":
 			res := make(map[*LayerGroup][]*Marker)
-			for marker := range Stage.Markers {
+			for marker := range stage.Markers {
 				if marker.LayerGroup != nil {
 					layergroup_ := marker.LayerGroup
 					var markers []*Marker
@@ -1856,7 +1233,7 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*S
 			return any(res).(map[*End][]*Start)
 		case "DivIcon":
 			res := make(map[*DivIcon][]*Marker)
-			for marker := range Stage.Markers {
+			for marker := range stage.Markers {
 				if marker.DivIcon != nil {
 					divicon_ := marker.DivIcon
 					var markers []*Marker
@@ -1883,7 +1260,7 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*S
 		// insertion point for per direct association field
 		case "LayerGroup":
 			res := make(map[*LayerGroup][]*VLine)
-			for vline := range Stage.VLines {
+			for vline := range stage.VLines {
 				if vline.LayerGroup != nil {
 					layergroup_ := vline.LayerGroup
 					var vlines []*VLine
@@ -1905,7 +1282,7 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*S
 		// insertion point for per direct association field
 		case "LayerGroup":
 			res := make(map[*LayerGroup][]*VisualTrack)
-			for visualtrack := range Stage.VisualTracks {
+			for visualtrack := range stage.VisualTracks {
 				if visualtrack.LayerGroup != nil {
 					layergroup_ := visualtrack.LayerGroup
 					var visualtracks []*VisualTrack
@@ -1922,7 +1299,7 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*S
 			return any(res).(map[*End][]*Start)
 		case "DivIcon":
 			res := make(map[*DivIcon][]*VisualTrack)
-			for visualtrack := range Stage.VisualTracks {
+			for visualtrack := range stage.VisualTracks {
 				if visualtrack.DivIcon != nil {
 					divicon_ := visualtrack.DivIcon
 					var visualtracks []*VisualTrack
@@ -1948,7 +1325,16 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*S
 // The function provides a map with keys as instances of End and values to *Start instances
 // the map is construed by iterating over all Start instances and populating keys with End instances
 // and values with the Start instances
-func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string) map[*End]*Start {
+func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string, stages ...*StageStruct) map[*End]*Start {
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
+
 	var ret Start
 
 	switch any(ret).(type) {
@@ -1984,7 +1370,7 @@ func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string) map[*
 		// insertion point for per direct association field
 		case "LayerGroupUses":
 			res := make(map[*LayerGroupUse]*MapOptions)
-			for mapoptions := range Stage.MapOptionss {
+			for mapoptions := range stage.MapOptionss {
 				for _, layergroupuse_ := range mapoptions.LayerGroupUses {
 					res[layergroupuse_] = mapoptions
 				}

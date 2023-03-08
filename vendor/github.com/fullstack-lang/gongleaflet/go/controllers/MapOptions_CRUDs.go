@@ -47,11 +47,23 @@ type MapOptionsInput struct {
 // default: genericError
 //
 //	200: mapoptionsDBResponse
-func GetMapOptionss(c *gin.Context) {
-	db := orm.BackRepo.BackRepoMapOptions.GetDB()
+func (controller *Controller) GetMapOptionss(c *gin.Context) {
 
 	// source slice
 	var mapoptionsDBs []orm.MapOptionsDB
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetMapOptionss", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoMapOptions.GetDB()
+
 	query := db.Find(&mapoptionsDBs)
 	if query.Error != nil {
 		var returnError GenericError
@@ -95,8 +107,19 @@ func GetMapOptionss(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func PostMapOptions(c *gin.Context) {
-	db := orm.BackRepo.BackRepoMapOptions.GetDB()
+func (controller *Controller) PostMapOptions(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("PostMapOptionss", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoMapOptions.GetDB()
 
 	// Validate input
 	var input orm.MapOptionsAPI
@@ -127,16 +150,16 @@ func PostMapOptions(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	orm.BackRepo.BackRepoMapOptions.CheckoutPhaseOneInstance(&mapoptionsDB)
-	mapoptions := (*orm.BackRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
+	backRepo.BackRepoMapOptions.CheckoutPhaseOneInstance(&mapoptionsDB)
+	mapoptions := (*backRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
 
 	if mapoptions != nil {
-		models.AfterCreateFromFront(&models.Stage, mapoptions)
+		models.AfterCreateFromFront(backRepo.GetStage(), mapoptions)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, mapoptionsDB)
 }
@@ -151,8 +174,19 @@ func PostMapOptions(c *gin.Context) {
 // default: genericError
 //
 //	200: mapoptionsDBResponse
-func GetMapOptions(c *gin.Context) {
-	db := orm.BackRepo.BackRepoMapOptions.GetDB()
+func (controller *Controller) GetMapOptions(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetMapOptions", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoMapOptions.GetDB()
 
 	// Get mapoptionsDB in DB
 	var mapoptionsDB orm.MapOptionsDB
@@ -183,8 +217,27 @@ func GetMapOptions(c *gin.Context) {
 // default: genericError
 //
 //	200: mapoptionsDBResponse
-func UpdateMapOptions(c *gin.Context) {
-	db := orm.BackRepo.BackRepoMapOptions.GetDB()
+func (controller *Controller) UpdateMapOptions(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("UpdateMapOptions", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoMapOptions.GetDB()
+
+	// Validate input
+	var input orm.MapOptionsAPI
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	// Get model if exist
 	var mapoptionsDB orm.MapOptionsDB
@@ -198,14 +251,6 @@ func UpdateMapOptions(c *gin.Context) {
 		returnError.Body.Message = query.Error.Error()
 		log.Println(query.Error.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
-		return
-	}
-
-	// Validate input
-	var input orm.MapOptionsAPI
-	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -228,16 +273,16 @@ func UpdateMapOptions(c *gin.Context) {
 	mapoptionsDB.CopyBasicFieldsToMapOptions(mapoptionsNew)
 
 	// get stage instance from DB instance, and call callback function
-	mapoptionsOld := (*orm.BackRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
+	mapoptionsOld := (*backRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
 	if mapoptionsOld != nil {
-		models.AfterUpdateFromFront(&models.Stage, mapoptionsOld, mapoptionsNew)
+		models.AfterUpdateFromFront(backRepo.GetStage(), mapoptionsOld, mapoptionsNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	// in some cases, with the marshalling of the stage, this operation might
 	// generates a checkout
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the mapoptionsDB
 	c.JSON(http.StatusOK, mapoptionsDB)
@@ -252,8 +297,19 @@ func UpdateMapOptions(c *gin.Context) {
 // default: genericError
 //
 //	200: mapoptionsDBResponse
-func DeleteMapOptions(c *gin.Context) {
-	db := orm.BackRepo.BackRepoMapOptions.GetDB()
+func (controller *Controller) DeleteMapOptions(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("DeleteMapOptions", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoMapOptions.GetDB()
 
 	// Get model if exist
 	var mapoptionsDB orm.MapOptionsDB
@@ -274,14 +330,14 @@ func DeleteMapOptions(c *gin.Context) {
 	mapoptionsDB.CopyBasicFieldsToMapOptions(mapoptionsDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	mapoptionsStaged := (*orm.BackRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
+	mapoptionsStaged := (*backRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
 	if mapoptionsStaged != nil {
-		models.AfterDeleteFromFront(&models.Stage, mapoptionsStaged, mapoptionsDeleted)
+		models.AfterDeleteFromFront(backRepo.GetStage(), mapoptionsStaged, mapoptionsDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

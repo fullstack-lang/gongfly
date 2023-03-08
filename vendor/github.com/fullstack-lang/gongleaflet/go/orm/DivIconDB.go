@@ -108,6 +108,13 @@ type BackRepoDivIconStruct struct {
 	Map_DivIconDBID_DivIconPtr *map[uint]*models.DivIcon
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoDivIcon *BackRepoDivIconStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoDivIcon.stage
+	return
 }
 
 func (backRepoDivIcon *BackRepoDivIconStruct) GetDB() *gorm.DB {
@@ -122,7 +129,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) GetDivIconDBFromDivIconPtr(divicon
 }
 
 // BackRepoDivIcon.Init set up the BackRepo of the DivIcon
-func (backRepoDivIcon *BackRepoDivIconStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoDivIcon *BackRepoDivIconStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoDivIcon.Map_DivIconDBID_DivIconPtr != nil {
 		err := errors.New("In Init, backRepoDivIcon.Map_DivIconDBID_DivIconPtr should be nil")
@@ -149,6 +156,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) Init(db *gorm.DB) (Error error) {
 	backRepoDivIcon.Map_DivIconPtr_DivIconDBID = &tmpID
 
 	backRepoDivIcon.db = db
+	backRepoDivIcon.stage = stage
 	return
 }
 
@@ -255,8 +263,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseTwoInstance(backRepo *B
 // BackRepoDivIcon.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseOne() (Error error) {
 
 	diviconDBArray := make([]DivIconDB, 0)
@@ -268,7 +275,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseOne() (Error error) {
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	diviconInstancesToBeRemovedFromTheStage := make(map[*models.DivIcon]any)
-	for key, value := range models.Stage.DivIcons {
+	for key, value := range backRepoDivIcon.stage.DivIcons {
 		diviconInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -286,7 +293,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseOne() (Error error) {
 
 	// remove from stage and back repo's 3 maps all divicons that are not in the checkout
 	for divicon := range diviconInstancesToBeRemovedFromTheStage {
-		divicon.Unstage()
+		divicon.Unstage(backRepoDivIcon.GetStage())
 
 		// remove instance from the back repo 3 maps
 		diviconID := (*backRepoDivIcon.Map_DivIconPtr_DivIconDBID)[divicon]
@@ -311,9 +318,12 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseOneInstance(diviconDB
 
 		// append model store with the new element
 		divicon.Name = diviconDB.Name_Data.String
-		divicon.Stage()
+		divicon.Stage(backRepoDivIcon.GetStage())
 	}
 	diviconDB.CopyBasicFieldsToDivIcon(divicon)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	divicon.Stage(backRepoDivIcon.GetStage())
 
 	// preserve pointer to diviconDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_DivIconDBID_DivIconDB)[diviconDB hold variable pointers

@@ -46,7 +46,7 @@ export class MarkerSortingComponent implements OnInit {
   }
 
   getMarkers(): void {
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.dialogData.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 
@@ -100,13 +100,13 @@ export class MarkerSortingComponent implements OnInit {
 
     this.associatedMarkers.forEach(
       marker => {
-        this.markerService.updateMarker(marker)
+        this.markerService.updateMarker(marker, this.dialogData.GONG__StackPath)
           .subscribe(marker => {
             this.markerService.MarkerServiceChanged.next("update")
           });
       }
     )
 
-    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer +' done');
+    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer + ' done');
   }
 }

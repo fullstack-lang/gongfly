@@ -108,6 +108,13 @@ type BackRepoCheckoutSchedulerStruct struct {
 	Map_CheckoutSchedulerDBID_CheckoutSchedulerPtr *map[uint]*models.CheckoutScheduler
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoCheckoutScheduler *BackRepoCheckoutSchedulerStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoCheckoutScheduler.stage
+	return
 }
 
 func (backRepoCheckoutScheduler *BackRepoCheckoutSchedulerStruct) GetDB() *gorm.DB {
@@ -122,7 +129,7 @@ func (backRepoCheckoutScheduler *BackRepoCheckoutSchedulerStruct) GetCheckoutSch
 }
 
 // BackRepoCheckoutScheduler.Init set up the BackRepo of the CheckoutScheduler
-func (backRepoCheckoutScheduler *BackRepoCheckoutSchedulerStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoCheckoutScheduler *BackRepoCheckoutSchedulerStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoCheckoutScheduler.Map_CheckoutSchedulerDBID_CheckoutSchedulerPtr != nil {
 		err := errors.New("In Init, backRepoCheckoutScheduler.Map_CheckoutSchedulerDBID_CheckoutSchedulerPtr should be nil")
@@ -149,6 +156,7 @@ func (backRepoCheckoutScheduler *BackRepoCheckoutSchedulerStruct) Init(db *gorm.
 	backRepoCheckoutScheduler.Map_CheckoutSchedulerPtr_CheckoutSchedulerDBID = &tmpID
 
 	backRepoCheckoutScheduler.db = db
+	backRepoCheckoutScheduler.stage = stage
 	return
 }
 
@@ -255,8 +263,7 @@ func (backRepoCheckoutScheduler *BackRepoCheckoutSchedulerStruct) CommitPhaseTwo
 // BackRepoCheckoutScheduler.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoCheckoutScheduler *BackRepoCheckoutSchedulerStruct) CheckoutPhaseOne() (Error error) {
 
 	checkoutschedulerDBArray := make([]CheckoutSchedulerDB, 0)
@@ -268,7 +275,7 @@ func (backRepoCheckoutScheduler *BackRepoCheckoutSchedulerStruct) CheckoutPhaseO
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	checkoutschedulerInstancesToBeRemovedFromTheStage := make(map[*models.CheckoutScheduler]any)
-	for key, value := range models.Stage.CheckoutSchedulers {
+	for key, value := range backRepoCheckoutScheduler.stage.CheckoutSchedulers {
 		checkoutschedulerInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -286,7 +293,7 @@ func (backRepoCheckoutScheduler *BackRepoCheckoutSchedulerStruct) CheckoutPhaseO
 
 	// remove from stage and back repo's 3 maps all checkoutschedulers that are not in the checkout
 	for checkoutscheduler := range checkoutschedulerInstancesToBeRemovedFromTheStage {
-		checkoutscheduler.Unstage()
+		checkoutscheduler.Unstage(backRepoCheckoutScheduler.GetStage())
 
 		// remove instance from the back repo 3 maps
 		checkoutschedulerID := (*backRepoCheckoutScheduler.Map_CheckoutSchedulerPtr_CheckoutSchedulerDBID)[checkoutscheduler]
@@ -311,9 +318,12 @@ func (backRepoCheckoutScheduler *BackRepoCheckoutSchedulerStruct) CheckoutPhaseO
 
 		// append model store with the new element
 		checkoutscheduler.Name = checkoutschedulerDB.Name_Data.String
-		checkoutscheduler.Stage()
+		checkoutscheduler.Stage(backRepoCheckoutScheduler.GetStage())
 	}
 	checkoutschedulerDB.CopyBasicFieldsToCheckoutScheduler(checkoutscheduler)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	checkoutscheduler.Stage(backRepoCheckoutScheduler.GetStage())
 
 	// preserve pointer to checkoutschedulerDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_CheckoutSchedulerDBID_CheckoutSchedulerDB)[checkoutschedulerDB hold variable pointers

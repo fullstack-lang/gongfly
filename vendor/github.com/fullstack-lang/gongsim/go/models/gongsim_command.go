@@ -15,7 +15,6 @@ type GongsimCommand struct {
 	DateSpeedCommand string
 }
 
-//
 // the states of the engine drivers
 type EngineDriverState int
 
@@ -47,7 +46,7 @@ var GongsimCommandSingloton = (&GongsimCommand{
 	Name:        "Gongsim Command Singloton",
 	Command:     COMMAND_PAUSE,
 	CommandDate: "",
-}).Stage().SetupGongsimThreads()
+}).Stage(&Stage).SetupGongsimThreads()
 
 //
 // SetupGongsimThreads enables GongsimCommand to periodicaly watch the GongsimCommand in the Repo
@@ -72,13 +71,13 @@ func (gongsimCommand *GongsimCommand) commandPooler() {
 		select {
 		case t := <-CommandPoolerPeriod.C:
 
-			gongsimCommand.Checkout()
+			gongsimCommand.Checkout(&Stage)
 			if GongsimStatusSingloton.CompletionDate != gongsimCommand.CommandDate {
 				log.Println("commandPooler reads new command ", gongsimCommand.Command, "  timestamp ", gongsimCommand.CommandDate, " at ", t)
 
 				GongsimStatusSingloton.CurrentCommand = gongsimCommand.Command
 				GongsimStatusSingloton.CompletionDate = gongsimCommand.CommandDate
-				GongsimStatusSingloton.Commit()
+				GongsimStatusSingloton.Commit(&Stage)
 			}
 			if GongsimStatusSingloton.SpeedCommandCompletionDate != gongsimCommand.DateSpeedCommand {
 				log.Println("commandPooler reads new speed command ", gongsimCommand.SpeedCommandType, "  timestamp ", gongsimCommand.CommandDate, " at ", t)
@@ -86,15 +85,15 @@ func (gongsimCommand *GongsimCommand) commandPooler() {
 				switch gongsimCommand.SpeedCommandType {
 				case COMMAND_DECREASE_SPEED_50_PERCENTS:
 					EngineSingloton.Speed *= 0.5
-					EngineSingloton.Commit()
+					EngineSingloton.Commit(&Stage)
 				case COMMAND_INCREASE_SPEED_100_PERCENTS:
 					EngineSingloton.Speed *= 2.0
-					EngineSingloton.Commit()
+					EngineSingloton.Commit(&Stage)
 				}
 
 				GongsimStatusSingloton.CurrentSpeedCommand = gongsimCommand.SpeedCommandType
 				GongsimStatusSingloton.SpeedCommandCompletionDate = gongsimCommand.DateSpeedCommand
-				GongsimStatusSingloton.Commit()
+				GongsimStatusSingloton.Commit(&Stage)
 			}
 		}
 	}
@@ -137,11 +136,12 @@ var commitFromFrontNbAfterLastEngineCommitOrCheckout uint
 
 // The "checkout scheduler" is in charge of asking for a checkout of the back repo to the stage.
 //
-// This can happen when an user updates manualy update the state vector of an agent by using the GUI
+// # This can happen when an user updates manualy update the state vector of an agent by using the GUI
 //
 // The checkout is performed only if both conditions are met:
-//  - the event number of the engine has not increased (if it is idle for instance)
-//  - the commitNb from the frontof the simulation has increased since the first condition is met
+//   - the event number of the engine has not increased (if it is idle for instance)
+//   - the commitNb from the frontof the simulation has increased since the first condition is met
+//
 // Since the checkout
 // have to happend when the simulation is not advancing, the "checkout scheduler" only schedule the "engine driver"
 // to checkout the simlation stage when it will be ready.
@@ -281,7 +281,7 @@ func (gongsimCommand *GongsimCommand) SetupGongsimThreads() *GongsimCommand {
 						EngineSingloton.Simulation.Reset(EngineSingloton)
 					}
 					// commit the engine state
-					EngineSingloton.Commit()
+					EngineSingloton.Commit(&Stage)
 				case COMMIT_AGENT_STATES:
 					if EngineSingloton.Simulation != nil {
 						EngineSingloton.Simulation.CommitAgents(EngineSingloton)
@@ -298,7 +298,7 @@ func (gongsimCommand *GongsimCommand) SetupGongsimThreads() *GongsimCommand {
 				case FIRE_ONE_EVENT:
 					if EngineSingloton.State != RUNNING {
 						EngineSingloton.State = RUNNING
-						EngineSingloton.Commit()
+						EngineSingloton.Commit(&Stage)
 					}
 
 					if nextMode == RELATIVE_SPEED {
@@ -322,7 +322,7 @@ func (gongsimCommand *GongsimCommand) SetupGongsimThreads() *GongsimCommand {
 						sleepTime := EngineSingloton.nextRealtimeHorizon.Sub(time.Now())
 						time.Sleep(sleepTime)
 
-						EngineSingloton.Commit()
+						EngineSingloton.Commit(&Stage)
 
 						// // log.Printf(lastSimTime.String() + " " + nextSimTime.String())
 						// if nextSimTime.Sub(EngineSingloton.GetCurrentTime()) > 0 {
@@ -348,7 +348,7 @@ func (gongsimCommand *GongsimCommand) SetupGongsimThreads() *GongsimCommand {
 						// 		EngineSingloton.SetCurrentTime(EngineSingloton.GetCurrentTime().Add(
 						// 			time.Duration(progressInSimulatedTimeInMiliseconds) * time.Millisecond))
 						// 		// log.Printf("Engine current time " + EngineSingloton.CurrentTime.String())
-						// 		EngineSingloton.Commit()
+						// 		EngineSingloton.Commit(&Stage)
 						// 	}
 						// }
 						// _, nextSimTime, _ = EngineSingloton.FireNextEvent()
@@ -382,13 +382,13 @@ func (gongsimCommand *GongsimCommand) SetupGongsimThreads() *GongsimCommand {
 						}
 
 						// time has progressed, therefore an update is necessary
-						EngineSingloton.Commit()
+						EngineSingloton.Commit(&Stage)
 					}
 
 				case SLEEP_100_MS:
 					if EngineSingloton.State != PAUSED {
 						EngineSingloton.State = PAUSED
-						EngineSingloton.Commit()
+						EngineSingloton.Commit(&Stage)
 					}
 					time.Sleep(time.Duration(100 * time.Millisecond))
 				default:

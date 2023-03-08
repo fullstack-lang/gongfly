@@ -8,20 +8,20 @@ import (
 
 var AircraftLayerGroup = (&gongleaflet_models.LayerGroup{
 	Name: string(models.Aircraft_),
-}).StageCopy()
+}).Stage(&gongleaflet_models.Stage)
 
 var SatelliteLayerGroup = (&gongleaflet_models.LayerGroup{
 	Name: string(models.Satellite_),
-}).StageCopy()
+}).Stage(&gongleaflet_models.Stage)
 
 var NetworkLayerGroup = (&gongleaflet_models.LayerGroup{
 	Name: string(models.Network_),
-}).StageCopy()
+}).Stage(&gongleaflet_models.Stage)
 
 var CenterLayerGroup = (&gongleaflet_models.LayerGroup{
 	Name: string(models.Center_),
-}).StageCopy()
+}).Stage(&gongleaflet_models.Stage)
 
 var SystemLayerGroup = (&gongleaflet_models.LayerGroup{
 	Name: string(models.System_),
-}).StageCopy()
+}).Stage(&gongleaflet_models.Stage)

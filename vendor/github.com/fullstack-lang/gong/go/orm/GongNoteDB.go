@@ -63,6 +63,9 @@ type GongNoteDB struct {
 
 	// Declation for basic field gongnoteDB.Body
 	Body_Data sql.NullString
+
+	// Declation for basic field gongnoteDB.BodyHTML
+	BodyHTML_Data sql.NullString
 	// encoding of pointers
 	GongNotePointersEnconding
 }
@@ -87,6 +90,8 @@ type GongNoteWOP struct {
 	Name string `xlsx:"1"`
 
 	Body string `xlsx:"2"`
+
+	BodyHTML string `xlsx:"3"`
 	// insertion for WOP pointer fields
 }
 
@@ -95,6 +100,7 @@ var GongNote_Fields = []string{
 	"ID",
 	"Name",
 	"Body",
+	"BodyHTML",
 }
 
 type BackRepoGongNoteStruct struct {
@@ -108,6 +114,13 @@ type BackRepoGongNoteStruct struct {
 	Map_GongNoteDBID_GongNotePtr *map[uint]*models.GongNote
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoGongNote *BackRepoGongNoteStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoGongNote.stage
+	return
 }
 
 func (backRepoGongNote *BackRepoGongNoteStruct) GetDB() *gorm.DB {
@@ -122,7 +135,7 @@ func (backRepoGongNote *BackRepoGongNoteStruct) GetGongNoteDBFromGongNotePtr(gon
 }
 
 // BackRepoGongNote.Init set up the BackRepo of the GongNote
-func (backRepoGongNote *BackRepoGongNoteStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoGongNote *BackRepoGongNoteStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoGongNote.Map_GongNoteDBID_GongNotePtr != nil {
 		err := errors.New("In Init, backRepoGongNote.Map_GongNoteDBID_GongNotePtr should be nil")
@@ -149,6 +162,7 @@ func (backRepoGongNote *BackRepoGongNoteStruct) Init(db *gorm.DB) (Error error) 
 	backRepoGongNote.Map_GongNotePtr_GongNoteDBID = &tmpID
 
 	backRepoGongNote.db = db
+	backRepoGongNote.stage = stage
 	return
 }
 
@@ -286,7 +300,7 @@ func (backRepoGongNote *BackRepoGongNoteStruct) CheckoutPhaseOne() (Error error)
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	gongnoteInstancesToBeRemovedFromTheStage := make(map[*models.GongNote]any)
-	for key, value := range models.Stage.GongNotes {
+	for key, value := range backRepoGongNote.stage.GongNotes {
 		gongnoteInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -304,7 +318,7 @@ func (backRepoGongNote *BackRepoGongNoteStruct) CheckoutPhaseOne() (Error error)
 
 	// remove from stage and back repo's 3 maps all gongnotes that are not in the checkout
 	for gongnote := range gongnoteInstancesToBeRemovedFromTheStage {
-		gongnote.Unstage()
+		gongnote.Unstage(backRepoGongNote.GetStage())
 
 		// remove instance from the back repo 3 maps
 		gongnoteID := (*backRepoGongNote.Map_GongNotePtr_GongNoteDBID)[gongnote]
@@ -329,12 +343,12 @@ func (backRepoGongNote *BackRepoGongNoteStruct) CheckoutPhaseOneInstance(gongnot
 
 		// append model store with the new element
 		gongnote.Name = gongnoteDB.Name_Data.String
-		gongnote.Stage()
+		gongnote.Stage(backRepoGongNote.GetStage())
 	}
 	gongnoteDB.CopyBasicFieldsToGongNote(gongnote)
 
 	// in some cases, the instance might have been unstaged. It is necessary to stage it again
-	gongnote.Stage()
+	gongnote.Stage(backRepoGongNote.GetStage())
 
 	// preserve pointer to gongnoteDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_GongNoteDBID_GongNoteDB)[gongnoteDB hold variable pointers
@@ -430,6 +444,9 @@ func (gongnoteDB *GongNoteDB) CopyBasicFieldsFromGongNote(gongnote *models.GongN
 
 	gongnoteDB.Body_Data.String = gongnote.Body
 	gongnoteDB.Body_Data.Valid = true
+
+	gongnoteDB.BodyHTML_Data.String = gongnote.BodyHTML
+	gongnoteDB.BodyHTML_Data.Valid = true
 }
 
 // CopyBasicFieldsFromGongNoteWOP
@@ -441,6 +458,9 @@ func (gongnoteDB *GongNoteDB) CopyBasicFieldsFromGongNoteWOP(gongnote *GongNoteW
 
 	gongnoteDB.Body_Data.String = gongnote.Body
 	gongnoteDB.Body_Data.Valid = true
+
+	gongnoteDB.BodyHTML_Data.String = gongnote.BodyHTML
+	gongnoteDB.BodyHTML_Data.Valid = true
 }
 
 // CopyBasicFieldsToGongNote
@@ -448,6 +468,7 @@ func (gongnoteDB *GongNoteDB) CopyBasicFieldsToGongNote(gongnote *models.GongNot
 	// insertion point for checkout of basic fields (back repo to stage)
 	gongnote.Name = gongnoteDB.Name_Data.String
 	gongnote.Body = gongnoteDB.Body_Data.String
+	gongnote.BodyHTML = gongnoteDB.BodyHTML_Data.String
 }
 
 // CopyBasicFieldsToGongNoteWOP
@@ -456,6 +477,7 @@ func (gongnoteDB *GongNoteDB) CopyBasicFieldsToGongNoteWOP(gongnote *GongNoteWOP
 	// insertion point for checkout of basic fields (back repo to stage)
 	gongnote.Name = gongnoteDB.Name_Data.String
 	gongnote.Body = gongnoteDB.Body_Data.String
+	gongnote.BodyHTML = gongnoteDB.BodyHTML_Data.String
 }
 
 // Backup generates a json file from a slice of all GongNoteDB instances in the backrepo

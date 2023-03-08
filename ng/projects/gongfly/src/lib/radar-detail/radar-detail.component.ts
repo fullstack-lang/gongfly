@@ -155,13 +155,13 @@ export class RadarDetailComponent implements OnInit {
 
 		switch (this.state) {
 			case RadarDetailComponentState.UPDATE_INSTANCE:
-				this.radarService.updateRadar(this.radar)
+				this.radarService.updateRadar(this.radar, this.GONG__StackPath)
 					.subscribe(radar => {
 						this.radarService.RadarServiceChanged.next("update")
 					});
 				break;
 			default:
-				this.radarService.postRadar(this.radar).subscribe(radar => {
+				this.radarService.postRadar(this.radar, this.GONG__StackPath).subscribe(radar => {
 					this.radarService.RadarServiceChanged.next("post")
 					this.radar = new (RadarDB) // reset fields
 				});

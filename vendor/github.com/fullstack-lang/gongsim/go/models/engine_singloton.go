@@ -7,6 +7,6 @@ var EngineSingloton = NewEngineSingloton()
 func NewEngineSingloton() (engine *Engine) {
 	engine = new(Engine)
 	engine.Name = "Simulation Engine"
-	engine.Stage()
+	engine.Stage(&Stage)
 	return
 }

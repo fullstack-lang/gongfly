@@ -239,7 +239,7 @@ export class LinersTableComponent implements OnInit {
 
   ngOnInit(): void {
     let stackPath = this.activatedRoute.snapshot.paramMap.get('GONG__StackPath')
-    if ( stackPath != undefined) {
+    if (stackPath != undefined) {
       this.GONG__StackPath = stackPath
     }
 
@@ -275,10 +275,14 @@ export class LinersTableComponent implements OnInit {
           let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s" as keyof FrontRepo] as Map<number, LinerDB>
           let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)!
 
-          let sourceField = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as LinerDB[]
-          for (let associationInstance of sourceField) {
-            let liner = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as LinerDB
-            this.initialSelection.push(liner)
+          // we associates on sourceInstance of type SourceStruct with a MANY MANY associations to LinerDB
+          // the field name is sourceField
+          let sourceFieldArray = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as LinerDB[]
+          if (sourceFieldArray != null) {
+            for (let associationInstance of sourceFieldArray) {
+              let liner = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as LinerDB
+              this.initialSelection.push(liner)
+            }
           }
 
           this.selection = new SelectionModel<LinerDB>(allowMultiSelect, this.initialSelection);
@@ -299,7 +303,7 @@ export class LinersTableComponent implements OnInit {
     // list of liners is truncated of liner before the delete
     this.liners = this.liners.filter(h => h !== liner);
 
-    this.linerService.deleteLiner(linerID).subscribe(
+    this.linerService.deleteLiner(linerID, this.GONG__StackPath).subscribe(
       liner => {
         this.linerService.LinerServiceChanged.next("delete")
       }
@@ -365,7 +369,7 @@ export class LinersTableComponent implements OnInit {
 
       // update all liner (only update selection & initial selection)
       for (let liner of toUpdate) {
-        this.linerService.updateLiner(liner)
+        this.linerService.updateLiner(liner, this.GONG__StackPath)
           .subscribe(liner => {
             this.linerService.LinerServiceChanged.next("update")
           });

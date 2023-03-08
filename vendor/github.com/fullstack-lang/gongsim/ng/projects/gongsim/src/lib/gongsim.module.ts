@@ -42,27 +42,22 @@ import { GongstructSelectionService } from './gongstruct-selection.service'
 import { DummyAgentsTableComponent } from './dummyagents-table/dummyagents-table.component'
 import { DummyAgentSortingComponent } from './dummyagent-sorting/dummyagent-sorting.component'
 import { DummyAgentDetailComponent } from './dummyagent-detail/dummyagent-detail.component'
-import { DummyAgentPresentationComponent } from './dummyagent-presentation/dummyagent-presentation.component'
 
 import { EnginesTableComponent } from './engines-table/engines-table.component'
 import { EngineSortingComponent } from './engine-sorting/engine-sorting.component'
 import { EngineDetailComponent } from './engine-detail/engine-detail.component'
-import { EnginePresentationComponent } from './engine-presentation/engine-presentation.component'
 
 import { EventsTableComponent } from './events-table/events-table.component'
 import { EventSortingComponent } from './event-sorting/event-sorting.component'
 import { EventDetailComponent } from './event-detail/event-detail.component'
-import { EventPresentationComponent } from './event-presentation/event-presentation.component'
 
 import { GongsimCommandsTableComponent } from './gongsimcommands-table/gongsimcommands-table.component'
 import { GongsimCommandSortingComponent } from './gongsimcommand-sorting/gongsimcommand-sorting.component'
 import { GongsimCommandDetailComponent } from './gongsimcommand-detail/gongsimcommand-detail.component'
-import { GongsimCommandPresentationComponent } from './gongsimcommand-presentation/gongsimcommand-presentation.component'
 
 import { GongsimStatussTableComponent } from './gongsimstatuss-table/gongsimstatuss-table.component'
 import { GongsimStatusSortingComponent } from './gongsimstatus-sorting/gongsimstatus-sorting.component'
 import { GongsimStatusDetailComponent } from './gongsimstatus-detail/gongsimstatus-detail.component'
-import { GongsimStatusPresentationComponent } from './gongsimstatus-presentation/gongsimstatus-presentation.component'
 
 
 @NgModule({
@@ -71,27 +66,22 @@ import { GongsimStatusPresentationComponent } from './gongsimstatus-presentation
 		DummyAgentsTableComponent,
 		DummyAgentSortingComponent,
 		DummyAgentDetailComponent,
-		DummyAgentPresentationComponent,
 
 		EnginesTableComponent,
 		EngineSortingComponent,
 		EngineDetailComponent,
-		EnginePresentationComponent,
 
 		EventsTableComponent,
 		EventSortingComponent,
 		EventDetailComponent,
-		EventPresentationComponent,
 
 		GongsimCommandsTableComponent,
 		GongsimCommandSortingComponent,
 		GongsimCommandDetailComponent,
-		GongsimCommandPresentationComponent,
 
 		GongsimStatussTableComponent,
 		GongsimStatusSortingComponent,
 		GongsimStatusDetailComponent,
-		GongsimStatusPresentationComponent,
 
 
 		SplitterComponent,
@@ -135,27 +125,22 @@ import { GongsimStatusPresentationComponent } from './gongsimstatus-presentation
 		DummyAgentsTableComponent,
 		DummyAgentSortingComponent,
 		DummyAgentDetailComponent,
-		DummyAgentPresentationComponent,
 
 		EnginesTableComponent,
 		EngineSortingComponent,
 		EngineDetailComponent,
-		EnginePresentationComponent,
 
 		EventsTableComponent,
 		EventSortingComponent,
 		EventDetailComponent,
-		EventPresentationComponent,
 
 		GongsimCommandsTableComponent,
 		GongsimCommandSortingComponent,
 		GongsimCommandDetailComponent,
-		GongsimCommandPresentationComponent,
 
 		GongsimStatussTableComponent,
 		GongsimStatusSortingComponent,
 		GongsimStatusDetailComponent,
-		GongsimStatusPresentationComponent,
 
 
 		SplitterComponent,

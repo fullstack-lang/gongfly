@@ -46,7 +46,7 @@ export class UserClickSortingComponent implements OnInit {
   }
 
   getUserClicks(): void {
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.dialogData.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 
@@ -100,13 +100,13 @@ export class UserClickSortingComponent implements OnInit {
 
     this.associatedUserClicks.forEach(
       userclick => {
-        this.userclickService.updateUserClick(userclick)
+        this.userclickService.updateUserClick(userclick, this.dialogData.GONG__StackPath)
           .subscribe(userclick => {
             this.userclickService.UserClickServiceChanged.next("update")
           });
       }
     )
 
-    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer +' done');
+    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer + ' done');
   }
 }

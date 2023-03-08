@@ -46,7 +46,7 @@ export class VisualTrackSortingComponent implements OnInit {
   }
 
   getVisualTracks(): void {
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.dialogData.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 
@@ -100,13 +100,13 @@ export class VisualTrackSortingComponent implements OnInit {
 
     this.associatedVisualTracks.forEach(
       visualtrack => {
-        this.visualtrackService.updateVisualTrack(visualtrack)
+        this.visualtrackService.updateVisualTrack(visualtrack, this.dialogData.GONG__StackPath)
           .subscribe(visualtrack => {
             this.visualtrackService.VisualTrackServiceChanged.next("update")
           });
       }
     )
 
-    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer +' done');
+    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer + ' done');
   }
 }

@@ -104,6 +104,8 @@ export class DialogData {
   IntermediateStruct: string = "" // the "AclassBclassUse" 
   IntermediateStructField: string = "" // the "Bclass" as field
   NextAssociationStruct: string = "" // the "Bclass"
+
+  GONG__StackPath: string = ""
 }
 
 export enum SelectionMode {
@@ -118,6 +120,8 @@ export enum SelectionMode {
   providedIn: 'root'
 })
 export class FrontRepoService {
+
+  GONG__StackPath: string = ""
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -175,17 +179,17 @@ export class FrontRepoService {
     Observable<UserClickDB[]>,
     Observable<VLineDB[]>,
     Observable<VisualTrackDB[]>,
-  ] = [ // insertion point sub template 
-      this.checkoutschedulerService.getCheckoutSchedulers(),
-      this.circleService.getCircles(),
-      this.diviconService.getDivIcons(),
-      this.layergroupService.getLayerGroups(),
-      this.layergroupuseService.getLayerGroupUses(),
-      this.mapoptionsService.getMapOptionss(),
-      this.markerService.getMarkers(),
-      this.userclickService.getUserClicks(),
-      this.vlineService.getVLines(),
-      this.visualtrackService.getVisualTracks(),
+  ] = [ // insertion point sub template
+      this.checkoutschedulerService.getCheckoutSchedulers(this.GONG__StackPath),
+      this.circleService.getCircles(this.GONG__StackPath),
+      this.diviconService.getDivIcons(this.GONG__StackPath),
+      this.layergroupService.getLayerGroups(this.GONG__StackPath),
+      this.layergroupuseService.getLayerGroupUses(this.GONG__StackPath),
+      this.mapoptionsService.getMapOptionss(this.GONG__StackPath),
+      this.markerService.getMarkers(this.GONG__StackPath),
+      this.userclickService.getUserClicks(this.GONG__StackPath),
+      this.vlineService.getVLines(this.GONG__StackPath),
+      this.visualtrackService.getVisualTracks(this.GONG__StackPath),
     ];
 
   //
@@ -194,7 +198,23 @@ export class FrontRepoService {
   // This is an observable. Therefore, the control flow forks with
   // - pull() return immediatly the observable
   // - the observable observer, if it subscribe, is called when all GET calls are performs
-  pull(): Observable<FrontRepo> {
+  pull(GONG__StackPath: string = ""): Observable<FrontRepo> {
+
+    this.GONG__StackPath = GONG__StackPath
+
+    this.observableFrontRepo = [ // insertion point sub template
+      this.checkoutschedulerService.getCheckoutSchedulers(this.GONG__StackPath),
+      this.circleService.getCircles(this.GONG__StackPath),
+      this.diviconService.getDivIcons(this.GONG__StackPath),
+      this.layergroupService.getLayerGroups(this.GONG__StackPath),
+      this.layergroupuseService.getLayerGroupUses(this.GONG__StackPath),
+      this.mapoptionsService.getMapOptionss(this.GONG__StackPath),
+      this.markerService.getMarkers(this.GONG__StackPath),
+      this.userclickService.getUserClicks(this.GONG__StackPath),
+      this.vlineService.getVLines(this.GONG__StackPath),
+      this.visualtrackService.getVisualTracks(this.GONG__StackPath),
+    ]
+
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest(

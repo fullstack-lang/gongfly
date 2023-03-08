@@ -20,10 +20,6 @@ import { SatelliteDB } from './satellite-db';
 })
 export class SatelliteService {
 
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-  };
-
   // Kamar Raïmo: Adding a way to communicate between components that share information
   // so that they are notified of a change.
   SatelliteServiceChanged: BehaviorSubject<string> = new BehaviorSubject("");
@@ -32,7 +28,6 @@ export class SatelliteService {
 
   constructor(
     private http: HttpClient,
-    private location: Location,
     @Inject(DOCUMENT) private document: Document
   ) {
     // path to the service share the same origin with the path to the document
@@ -67,14 +62,18 @@ export class SatelliteService {
     );
   }
 
-  //////// Save methods //////////
-
   /** POST: add a new satellite to the server */
-  postSatellite(satellitedb: SatelliteDB): Observable<SatelliteDB> {
+  postSatellite(satellitedb: SatelliteDB, GONG__StackPath: string): Observable<SatelliteDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.post<SatelliteDB>(this.satellitesUrl, satellitedb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+	return this.http.post<SatelliteDB>(this.satellitesUrl, satellitedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`posted satellitedb id=${satellitedb.ID}`)
@@ -84,24 +83,36 @@ export class SatelliteService {
   }
 
   /** DELETE: delete the satellitedb from the server */
-  deleteSatellite(satellitedb: SatelliteDB | number): Observable<SatelliteDB> {
+  deleteSatellite(satellitedb: SatelliteDB | number, GONG__StackPath: string): Observable<SatelliteDB> {
     const id = typeof satellitedb === 'number' ? satellitedb : satellitedb.ID;
     const url = `${this.satellitesUrl}/${id}`;
 
-    return this.http.delete<SatelliteDB>(url, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.delete<SatelliteDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted satellitedb id=${id}`)),
       catchError(this.handleError<SatelliteDB>('deleteSatellite'))
     );
   }
 
   /** PUT: update the satellitedb on the server */
-  updateSatellite(satellitedb: SatelliteDB): Observable<SatelliteDB> {
+  updateSatellite(satellitedb: SatelliteDB, GONG__StackPath: string): Observable<SatelliteDB> {
     const id = typeof satellitedb === 'number' ? satellitedb : satellitedb.ID;
     const url = `${this.satellitesUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.put<SatelliteDB>(url, satellitedb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.put<SatelliteDB>(url, satellitedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated satellitedb id=${satellitedb.ID}`)

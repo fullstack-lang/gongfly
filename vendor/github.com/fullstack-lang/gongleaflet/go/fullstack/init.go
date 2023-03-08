@@ -4,6 +4,7 @@ import (
 	// gongleaflet stack for model analysis
 
 	gongleaflet_controllers "github.com/fullstack-lang/gongleaflet/go/controllers"
+	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
 	gongleaflet_orm "github.com/fullstack-lang/gongleaflet/go/orm"
 	"github.com/gin-gonic/gin"
 
@@ -19,7 +20,7 @@ func Init(r *gin.Engine, filenames ...string) {
 		filenames = append(filenames, ":memory:")
 	}
 
-	db_inMemory := gongleaflet_orm.SetupModels(false, filenames[0])
+	db_inMemory := gongleaflet_orm.SetupModels(&gongleaflet_models.Stage, false, filenames[0])
 
 	// since gongleafletsim is a multi threaded application. It is important to set up
 	// only one open connexion at a time

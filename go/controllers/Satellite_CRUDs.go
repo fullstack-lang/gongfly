@@ -47,23 +47,22 @@ type SatelliteInput struct {
 // default: genericError
 //
 //	200: satelliteDBResponse
-func GetSatellites(c *gin.Context) {
-	db := orm.BackRepo.BackRepoSatellite.GetDB()
+func (controller *Controller) GetSatellites(c *gin.Context) {
 
 	// source slice
 	var satelliteDBs []orm.SatelliteDB
 
-	// type Values map[string][]string
 	values := c.Request.URL.Query()
+	stackPath := ""
 	if len(values) == 1 {
 		value := values["GONG__StackPath"]
 		if len(value) == 1 {
-			// we have a single parameter
-			// we assume it is the stack
-			stackParam := value[0]
-			log.Println("GONG__StackPath", stackParam)
+			stackPath = value[0]
+			log.Println("GetSatellites", "GONG__StackPath", stackPath)
 		}
 	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoSatellite.GetDB()
 
 	query := db.Find(&satelliteDBs)
 	if query.Error != nil {
@@ -108,7 +107,19 @@ func GetSatellites(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func PostSatellite(c *gin.Context) {
+func (controller *Controller) PostSatellite(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("PostSatellites", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoSatellite.GetDB()
 
 	// Validate input
 	var input orm.SatelliteAPI
@@ -128,7 +139,6 @@ func PostSatellite(c *gin.Context) {
 	satelliteDB.SatellitePointersEnconding = input.SatellitePointersEnconding
 	satelliteDB.CopyBasicFieldsFromSatellite(&input.Satellite)
 
-	db := orm.BackRepo.BackRepoSatellite.GetDB()
 	query := db.Create(&satelliteDB)
 	if query.Error != nil {
 		var returnError GenericError
@@ -140,16 +150,16 @@ func PostSatellite(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	orm.BackRepo.BackRepoSatellite.CheckoutPhaseOneInstance(&satelliteDB)
-	satellite := (*orm.BackRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
+	backRepo.BackRepoSatellite.CheckoutPhaseOneInstance(&satelliteDB)
+	satellite := (*backRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
 
 	if satellite != nil {
-		models.AfterCreateFromFront(&models.Stage, satellite)
+		models.AfterCreateFromFront(backRepo.GetStage(), satellite)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, satelliteDB)
 }
@@ -164,21 +174,19 @@ func PostSatellite(c *gin.Context) {
 // default: genericError
 //
 //	200: satelliteDBResponse
-func GetSatellite(c *gin.Context) {
+func (controller *Controller) GetSatellite(c *gin.Context) {
 
-	// type Values map[string][]string
 	values := c.Request.URL.Query()
+	stackPath := ""
 	if len(values) == 1 {
-		value := values["stack"]
+		value := values["GONG__StackPath"]
 		if len(value) == 1 {
-			// we have a single parameter
-			// we assume it is the stack
-			stackParam := value[0]
-			log.Println("GET params", stackParam)
+			stackPath = value[0]
+			log.Println("GetSatellite", "GONG__StackPath", stackPath)
 		}
 	}
-
-	db := orm.BackRepo.BackRepoSatellite.GetDB()
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoSatellite.GetDB()
 
 	// Get satelliteDB in DB
 	var satelliteDB orm.SatelliteDB
@@ -209,7 +217,19 @@ func GetSatellite(c *gin.Context) {
 // default: genericError
 //
 //	200: satelliteDBResponse
-func UpdateSatellite(c *gin.Context) {
+func (controller *Controller) UpdateSatellite(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("UpdateSatellite", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoSatellite.GetDB()
 
 	// Validate input
 	var input orm.SatelliteAPI
@@ -218,8 +238,6 @@ func UpdateSatellite(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	db := orm.BackRepo.BackRepoSatellite.GetDB()
 
 	// Get model if exist
 	var satelliteDB orm.SatelliteDB
@@ -255,16 +273,16 @@ func UpdateSatellite(c *gin.Context) {
 	satelliteDB.CopyBasicFieldsToSatellite(satelliteNew)
 
 	// get stage instance from DB instance, and call callback function
-	satelliteOld := (*orm.BackRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
+	satelliteOld := (*backRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
 	if satelliteOld != nil {
-		models.AfterUpdateFromFront(&models.Stage, satelliteOld, satelliteNew)
+		models.AfterUpdateFromFront(backRepo.GetStage(), satelliteOld, satelliteNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	// in some cases, with the marshalling of the stage, this operation might
 	// generates a checkout
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the satelliteDB
 	c.JSON(http.StatusOK, satelliteDB)
@@ -279,8 +297,19 @@ func UpdateSatellite(c *gin.Context) {
 // default: genericError
 //
 //	200: satelliteDBResponse
-func DeleteSatellite(c *gin.Context) {
-	db := orm.BackRepo.BackRepoSatellite.GetDB()
+func (controller *Controller) DeleteSatellite(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("DeleteSatellite", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoSatellite.GetDB()
 
 	// Get model if exist
 	var satelliteDB orm.SatelliteDB
@@ -301,14 +330,14 @@ func DeleteSatellite(c *gin.Context) {
 	satelliteDB.CopyBasicFieldsToSatellite(satelliteDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	satelliteStaged := (*orm.BackRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
+	satelliteStaged := (*backRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
 	if satelliteStaged != nil {
-		models.AfterDeleteFromFront(&models.Stage, satelliteStaged, satelliteDeleted)
+		models.AfterDeleteFromFront(backRepo.GetStage(), satelliteStaged, satelliteDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

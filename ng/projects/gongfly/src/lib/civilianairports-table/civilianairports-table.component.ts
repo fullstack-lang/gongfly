@@ -165,7 +165,7 @@ export class CivilianAirportsTableComponent implements OnInit {
 
   ngOnInit(): void {
     let stackPath = this.activatedRoute.snapshot.paramMap.get('GONG__StackPath')
-    if ( stackPath != undefined) {
+    if (stackPath != undefined) {
       this.GONG__StackPath = stackPath
     }
 
@@ -201,10 +201,14 @@ export class CivilianAirportsTableComponent implements OnInit {
           let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s" as keyof FrontRepo] as Map<number, CivilianAirportDB>
           let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)!
 
-          let sourceField = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as CivilianAirportDB[]
-          for (let associationInstance of sourceField) {
-            let civilianairport = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as CivilianAirportDB
-            this.initialSelection.push(civilianairport)
+          // we associates on sourceInstance of type SourceStruct with a MANY MANY associations to CivilianAirportDB
+          // the field name is sourceField
+          let sourceFieldArray = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as CivilianAirportDB[]
+          if (sourceFieldArray != null) {
+            for (let associationInstance of sourceFieldArray) {
+              let civilianairport = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as CivilianAirportDB
+              this.initialSelection.push(civilianairport)
+            }
           }
 
           this.selection = new SelectionModel<CivilianAirportDB>(allowMultiSelect, this.initialSelection);
@@ -225,7 +229,7 @@ export class CivilianAirportsTableComponent implements OnInit {
     // list of civilianairports is truncated of civilianairport before the delete
     this.civilianairports = this.civilianairports.filter(h => h !== civilianairport);
 
-    this.civilianairportService.deleteCivilianAirport(civilianairportID).subscribe(
+    this.civilianairportService.deleteCivilianAirport(civilianairportID, this.GONG__StackPath).subscribe(
       civilianairport => {
         this.civilianairportService.CivilianAirportServiceChanged.next("delete")
       }
@@ -291,7 +295,7 @@ export class CivilianAirportsTableComponent implements OnInit {
 
       // update all civilianairport (only update selection & initial selection)
       for (let civilianairport of toUpdate) {
-        this.civilianairportService.updateCivilianAirport(civilianairport)
+        this.civilianairportService.updateCivilianAirport(civilianairport, this.GONG__StackPath)
           .subscribe(civilianairport => {
             this.civilianairportService.CivilianAirportServiceChanged.next("update")
           });

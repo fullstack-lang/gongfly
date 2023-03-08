@@ -21,10 +21,6 @@ import { ScenarioDB } from './scenario-db'
 })
 export class OpsLineService {
 
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-  };
-
   // Kamar Raïmo: Adding a way to communicate between components that share information
   // so that they are notified of a change.
   OpsLineServiceChanged: BehaviorSubject<string> = new BehaviorSubject("");
@@ -33,7 +29,6 @@ export class OpsLineService {
 
   constructor(
     private http: HttpClient,
-    private location: Location,
     @Inject(DOCUMENT) private document: Document
   ) {
     // path to the service share the same origin with the path to the document
@@ -68,15 +63,19 @@ export class OpsLineService {
     );
   }
 
-  //////// Save methods //////////
-
   /** POST: add a new opsline to the server */
-  postOpsLine(opslinedb: OpsLineDB): Observable<OpsLineDB> {
+  postOpsLine(opslinedb: OpsLineDB, GONG__StackPath: string): Observable<OpsLineDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
     opslinedb.Scenario = new ScenarioDB
 
-    return this.http.post<OpsLineDB>(this.opslinesUrl, opslinedb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+	return this.http.post<OpsLineDB>(this.opslinesUrl, opslinedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`posted opslinedb id=${opslinedb.ID}`)
@@ -86,25 +85,37 @@ export class OpsLineService {
   }
 
   /** DELETE: delete the opslinedb from the server */
-  deleteOpsLine(opslinedb: OpsLineDB | number): Observable<OpsLineDB> {
+  deleteOpsLine(opslinedb: OpsLineDB | number, GONG__StackPath: string): Observable<OpsLineDB> {
     const id = typeof opslinedb === 'number' ? opslinedb : opslinedb.ID;
     const url = `${this.opslinesUrl}/${id}`;
 
-    return this.http.delete<OpsLineDB>(url, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.delete<OpsLineDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted opslinedb id=${id}`)),
       catchError(this.handleError<OpsLineDB>('deleteOpsLine'))
     );
   }
 
   /** PUT: update the opslinedb on the server */
-  updateOpsLine(opslinedb: OpsLineDB): Observable<OpsLineDB> {
+  updateOpsLine(opslinedb: OpsLineDB, GONG__StackPath: string): Observable<OpsLineDB> {
     const id = typeof opslinedb === 'number' ? opslinedb : opslinedb.ID;
     const url = `${this.opslinesUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
     opslinedb.Scenario = new ScenarioDB
 
-    return this.http.put<OpsLineDB>(url, opslinedb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.put<OpsLineDB>(url, opslinedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated opslinedb id=${opslinedb.ID}`)

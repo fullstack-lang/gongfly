@@ -20,10 +20,6 @@ import { RadarDB } from './radar-db';
 })
 export class RadarService {
 
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-  };
-
   // Kamar Raïmo: Adding a way to communicate between components that share information
   // so that they are notified of a change.
   RadarServiceChanged: BehaviorSubject<string> = new BehaviorSubject("");
@@ -32,7 +28,6 @@ export class RadarService {
 
   constructor(
     private http: HttpClient,
-    private location: Location,
     @Inject(DOCUMENT) private document: Document
   ) {
     // path to the service share the same origin with the path to the document
@@ -67,14 +62,18 @@ export class RadarService {
     );
   }
 
-  //////// Save methods //////////
-
   /** POST: add a new radar to the server */
-  postRadar(radardb: RadarDB): Observable<RadarDB> {
+  postRadar(radardb: RadarDB, GONG__StackPath: string): Observable<RadarDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.post<RadarDB>(this.radarsUrl, radardb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+	return this.http.post<RadarDB>(this.radarsUrl, radardb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`posted radardb id=${radardb.ID}`)
@@ -84,24 +83,36 @@ export class RadarService {
   }
 
   /** DELETE: delete the radardb from the server */
-  deleteRadar(radardb: RadarDB | number): Observable<RadarDB> {
+  deleteRadar(radardb: RadarDB | number, GONG__StackPath: string): Observable<RadarDB> {
     const id = typeof radardb === 'number' ? radardb : radardb.ID;
     const url = `${this.radarsUrl}/${id}`;
 
-    return this.http.delete<RadarDB>(url, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.delete<RadarDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted radardb id=${id}`)),
       catchError(this.handleError<RadarDB>('deleteRadar'))
     );
   }
 
   /** PUT: update the radardb on the server */
-  updateRadar(radardb: RadarDB): Observable<RadarDB> {
+  updateRadar(radardb: RadarDB, GONG__StackPath: string): Observable<RadarDB> {
     const id = typeof radardb === 'number' ? radardb : radardb.ID;
     const url = `${this.radarsUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.put<RadarDB>(url, radardb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.put<RadarDB>(url, radardb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated radardb id=${radardb.ID}`)

@@ -126,6 +126,13 @@ type BackRepoGongsimStatusStruct struct {
 	Map_GongsimStatusDBID_GongsimStatusPtr *map[uint]*models.GongsimStatus
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoGongsimStatus.stage
+	return
 }
 
 func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) GetDB() *gorm.DB {
@@ -140,7 +147,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) GetGongsimStatusDBFrom
 }
 
 // BackRepoGongsimStatus.Init set up the BackRepo of the GongsimStatus
-func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr != nil {
 		err := errors.New("In Init, backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr should be nil")
@@ -167,6 +174,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) Init(db *gorm.DB) (Err
 	backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID = &tmpID
 
 	backRepoGongsimStatus.db = db
+	backRepoGongsimStatus.stage = stage
 	return
 }
 
@@ -273,8 +281,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseTwoInstance
 // BackRepoGongsimStatus.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseOne() (Error error) {
 
 	gongsimstatusDBArray := make([]GongsimStatusDB, 0)
@@ -286,7 +293,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseOne() (Er
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	gongsimstatusInstancesToBeRemovedFromTheStage := make(map[*models.GongsimStatus]any)
-	for key, value := range models.Stage.GongsimStatuss {
+	for key, value := range backRepoGongsimStatus.stage.GongsimStatuss {
 		gongsimstatusInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -304,7 +311,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseOne() (Er
 
 	// remove from stage and back repo's 3 maps all gongsimstatuss that are not in the checkout
 	for gongsimstatus := range gongsimstatusInstancesToBeRemovedFromTheStage {
-		gongsimstatus.Unstage()
+		gongsimstatus.Unstage(backRepoGongsimStatus.GetStage())
 
 		// remove instance from the back repo 3 maps
 		gongsimstatusID := (*backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID)[gongsimstatus]
@@ -329,9 +336,12 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseOneInstan
 
 		// append model store with the new element
 		gongsimstatus.Name = gongsimstatusDB.Name_Data.String
-		gongsimstatus.Stage()
+		gongsimstatus.Stage(backRepoGongsimStatus.GetStage())
 	}
 	gongsimstatusDB.CopyBasicFieldsToGongsimStatus(gongsimstatus)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	gongsimstatus.Stage(backRepoGongsimStatus.GetStage())
 
 	// preserve pointer to gongsimstatusDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_GongsimStatusDBID_GongsimStatusDB)[gongsimstatusDB hold variable pointers

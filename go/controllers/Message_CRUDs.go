@@ -47,23 +47,22 @@ type MessageInput struct {
 // default: genericError
 //
 //	200: messageDBResponse
-func GetMessages(c *gin.Context) {
-	db := orm.BackRepo.BackRepoMessage.GetDB()
+func (controller *Controller) GetMessages(c *gin.Context) {
 
 	// source slice
 	var messageDBs []orm.MessageDB
 
-	// type Values map[string][]string
 	values := c.Request.URL.Query()
+	stackPath := ""
 	if len(values) == 1 {
 		value := values["GONG__StackPath"]
 		if len(value) == 1 {
-			// we have a single parameter
-			// we assume it is the stack
-			stackParam := value[0]
-			log.Println("GONG__StackPath", stackParam)
+			stackPath = value[0]
+			log.Println("GetMessages", "GONG__StackPath", stackPath)
 		}
 	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoMessage.GetDB()
 
 	query := db.Find(&messageDBs)
 	if query.Error != nil {
@@ -108,7 +107,19 @@ func GetMessages(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func PostMessage(c *gin.Context) {
+func (controller *Controller) PostMessage(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("PostMessages", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoMessage.GetDB()
 
 	// Validate input
 	var input orm.MessageAPI
@@ -128,7 +139,6 @@ func PostMessage(c *gin.Context) {
 	messageDB.MessagePointersEnconding = input.MessagePointersEnconding
 	messageDB.CopyBasicFieldsFromMessage(&input.Message)
 
-	db := orm.BackRepo.BackRepoMessage.GetDB()
 	query := db.Create(&messageDB)
 	if query.Error != nil {
 		var returnError GenericError
@@ -140,16 +150,16 @@ func PostMessage(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	orm.BackRepo.BackRepoMessage.CheckoutPhaseOneInstance(&messageDB)
-	message := (*orm.BackRepo.BackRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
+	backRepo.BackRepoMessage.CheckoutPhaseOneInstance(&messageDB)
+	message := (*backRepo.BackRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
 
 	if message != nil {
-		models.AfterCreateFromFront(&models.Stage, message)
+		models.AfterCreateFromFront(backRepo.GetStage(), message)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, messageDB)
 }
@@ -164,21 +174,19 @@ func PostMessage(c *gin.Context) {
 // default: genericError
 //
 //	200: messageDBResponse
-func GetMessage(c *gin.Context) {
+func (controller *Controller) GetMessage(c *gin.Context) {
 
-	// type Values map[string][]string
 	values := c.Request.URL.Query()
+	stackPath := ""
 	if len(values) == 1 {
-		value := values["stack"]
+		value := values["GONG__StackPath"]
 		if len(value) == 1 {
-			// we have a single parameter
-			// we assume it is the stack
-			stackParam := value[0]
-			log.Println("GET params", stackParam)
+			stackPath = value[0]
+			log.Println("GetMessage", "GONG__StackPath", stackPath)
 		}
 	}
-
-	db := orm.BackRepo.BackRepoMessage.GetDB()
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoMessage.GetDB()
 
 	// Get messageDB in DB
 	var messageDB orm.MessageDB
@@ -209,7 +217,19 @@ func GetMessage(c *gin.Context) {
 // default: genericError
 //
 //	200: messageDBResponse
-func UpdateMessage(c *gin.Context) {
+func (controller *Controller) UpdateMessage(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("UpdateMessage", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoMessage.GetDB()
 
 	// Validate input
 	var input orm.MessageAPI
@@ -218,8 +238,6 @@ func UpdateMessage(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	db := orm.BackRepo.BackRepoMessage.GetDB()
 
 	// Get model if exist
 	var messageDB orm.MessageDB
@@ -255,16 +273,16 @@ func UpdateMessage(c *gin.Context) {
 	messageDB.CopyBasicFieldsToMessage(messageNew)
 
 	// get stage instance from DB instance, and call callback function
-	messageOld := (*orm.BackRepo.BackRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
+	messageOld := (*backRepo.BackRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
 	if messageOld != nil {
-		models.AfterUpdateFromFront(&models.Stage, messageOld, messageNew)
+		models.AfterUpdateFromFront(backRepo.GetStage(), messageOld, messageNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	// in some cases, with the marshalling of the stage, this operation might
 	// generates a checkout
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the messageDB
 	c.JSON(http.StatusOK, messageDB)
@@ -279,8 +297,19 @@ func UpdateMessage(c *gin.Context) {
 // default: genericError
 //
 //	200: messageDBResponse
-func DeleteMessage(c *gin.Context) {
-	db := orm.BackRepo.BackRepoMessage.GetDB()
+func (controller *Controller) DeleteMessage(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("DeleteMessage", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoMessage.GetDB()
 
 	// Get model if exist
 	var messageDB orm.MessageDB
@@ -301,14 +330,14 @@ func DeleteMessage(c *gin.Context) {
 	messageDB.CopyBasicFieldsToMessage(messageDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	messageStaged := (*orm.BackRepo.BackRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
+	messageStaged := (*backRepo.BackRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
 	if messageStaged != nil {
-		models.AfterDeleteFromFront(&models.Stage, messageStaged, messageDeleted)
+		models.AfterDeleteFromFront(backRepo.GetStage(), messageStaged, messageDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

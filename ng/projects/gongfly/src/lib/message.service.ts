@@ -20,10 +20,6 @@ import { MessageDB } from './message-db';
 })
 export class MessageService {
 
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-  };
-
   // Kamar Raïmo: Adding a way to communicate between components that share information
   // so that they are notified of a change.
   MessageServiceChanged: BehaviorSubject<string> = new BehaviorSubject("");
@@ -32,7 +28,6 @@ export class MessageService {
 
   constructor(
     private http: HttpClient,
-    private location: Location,
     @Inject(DOCUMENT) private document: Document
   ) {
     // path to the service share the same origin with the path to the document
@@ -67,14 +62,18 @@ export class MessageService {
     );
   }
 
-  //////// Save methods //////////
-
   /** POST: add a new message to the server */
-  postMessage(messagedb: MessageDB): Observable<MessageDB> {
+  postMessage(messagedb: MessageDB, GONG__StackPath: string): Observable<MessageDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.post<MessageDB>(this.messagesUrl, messagedb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+	return this.http.post<MessageDB>(this.messagesUrl, messagedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`posted messagedb id=${messagedb.ID}`)
@@ -84,24 +83,36 @@ export class MessageService {
   }
 
   /** DELETE: delete the messagedb from the server */
-  deleteMessage(messagedb: MessageDB | number): Observable<MessageDB> {
+  deleteMessage(messagedb: MessageDB | number, GONG__StackPath: string): Observable<MessageDB> {
     const id = typeof messagedb === 'number' ? messagedb : messagedb.ID;
     const url = `${this.messagesUrl}/${id}`;
 
-    return this.http.delete<MessageDB>(url, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.delete<MessageDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted messagedb id=${id}`)),
       catchError(this.handleError<MessageDB>('deleteMessage'))
     );
   }
 
   /** PUT: update the messagedb on the server */
-  updateMessage(messagedb: MessageDB): Observable<MessageDB> {
+  updateMessage(messagedb: MessageDB, GONG__StackPath: string): Observable<MessageDB> {
     const id = typeof messagedb === 'number' ? messagedb : messagedb.ID;
     const url = `${this.messagesUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.put<MessageDB>(url, messagedb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.put<MessageDB>(url, messagedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated messagedb id=${messagedb.ID}`)

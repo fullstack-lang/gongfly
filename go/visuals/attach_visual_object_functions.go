@@ -22,7 +22,7 @@ func attachVisualTrack(track gongleaflet_models.VisualTrackInterface,
 		log.Fatal("nil visual icon")
 	}
 
-	visualTrack := new(gongleaflet_models.VisualTrack).Stage()
+	visualTrack := new(gongleaflet_models.VisualTrack).Stage(&gongleaflet_models.Stage)
 	visualTrack.VisualTrackInterface = track
 	visualTrack.DivIcon = divIcon
 	visualTrack.DisplayTrackHistory = displayTrackHistory
@@ -40,7 +40,7 @@ func attachMarker(
 	if divIcon == nil {
 		log.Fatal("nil visual icon")
 	}
-	visualCenter := new(gongleaflet_models.Marker).Stage()
+	visualCenter := new(gongleaflet_models.Marker).Stage(&gongleaflet_models.Stage)
 	visualCenter.MarkerInteface = visualCenterInterface
 	visualCenter.ColorEnum = colorEnum
 	visualCenter.DivIcon = divIcon
@@ -51,7 +51,7 @@ func attachMarker(
 func attachLine(
 	visualLineInterface gongleaflet_models.LineInterface,
 	DashStyleEnum gongleaflet_models.DashStyleEnum) {
-	visualLine := new(gongleaflet_models.VLine).Stage()
+	visualLine := new(gongleaflet_models.VLine).Stage(&gongleaflet_models.Stage)
 	visualLine.DashStyleEnum = DashStyleEnum
 	visualLine.LineInterface = visualLineInterface
 	visualLine.UpdateLine()
@@ -61,7 +61,7 @@ func attachLine(
 func attachCircle(
 	visualCircleInterface gongleaflet_models.CircleInterface,
 	DashStyleEnum gongleaflet_models.DashStyleEnum) {
-	visualCircle := new(gongleaflet_models.Circle).Stage()
+	visualCircle := new(gongleaflet_models.Circle).Stage(&gongleaflet_models.Stage)
 	visualCircle.DashStyleEnum = DashStyleEnum
 	visualCircle.Circle = visualCircleInterface
 	visualCircle.UpdateCircle()

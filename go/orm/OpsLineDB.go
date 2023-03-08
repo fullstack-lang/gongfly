@@ -138,6 +138,13 @@ type BackRepoOpsLineStruct struct {
 	Map_OpsLineDBID_OpsLinePtr *map[uint]*models.OpsLine
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoOpsLine *BackRepoOpsLineStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoOpsLine.stage
+	return
 }
 
 func (backRepoOpsLine *BackRepoOpsLineStruct) GetDB() *gorm.DB {
@@ -152,7 +159,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) GetOpsLineDBFromOpsLinePtr(opsline
 }
 
 // BackRepoOpsLine.Init set up the BackRepo of the OpsLine
-func (backRepoOpsLine *BackRepoOpsLineStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoOpsLine *BackRepoOpsLineStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr != nil {
 		err := errors.New("In Init, backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr should be nil")
@@ -179,6 +186,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) Init(db *gorm.DB) (Error error) {
 	backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID = &tmpID
 
 	backRepoOpsLine.db = db
+	backRepoOpsLine.stage = stage
 	return
 }
 
@@ -306,7 +314,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseOne() (Error error) {
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	opslineInstancesToBeRemovedFromTheStage := make(map[*models.OpsLine]any)
-	for key, value := range models.Stage.OpsLines {
+	for key, value := range backRepoOpsLine.stage.OpsLines {
 		opslineInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -324,7 +332,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseOne() (Error error) {
 
 	// remove from stage and back repo's 3 maps all opslines that are not in the checkout
 	for opsline := range opslineInstancesToBeRemovedFromTheStage {
-		opsline.Unstage()
+		opsline.Unstage(backRepoOpsLine.GetStage())
 
 		// remove instance from the back repo 3 maps
 		opslineID := (*backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID)[opsline]
@@ -349,12 +357,12 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseOneInstance(opslineDB
 
 		// append model store with the new element
 		opsline.Name = opslineDB.Name_Data.String
-		opsline.Stage()
+		opsline.Stage(backRepoOpsLine.GetStage())
 	}
 	opslineDB.CopyBasicFieldsToOpsLine(opsline)
 
 	// in some cases, the instance might have been unstaged. It is necessary to stage it again
-	opsline.Stage()
+	opsline.Stage(backRepoOpsLine.GetStage())
 
 	// preserve pointer to opslineDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_OpsLineDBID_OpsLineDB)[opslineDB hold variable pointers

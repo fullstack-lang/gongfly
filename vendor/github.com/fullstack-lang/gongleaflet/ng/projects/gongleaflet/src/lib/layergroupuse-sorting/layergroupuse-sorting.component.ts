@@ -46,7 +46,7 @@ export class LayerGroupUseSortingComponent implements OnInit {
   }
 
   getLayerGroupUses(): void {
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.dialogData.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 
@@ -100,13 +100,13 @@ export class LayerGroupUseSortingComponent implements OnInit {
 
     this.associatedLayerGroupUses.forEach(
       layergroupuse => {
-        this.layergroupuseService.updateLayerGroupUse(layergroupuse)
+        this.layergroupuseService.updateLayerGroupUse(layergroupuse, this.dialogData.GONG__StackPath)
           .subscribe(layergroupuse => {
             this.layergroupuseService.LayerGroupUseServiceChanged.next("update")
           });
       }
     )
 
-    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer +' done');
+    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer + ' done');
   }
 }

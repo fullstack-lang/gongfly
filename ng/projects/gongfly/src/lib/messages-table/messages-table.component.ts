@@ -253,7 +253,7 @@ export class MessagesTableComponent implements OnInit {
 
   ngOnInit(): void {
     let stackPath = this.activatedRoute.snapshot.paramMap.get('GONG__StackPath')
-    if ( stackPath != undefined) {
+    if (stackPath != undefined) {
       this.GONG__StackPath = stackPath
     }
 
@@ -296,10 +296,14 @@ export class MessagesTableComponent implements OnInit {
           let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s" as keyof FrontRepo] as Map<number, MessageDB>
           let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)!
 
-          let sourceField = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as MessageDB[]
-          for (let associationInstance of sourceField) {
-            let message = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as MessageDB
-            this.initialSelection.push(message)
+          // we associates on sourceInstance of type SourceStruct with a MANY MANY associations to MessageDB
+          // the field name is sourceField
+          let sourceFieldArray = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as MessageDB[]
+          if (sourceFieldArray != null) {
+            for (let associationInstance of sourceFieldArray) {
+              let message = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as MessageDB
+              this.initialSelection.push(message)
+            }
           }
 
           this.selection = new SelectionModel<MessageDB>(allowMultiSelect, this.initialSelection);
@@ -320,7 +324,7 @@ export class MessagesTableComponent implements OnInit {
     // list of messages is truncated of message before the delete
     this.messages = this.messages.filter(h => h !== message);
 
-    this.messageService.deleteMessage(messageID).subscribe(
+    this.messageService.deleteMessage(messageID, this.GONG__StackPath).subscribe(
       message => {
         this.messageService.MessageServiceChanged.next("delete")
       }
@@ -386,7 +390,7 @@ export class MessagesTableComponent implements OnInit {
 
       // update all message (only update selection & initial selection)
       for (let message of toUpdate) {
-        this.messageService.updateMessage(message)
+        this.messageService.updateMessage(message, this.GONG__StackPath)
           .subscribe(message => {
             this.messageService.MessageServiceChanged.next("update")
           });

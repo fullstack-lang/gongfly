@@ -177,7 +177,7 @@ export class ScenariosTableComponent implements OnInit {
 
   ngOnInit(): void {
     let stackPath = this.activatedRoute.snapshot.paramMap.get('GONG__StackPath')
-    if ( stackPath != undefined) {
+    if (stackPath != undefined) {
       this.GONG__StackPath = stackPath
     }
 
@@ -213,10 +213,14 @@ export class ScenariosTableComponent implements OnInit {
           let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s" as keyof FrontRepo] as Map<number, ScenarioDB>
           let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)!
 
-          let sourceField = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as ScenarioDB[]
-          for (let associationInstance of sourceField) {
-            let scenario = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as ScenarioDB
-            this.initialSelection.push(scenario)
+          // we associates on sourceInstance of type SourceStruct with a MANY MANY associations to ScenarioDB
+          // the field name is sourceField
+          let sourceFieldArray = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as ScenarioDB[]
+          if (sourceFieldArray != null) {
+            for (let associationInstance of sourceFieldArray) {
+              let scenario = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as ScenarioDB
+              this.initialSelection.push(scenario)
+            }
           }
 
           this.selection = new SelectionModel<ScenarioDB>(allowMultiSelect, this.initialSelection);
@@ -237,7 +241,7 @@ export class ScenariosTableComponent implements OnInit {
     // list of scenarios is truncated of scenario before the delete
     this.scenarios = this.scenarios.filter(h => h !== scenario);
 
-    this.scenarioService.deleteScenario(scenarioID).subscribe(
+    this.scenarioService.deleteScenario(scenarioID, this.GONG__StackPath).subscribe(
       scenario => {
         this.scenarioService.ScenarioServiceChanged.next("delete")
       }
@@ -303,7 +307,7 @@ export class ScenariosTableComponent implements OnInit {
 
       // update all scenario (only update selection & initial selection)
       for (let scenario of toUpdate) {
-        this.scenarioService.updateScenario(scenario)
+        this.scenarioService.updateScenario(scenario, this.GONG__StackPath)
           .subscribe(scenario => {
             this.scenarioService.ScenarioServiceChanged.next("update")
           });

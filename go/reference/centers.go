@@ -13,7 +13,7 @@ var TLN_LFTH_ref = models.CivilianAirport{
 		Lng: 6 + 8.0/60.0,
 	},
 }
-var NTE_LFRS = TLN_LFTH_ref.StageCopy().Register()
+var NTE_LFRS = TLN_LFTH_ref.Stage(&models.Stage).Register()
 
 var CDG_LFPG_ref = models.CivilianAirport{
 	Name: "CDG",
@@ -22,4 +22,4 @@ var CDG_LFPG_ref = models.CivilianAirport{
 		Lng: 2 + 32.0/60.0,
 	},
 }
-var CDG_LFPG = CDG_LFPG_ref.StageCopy().Register()
+var CDG_LFPG = CDG_LFPG_ref.Stage(&models.Stage).Register()

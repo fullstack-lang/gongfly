@@ -33,6 +33,8 @@ func AfterCreateFromFront[Type Gongstruct](stage *StageStruct, instance *Type) {
 		if stage.OnAfterScenarioCreateCallback != nil {
 			stage.OnAfterScenarioCreateCallback.OnAfterCreate(stage, target)
 		}
+	default:
+		_ = target
 	}
 }
 
@@ -76,6 +78,8 @@ func AfterUpdateFromFront[Type Gongstruct](stage *StageStruct, old, new *Type) {
 		if stage.OnAfterScenarioUpdateCallback != nil {
 			stage.OnAfterScenarioUpdateCallback.OnAfterUpdate(stage, oldTarget, newTarget)
 		}
+	default:
+		_ = oldTarget
 	}
 }
 
@@ -119,6 +123,8 @@ func AfterDeleteFromFront[Type Gongstruct](stage *StageStruct, staged, front *Ty
 			staged := any(staged).(*Scenario)
 			stage.OnAfterScenarioDeleteCallback.OnAfterDelete(stage, staged, front)
 		}
+	default:
+		_ = front
 	}
 }
 
@@ -155,6 +161,8 @@ func AfterReadFromFront[Type Gongstruct](stage *StageStruct, instance *Type) {
 		if stage.OnAfterScenarioReadCallback != nil {
 			stage.OnAfterScenarioReadCallback.OnAfterRead(stage, target)
 		}
+	default:
+		_ = target
 	}
 }
 

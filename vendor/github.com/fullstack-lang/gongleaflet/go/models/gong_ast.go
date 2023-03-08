@@ -15,13 +15,24 @@ import (
 
 var dummy_strconv_import strconv.NumError
 
+// swagger:ignore
+type GONG__ExpressionType string
+
+const (
+	GONG__STRUCT_INSTANCE      GONG__ExpressionType = "STRUCT_INSTANCE"
+	GONG__FIELD_OR_CONST_VALUE GONG__ExpressionType = "FIELD_OR_CONST_VALUE"
+	GONG__FIELD_VALUE          GONG__ExpressionType = "FIELD_VALUE"
+	GONG__ENUM_CAST_INT        GONG__ExpressionType = "ENUM_CAST_INT"
+	GONG__ENUM_CAST_STRING     GONG__ExpressionType = "ENUM_CAST_STRING"
+	GONG__IDENTIFIER_CONST     GONG__ExpressionType = "IDENTIFIER_CONST"
+)
+
 // ParseAstFile Parse pathToFile and stages all instances
 // declared in the file
-func ParseAstFile(pathToFile string) error {
-
+func ParseAstFile(stage *StageStruct, pathToFile string) error {
 	// map to store renaming docLink
 	// to be removed after fix of [issue](https://github.com/golang/go/issues/57559)
-	Stage.Map_DocLink_Renaming = make(map[string]string, 0)
+	stage.Map_DocLink_Renaming = make(map[string]GONG__Identifier, 0)
 
 	fileOfInterest, err := filepath.Abs(pathToFile)
 	if err != nil {
@@ -37,15 +48,19 @@ func ParseAstFile(pathToFile string) error {
 		return errors.New("Unable to parser " + errParser.Error())
 	}
 
+	return ParseAstFileFromAst(stage, inFile, fset)
+}
+
+// ParseAstFile Parse pathToFile and stages all instances
+// declared in the file
+func ParseAstFileFromAst(stage *StageStruct, inFile *ast.File, fset *token.FileSet) error {
 	// if there is a meta package import, it is the third import
 	if len(inFile.Imports) > 3 {
-		log.Fatalln("Too many imports in file", fileOfInterest)
+		log.Fatalln("Too many imports in file", inFile.Name)
 	}
-	stage := &Stage
-	_ = stage
 	if len(inFile.Imports) == 3 {
-		Stage.MetaPackageImportAlias = inFile.Imports[2].Name.Name
-		Stage.MetaPackageImportPath = inFile.Imports[2].Path.Value
+		stage.MetaPackageImportAlias = inFile.Imports[2].Name.Name
+		stage.MetaPackageImportPath = inFile.Imports[2].Path.Value
 	}
 
 	// astCoordinate := "File "
@@ -99,7 +114,7 @@ func ParseAstFile(pathToFile string) error {
 						assignStmt := stmt
 						instance, id, gongstruct, fieldName :=
 							UnmarshallGongstructStaging(
-								&cmap, assignStmt, astCoordinate)
+								stage, &cmap, assignStmt, astCoordinate)
 						_ = instance
 						_ = id
 						_ = gongstruct
@@ -162,71 +177,122 @@ func ParseAstFile(pathToFile string) error {
 								key = strings.TrimPrefix(key, "\"")
 								key = strings.TrimSuffix(key, "\"")
 							}
+							var expressionType GONG__ExpressionType = GONG__STRUCT_INSTANCE
+							var docLink GONG__Identifier
 
-							var isFieldEntry bool
 							var fieldName string
 							var ue *ast.UnaryExpr
 							if ue, ok = kve.Value.(*ast.UnaryExpr); !ok {
-								isFieldEntry = true
+								expressionType = GONG__FIELD_OR_CONST_VALUE
+							}
+
+							var callExpr *ast.CallExpr
+							if callExpr, ok = kve.Value.(*ast.CallExpr); ok {
+
+								var se *ast.SelectorExpr
+								if se, ok = callExpr.Fun.(*ast.SelectorExpr); !ok {
+									log.Fatal("Expression should be a selector expression" +
+										fset.Position(callExpr.Pos()).String())
+								}
+
+								var id *ast.Ident
+								if id, ok = se.X.(*ast.Ident); !ok {
+									log.Fatal("Expression should be an ident" +
+										fset.Position(se.Pos()).String())
+								}
+
+								// check the arg type to select wether this is a int or a string enum
+								var bl *ast.BasicLit
+								if bl, ok = callExpr.Args[0].(*ast.BasicLit); ok {
+									switch bl.Kind {
+									case token.STRING:
+										expressionType = GONG__ENUM_CAST_STRING
+									case token.INT:
+										expressionType = GONG__ENUM_CAST_INT
+									}
+								} else {
+									log.Fatal("Expression should be a basic lit" +
+										fset.Position(se.Pos()).String())
+								}
+
+								docLink.Ident = id.Name + "." + se.Sel.Name
+								_ = callExpr
 							}
 
 							var se2 *ast.SelectorExpr
-							if isFieldEntry {
-								if se2, ok = kve.Value.(*ast.SelectorExpr); !ok {
-									log.Fatal("Expression should be a selector expression" +
-										fset.Position(kve.Pos()).String())
+							switch expressionType {
+							case GONG__FIELD_OR_CONST_VALUE:
+								if se2, ok = kve.Value.(*ast.SelectorExpr); ok {
+
+									var ident *ast.Ident
+									if _, ok = se2.X.(*ast.ParenExpr); ok {
+										expressionType = GONG__FIELD_VALUE
+										fieldName = se2.Sel.Name
+									} else if ident, ok = se2.X.(*ast.Ident); ok {
+										expressionType = GONG__IDENTIFIER_CONST
+										docLink.Ident = ident.Name + "." + se2.Sel.Name
+									} else {
+										log.Fatal("Expression should be a selector expression or an ident" +
+											fset.Position(kve.Pos()).String())
+									}
+								} else {
+
 								}
-								fieldName = se2.Sel.Name
 							}
 
 							var pe *ast.ParenExpr
-							if !isFieldEntry {
+							switch expressionType {
+							case GONG__STRUCT_INSTANCE:
 								if pe, ok = ue.X.(*ast.ParenExpr); !ok {
 									log.Fatal("Expression should be parenthese expression" +
 										fset.Position(ue.Pos()).String())
 								}
-							} else {
+							case GONG__FIELD_VALUE:
 								if pe, ok = se2.X.(*ast.ParenExpr); !ok {
 									log.Fatal("Expression should be parenthese expression" +
 										fset.Position(ue.Pos()).String())
 								}
 							}
+							switch expressionType {
+							case GONG__FIELD_VALUE, GONG__STRUCT_INSTANCE:
+								// expect a Composite Litteral with no Element <type>{}
+								var cl *ast.CompositeLit
+								if cl, ok = pe.X.(*ast.CompositeLit); !ok {
+									log.Fatal("Expression should be a composite lit" +
+										fset.Position(pe.Pos()).String())
+								}
 
-							// expect a Composite Litteral with no Element <type>{}
-							var cl *ast.CompositeLit
-							if cl, ok = pe.X.(*ast.CompositeLit); !ok {
-								log.Fatal("Expression should be a composite lit" +
-									fset.Position(pe.Pos()).String())
+								var se *ast.SelectorExpr
+								if se, ok = cl.Type.(*ast.SelectorExpr); !ok {
+									log.Fatal("Expression should be a selector" +
+										fset.Position(cl.Pos()).String())
+								}
+
+								var id *ast.Ident
+								if id, ok = se.X.(*ast.Ident); !ok {
+									log.Fatal("Expression should be an ident" +
+										fset.Position(se.Pos()).String())
+								}
+								docLink.Ident = id.Name + "." + se.Sel.Name
 							}
 
-							var se *ast.SelectorExpr
-							if se, ok = cl.Type.(*ast.SelectorExpr); !ok {
-								log.Fatal("Expression should be a selector" +
-									fset.Position(cl.Pos()).String())
-							}
-
-							var id *ast.Ident
-							if id, ok = se.X.(*ast.Ident); !ok {
-								log.Fatal("Expression should be an ident" +
-									fset.Position(se.Pos()).String())
-							}
-							docLink := id.Name + "." + se.Sel.Name
-
-							if isFieldEntry {
-								docLink += "." + fieldName
+							switch expressionType {
+							case GONG__FIELD_VALUE:
+								docLink.Ident += "." + fieldName
 							}
 
 							// if map_DocLink_Identifier has the same ident, this means
 							// that no renaming has occured since the last processing of the
 							// file. But it is neccessary to keep it in memory for the
 							// marshalling
-							if docLink == key {
+							if docLink.Ident == key {
 								// continue
 							}
 
 							// otherwise, one stores the new ident (after renaming) in the
 							// renaming map
-							Stage.Map_DocLink_Renaming[key] = docLink
+							docLink.Type = expressionType
+							stage.Map_DocLink_Renaming[key] = docLink
 						}
 					}
 				}
@@ -256,10 +322,7 @@ var __gong__map_VisualTrack = make(map[string]*VisualTrack)
 // While this was introduced in go 1.19, it is not yet implemented in
 // gopls (see [issue](https://github.com/golang/go/issues/57559)
 func lookupPackage(name string) (importPath string, ok bool) {
-	if name == Stage.MetaPackageImportAlias {
-		return Stage.MetaPackageImportAlias, true
-	}
-	return comment.DefaultLookupPackage(name)
+	return name, true
 }
 func lookupSym(recv, name string) (ok bool) {
 	if recv == "" {
@@ -269,7 +332,7 @@ func lookupSym(recv, name string) (ok bool) {
 }
 
 // UnmarshallGoStaging unmarshall a go assign statement
-func UnmarshallGongstructStaging(cmap *ast.CommentMap, assignStmt *ast.AssignStmt, astCoordinate_ string) (
+func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assignStmt *ast.AssignStmt, astCoordinate_ string) (
 	instance any,
 	identifier string,
 	gongstructName string,
@@ -320,8 +383,8 @@ func UnmarshallGongstructStaging(cmap *ast.CommentMap, assignStmt *ast.AssignStm
 
 						// we check wether the doc link has been renamed
 						// to be removed after fix of [issue](https://github.com/golang/go/issues/57559)
-						if renamed, ok := (Stage.Map_DocLink_Renaming)[docLinkText]; ok {
-							docLinkText = renamed
+						if renamed, ok := (stage.Map_DocLink_Renaming)[docLinkText]; ok {
+							docLinkText = renamed.Ident
 						}
 					}
 				}
@@ -426,43 +489,43 @@ func UnmarshallGongstructStaging(cmap *ast.CommentMap, assignStmt *ast.AssignStm
 									switch gongstructName {
 									// insertion point for identifiers
 									case "CheckoutScheduler":
-										instanceCheckoutScheduler := (&CheckoutScheduler{Name: instanceName}).Stage()
+										instanceCheckoutScheduler := (&CheckoutScheduler{Name: instanceName}).Stage(stage)
 										instance = any(instanceCheckoutScheduler)
 										__gong__map_CheckoutScheduler[identifier] = instanceCheckoutScheduler
 									case "Circle":
-										instanceCircle := (&Circle{Name: instanceName}).Stage()
+										instanceCircle := (&Circle{Name: instanceName}).Stage(stage)
 										instance = any(instanceCircle)
 										__gong__map_Circle[identifier] = instanceCircle
 									case "DivIcon":
-										instanceDivIcon := (&DivIcon{Name: instanceName}).Stage()
+										instanceDivIcon := (&DivIcon{Name: instanceName}).Stage(stage)
 										instance = any(instanceDivIcon)
 										__gong__map_DivIcon[identifier] = instanceDivIcon
 									case "LayerGroup":
-										instanceLayerGroup := (&LayerGroup{Name: instanceName}).Stage()
+										instanceLayerGroup := (&LayerGroup{Name: instanceName}).Stage(stage)
 										instance = any(instanceLayerGroup)
 										__gong__map_LayerGroup[identifier] = instanceLayerGroup
 									case "LayerGroupUse":
-										instanceLayerGroupUse := (&LayerGroupUse{Name: instanceName}).Stage()
+										instanceLayerGroupUse := (&LayerGroupUse{Name: instanceName}).Stage(stage)
 										instance = any(instanceLayerGroupUse)
 										__gong__map_LayerGroupUse[identifier] = instanceLayerGroupUse
 									case "MapOptions":
-										instanceMapOptions := (&MapOptions{Name: instanceName}).Stage()
+										instanceMapOptions := (&MapOptions{Name: instanceName}).Stage(stage)
 										instance = any(instanceMapOptions)
 										__gong__map_MapOptions[identifier] = instanceMapOptions
 									case "Marker":
-										instanceMarker := (&Marker{Name: instanceName}).Stage()
+										instanceMarker := (&Marker{Name: instanceName}).Stage(stage)
 										instance = any(instanceMarker)
 										__gong__map_Marker[identifier] = instanceMarker
 									case "UserClick":
-										instanceUserClick := (&UserClick{Name: instanceName}).Stage()
+										instanceUserClick := (&UserClick{Name: instanceName}).Stage(stage)
 										instance = any(instanceUserClick)
 										__gong__map_UserClick[identifier] = instanceUserClick
 									case "VLine":
-										instanceVLine := (&VLine{Name: instanceName}).Stage()
+										instanceVLine := (&VLine{Name: instanceName}).Stage(stage)
 										instance = any(instanceVLine)
 										__gong__map_VLine[identifier] = instanceVLine
 									case "VisualTrack":
-										instanceVisualTrack := (&VisualTrack{Name: instanceName}).Stage()
+										instanceVisualTrack := (&VisualTrack{Name: instanceName}).Stage(stage)
 										instance = any(instanceVisualTrack)
 										__gong__map_VisualTrack[identifier] = instanceVisualTrack
 									}

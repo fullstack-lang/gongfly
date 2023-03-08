@@ -11,74 +11,74 @@ var air_traffic_controler string
 var AirTrafficControler *gongleaflet_models.DivIcon = (&gongleaflet_models.DivIcon{
 	Name: "Airport",
 	SVG:  air_traffic_controler,
-}).Stage()
+}).Stage(&gongleaflet_models.Stage)
 
 //go:embed airport.svg
 var airport string
 var Airport *gongleaflet_models.DivIcon = (&gongleaflet_models.DivIcon{
 	Name: "Airport",
 	SVG:  airport,
-}).Stage()
+}).Stage(&gongleaflet_models.Stage)
 
 //go:embed airplane.svg
 var airplane string
 var Airplane *gongleaflet_models.DivIcon = (&gongleaflet_models.DivIcon{
 	Name: "Airplane",
 	SVG:  airplane,
-}).Stage()
+}).Stage(&gongleaflet_models.Stage)
 
 //go:embed satellite.svg
 var satellite string
 var Satellite *gongleaflet_models.DivIcon = (&gongleaflet_models.DivIcon{
 	Name: "Satellite",
 	SVG:  satellite,
-}).Stage()
+}).Stage(&gongleaflet_models.Stage)
 
 //go:embed radar.svg
 var radar string
 var Radar *gongleaflet_models.DivIcon = (&gongleaflet_models.DivIcon{
 	Name: "Radar",
 	SVG:  radar,
-}).Stage()
+}).Stage(&gongleaflet_models.Stage)
 
 //go:embed antena.svg
 var antena string
 var Antena *gongleaflet_models.DivIcon = (&gongleaflet_models.DivIcon{
 	Name: "Antena",
 	SVG:  antena,
-}).Stage()
+}).Stage(&gongleaflet_models.Stage)
 
 //go:embed message.svg
 var message string
 var Message *gongleaflet_models.DivIcon = (&gongleaflet_models.DivIcon{
 	Name: "Message",
 	SVG:  message,
-}).Stage()
+}).Stage(&gongleaflet_models.Stage)
 
 //go:embed dot_blur.svg
 var dot_blur string
 var DotBlur *gongleaflet_models.DivIcon = (&gongleaflet_models.DivIcon{
 	Name: "DotBlur",
 	SVG:  dot_blur,
-}).Stage()
+}).Stage(&gongleaflet_models.Stage)
 
 //go:embed arrow_simple.svg
 var arrow_simple string
 var Arrow *gongleaflet_models.DivIcon = (&gongleaflet_models.DivIcon{
 	Name: "Arrow",
 	SVG:  arrow_simple,
-}).Stage()
+}).Stage(&gongleaflet_models.Stage)
 
 //go:embed cross_rot45.svg
 var cross_rot45 string
 var Cross *gongleaflet_models.DivIcon = (&gongleaflet_models.DivIcon{
 	Name: "Cross",
 	SVG:  cross_rot45,
-}).Stage()
+}).Stage(&gongleaflet_models.Stage)
 
 //go:embed dot_10.svg
 var dot_10 string
 var Dot_10Icon *gongleaflet_models.DivIcon = (&gongleaflet_models.DivIcon{
 	Name: "Dot10",
 	SVG:  dot_10,
-}).Stage()
+}).Stage(&gongleaflet_models.Stage)

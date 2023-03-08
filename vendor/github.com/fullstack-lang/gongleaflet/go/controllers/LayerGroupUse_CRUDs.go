@@ -47,11 +47,23 @@ type LayerGroupUseInput struct {
 // default: genericError
 //
 //	200: layergroupuseDBResponse
-func GetLayerGroupUses(c *gin.Context) {
-	db := orm.BackRepo.BackRepoLayerGroupUse.GetDB()
+func (controller *Controller) GetLayerGroupUses(c *gin.Context) {
 
 	// source slice
 	var layergroupuseDBs []orm.LayerGroupUseDB
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetLayerGroupUses", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoLayerGroupUse.GetDB()
+
 	query := db.Find(&layergroupuseDBs)
 	if query.Error != nil {
 		var returnError GenericError
@@ -95,8 +107,19 @@ func GetLayerGroupUses(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func PostLayerGroupUse(c *gin.Context) {
-	db := orm.BackRepo.BackRepoLayerGroupUse.GetDB()
+func (controller *Controller) PostLayerGroupUse(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("PostLayerGroupUses", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoLayerGroupUse.GetDB()
 
 	// Validate input
 	var input orm.LayerGroupUseAPI
@@ -127,16 +150,16 @@ func PostLayerGroupUse(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	orm.BackRepo.BackRepoLayerGroupUse.CheckoutPhaseOneInstance(&layergroupuseDB)
-	layergroupuse := (*orm.BackRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr)[layergroupuseDB.ID]
+	backRepo.BackRepoLayerGroupUse.CheckoutPhaseOneInstance(&layergroupuseDB)
+	layergroupuse := (*backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr)[layergroupuseDB.ID]
 
 	if layergroupuse != nil {
-		models.AfterCreateFromFront(&models.Stage, layergroupuse)
+		models.AfterCreateFromFront(backRepo.GetStage(), layergroupuse)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, layergroupuseDB)
 }
@@ -151,8 +174,19 @@ func PostLayerGroupUse(c *gin.Context) {
 // default: genericError
 //
 //	200: layergroupuseDBResponse
-func GetLayerGroupUse(c *gin.Context) {
-	db := orm.BackRepo.BackRepoLayerGroupUse.GetDB()
+func (controller *Controller) GetLayerGroupUse(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetLayerGroupUse", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoLayerGroupUse.GetDB()
 
 	// Get layergroupuseDB in DB
 	var layergroupuseDB orm.LayerGroupUseDB
@@ -183,8 +217,27 @@ func GetLayerGroupUse(c *gin.Context) {
 // default: genericError
 //
 //	200: layergroupuseDBResponse
-func UpdateLayerGroupUse(c *gin.Context) {
-	db := orm.BackRepo.BackRepoLayerGroupUse.GetDB()
+func (controller *Controller) UpdateLayerGroupUse(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("UpdateLayerGroupUse", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoLayerGroupUse.GetDB()
+
+	// Validate input
+	var input orm.LayerGroupUseAPI
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	// Get model if exist
 	var layergroupuseDB orm.LayerGroupUseDB
@@ -198,14 +251,6 @@ func UpdateLayerGroupUse(c *gin.Context) {
 		returnError.Body.Message = query.Error.Error()
 		log.Println(query.Error.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
-		return
-	}
-
-	// Validate input
-	var input orm.LayerGroupUseAPI
-	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -228,16 +273,16 @@ func UpdateLayerGroupUse(c *gin.Context) {
 	layergroupuseDB.CopyBasicFieldsToLayerGroupUse(layergroupuseNew)
 
 	// get stage instance from DB instance, and call callback function
-	layergroupuseOld := (*orm.BackRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr)[layergroupuseDB.ID]
+	layergroupuseOld := (*backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr)[layergroupuseDB.ID]
 	if layergroupuseOld != nil {
-		models.AfterUpdateFromFront(&models.Stage, layergroupuseOld, layergroupuseNew)
+		models.AfterUpdateFromFront(backRepo.GetStage(), layergroupuseOld, layergroupuseNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	// in some cases, with the marshalling of the stage, this operation might
 	// generates a checkout
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the layergroupuseDB
 	c.JSON(http.StatusOK, layergroupuseDB)
@@ -252,8 +297,19 @@ func UpdateLayerGroupUse(c *gin.Context) {
 // default: genericError
 //
 //	200: layergroupuseDBResponse
-func DeleteLayerGroupUse(c *gin.Context) {
-	db := orm.BackRepo.BackRepoLayerGroupUse.GetDB()
+func (controller *Controller) DeleteLayerGroupUse(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("DeleteLayerGroupUse", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoLayerGroupUse.GetDB()
 
 	// Get model if exist
 	var layergroupuseDB orm.LayerGroupUseDB
@@ -274,14 +330,14 @@ func DeleteLayerGroupUse(c *gin.Context) {
 	layergroupuseDB.CopyBasicFieldsToLayerGroupUse(layergroupuseDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	layergroupuseStaged := (*orm.BackRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr)[layergroupuseDB.ID]
+	layergroupuseStaged := (*backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr)[layergroupuseDB.ID]
 	if layergroupuseStaged != nil {
-		models.AfterDeleteFromFront(&models.Stage, layergroupuseStaged, layergroupuseDeleted)
+		models.AfterDeleteFromFront(backRepo.GetStage(), layergroupuseStaged, layergroupuseDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

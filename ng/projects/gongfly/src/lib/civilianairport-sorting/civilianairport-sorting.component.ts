@@ -100,7 +100,7 @@ export class CivilianAirportSortingComponent implements OnInit {
 
     this.associatedCivilianAirports.forEach(
       civilianairport => {
-        this.civilianairportService.updateCivilianAirport(civilianairport)
+        this.civilianairportService.updateCivilianAirport(civilianairport, this.dialogData.GONG__StackPath)
           .subscribe(civilianairport => {
             this.civilianairportService.CivilianAirportServiceChanged.next("update")
           });

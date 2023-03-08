@@ -47,23 +47,22 @@ type OpsLineInput struct {
 // default: genericError
 //
 //	200: opslineDBResponse
-func GetOpsLines(c *gin.Context) {
-	db := orm.BackRepo.BackRepoOpsLine.GetDB()
+func (controller *Controller) GetOpsLines(c *gin.Context) {
 
 	// source slice
 	var opslineDBs []orm.OpsLineDB
 
-	// type Values map[string][]string
 	values := c.Request.URL.Query()
+	stackPath := ""
 	if len(values) == 1 {
 		value := values["GONG__StackPath"]
 		if len(value) == 1 {
-			// we have a single parameter
-			// we assume it is the stack
-			stackParam := value[0]
-			log.Println("GONG__StackPath", stackParam)
+			stackPath = value[0]
+			log.Println("GetOpsLines", "GONG__StackPath", stackPath)
 		}
 	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoOpsLine.GetDB()
 
 	query := db.Find(&opslineDBs)
 	if query.Error != nil {
@@ -108,7 +107,19 @@ func GetOpsLines(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func PostOpsLine(c *gin.Context) {
+func (controller *Controller) PostOpsLine(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("PostOpsLines", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoOpsLine.GetDB()
 
 	// Validate input
 	var input orm.OpsLineAPI
@@ -128,7 +139,6 @@ func PostOpsLine(c *gin.Context) {
 	opslineDB.OpsLinePointersEnconding = input.OpsLinePointersEnconding
 	opslineDB.CopyBasicFieldsFromOpsLine(&input.OpsLine)
 
-	db := orm.BackRepo.BackRepoOpsLine.GetDB()
 	query := db.Create(&opslineDB)
 	if query.Error != nil {
 		var returnError GenericError
@@ -140,16 +150,16 @@ func PostOpsLine(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	orm.BackRepo.BackRepoOpsLine.CheckoutPhaseOneInstance(&opslineDB)
-	opsline := (*orm.BackRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
+	backRepo.BackRepoOpsLine.CheckoutPhaseOneInstance(&opslineDB)
+	opsline := (*backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
 
 	if opsline != nil {
-		models.AfterCreateFromFront(&models.Stage, opsline)
+		models.AfterCreateFromFront(backRepo.GetStage(), opsline)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, opslineDB)
 }
@@ -164,21 +174,19 @@ func PostOpsLine(c *gin.Context) {
 // default: genericError
 //
 //	200: opslineDBResponse
-func GetOpsLine(c *gin.Context) {
+func (controller *Controller) GetOpsLine(c *gin.Context) {
 
-	// type Values map[string][]string
 	values := c.Request.URL.Query()
+	stackPath := ""
 	if len(values) == 1 {
-		value := values["stack"]
+		value := values["GONG__StackPath"]
 		if len(value) == 1 {
-			// we have a single parameter
-			// we assume it is the stack
-			stackParam := value[0]
-			log.Println("GET params", stackParam)
+			stackPath = value[0]
+			log.Println("GetOpsLine", "GONG__StackPath", stackPath)
 		}
 	}
-
-	db := orm.BackRepo.BackRepoOpsLine.GetDB()
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoOpsLine.GetDB()
 
 	// Get opslineDB in DB
 	var opslineDB orm.OpsLineDB
@@ -209,7 +217,19 @@ func GetOpsLine(c *gin.Context) {
 // default: genericError
 //
 //	200: opslineDBResponse
-func UpdateOpsLine(c *gin.Context) {
+func (controller *Controller) UpdateOpsLine(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("UpdateOpsLine", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoOpsLine.GetDB()
 
 	// Validate input
 	var input orm.OpsLineAPI
@@ -218,8 +238,6 @@ func UpdateOpsLine(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	db := orm.BackRepo.BackRepoOpsLine.GetDB()
 
 	// Get model if exist
 	var opslineDB orm.OpsLineDB
@@ -255,16 +273,16 @@ func UpdateOpsLine(c *gin.Context) {
 	opslineDB.CopyBasicFieldsToOpsLine(opslineNew)
 
 	// get stage instance from DB instance, and call callback function
-	opslineOld := (*orm.BackRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
+	opslineOld := (*backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
 	if opslineOld != nil {
-		models.AfterUpdateFromFront(&models.Stage, opslineOld, opslineNew)
+		models.AfterUpdateFromFront(backRepo.GetStage(), opslineOld, opslineNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	// in some cases, with the marshalling of the stage, this operation might
 	// generates a checkout
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the opslineDB
 	c.JSON(http.StatusOK, opslineDB)
@@ -279,8 +297,19 @@ func UpdateOpsLine(c *gin.Context) {
 // default: genericError
 //
 //	200: opslineDBResponse
-func DeleteOpsLine(c *gin.Context) {
-	db := orm.BackRepo.BackRepoOpsLine.GetDB()
+func (controller *Controller) DeleteOpsLine(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("DeleteOpsLine", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoOpsLine.GetDB()
 
 	// Get model if exist
 	var opslineDB orm.OpsLineDB
@@ -301,14 +330,14 @@ func DeleteOpsLine(c *gin.Context) {
 	opslineDB.CopyBasicFieldsToOpsLine(opslineDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	opslineStaged := (*orm.BackRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
+	opslineStaged := (*backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
 	if opslineStaged != nil {
-		models.AfterDeleteFromFront(&models.Stage, opslineStaged, opslineDeleted)
+		models.AfterDeleteFromFront(backRepo.GetStage(), opslineStaged, opslineDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

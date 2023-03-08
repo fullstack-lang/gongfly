@@ -2,11 +2,10 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/fullstack-lang/gongsim/go/orm"
 )
 
 // genQuery return the name of the column
@@ -43,56 +42,76 @@ type ValidationError struct {
 func RegisterControllers(r *gin.Engine) {
 	v1 := r.Group("/api/github.com/fullstack-lang/gongsim/go")
 	{ // insertion point for registrations
-		v1.GET("/v1/dummyagents", GetDummyAgents)
-		v1.GET("/v1/dummyagents/:id", GetDummyAgent)
-		v1.POST("/v1/dummyagents", PostDummyAgent)
-		v1.PATCH("/v1/dummyagents/:id", UpdateDummyAgent)
-		v1.PUT("/v1/dummyagents/:id", UpdateDummyAgent)
-		v1.DELETE("/v1/dummyagents/:id", DeleteDummyAgent)
+		v1.GET("/v1/dummyagents", GetController().GetDummyAgents)
+		v1.GET("/v1/dummyagents/:id", GetController().GetDummyAgent)
+		v1.POST("/v1/dummyagents", GetController().PostDummyAgent)
+		v1.PATCH("/v1/dummyagents/:id", GetController().UpdateDummyAgent)
+		v1.PUT("/v1/dummyagents/:id", GetController().UpdateDummyAgent)
+		v1.DELETE("/v1/dummyagents/:id", GetController().DeleteDummyAgent)
 
-		v1.GET("/v1/engines", GetEngines)
-		v1.GET("/v1/engines/:id", GetEngine)
-		v1.POST("/v1/engines", PostEngine)
-		v1.PATCH("/v1/engines/:id", UpdateEngine)
-		v1.PUT("/v1/engines/:id", UpdateEngine)
-		v1.DELETE("/v1/engines/:id", DeleteEngine)
+		v1.GET("/v1/engines", GetController().GetEngines)
+		v1.GET("/v1/engines/:id", GetController().GetEngine)
+		v1.POST("/v1/engines", GetController().PostEngine)
+		v1.PATCH("/v1/engines/:id", GetController().UpdateEngine)
+		v1.PUT("/v1/engines/:id", GetController().UpdateEngine)
+		v1.DELETE("/v1/engines/:id", GetController().DeleteEngine)
 
-		v1.GET("/v1/events", GetEvents)
-		v1.GET("/v1/events/:id", GetEvent)
-		v1.POST("/v1/events", PostEvent)
-		v1.PATCH("/v1/events/:id", UpdateEvent)
-		v1.PUT("/v1/events/:id", UpdateEvent)
-		v1.DELETE("/v1/events/:id", DeleteEvent)
+		v1.GET("/v1/events", GetController().GetEvents)
+		v1.GET("/v1/events/:id", GetController().GetEvent)
+		v1.POST("/v1/events", GetController().PostEvent)
+		v1.PATCH("/v1/events/:id", GetController().UpdateEvent)
+		v1.PUT("/v1/events/:id", GetController().UpdateEvent)
+		v1.DELETE("/v1/events/:id", GetController().DeleteEvent)
 
-		v1.GET("/v1/gongsimcommands", GetGongsimCommands)
-		v1.GET("/v1/gongsimcommands/:id", GetGongsimCommand)
-		v1.POST("/v1/gongsimcommands", PostGongsimCommand)
-		v1.PATCH("/v1/gongsimcommands/:id", UpdateGongsimCommand)
-		v1.PUT("/v1/gongsimcommands/:id", UpdateGongsimCommand)
-		v1.DELETE("/v1/gongsimcommands/:id", DeleteGongsimCommand)
+		v1.GET("/v1/gongsimcommands", GetController().GetGongsimCommands)
+		v1.GET("/v1/gongsimcommands/:id", GetController().GetGongsimCommand)
+		v1.POST("/v1/gongsimcommands", GetController().PostGongsimCommand)
+		v1.PATCH("/v1/gongsimcommands/:id", GetController().UpdateGongsimCommand)
+		v1.PUT("/v1/gongsimcommands/:id", GetController().UpdateGongsimCommand)
+		v1.DELETE("/v1/gongsimcommands/:id", GetController().DeleteGongsimCommand)
 
-		v1.GET("/v1/gongsimstatuss", GetGongsimStatuss)
-		v1.GET("/v1/gongsimstatuss/:id", GetGongsimStatus)
-		v1.POST("/v1/gongsimstatuss", PostGongsimStatus)
-		v1.PATCH("/v1/gongsimstatuss/:id", UpdateGongsimStatus)
-		v1.PUT("/v1/gongsimstatuss/:id", UpdateGongsimStatus)
-		v1.DELETE("/v1/gongsimstatuss/:id", DeleteGongsimStatus)
+		v1.GET("/v1/gongsimstatuss", GetController().GetGongsimStatuss)
+		v1.GET("/v1/gongsimstatuss/:id", GetController().GetGongsimStatus)
+		v1.POST("/v1/gongsimstatuss", GetController().PostGongsimStatus)
+		v1.PATCH("/v1/gongsimstatuss/:id", GetController().UpdateGongsimStatus)
+		v1.PUT("/v1/gongsimstatuss/:id", GetController().UpdateGongsimStatus)
+		v1.DELETE("/v1/gongsimstatuss/:id", GetController().DeleteGongsimStatus)
 
-		v1.GET("/commitfrombacknb", GetLastCommitFromBackNb)
-		v1.GET("/pushfromfrontnb", GetLastPushFromFrontNb)
+		v1.GET("/v1/commitfrombacknb", GetController().GetLastCommitFromBackNb)
+		v1.GET("/v1/pushfromfrontnb", GetController().GetLastPushFromFrontNb)
 	}
 }
 
 // swagger:route GET /commitfrombacknb backrepo GetLastCommitFromBackNb
-func GetLastCommitFromBackNb(c *gin.Context) {
-	res := orm.GetLastCommitFromBackNb()
+func (controller *Controller) GetLastCommitFromBackNb(c *gin.Context) {
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetLastCommitFromBackNb", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	res := backRepo.GetLastCommitFromBackNb()
 
 	c.JSON(http.StatusOK, res)
 }
 
 // swagger:route GET /pushfromfrontnb backrepo GetLastPushFromFrontNb
-func GetLastPushFromFrontNb(c *gin.Context) {
-	res := orm.GetLastPushFromFrontNb()
+func(controller *Controller) GetLastPushFromFrontNb(c *gin.Context) {
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetLastPushFromFrontNb", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	res := backRepo.GetLastPushFromFrontNb()
 
 	c.JSON(http.StatusOK, res)
 }

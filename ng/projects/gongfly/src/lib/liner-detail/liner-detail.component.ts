@@ -165,13 +165,13 @@ export class LinerDetailComponent implements OnInit {
 
 		switch (this.state) {
 			case LinerDetailComponentState.UPDATE_INSTANCE:
-				this.linerService.updateLiner(this.liner)
+				this.linerService.updateLiner(this.liner, this.GONG__StackPath)
 					.subscribe(liner => {
 						this.linerService.LinerServiceChanged.next("update")
 					});
 				break;
 			default:
-				this.linerService.postLiner(this.liner).subscribe(liner => {
+				this.linerService.postLiner(this.liner, this.GONG__StackPath).subscribe(liner => {
 					this.linerService.LinerServiceChanged.next("post")
 					this.liner = new (LinerDB) // reset fields
 				});

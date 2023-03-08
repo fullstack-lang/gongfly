@@ -4,16 +4,13 @@ package models
 import (
 	"errors"
 	"fmt"
-	"log"
-	"os"
-	"path"
-	"regexp"
-	"sort"
-	"strings"
 )
 
 // errUnkownEnum is returns when a value cannot match enum values
 var errUnkownEnum = errors.New("unkown enum")
+
+// needed to avoid when fmt package is not needed by generated code
+var __dummy__fmt_variable fmt.Scanner
 
 // swagger:ignore
 type __void any
@@ -85,6 +82,27 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 
 	// store the number of instance per gongstruct
 	Map_GongStructName_InstancesNb map[string]int
+
+	// store meta package import
+	MetaPackageImportPath  string
+	MetaPackageImportAlias string
+	Map_DocLink_Renaming   map[string]GONG__Identifier
+
+	// map_Gongstruct_BackPointer is storage of back pointers
+	map_Gongstruct_BackPointer map[any]any
+}
+
+func SetBackPointer[T Gongstruct](stageStruct *StageStruct, instance *T, backPointer any) {
+	stageStruct.map_Gongstruct_BackPointer[instance] = backPointer
+}
+func GetBackPointer[T Gongstruct](stageStruct *StageStruct, instance *T) (backPointer any) {
+	backPointer, _ = stageStruct.map_Gongstruct_BackPointer[instance]
+	return
+}
+
+type GONG__Identifier struct {
+	Ident string
+	Type  GONG__ExpressionType
 }
 
 type OnInitCommitInterface interface {
@@ -155,6 +173,7 @@ var Stage StageStruct = StageStruct{ // insertion point for array initiatialisat
 
 	// end of insertion point
 	Map_GongStructName_InstancesNb: make(map[string]int),
+	map_Gongstruct_BackPointer:     make(map[any]any),
 }
 
 func (stage *StageStruct) Commit() {
@@ -215,93 +234,38 @@ func (stage *StageStruct) RestoreXL(dirPath string) {
 
 // insertion point for cumulative sub template with model space calls
 // Stage puts dummyagent to the model stage
-func (dummyagent *DummyAgent) Stage() *DummyAgent {
-	Stage.DummyAgents[dummyagent] = __member
-	Stage.DummyAgents_mapString[dummyagent.Name] = dummyagent
+func (dummyagent *DummyAgent) Stage(stage *StageStruct) *DummyAgent {
+	stage.DummyAgents[dummyagent] = __member
+	stage.DummyAgents_mapString[dummyagent.Name] = dummyagent
 
 	return dummyagent
 }
 
 // Unstage removes dummyagent off the model stage
-func (dummyagent *DummyAgent) Unstage() *DummyAgent {
-	delete(Stage.DummyAgents, dummyagent)
-	delete(Stage.DummyAgents_mapString, dummyagent.Name)
+func (dummyagent *DummyAgent) Unstage(stage *StageStruct) *DummyAgent {
+	delete(stage.DummyAgents, dummyagent)
+	delete(stage.DummyAgents_mapString, dummyagent.Name)
 	return dummyagent
 }
 
 // commit dummyagent to the back repo (if it is already staged)
-func (dummyagent *DummyAgent) Commit() *DummyAgent {
-	if _, ok := Stage.DummyAgents[dummyagent]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitDummyAgent(dummyagent)
+func (dummyagent *DummyAgent) Commit(stage *StageStruct) *DummyAgent {
+	if _, ok := stage.DummyAgents[dummyagent]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitDummyAgent(dummyagent)
 		}
 	}
 	return dummyagent
 }
 
 // Checkout dummyagent to the back repo (if it is already staged)
-func (dummyagent *DummyAgent) Checkout() *DummyAgent {
-	if _, ok := Stage.DummyAgents[dummyagent]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutDummyAgent(dummyagent)
+func (dummyagent *DummyAgent) Checkout(stage *StageStruct) *DummyAgent {
+	if _, ok := stage.DummyAgents[dummyagent]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutDummyAgent(dummyagent)
 		}
 	}
 	return dummyagent
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of dummyagent to the model stage
-func (dummyagent *DummyAgent) StageCopy() *DummyAgent {
-	_dummyagent := new(DummyAgent)
-	*_dummyagent = *dummyagent
-	_dummyagent.Stage()
-	return _dummyagent
-}
-
-// StageAndCommit appends dummyagent to the model stage and commit to the orm repo
-func (dummyagent *DummyAgent) StageAndCommit() *DummyAgent {
-	dummyagent.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMDummyAgent(dummyagent)
-	}
-	return dummyagent
-}
-
-// DeleteStageAndCommit appends dummyagent to the model stage and commit to the orm repo
-func (dummyagent *DummyAgent) DeleteStageAndCommit() *DummyAgent {
-	dummyagent.Unstage()
-	DeleteORMDummyAgent(dummyagent)
-	return dummyagent
-}
-
-// StageCopyAndCommit appends a copy of dummyagent to the model stage and commit to the orm repo
-func (dummyagent *DummyAgent) StageCopyAndCommit() *DummyAgent {
-	_dummyagent := new(DummyAgent)
-	*_dummyagent = *dummyagent
-	_dummyagent.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMDummyAgent(dummyagent)
-	}
-	return _dummyagent
-}
-
-// CreateORMDummyAgent enables dynamic staging of a DummyAgent instance
-func CreateORMDummyAgent(dummyagent *DummyAgent) {
-	dummyagent.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMDummyAgent(dummyagent)
-	}
-}
-
-// DeleteORMDummyAgent enables dynamic staging of a DummyAgent instance
-func DeleteORMDummyAgent(dummyagent *DummyAgent) {
-	dummyagent.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMDummyAgent(dummyagent)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -310,93 +274,38 @@ func (dummyagent *DummyAgent) GetName() (res string) {
 }
 
 // Stage puts engine to the model stage
-func (engine *Engine) Stage() *Engine {
-	Stage.Engines[engine] = __member
-	Stage.Engines_mapString[engine.Name] = engine
+func (engine *Engine) Stage(stage *StageStruct) *Engine {
+	stage.Engines[engine] = __member
+	stage.Engines_mapString[engine.Name] = engine
 
 	return engine
 }
 
 // Unstage removes engine off the model stage
-func (engine *Engine) Unstage() *Engine {
-	delete(Stage.Engines, engine)
-	delete(Stage.Engines_mapString, engine.Name)
+func (engine *Engine) Unstage(stage *StageStruct) *Engine {
+	delete(stage.Engines, engine)
+	delete(stage.Engines_mapString, engine.Name)
 	return engine
 }
 
 // commit engine to the back repo (if it is already staged)
-func (engine *Engine) Commit() *Engine {
-	if _, ok := Stage.Engines[engine]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitEngine(engine)
+func (engine *Engine) Commit(stage *StageStruct) *Engine {
+	if _, ok := stage.Engines[engine]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitEngine(engine)
 		}
 	}
 	return engine
 }
 
 // Checkout engine to the back repo (if it is already staged)
-func (engine *Engine) Checkout() *Engine {
-	if _, ok := Stage.Engines[engine]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutEngine(engine)
+func (engine *Engine) Checkout(stage *StageStruct) *Engine {
+	if _, ok := stage.Engines[engine]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutEngine(engine)
 		}
 	}
 	return engine
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of engine to the model stage
-func (engine *Engine) StageCopy() *Engine {
-	_engine := new(Engine)
-	*_engine = *engine
-	_engine.Stage()
-	return _engine
-}
-
-// StageAndCommit appends engine to the model stage and commit to the orm repo
-func (engine *Engine) StageAndCommit() *Engine {
-	engine.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMEngine(engine)
-	}
-	return engine
-}
-
-// DeleteStageAndCommit appends engine to the model stage and commit to the orm repo
-func (engine *Engine) DeleteStageAndCommit() *Engine {
-	engine.Unstage()
-	DeleteORMEngine(engine)
-	return engine
-}
-
-// StageCopyAndCommit appends a copy of engine to the model stage and commit to the orm repo
-func (engine *Engine) StageCopyAndCommit() *Engine {
-	_engine := new(Engine)
-	*_engine = *engine
-	_engine.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMEngine(engine)
-	}
-	return _engine
-}
-
-// CreateORMEngine enables dynamic staging of a Engine instance
-func CreateORMEngine(engine *Engine) {
-	engine.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMEngine(engine)
-	}
-}
-
-// DeleteORMEngine enables dynamic staging of a Engine instance
-func DeleteORMEngine(engine *Engine) {
-	engine.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMEngine(engine)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -405,93 +314,38 @@ func (engine *Engine) GetName() (res string) {
 }
 
 // Stage puts event to the model stage
-func (event *Event) Stage() *Event {
-	Stage.Events[event] = __member
-	Stage.Events_mapString[event.Name] = event
+func (event *Event) Stage(stage *StageStruct) *Event {
+	stage.Events[event] = __member
+	stage.Events_mapString[event.Name] = event
 
 	return event
 }
 
 // Unstage removes event off the model stage
-func (event *Event) Unstage() *Event {
-	delete(Stage.Events, event)
-	delete(Stage.Events_mapString, event.Name)
+func (event *Event) Unstage(stage *StageStruct) *Event {
+	delete(stage.Events, event)
+	delete(stage.Events_mapString, event.Name)
 	return event
 }
 
 // commit event to the back repo (if it is already staged)
-func (event *Event) Commit() *Event {
-	if _, ok := Stage.Events[event]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitEvent(event)
+func (event *Event) Commit(stage *StageStruct) *Event {
+	if _, ok := stage.Events[event]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitEvent(event)
 		}
 	}
 	return event
 }
 
 // Checkout event to the back repo (if it is already staged)
-func (event *Event) Checkout() *Event {
-	if _, ok := Stage.Events[event]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutEvent(event)
+func (event *Event) Checkout(stage *StageStruct) *Event {
+	if _, ok := stage.Events[event]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutEvent(event)
 		}
 	}
 	return event
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of event to the model stage
-func (event *Event) StageCopy() *Event {
-	_event := new(Event)
-	*_event = *event
-	_event.Stage()
-	return _event
-}
-
-// StageAndCommit appends event to the model stage and commit to the orm repo
-func (event *Event) StageAndCommit() *Event {
-	event.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMEvent(event)
-	}
-	return event
-}
-
-// DeleteStageAndCommit appends event to the model stage and commit to the orm repo
-func (event *Event) DeleteStageAndCommit() *Event {
-	event.Unstage()
-	DeleteORMEvent(event)
-	return event
-}
-
-// StageCopyAndCommit appends a copy of event to the model stage and commit to the orm repo
-func (event *Event) StageCopyAndCommit() *Event {
-	_event := new(Event)
-	*_event = *event
-	_event.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMEvent(event)
-	}
-	return _event
-}
-
-// CreateORMEvent enables dynamic staging of a Event instance
-func CreateORMEvent(event *Event) {
-	event.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMEvent(event)
-	}
-}
-
-// DeleteORMEvent enables dynamic staging of a Event instance
-func DeleteORMEvent(event *Event) {
-	event.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMEvent(event)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -500,93 +354,38 @@ func (event *Event) GetName() (res string) {
 }
 
 // Stage puts gongsimcommand to the model stage
-func (gongsimcommand *GongsimCommand) Stage() *GongsimCommand {
-	Stage.GongsimCommands[gongsimcommand] = __member
-	Stage.GongsimCommands_mapString[gongsimcommand.Name] = gongsimcommand
+func (gongsimcommand *GongsimCommand) Stage(stage *StageStruct) *GongsimCommand {
+	stage.GongsimCommands[gongsimcommand] = __member
+	stage.GongsimCommands_mapString[gongsimcommand.Name] = gongsimcommand
 
 	return gongsimcommand
 }
 
 // Unstage removes gongsimcommand off the model stage
-func (gongsimcommand *GongsimCommand) Unstage() *GongsimCommand {
-	delete(Stage.GongsimCommands, gongsimcommand)
-	delete(Stage.GongsimCommands_mapString, gongsimcommand.Name)
+func (gongsimcommand *GongsimCommand) Unstage(stage *StageStruct) *GongsimCommand {
+	delete(stage.GongsimCommands, gongsimcommand)
+	delete(stage.GongsimCommands_mapString, gongsimcommand.Name)
 	return gongsimcommand
 }
 
 // commit gongsimcommand to the back repo (if it is already staged)
-func (gongsimcommand *GongsimCommand) Commit() *GongsimCommand {
-	if _, ok := Stage.GongsimCommands[gongsimcommand]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitGongsimCommand(gongsimcommand)
+func (gongsimcommand *GongsimCommand) Commit(stage *StageStruct) *GongsimCommand {
+	if _, ok := stage.GongsimCommands[gongsimcommand]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitGongsimCommand(gongsimcommand)
 		}
 	}
 	return gongsimcommand
 }
 
 // Checkout gongsimcommand to the back repo (if it is already staged)
-func (gongsimcommand *GongsimCommand) Checkout() *GongsimCommand {
-	if _, ok := Stage.GongsimCommands[gongsimcommand]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutGongsimCommand(gongsimcommand)
+func (gongsimcommand *GongsimCommand) Checkout(stage *StageStruct) *GongsimCommand {
+	if _, ok := stage.GongsimCommands[gongsimcommand]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutGongsimCommand(gongsimcommand)
 		}
 	}
 	return gongsimcommand
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of gongsimcommand to the model stage
-func (gongsimcommand *GongsimCommand) StageCopy() *GongsimCommand {
-	_gongsimcommand := new(GongsimCommand)
-	*_gongsimcommand = *gongsimcommand
-	_gongsimcommand.Stage()
-	return _gongsimcommand
-}
-
-// StageAndCommit appends gongsimcommand to the model stage and commit to the orm repo
-func (gongsimcommand *GongsimCommand) StageAndCommit() *GongsimCommand {
-	gongsimcommand.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMGongsimCommand(gongsimcommand)
-	}
-	return gongsimcommand
-}
-
-// DeleteStageAndCommit appends gongsimcommand to the model stage and commit to the orm repo
-func (gongsimcommand *GongsimCommand) DeleteStageAndCommit() *GongsimCommand {
-	gongsimcommand.Unstage()
-	DeleteORMGongsimCommand(gongsimcommand)
-	return gongsimcommand
-}
-
-// StageCopyAndCommit appends a copy of gongsimcommand to the model stage and commit to the orm repo
-func (gongsimcommand *GongsimCommand) StageCopyAndCommit() *GongsimCommand {
-	_gongsimcommand := new(GongsimCommand)
-	*_gongsimcommand = *gongsimcommand
-	_gongsimcommand.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMGongsimCommand(gongsimcommand)
-	}
-	return _gongsimcommand
-}
-
-// CreateORMGongsimCommand enables dynamic staging of a GongsimCommand instance
-func CreateORMGongsimCommand(gongsimcommand *GongsimCommand) {
-	gongsimcommand.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMGongsimCommand(gongsimcommand)
-	}
-}
-
-// DeleteORMGongsimCommand enables dynamic staging of a GongsimCommand instance
-func DeleteORMGongsimCommand(gongsimcommand *GongsimCommand) {
-	gongsimcommand.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMGongsimCommand(gongsimcommand)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -595,93 +394,38 @@ func (gongsimcommand *GongsimCommand) GetName() (res string) {
 }
 
 // Stage puts gongsimstatus to the model stage
-func (gongsimstatus *GongsimStatus) Stage() *GongsimStatus {
-	Stage.GongsimStatuss[gongsimstatus] = __member
-	Stage.GongsimStatuss_mapString[gongsimstatus.Name] = gongsimstatus
+func (gongsimstatus *GongsimStatus) Stage(stage *StageStruct) *GongsimStatus {
+	stage.GongsimStatuss[gongsimstatus] = __member
+	stage.GongsimStatuss_mapString[gongsimstatus.Name] = gongsimstatus
 
 	return gongsimstatus
 }
 
 // Unstage removes gongsimstatus off the model stage
-func (gongsimstatus *GongsimStatus) Unstage() *GongsimStatus {
-	delete(Stage.GongsimStatuss, gongsimstatus)
-	delete(Stage.GongsimStatuss_mapString, gongsimstatus.Name)
+func (gongsimstatus *GongsimStatus) Unstage(stage *StageStruct) *GongsimStatus {
+	delete(stage.GongsimStatuss, gongsimstatus)
+	delete(stage.GongsimStatuss_mapString, gongsimstatus.Name)
 	return gongsimstatus
 }
 
 // commit gongsimstatus to the back repo (if it is already staged)
-func (gongsimstatus *GongsimStatus) Commit() *GongsimStatus {
-	if _, ok := Stage.GongsimStatuss[gongsimstatus]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitGongsimStatus(gongsimstatus)
+func (gongsimstatus *GongsimStatus) Commit(stage *StageStruct) *GongsimStatus {
+	if _, ok := stage.GongsimStatuss[gongsimstatus]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitGongsimStatus(gongsimstatus)
 		}
 	}
 	return gongsimstatus
 }
 
 // Checkout gongsimstatus to the back repo (if it is already staged)
-func (gongsimstatus *GongsimStatus) Checkout() *GongsimStatus {
-	if _, ok := Stage.GongsimStatuss[gongsimstatus]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutGongsimStatus(gongsimstatus)
+func (gongsimstatus *GongsimStatus) Checkout(stage *StageStruct) *GongsimStatus {
+	if _, ok := stage.GongsimStatuss[gongsimstatus]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutGongsimStatus(gongsimstatus)
 		}
 	}
 	return gongsimstatus
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of gongsimstatus to the model stage
-func (gongsimstatus *GongsimStatus) StageCopy() *GongsimStatus {
-	_gongsimstatus := new(GongsimStatus)
-	*_gongsimstatus = *gongsimstatus
-	_gongsimstatus.Stage()
-	return _gongsimstatus
-}
-
-// StageAndCommit appends gongsimstatus to the model stage and commit to the orm repo
-func (gongsimstatus *GongsimStatus) StageAndCommit() *GongsimStatus {
-	gongsimstatus.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMGongsimStatus(gongsimstatus)
-	}
-	return gongsimstatus
-}
-
-// DeleteStageAndCommit appends gongsimstatus to the model stage and commit to the orm repo
-func (gongsimstatus *GongsimStatus) DeleteStageAndCommit() *GongsimStatus {
-	gongsimstatus.Unstage()
-	DeleteORMGongsimStatus(gongsimstatus)
-	return gongsimstatus
-}
-
-// StageCopyAndCommit appends a copy of gongsimstatus to the model stage and commit to the orm repo
-func (gongsimstatus *GongsimStatus) StageCopyAndCommit() *GongsimStatus {
-	_gongsimstatus := new(GongsimStatus)
-	*_gongsimstatus = *gongsimstatus
-	_gongsimstatus.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMGongsimStatus(gongsimstatus)
-	}
-	return _gongsimstatus
-}
-
-// CreateORMGongsimStatus enables dynamic staging of a GongsimStatus instance
-func CreateORMGongsimStatus(gongsimstatus *GongsimStatus) {
-	gongsimstatus.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMGongsimStatus(gongsimstatus)
-	}
-}
-
-// DeleteORMGongsimStatus enables dynamic staging of a GongsimStatus instance
-func DeleteORMGongsimStatus(gongsimstatus *GongsimStatus) {
-	gongsimstatus.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMGongsimStatus(gongsimstatus)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -742,443 +486,28 @@ func (stage *StageStruct) Nil() { // insertion point for array nil
 
 }
 
-const marshallRes = `package {{PackageName}}
-
-import (
-	"time"
-
-	"{{ModelsPackageName}}"
-)
-
-// generated in order to avoid error in the package import
-// if there are no elements in the stage to marshall
-var ___dummy__Stage models.StageStruct
-
-func init() {
-	var __Dummy_time_variable time.Time
-	_ = __Dummy_time_variable
-	InjectionGateway["{{databaseName}}"] = {{databaseName}}Injection
-}
-
-// {{databaseName}}Injection will stage objects of database "{{databaseName}}"
-func {{databaseName}}Injection() {
-
-	// Declaration of instances to stage{{Identifiers}}
-
-	// Setup of values{{ValueInitializers}}
-
-	// Setup of pointers{{PointersInitializers}}
-}
-
-`
-
-const IdentifiersDecls = `
-	{{Identifier}} := (&models.{{GeneratedStructName}}{Name: ` + "`" + `{{GeneratedFieldNameValue}}` + "`" + `}).Stage()`
-
-const StringInitStatement = `
-	{{Identifier}}.{{GeneratedFieldName}} = ` + "`" + `{{GeneratedFieldNameValue}}` + "`"
-
-const StringEnumInitStatement = `
-	{{Identifier}}.{{GeneratedFieldName}} = {{GeneratedFieldNameValue}}`
-
-const NumberInitStatement = `
-	{{Identifier}}.{{GeneratedFieldName}} = {{GeneratedFieldNameValue}}`
-
-const PointerFieldInitStatement = `
-	{{Identifier}}.{{GeneratedFieldName}} = {{GeneratedFieldNameValue}}`
-
-const SliceOfPointersFieldInitStatement = `
-	{{Identifier}}.{{GeneratedFieldName}} = append({{Identifier}}.{{GeneratedFieldName}}, {{GeneratedFieldNameValue}})`
-
-const TimeInitStatement = `
-	{{Identifier}}.{{GeneratedFieldName}}, _ = time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", "{{GeneratedFieldNameValue}}")`
-
-// Marshall marshall the stage content into the file as an instanciation into a stage
-func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName string) {
-
-	name := file.Name()
-
-	if !strings.HasSuffix(name, ".go") {
-		log.Fatalln(name + " is not a go filename")
-	}
-
-	log.Println("filename of marshall output  is " + name)
-
-	res := marshallRes
-	res = strings.ReplaceAll(res, "{{databaseName}}", strings.ReplaceAll(path.Base(name), ".go", ""))
-	res = strings.ReplaceAll(res, "{{PackageName}}", packageName)
-	res = strings.ReplaceAll(res, "{{ModelsPackageName}}", modelsPackageName)
-
-	// map of identifiers
-	// var StageMapDstructIds map[*Dstruct]string
-	identifiersDecl := ""
-	initializerStatements := ""
-	pointersInitializesStatements := ""
-
-	id := ""
-	decl := ""
-	setValueField := ""
-
-	// insertion initialization of objects to stage
-	map_DummyAgent_Identifiers := make(map[*DummyAgent]string)
-	_ = map_DummyAgent_Identifiers
-
-	dummyagentOrdered := []*DummyAgent{}
+func (stage *StageStruct) Unstage() { // insertion point for array nil
 	for dummyagent := range stage.DummyAgents {
-		dummyagentOrdered = append(dummyagentOrdered, dummyagent)
-	}
-	sort.Slice(dummyagentOrdered[:], func(i, j int) bool {
-		return dummyagentOrdered[i].Name < dummyagentOrdered[j].Name
-	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of DummyAgent"
-	for idx, dummyagent := range dummyagentOrdered {
-
-		id = generatesIdentifier("DummyAgent", idx, dummyagent.Name)
-		map_DummyAgent_Identifiers[dummyagent] = id
-
-		decl = IdentifiersDecls
-		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
-		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "DummyAgent")
-		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", dummyagent.Name)
-		identifiersDecl += decl
-
-		initializerStatements += "\n\n	// DummyAgent values setup"
-		// Initialisation of values
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "TechName")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(dummyagent.TechName))
-		initializerStatements += setValueField
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(dummyagent.Name))
-		initializerStatements += setValueField
-
+		dummyagent.Unstage(stage)
 	}
 
-	map_Engine_Identifiers := make(map[*Engine]string)
-	_ = map_Engine_Identifiers
-
-	engineOrdered := []*Engine{}
 	for engine := range stage.Engines {
-		engineOrdered = append(engineOrdered, engine)
-	}
-	sort.Slice(engineOrdered[:], func(i, j int) bool {
-		return engineOrdered[i].Name < engineOrdered[j].Name
-	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of Engine"
-	for idx, engine := range engineOrdered {
-
-		id = generatesIdentifier("Engine", idx, engine.Name)
-		map_Engine_Identifiers[engine] = id
-
-		decl = IdentifiersDecls
-		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
-		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "Engine")
-		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", engine.Name)
-		identifiersDecl += decl
-
-		initializerStatements += "\n\n	// Engine values setup"
-		// Initialisation of values
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(engine.Name))
-		initializerStatements += setValueField
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "EndTime")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(engine.EndTime))
-		initializerStatements += setValueField
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CurrentTime")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(engine.CurrentTime))
-		initializerStatements += setValueField
-
-		setValueField = NumberInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "SecondsSinceStart")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%f", engine.SecondsSinceStart))
-		initializerStatements += setValueField
-
-		setValueField = NumberInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Fired")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", engine.Fired))
-		initializerStatements += setValueField
-
-		if engine.ControlMode != "" {
-			setValueField = StringEnumInitStatement
-			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "ControlMode")
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+engine.ControlMode.ToCodeString())
-			initializerStatements += setValueField
-		}
-
-		if engine.State != "" {
-			setValueField = StringEnumInitStatement
-			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "State")
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+engine.State.ToCodeString())
-			initializerStatements += setValueField
-		}
-
-		setValueField = NumberInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Speed")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%f", engine.Speed))
-		initializerStatements += setValueField
-
+		engine.Unstage(stage)
 	}
 
-	map_Event_Identifiers := make(map[*Event]string)
-	_ = map_Event_Identifiers
-
-	eventOrdered := []*Event{}
 	for event := range stage.Events {
-		eventOrdered = append(eventOrdered, event)
-	}
-	sort.Slice(eventOrdered[:], func(i, j int) bool {
-		return eventOrdered[i].Name < eventOrdered[j].Name
-	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of Event"
-	for idx, event := range eventOrdered {
-
-		id = generatesIdentifier("Event", idx, event.Name)
-		map_Event_Identifiers[event] = id
-
-		decl = IdentifiersDecls
-		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
-		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "Event")
-		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", event.Name)
-		identifiersDecl += decl
-
-		initializerStatements += "\n\n	// Event values setup"
-		// Initialisation of values
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(event.Name))
-		initializerStatements += setValueField
-
-		setValueField = NumberInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Duration")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", event.Duration))
-		initializerStatements += setValueField
-
+		event.Unstage(stage)
 	}
 
-	map_GongsimCommand_Identifiers := make(map[*GongsimCommand]string)
-	_ = map_GongsimCommand_Identifiers
-
-	gongsimcommandOrdered := []*GongsimCommand{}
 	for gongsimcommand := range stage.GongsimCommands {
-		gongsimcommandOrdered = append(gongsimcommandOrdered, gongsimcommand)
-	}
-	sort.Slice(gongsimcommandOrdered[:], func(i, j int) bool {
-		return gongsimcommandOrdered[i].Name < gongsimcommandOrdered[j].Name
-	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of GongsimCommand"
-	for idx, gongsimcommand := range gongsimcommandOrdered {
-
-		id = generatesIdentifier("GongsimCommand", idx, gongsimcommand.Name)
-		map_GongsimCommand_Identifiers[gongsimcommand] = id
-
-		decl = IdentifiersDecls
-		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
-		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "GongsimCommand")
-		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", gongsimcommand.Name)
-		identifiersDecl += decl
-
-		initializerStatements += "\n\n	// GongsimCommand values setup"
-		// Initialisation of values
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimcommand.Name))
-		initializerStatements += setValueField
-
-		if gongsimcommand.Command != "" {
-			setValueField = StringEnumInitStatement
-			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Command")
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+gongsimcommand.Command.ToCodeString())
-			initializerStatements += setValueField
-		}
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CommandDate")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimcommand.CommandDate))
-		initializerStatements += setValueField
-
-		if gongsimcommand.SpeedCommandType != "" {
-			setValueField = StringEnumInitStatement
-			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "SpeedCommandType")
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+gongsimcommand.SpeedCommandType.ToCodeString())
-			initializerStatements += setValueField
-		}
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "DateSpeedCommand")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimcommand.DateSpeedCommand))
-		initializerStatements += setValueField
-
+		gongsimcommand.Unstage(stage)
 	}
 
-	map_GongsimStatus_Identifiers := make(map[*GongsimStatus]string)
-	_ = map_GongsimStatus_Identifiers
-
-	gongsimstatusOrdered := []*GongsimStatus{}
 	for gongsimstatus := range stage.GongsimStatuss {
-		gongsimstatusOrdered = append(gongsimstatusOrdered, gongsimstatus)
-	}
-	sort.Slice(gongsimstatusOrdered[:], func(i, j int) bool {
-		return gongsimstatusOrdered[i].Name < gongsimstatusOrdered[j].Name
-	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of GongsimStatus"
-	for idx, gongsimstatus := range gongsimstatusOrdered {
-
-		id = generatesIdentifier("GongsimStatus", idx, gongsimstatus.Name)
-		map_GongsimStatus_Identifiers[gongsimstatus] = id
-
-		decl = IdentifiersDecls
-		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
-		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "GongsimStatus")
-		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", gongsimstatus.Name)
-		identifiersDecl += decl
-
-		initializerStatements += "\n\n	// GongsimStatus values setup"
-		// Initialisation of values
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimstatus.Name))
-		initializerStatements += setValueField
-
-		if gongsimstatus.CurrentCommand != "" {
-			setValueField = StringEnumInitStatement
-			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CurrentCommand")
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+gongsimstatus.CurrentCommand.ToCodeString())
-			initializerStatements += setValueField
-		}
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CompletionDate")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimstatus.CompletionDate))
-		initializerStatements += setValueField
-
-		if gongsimstatus.CurrentSpeedCommand != "" {
-			setValueField = StringEnumInitStatement
-			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CurrentSpeedCommand")
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+gongsimstatus.CurrentSpeedCommand.ToCodeString())
-			initializerStatements += setValueField
-		}
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "SpeedCommandCompletionDate")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimstatus.SpeedCommandCompletionDate))
-		initializerStatements += setValueField
-
+		gongsimstatus.Unstage(stage)
 	}
 
-	// insertion initialization of objects to stage
-	for idx, dummyagent := range dummyagentOrdered {
-		var setPointerField string
-		_ = setPointerField
-
-		id = generatesIdentifier("DummyAgent", idx, dummyagent.Name)
-		map_DummyAgent_Identifiers[dummyagent] = id
-
-		// Initialisation of values
-	}
-
-	for idx, engine := range engineOrdered {
-		var setPointerField string
-		_ = setPointerField
-
-		id = generatesIdentifier("Engine", idx, engine.Name)
-		map_Engine_Identifiers[engine] = id
-
-		// Initialisation of values
-	}
-
-	for idx, event := range eventOrdered {
-		var setPointerField string
-		_ = setPointerField
-
-		id = generatesIdentifier("Event", idx, event.Name)
-		map_Event_Identifiers[event] = id
-
-		// Initialisation of values
-	}
-
-	for idx, gongsimcommand := range gongsimcommandOrdered {
-		var setPointerField string
-		_ = setPointerField
-
-		id = generatesIdentifier("GongsimCommand", idx, gongsimcommand.Name)
-		map_GongsimCommand_Identifiers[gongsimcommand] = id
-
-		// Initialisation of values
-	}
-
-	for idx, gongsimstatus := range gongsimstatusOrdered {
-		var setPointerField string
-		_ = setPointerField
-
-		id = generatesIdentifier("GongsimStatus", idx, gongsimstatus.Name)
-		map_GongsimStatus_Identifiers[gongsimstatus] = id
-
-		// Initialisation of values
-	}
-
-	res = strings.ReplaceAll(res, "{{Identifiers}}", identifiersDecl)
-	res = strings.ReplaceAll(res, "{{ValueInitializers}}", initializerStatements)
-	res = strings.ReplaceAll(res, "{{PointersInitializers}}", pointersInitializesStatements)
-
-	fmt.Fprintln(file, res)
 }
-
-// unique identifier per struct
-func generatesIdentifier(gongStructName string, idx int, instanceName string) (identifier string) {
-
-	identifier = instanceName
-	// Make a Regex to say we only want letters and numbers
-	reg, err := regexp.Compile("[^a-zA-Z0-9]+")
-	if err != nil {
-		log.Fatal(err)
-	}
-	processedString := reg.ReplaceAllString(instanceName, "_")
-
-	identifier = fmt.Sprintf("__%s__%06d_%s", gongStructName, idx, processedString)
-
-	return
-}
-
-// insertion point of functions that provide maps for reverse associations
-
-// generate function for reverse association maps of DummyAgent
-
-// generate function for reverse association maps of Engine
-
-// generate function for reverse association maps of Event
-
-// generate function for reverse association maps of GongsimCommand
-
-// generate function for reverse association maps of GongsimStatus
 
 // Gongstruct is the type parameter for generated generic function that allows
 // - access to staged instances
@@ -1223,21 +552,29 @@ type GongstructMapString interface {
 
 // GongGetSet returns the set staged GongstructType instances
 // it is usefull because it allows refactoring of gong struct identifier
-func GongGetSet[Type GongstructSet]() *Type {
+func GongGetSet[Type GongstructSet](stages ...*StageStruct) *Type {
 	var ret Type
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
 	case map[*DummyAgent]any:
-		return any(&Stage.DummyAgents).(*Type)
+		return any(&stage.DummyAgents).(*Type)
 	case map[*Engine]any:
-		return any(&Stage.Engines).(*Type)
+		return any(&stage.Engines).(*Type)
 	case map[*Event]any:
-		return any(&Stage.Events).(*Type)
+		return any(&stage.Events).(*Type)
 	case map[*GongsimCommand]any:
-		return any(&Stage.GongsimCommands).(*Type)
+		return any(&stage.GongsimCommands).(*Type)
 	case map[*GongsimStatus]any:
-		return any(&Stage.GongsimStatuss).(*Type)
+		return any(&stage.GongsimStatuss).(*Type)
 	default:
 		return nil
 	}
@@ -1245,21 +582,29 @@ func GongGetSet[Type GongstructSet]() *Type {
 
 // GongGetMap returns the map of staged GongstructType instances
 // it is usefull because it allows refactoring of gong struct identifier
-func GongGetMap[Type GongstructMapString]() *Type {
+func GongGetMap[Type GongstructMapString](stages ...*StageStruct) *Type {
 	var ret Type
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
 	case map[string]*DummyAgent:
-		return any(&Stage.DummyAgents_mapString).(*Type)
+		return any(&stage.DummyAgents_mapString).(*Type)
 	case map[string]*Engine:
-		return any(&Stage.Engines_mapString).(*Type)
+		return any(&stage.Engines_mapString).(*Type)
 	case map[string]*Event:
-		return any(&Stage.Events_mapString).(*Type)
+		return any(&stage.Events_mapString).(*Type)
 	case map[string]*GongsimCommand:
-		return any(&Stage.GongsimCommands_mapString).(*Type)
+		return any(&stage.GongsimCommands_mapString).(*Type)
 	case map[string]*GongsimStatus:
-		return any(&Stage.GongsimStatuss_mapString).(*Type)
+		return any(&stage.GongsimStatuss_mapString).(*Type)
 	default:
 		return nil
 	}
@@ -1267,21 +612,29 @@ func GongGetMap[Type GongstructMapString]() *Type {
 
 // GetGongstructInstancesSet returns the set staged GongstructType instances
 // it is usefull because it allows refactoring of gongstruct identifier
-func GetGongstructInstancesSet[Type Gongstruct]() *map[*Type]any {
+func GetGongstructInstancesSet[Type Gongstruct](stages ...*StageStruct) *map[*Type]any {
 	var ret Type
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
 	case DummyAgent:
-		return any(&Stage.DummyAgents).(*map[*Type]any)
+		return any(&stage.DummyAgents).(*map[*Type]any)
 	case Engine:
-		return any(&Stage.Engines).(*map[*Type]any)
+		return any(&stage.Engines).(*map[*Type]any)
 	case Event:
-		return any(&Stage.Events).(*map[*Type]any)
+		return any(&stage.Events).(*map[*Type]any)
 	case GongsimCommand:
-		return any(&Stage.GongsimCommands).(*map[*Type]any)
+		return any(&stage.GongsimCommands).(*map[*Type]any)
 	case GongsimStatus:
-		return any(&Stage.GongsimStatuss).(*map[*Type]any)
+		return any(&stage.GongsimStatuss).(*map[*Type]any)
 	default:
 		return nil
 	}
@@ -1289,21 +642,29 @@ func GetGongstructInstancesSet[Type Gongstruct]() *map[*Type]any {
 
 // GetGongstructInstancesMap returns the map of staged GongstructType instances
 // it is usefull because it allows refactoring of gong struct identifier
-func GetGongstructInstancesMap[Type Gongstruct]() *map[string]*Type {
+func GetGongstructInstancesMap[Type Gongstruct](stages ...*StageStruct) *map[string]*Type {
 	var ret Type
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
 	case DummyAgent:
-		return any(&Stage.DummyAgents_mapString).(*map[string]*Type)
+		return any(&stage.DummyAgents_mapString).(*map[string]*Type)
 	case Engine:
-		return any(&Stage.Engines_mapString).(*map[string]*Type)
+		return any(&stage.Engines_mapString).(*map[string]*Type)
 	case Event:
-		return any(&Stage.Events_mapString).(*map[string]*Type)
+		return any(&stage.Events_mapString).(*map[string]*Type)
 	case GongsimCommand:
-		return any(&Stage.GongsimCommands_mapString).(*map[string]*Type)
+		return any(&stage.GongsimCommands_mapString).(*map[string]*Type)
 	case GongsimStatus:
-		return any(&Stage.GongsimStatuss_mapString).(*map[string]*Type)
+		return any(&stage.GongsimStatuss_mapString).(*map[string]*Type)
 	default:
 		return nil
 	}
@@ -1350,7 +711,16 @@ func GetAssociationName[Type Gongstruct]() *Type {
 // The function provides a map with keys as instances of End and values to arrays of *Start
 // the map is construed by iterating over all Start instances and populationg keys with End instances
 // and values with slice of Start instances
-func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*Start {
+func GetPointerReverseMap[Start, End Gongstruct](fieldname string, stages ...*StageStruct) map[*End][]*Start {
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
+
 	var ret Start
 
 	switch any(ret).(type) {
@@ -1390,7 +760,16 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*S
 // The function provides a map with keys as instances of End and values to *Start instances
 // the map is construed by iterating over all Start instances and populating keys with End instances
 // and values with the Start instances
-func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string) map[*End]*Start {
+func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string, stages ...*StageStruct) map[*End]*Start {
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
+
 	var ret Start
 
 	switch any(ret).(type) {
@@ -1542,479 +921,6 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 		case "SpeedCommandCompletionDate":
 			res = any(instance).(GongsimStatus).SpeedCommandCompletionDate
 		}
-	}
-	return
-}
-
-// insertion point of enum utility functions
-// Utility function for ControlMode
-// if enum values are string, it is stored with the value
-// if enum values are int, they are stored with the code of the value
-func (controlmode ControlMode) ToString() (res string) {
-
-	// migration of former implementation of enum
-	switch controlmode {
-	// insertion code per enum code
-	case AUTONOMOUS:
-		res = "Autonomous"
-	case CLIENT_CONTROL:
-		res = "ClientControl"
-	}
-	return
-}
-
-func (controlmode *ControlMode) FromString(input string) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case "Autonomous":
-		*controlmode = AUTONOMOUS
-	case "ClientControl":
-		*controlmode = CLIENT_CONTROL
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (controlmode *ControlMode) FromCodeString(input string) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case "AUTONOMOUS":
-		*controlmode = AUTONOMOUS
-	case "CLIENT_CONTROL":
-		*controlmode = CLIENT_CONTROL
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (controlmode *ControlMode) ToCodeString() (res string) {
-
-	switch *controlmode {
-	// insertion code per enum code
-	case AUTONOMOUS:
-		res = "AUTONOMOUS"
-	case CLIENT_CONTROL:
-		res = "CLIENT_CONTROL"
-	}
-	return
-}
-
-// Utility function for EngineDriverState
-// if enum values are string, it is stored with the value
-// if enum values are int, they are stored with the code of the value
-func (enginedriverstate EngineDriverState) ToInt() (res int) {
-
-	// migration of former implementation of enum
-	switch enginedriverstate {
-	// insertion code per enum code
-	case COMMIT_AGENT_STATES:
-		res = 0
-	case CHECKOUT_AGENT_STATES:
-		res = 1
-	case FIRE_ONE_EVENT:
-		res = 2
-	case SLEEP_100_MS:
-		res = 3
-	case RESET_SIMULATION:
-		res = 4
-	case UNKOWN:
-		res = 5
-	}
-	return
-}
-
-func (enginedriverstate *EngineDriverState) FromInt(input int) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case 0:
-		*enginedriverstate = COMMIT_AGENT_STATES
-	case 1:
-		*enginedriverstate = CHECKOUT_AGENT_STATES
-	case 2:
-		*enginedriverstate = FIRE_ONE_EVENT
-	case 3:
-		*enginedriverstate = SLEEP_100_MS
-	case 4:
-		*enginedriverstate = RESET_SIMULATION
-	case 5:
-		*enginedriverstate = UNKOWN
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (enginedriverstate *EngineDriverState) FromCodeString(input string) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case "COMMIT_AGENT_STATES":
-		*enginedriverstate = COMMIT_AGENT_STATES
-	case "CHECKOUT_AGENT_STATES":
-		*enginedriverstate = CHECKOUT_AGENT_STATES
-	case "FIRE_ONE_EVENT":
-		*enginedriverstate = FIRE_ONE_EVENT
-	case "SLEEP_100_MS":
-		*enginedriverstate = SLEEP_100_MS
-	case "RESET_SIMULATION":
-		*enginedriverstate = RESET_SIMULATION
-	case "UNKOWN":
-		*enginedriverstate = UNKOWN
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (enginedriverstate *EngineDriverState) ToCodeString() (res string) {
-
-	switch *enginedriverstate {
-	// insertion code per enum code
-	case COMMIT_AGENT_STATES:
-		res = "COMMIT_AGENT_STATES"
-	case CHECKOUT_AGENT_STATES:
-		res = "CHECKOUT_AGENT_STATES"
-	case FIRE_ONE_EVENT:
-		res = "FIRE_ONE_EVENT"
-	case SLEEP_100_MS:
-		res = "SLEEP_100_MS"
-	case RESET_SIMULATION:
-		res = "RESET_SIMULATION"
-	case UNKOWN:
-		res = "UNKOWN"
-	}
-	return
-}
-
-// Utility function for EngineRunMode
-// if enum values are string, it is stored with the value
-// if enum values are int, they are stored with the code of the value
-func (enginerunmode EngineRunMode) ToInt() (res int) {
-
-	// migration of former implementation of enum
-	switch enginerunmode {
-	// insertion code per enum code
-	case RELATIVE_SPEED:
-		res = 0
-	case FULL_SPEED:
-		res = 1
-	}
-	return
-}
-
-func (enginerunmode *EngineRunMode) FromInt(input int) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case 0:
-		*enginerunmode = RELATIVE_SPEED
-	case 1:
-		*enginerunmode = FULL_SPEED
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (enginerunmode *EngineRunMode) FromCodeString(input string) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case "RELATIVE_SPEED":
-		*enginerunmode = RELATIVE_SPEED
-	case "FULL_SPEED":
-		*enginerunmode = FULL_SPEED
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (enginerunmode *EngineRunMode) ToCodeString() (res string) {
-
-	switch *enginerunmode {
-	// insertion code per enum code
-	case RELATIVE_SPEED:
-		res = "RELATIVE_SPEED"
-	case FULL_SPEED:
-		res = "FULL_SPEED"
-	}
-	return
-}
-
-// Utility function for EngineState
-// if enum values are string, it is stored with the value
-// if enum values are int, they are stored with the code of the value
-func (enginestate EngineState) ToString() (res string) {
-
-	// migration of former implementation of enum
-	switch enginestate {
-	// insertion code per enum code
-	case RUNNING:
-		res = "RUNNING"
-	case PAUSED:
-		res = "PAUSED"
-	case OVER:
-		res = "OVER"
-	}
-	return
-}
-
-func (enginestate *EngineState) FromString(input string) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case "RUNNING":
-		*enginestate = RUNNING
-	case "PAUSED":
-		*enginestate = PAUSED
-	case "OVER":
-		*enginestate = OVER
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (enginestate *EngineState) FromCodeString(input string) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case "RUNNING":
-		*enginestate = RUNNING
-	case "PAUSED":
-		*enginestate = PAUSED
-	case "OVER":
-		*enginestate = OVER
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (enginestate *EngineState) ToCodeString() (res string) {
-
-	switch *enginestate {
-	// insertion code per enum code
-	case RUNNING:
-		res = "RUNNING"
-	case PAUSED:
-		res = "PAUSED"
-	case OVER:
-		res = "OVER"
-	}
-	return
-}
-
-// Utility function for EngineStopMode
-// if enum values are string, it is stored with the value
-// if enum values are int, they are stored with the code of the value
-func (enginestopmode EngineStopMode) ToInt() (res int) {
-
-	// migration of former implementation of enum
-	switch enginestopmode {
-	// insertion code per enum code
-	case TEN_MINUTES:
-		res = 0
-	case STATE_CHANGED:
-		res = 1
-	}
-	return
-}
-
-func (enginestopmode *EngineStopMode) FromInt(input int) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case 0:
-		*enginestopmode = TEN_MINUTES
-	case 1:
-		*enginestopmode = STATE_CHANGED
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (enginestopmode *EngineStopMode) FromCodeString(input string) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case "TEN_MINUTES":
-		*enginestopmode = TEN_MINUTES
-	case "STATE_CHANGED":
-		*enginestopmode = STATE_CHANGED
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (enginestopmode *EngineStopMode) ToCodeString() (res string) {
-
-	switch *enginestopmode {
-	// insertion code per enum code
-	case TEN_MINUTES:
-		res = "TEN_MINUTES"
-	case STATE_CHANGED:
-		res = "STATE_CHANGED"
-	}
-	return
-}
-
-// Utility function for GongsimCommandType
-// if enum values are string, it is stored with the value
-// if enum values are int, they are stored with the code of the value
-func (gongsimcommandtype GongsimCommandType) ToString() (res string) {
-
-	// migration of former implementation of enum
-	switch gongsimcommandtype {
-	// insertion code per enum code
-	case COMMAND_PLAY:
-		res = "PLAY"
-	case COMMAND_PAUSE:
-		res = "PAUSE"
-	case COMMAND_FIRE_NEXT_EVENT:
-		res = "FIRE_NEXT_EVENT"
-	case COMMAND_FIRE_EVENT_TILL_STATES_CHANGE:
-		res = "FIRE_EVENT_TILL_STATES_CHANGE"
-	case COMMAND_RESET:
-		res = "RESET"
-	case COMMAND_ADVANCE_10_MIN:
-		res = "ADVANCE_10_MIN"
-	}
-	return
-}
-
-func (gongsimcommandtype *GongsimCommandType) FromString(input string) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case "PLAY":
-		*gongsimcommandtype = COMMAND_PLAY
-	case "PAUSE":
-		*gongsimcommandtype = COMMAND_PAUSE
-	case "FIRE_NEXT_EVENT":
-		*gongsimcommandtype = COMMAND_FIRE_NEXT_EVENT
-	case "FIRE_EVENT_TILL_STATES_CHANGE":
-		*gongsimcommandtype = COMMAND_FIRE_EVENT_TILL_STATES_CHANGE
-	case "RESET":
-		*gongsimcommandtype = COMMAND_RESET
-	case "ADVANCE_10_MIN":
-		*gongsimcommandtype = COMMAND_ADVANCE_10_MIN
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (gongsimcommandtype *GongsimCommandType) FromCodeString(input string) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case "COMMAND_PLAY":
-		*gongsimcommandtype = COMMAND_PLAY
-	case "COMMAND_PAUSE":
-		*gongsimcommandtype = COMMAND_PAUSE
-	case "COMMAND_FIRE_NEXT_EVENT":
-		*gongsimcommandtype = COMMAND_FIRE_NEXT_EVENT
-	case "COMMAND_FIRE_EVENT_TILL_STATES_CHANGE":
-		*gongsimcommandtype = COMMAND_FIRE_EVENT_TILL_STATES_CHANGE
-	case "COMMAND_RESET":
-		*gongsimcommandtype = COMMAND_RESET
-	case "COMMAND_ADVANCE_10_MIN":
-		*gongsimcommandtype = COMMAND_ADVANCE_10_MIN
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (gongsimcommandtype *GongsimCommandType) ToCodeString() (res string) {
-
-	switch *gongsimcommandtype {
-	// insertion code per enum code
-	case COMMAND_PLAY:
-		res = "COMMAND_PLAY"
-	case COMMAND_PAUSE:
-		res = "COMMAND_PAUSE"
-	case COMMAND_FIRE_NEXT_EVENT:
-		res = "COMMAND_FIRE_NEXT_EVENT"
-	case COMMAND_FIRE_EVENT_TILL_STATES_CHANGE:
-		res = "COMMAND_FIRE_EVENT_TILL_STATES_CHANGE"
-	case COMMAND_RESET:
-		res = "COMMAND_RESET"
-	case COMMAND_ADVANCE_10_MIN:
-		res = "COMMAND_ADVANCE_10_MIN"
-	}
-	return
-}
-
-// Utility function for SpeedCommandType
-// if enum values are string, it is stored with the value
-// if enum values are int, they are stored with the code of the value
-func (speedcommandtype SpeedCommandType) ToString() (res string) {
-
-	// migration of former implementation of enum
-	switch speedcommandtype {
-	// insertion code per enum code
-	case COMMAND_INCREASE_SPEED_100_PERCENTS:
-		res = "INCREASE_SPEED_100_PERCENTS"
-	case COMMAND_DECREASE_SPEED_50_PERCENTS:
-		res = "COMMAND_DECREASE_SPEED_50_PERCENTS "
-	case COMMAND_SPEED_STEADY:
-		res = "COMMAND_SPEED_STEADY"
-	}
-	return
-}
-
-func (speedcommandtype *SpeedCommandType) FromString(input string) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case "INCREASE_SPEED_100_PERCENTS":
-		*speedcommandtype = COMMAND_INCREASE_SPEED_100_PERCENTS
-	case "COMMAND_DECREASE_SPEED_50_PERCENTS ":
-		*speedcommandtype = COMMAND_DECREASE_SPEED_50_PERCENTS
-	case "COMMAND_SPEED_STEADY":
-		*speedcommandtype = COMMAND_SPEED_STEADY
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (speedcommandtype *SpeedCommandType) FromCodeString(input string) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case "COMMAND_INCREASE_SPEED_100_PERCENTS":
-		*speedcommandtype = COMMAND_INCREASE_SPEED_100_PERCENTS
-	case "COMMAND_DECREASE_SPEED_50_PERCENTS":
-		*speedcommandtype = COMMAND_DECREASE_SPEED_50_PERCENTS
-	case "COMMAND_SPEED_STEADY":
-		*speedcommandtype = COMMAND_SPEED_STEADY
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (speedcommandtype *SpeedCommandType) ToCodeString() (res string) {
-
-	switch *speedcommandtype {
-	// insertion code per enum code
-	case COMMAND_INCREASE_SPEED_100_PERCENTS:
-		res = "COMMAND_INCREASE_SPEED_100_PERCENTS"
-	case COMMAND_DECREASE_SPEED_50_PERCENTS:
-		res = "COMMAND_DECREASE_SPEED_50_PERCENTS"
-	case COMMAND_SPEED_STEADY:
-		res = "COMMAND_SPEED_STEADY"
 	}
 	return
 }

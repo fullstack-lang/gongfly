@@ -184,6 +184,13 @@ type BackRepoLinerStruct struct {
 	Map_LinerDBID_LinerPtr *map[uint]*models.Liner
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoLiner *BackRepoLinerStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoLiner.stage
+	return
 }
 
 func (backRepoLiner *BackRepoLinerStruct) GetDB() *gorm.DB {
@@ -198,7 +205,7 @@ func (backRepoLiner *BackRepoLinerStruct) GetLinerDBFromLinerPtr(liner *models.L
 }
 
 // BackRepoLiner.Init set up the BackRepo of the Liner
-func (backRepoLiner *BackRepoLinerStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoLiner *BackRepoLinerStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoLiner.Map_LinerDBID_LinerPtr != nil {
 		err := errors.New("In Init, backRepoLiner.Map_LinerDBID_LinerPtr should be nil")
@@ -225,6 +232,7 @@ func (backRepoLiner *BackRepoLinerStruct) Init(db *gorm.DB) (Error error) {
 	backRepoLiner.Map_LinerPtr_LinerDBID = &tmpID
 
 	backRepoLiner.db = db
+	backRepoLiner.stage = stage
 	return
 }
 
@@ -352,7 +360,7 @@ func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseOne() (Error error) {
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	linerInstancesToBeRemovedFromTheStage := make(map[*models.Liner]any)
-	for key, value := range models.Stage.Liners {
+	for key, value := range backRepoLiner.stage.Liners {
 		linerInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -370,7 +378,7 @@ func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseOne() (Error error) {
 
 	// remove from stage and back repo's 3 maps all liners that are not in the checkout
 	for liner := range linerInstancesToBeRemovedFromTheStage {
-		liner.Unstage()
+		liner.Unstage(backRepoLiner.GetStage())
 
 		// remove instance from the back repo 3 maps
 		linerID := (*backRepoLiner.Map_LinerPtr_LinerDBID)[liner]
@@ -395,12 +403,12 @@ func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseOneInstance(linerDB *Line
 
 		// append model store with the new element
 		liner.Name = linerDB.Name_Data.String
-		liner.Stage()
+		liner.Stage(backRepoLiner.GetStage())
 	}
 	linerDB.CopyBasicFieldsToLiner(liner)
 
 	// in some cases, the instance might have been unstaged. It is necessary to stage it again
-	liner.Stage()
+	liner.Stage(backRepoLiner.GetStage())
 
 	// preserve pointer to linerDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_LinerDBID_LinerDB)[linerDB hold variable pointers

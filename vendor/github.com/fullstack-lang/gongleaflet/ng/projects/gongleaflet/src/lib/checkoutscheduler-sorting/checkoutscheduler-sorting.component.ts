@@ -46,7 +46,7 @@ export class CheckoutSchedulerSortingComponent implements OnInit {
   }
 
   getCheckoutSchedulers(): void {
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.dialogData.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 
@@ -100,13 +100,13 @@ export class CheckoutSchedulerSortingComponent implements OnInit {
 
     this.associatedCheckoutSchedulers.forEach(
       checkoutscheduler => {
-        this.checkoutschedulerService.updateCheckoutScheduler(checkoutscheduler)
+        this.checkoutschedulerService.updateCheckoutScheduler(checkoutscheduler, this.dialogData.GONG__StackPath)
           .subscribe(checkoutscheduler => {
             this.checkoutschedulerService.CheckoutSchedulerServiceChanged.next("update")
           });
       }
     )
 
-    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer +' done');
+    this.dialogRef.close('Sorting of ' + this.dialogData.ReversePointer + ' done');
   }
 }

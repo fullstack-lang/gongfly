@@ -108,6 +108,13 @@ type BackRepoEventStruct struct {
 	Map_EventDBID_EventPtr *map[uint]*models.Event
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoEvent *BackRepoEventStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoEvent.stage
+	return
 }
 
 func (backRepoEvent *BackRepoEventStruct) GetDB() *gorm.DB {
@@ -122,7 +129,7 @@ func (backRepoEvent *BackRepoEventStruct) GetEventDBFromEventPtr(event *models.E
 }
 
 // BackRepoEvent.Init set up the BackRepo of the Event
-func (backRepoEvent *BackRepoEventStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoEvent *BackRepoEventStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoEvent.Map_EventDBID_EventPtr != nil {
 		err := errors.New("In Init, backRepoEvent.Map_EventDBID_EventPtr should be nil")
@@ -149,6 +156,7 @@ func (backRepoEvent *BackRepoEventStruct) Init(db *gorm.DB) (Error error) {
 	backRepoEvent.Map_EventPtr_EventDBID = &tmpID
 
 	backRepoEvent.db = db
+	backRepoEvent.stage = stage
 	return
 }
 
@@ -255,8 +263,7 @@ func (backRepoEvent *BackRepoEventStruct) CommitPhaseTwoInstance(backRepo *BackR
 // BackRepoEvent.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseOne() (Error error) {
 
 	eventDBArray := make([]EventDB, 0)
@@ -268,7 +275,7 @@ func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseOne() (Error error) {
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	eventInstancesToBeRemovedFromTheStage := make(map[*models.Event]any)
-	for key, value := range models.Stage.Events {
+	for key, value := range backRepoEvent.stage.Events {
 		eventInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -286,7 +293,7 @@ func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseOne() (Error error) {
 
 	// remove from stage and back repo's 3 maps all events that are not in the checkout
 	for event := range eventInstancesToBeRemovedFromTheStage {
-		event.Unstage()
+		event.Unstage(backRepoEvent.GetStage())
 
 		// remove instance from the back repo 3 maps
 		eventID := (*backRepoEvent.Map_EventPtr_EventDBID)[event]
@@ -311,9 +318,12 @@ func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseOneInstance(eventDB *Even
 
 		// append model store with the new element
 		event.Name = eventDB.Name_Data.String
-		event.Stage()
+		event.Stage(backRepoEvent.GetStage())
 	}
 	eventDB.CopyBasicFieldsToEvent(event)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	event.Stage(backRepoEvent.GetStage())
 
 	// preserve pointer to eventDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_EventDBID_EventDB)[eventDB hold variable pointers

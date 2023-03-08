@@ -12,7 +12,7 @@ import { MapOfSortingComponents } from '../map-components'
 // insertion point for imports
 import { MapOptionsDB } from '../mapoptions-db'
 
-import { Router, RouterState, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 
@@ -59,23 +59,34 @@ export class LayerGroupUseDetailComponent implements OnInit {
 	originStruct: string = ""
 	originStructFieldName: string = ""
 
+	GONG__StackPath: string = ""
+
 	constructor(
 		private layergroupuseService: LayerGroupUseService,
 		private frontRepoService: FrontRepoService,
 		public dialog: MatDialog,
-		private route: ActivatedRoute,
+		private activatedRoute: ActivatedRoute,
 		private router: Router,
 	) {
 	}
 
 	ngOnInit(): void {
+		this.GONG__StackPath = this.activatedRoute.snapshot.paramMap.get('GONG__StackPath')!;
+
+		this.activatedRoute.params.subscribe(params => {
+			this.onChangedActivatedRoute()
+		});
+	}
+	onChangedActivatedRoute(): void {
 
 		// compute state
-		this.id = +this.route.snapshot.paramMap.get('id')!;
-		this.originStruct = this.route.snapshot.paramMap.get('originStruct')!;
-		this.originStructFieldName = this.route.snapshot.paramMap.get('originStructFieldName')!;
+		this.id = +this.activatedRoute.snapshot.paramMap.get('id')!;
+		this.originStruct = this.activatedRoute.snapshot.paramMap.get('originStruct')!;
+		this.originStructFieldName = this.activatedRoute.snapshot.paramMap.get('originStructFieldName')!;
 
-		const association = this.route.snapshot.paramMap.get('association');
+		this.GONG__StackPath = this.activatedRoute.snapshot.paramMap.get('GONG__StackPath')!;
+
+		const association = this.activatedRoute.snapshot.paramMap.get('association');
 		if (this.id == 0) {
 			this.state = LayerGroupUseDetailComponentState.CREATE_INSTANCE
 		} else {
@@ -110,7 +121,7 @@ export class LayerGroupUseDetailComponent implements OnInit {
 
 	getLayerGroupUse(): void {
 
-		this.frontRepoService.pull().subscribe(
+		this.frontRepoService.pull(this.GONG__StackPath).subscribe(
 			frontRepo => {
 				this.frontRepo = frontRepo
 
@@ -176,13 +187,13 @@ export class LayerGroupUseDetailComponent implements OnInit {
 
 		switch (this.state) {
 			case LayerGroupUseDetailComponentState.UPDATE_INSTANCE:
-				this.layergroupuseService.updateLayerGroupUse(this.layergroupuse)
+				this.layergroupuseService.updateLayerGroupUse(this.layergroupuse, this.GONG__StackPath)
 					.subscribe(layergroupuse => {
 						this.layergroupuseService.LayerGroupUseServiceChanged.next("update")
 					});
 				break;
 			default:
-				this.layergroupuseService.postLayerGroupUse(this.layergroupuse).subscribe(layergroupuse => {
+				this.layergroupuseService.postLayerGroupUse(this.layergroupuse, this.GONG__StackPath).subscribe(layergroupuse => {
 					this.layergroupuseService.LayerGroupUseServiceChanged.next("post")
 					this.layergroupuse = new (LayerGroupUseDB) // reset fields
 				});
@@ -211,6 +222,7 @@ export class LayerGroupUseDetailComponent implements OnInit {
 			dialogData.ReversePointer = reverseField
 			dialogData.OrderingMode = false
 			dialogData.SelectionMode = selectionMode
+			dialogData.GONG__StackPath = this.GONG__StackPath
 
 			dialogConfig.data = dialogData
 			const dialogRef: MatDialogRef<string, any> = this.dialog.open(
@@ -227,6 +239,7 @@ export class LayerGroupUseDetailComponent implements OnInit {
 			dialogData.ReversePointer = reverseField
 			dialogData.OrderingMode = false
 			dialogData.SelectionMode = selectionMode
+			dialogData.GONG__StackPath = this.GONG__StackPath
 
 			// set up the source
 			dialogData.SourceStruct = "LayerGroupUse"
@@ -262,6 +275,7 @@ export class LayerGroupUseDetailComponent implements OnInit {
 			ID: this.layergroupuse.ID,
 			ReversePointer: reverseField,
 			OrderingMode: true,
+			GONG__StackPath: this.GONG__StackPath,
 		};
 		const dialogRef: MatDialogRef<string, any> = this.dialog.open(
 			MapOfSortingComponents.get(AssociatedStruct).get(

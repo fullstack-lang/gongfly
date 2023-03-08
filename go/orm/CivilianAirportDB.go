@@ -114,6 +114,13 @@ type BackRepoCivilianAirportStruct struct {
 	Map_CivilianAirportDBID_CivilianAirportPtr *map[uint]*models.CivilianAirport
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoCivilianAirport.stage
+	return
 }
 
 func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) GetDB() *gorm.DB {
@@ -128,7 +135,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) GetCivilianAirport
 }
 
 // BackRepoCivilianAirport.Init set up the BackRepo of the CivilianAirport
-func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr != nil {
 		err := errors.New("In Init, backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr should be nil")
@@ -155,6 +162,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) Init(db *gorm.DB) 
 	backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID = &tmpID
 
 	backRepoCivilianAirport.db = db
+	backRepoCivilianAirport.stage = stage
 	return
 }
 
@@ -273,7 +281,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseOne()
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	civilianairportInstancesToBeRemovedFromTheStage := make(map[*models.CivilianAirport]any)
-	for key, value := range models.Stage.CivilianAirports {
+	for key, value := range backRepoCivilianAirport.stage.CivilianAirports {
 		civilianairportInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -291,7 +299,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseOne()
 
 	// remove from stage and back repo's 3 maps all civilianairports that are not in the checkout
 	for civilianairport := range civilianairportInstancesToBeRemovedFromTheStage {
-		civilianairport.Unstage()
+		civilianairport.Unstage(backRepoCivilianAirport.GetStage())
 
 		// remove instance from the back repo 3 maps
 		civilianairportID := (*backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID)[civilianairport]
@@ -316,12 +324,12 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseOneIn
 
 		// append model store with the new element
 		civilianairport.Name = civilianairportDB.Name_Data.String
-		civilianairport.Stage()
+		civilianairport.Stage(backRepoCivilianAirport.GetStage())
 	}
 	civilianairportDB.CopyBasicFieldsToCivilianAirport(civilianairport)
 
 	// in some cases, the instance might have been unstaged. It is necessary to stage it again
-	civilianairport.Stage()
+	civilianairport.Stage(backRepoCivilianAirport.GetStage())
 
 	// preserve pointer to civilianairportDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_CivilianAirportDBID_CivilianAirportDB)[civilianairportDB hold variable pointers

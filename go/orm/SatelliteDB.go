@@ -156,6 +156,13 @@ type BackRepoSatelliteStruct struct {
 	Map_SatelliteDBID_SatellitePtr *map[uint]*models.Satellite
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoSatellite *BackRepoSatelliteStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoSatellite.stage
+	return
 }
 
 func (backRepoSatellite *BackRepoSatelliteStruct) GetDB() *gorm.DB {
@@ -170,7 +177,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) GetSatelliteDBFromSatellitePtr
 }
 
 // BackRepoSatellite.Init set up the BackRepo of the Satellite
-func (backRepoSatellite *BackRepoSatelliteStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoSatellite *BackRepoSatelliteStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoSatellite.Map_SatelliteDBID_SatellitePtr != nil {
 		err := errors.New("In Init, backRepoSatellite.Map_SatelliteDBID_SatellitePtr should be nil")
@@ -197,6 +204,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) Init(db *gorm.DB) (Error error
 	backRepoSatellite.Map_SatellitePtr_SatelliteDBID = &tmpID
 
 	backRepoSatellite.db = db
+	backRepoSatellite.stage = stage
 	return
 }
 
@@ -315,7 +323,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseOne() (Error erro
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	satelliteInstancesToBeRemovedFromTheStage := make(map[*models.Satellite]any)
-	for key, value := range models.Stage.Satellites {
+	for key, value := range backRepoSatellite.stage.Satellites {
 		satelliteInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -333,7 +341,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseOne() (Error erro
 
 	// remove from stage and back repo's 3 maps all satellites that are not in the checkout
 	for satellite := range satelliteInstancesToBeRemovedFromTheStage {
-		satellite.Unstage()
+		satellite.Unstage(backRepoSatellite.GetStage())
 
 		// remove instance from the back repo 3 maps
 		satelliteID := (*backRepoSatellite.Map_SatellitePtr_SatelliteDBID)[satellite]
@@ -358,12 +366,12 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseOneInstance(satel
 
 		// append model store with the new element
 		satellite.Name = satelliteDB.Name_Data.String
-		satellite.Stage()
+		satellite.Stage(backRepoSatellite.GetStage())
 	}
 	satelliteDB.CopyBasicFieldsToSatellite(satellite)
 
 	// in some cases, the instance might have been unstaged. It is necessary to stage it again
-	satellite.Stage()
+	satellite.Stage(backRepoSatellite.GetStage())
 
 	// preserve pointer to satelliteDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_SatelliteDBID_SatelliteDB)[satelliteDB hold variable pointers

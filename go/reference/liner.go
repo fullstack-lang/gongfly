@@ -24,4 +24,4 @@ var Sc1_AF_CDG_HYE_ref = models.Liner{
 	TargetLocationLat:  TLN_LFTH_ref.Lat,
 	TargetLocationLng:  TLN_LFTH_ref.Lng,
 }
-var Sc1_AF_3577_MDM = Sc1_AF_CDG_HYE_ref.StageCopy().Register()
+var Sc1_AF_3577_MDM = Sc1_AF_CDG_HYE_ref.Stage(&models.Stage).Register()

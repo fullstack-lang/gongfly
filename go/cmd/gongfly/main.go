@@ -100,7 +100,7 @@ func main() {
 	reference.Sat7.QueueUpdateEvent(1 * time.Second)
 	reference.Sat8.QueueUpdateEvent(1 * time.Second)
 
-	defaultLayer := new(gongleaflet_models.LayerGroup).Stage()
+	defaultLayer := new(gongleaflet_models.LayerGroup).Stage(&gongleaflet_models.Stage)
 	defaultLayer.Name = "default"
 	defaultLayer.DisplayName = "default"
 

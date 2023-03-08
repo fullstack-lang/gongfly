@@ -89,7 +89,7 @@ export class CartoatcControlSettingsComponent implements OnInit {
     if (layerGroupUse) {
       layerGroupUse.Display = !layerGroupUse.Display
 
-      this.layerGroupUseService.updateLayerGroupUse(layerGroupUse).subscribe(
+      this.layerGroupUseService.updateLayerGroupUse(layerGroupUse, "").subscribe(
         () => {
           console.log("layer group use " + layerGroupUse?.Name + " display value updated to " + layerGroupUse?.Display)
 

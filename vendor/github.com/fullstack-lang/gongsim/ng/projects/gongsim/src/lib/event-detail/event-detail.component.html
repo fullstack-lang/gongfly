@@ -1,7 +1,7 @@
 <form *ngIf="event" class="details">
     <h2 class="details__title">event</h2>
     <!-- insertion point for fields specific code -->
-    <mat-grid-list *ngIf='!isATextArea("Name")' cols="5" rowHeight="2:1">
+    <mat-grid-list *ngIf='!isATextArea("Name")' cols="5" rowHeight="1:1">
         <mat-grid-tile [colspan]="3">
             <mat-form-field mat-form-field class="detail-full-width">
                 <mat-label>Name</mat-label>
@@ -22,22 +22,22 @@
     </mat-form-field>
 
     <!-- -->
-    <mat-grid-list cols="3" rowHeight="4:1">
+    <mat-grid-list cols="3" rowHeight="1:1">
         <mat-grid-tile>
             <mat-form-field class="details_hours_width">
-                <mat-label>Duration Hours</mat-label>
+                <mat-label>Hrs. Duration</mat-label>
                 <input type="number" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="Duration_Hours">
             </mat-form-field>
         </mat-grid-tile>
         <mat-grid-tile>
             <mat-form-field class="details_minutes_width">
-                <mat-label>Duration Minutes</mat-label>
+                <mat-label>Min. Duration</mat-label>
                 <input type="number" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="Duration_Minutes">
             </mat-form-field>
         </mat-grid-tile>
         <mat-grid-tile>
             <mat-form-field class="details_seconds_width">
-                <mat-label>Duration Seconds</mat-label>
+                <mat-label>Sec. Duration</mat-label>
                 <input type="number" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="Duration_Seconds">
             </mat-form-field>
         </mat-grid-tile>

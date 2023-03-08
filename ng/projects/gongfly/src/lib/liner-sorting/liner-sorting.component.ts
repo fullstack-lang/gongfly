@@ -100,7 +100,7 @@ export class LinerSortingComponent implements OnInit {
 
     this.associatedLiners.forEach(
       liner => {
-        this.linerService.updateLiner(liner)
+        this.linerService.updateLiner(liner, this.dialogData.GONG__StackPath)
           .subscribe(liner => {
             this.linerService.LinerServiceChanged.next("update")
           });

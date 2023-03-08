@@ -4,6 +4,7 @@ import (
 	// gongfly stack for model analysis
 
 	gongfly_controllers "github.com/fullstack-lang/gongfly/go/controllers"
+	gongfly_models "github.com/fullstack-lang/gongfly/go/models"
 	gongfly_orm "github.com/fullstack-lang/gongfly/go/orm"
 	"github.com/gin-gonic/gin"
 
@@ -19,7 +20,7 @@ func Init(r *gin.Engine, filenames ...string) {
 		filenames = append(filenames, ":memory:")
 	}
 
-	db_inMemory := gongfly_orm.SetupModels(false, filenames[0])
+	db_inMemory := gongfly_orm.SetupModels(&gongfly_models.Stage, false, filenames[0])
 
 	// since gongflysim is a multi threaded application. It is important to set up
 	// only one open connexion at a time

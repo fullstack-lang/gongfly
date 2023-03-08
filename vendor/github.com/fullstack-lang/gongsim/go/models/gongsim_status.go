@@ -13,7 +13,7 @@ type GongsimStatus struct {
 var GongsimStatusSingloton = (&GongsimStatus{
 	Name:                       "Gongsim Status Singloton",
 	CurrentCommand:             COMMAND_PAUSE,
-	CurrentSpeedCommand: COMMAND_SPEED_STEADY,
+	CurrentSpeedCommand:        COMMAND_SPEED_STEADY,
 	CompletionDate:             "",
 	SpeedCommandCompletionDate: "",
-}).Stage()
+}).Stage(&Stage)

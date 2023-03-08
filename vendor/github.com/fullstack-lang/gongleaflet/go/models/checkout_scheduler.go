@@ -12,7 +12,7 @@ type CheckoutScheduler struct {
 
 var CheckoutSchedulerSingloton = (&CheckoutScheduler{
 	Name: "Checkout Scheduler Singloton",
-}).Stage()
+}).Stage(&Stage)
 
 func init() {
 	CheckoutSchedulerSingloton.StartThread()

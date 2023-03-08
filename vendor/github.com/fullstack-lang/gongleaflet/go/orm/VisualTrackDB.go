@@ -166,6 +166,13 @@ type BackRepoVisualTrackStruct struct {
 	Map_VisualTrackDBID_VisualTrackPtr *map[uint]*models.VisualTrack
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoVisualTrack *BackRepoVisualTrackStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoVisualTrack.stage
+	return
 }
 
 func (backRepoVisualTrack *BackRepoVisualTrackStruct) GetDB() *gorm.DB {
@@ -180,7 +187,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) GetVisualTrackDBFromVisual
 }
 
 // BackRepoVisualTrack.Init set up the BackRepo of the VisualTrack
-func (backRepoVisualTrack *BackRepoVisualTrackStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoVisualTrack *BackRepoVisualTrackStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr != nil {
 		err := errors.New("In Init, backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr should be nil")
@@ -207,6 +214,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) Init(db *gorm.DB) (Error e
 	backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID = &tmpID
 
 	backRepoVisualTrack.db = db
+	backRepoVisualTrack.stage = stage
 	return
 }
 
@@ -331,8 +339,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseTwoInstance(bac
 // BackRepoVisualTrack.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseOne() (Error error) {
 
 	visualtrackDBArray := make([]VisualTrackDB, 0)
@@ -344,7 +351,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseOne() (Error 
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	visualtrackInstancesToBeRemovedFromTheStage := make(map[*models.VisualTrack]any)
-	for key, value := range models.Stage.VisualTracks {
+	for key, value := range backRepoVisualTrack.stage.VisualTracks {
 		visualtrackInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -362,7 +369,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseOne() (Error 
 
 	// remove from stage and back repo's 3 maps all visualtracks that are not in the checkout
 	for visualtrack := range visualtrackInstancesToBeRemovedFromTheStage {
-		visualtrack.Unstage()
+		visualtrack.Unstage(backRepoVisualTrack.GetStage())
 
 		// remove instance from the back repo 3 maps
 		visualtrackID := (*backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID)[visualtrack]
@@ -387,9 +394,12 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseOneInstance(v
 
 		// append model store with the new element
 		visualtrack.Name = visualtrackDB.Name_Data.String
-		visualtrack.Stage()
+		visualtrack.Stage(backRepoVisualTrack.GetStage())
 	}
 	visualtrackDB.CopyBasicFieldsToVisualTrack(visualtrack)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	visualtrack.Stage(backRepoVisualTrack.GetStage())
 
 	// preserve pointer to visualtrackDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_VisualTrackDBID_VisualTrackDB)[visualtrackDB hold variable pointers

@@ -171,13 +171,13 @@ export class OpsLineDetailComponent implements OnInit {
 
 		switch (this.state) {
 			case OpsLineDetailComponentState.UPDATE_INSTANCE:
-				this.opslineService.updateOpsLine(this.opsline)
+				this.opslineService.updateOpsLine(this.opsline, this.GONG__StackPath)
 					.subscribe(opsline => {
 						this.opslineService.OpsLineServiceChanged.next("update")
 					});
 				break;
 			default:
-				this.opslineService.postOpsLine(this.opsline).subscribe(opsline => {
+				this.opslineService.postOpsLine(this.opsline, this.GONG__StackPath).subscribe(opsline => {
 					this.opslineService.OpsLineServiceChanged.next("post")
 					this.opsline = new (OpsLineDB) // reset fields
 				});

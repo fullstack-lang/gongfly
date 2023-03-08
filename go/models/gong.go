@@ -264,93 +264,38 @@ func (stage *StageStruct) RestoreXL(dirPath string) {
 
 // insertion point for cumulative sub template with model space calls
 // Stage puts civilianairport to the model stage
-func (civilianairport *CivilianAirport) Stage() *CivilianAirport {
-	Stage.CivilianAirports[civilianairport] = __member
-	Stage.CivilianAirports_mapString[civilianairport.Name] = civilianairport
+func (civilianairport *CivilianAirport) Stage(stage *StageStruct) *CivilianAirport {
+	stage.CivilianAirports[civilianairport] = __member
+	stage.CivilianAirports_mapString[civilianairport.Name] = civilianairport
 
 	return civilianairport
 }
 
 // Unstage removes civilianairport off the model stage
-func (civilianairport *CivilianAirport) Unstage() *CivilianAirport {
-	delete(Stage.CivilianAirports, civilianairport)
-	delete(Stage.CivilianAirports_mapString, civilianairport.Name)
+func (civilianairport *CivilianAirport) Unstage(stage *StageStruct) *CivilianAirport {
+	delete(stage.CivilianAirports, civilianairport)
+	delete(stage.CivilianAirports_mapString, civilianairport.Name)
 	return civilianairport
 }
 
 // commit civilianairport to the back repo (if it is already staged)
-func (civilianairport *CivilianAirport) Commit() *CivilianAirport {
-	if _, ok := Stage.CivilianAirports[civilianairport]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitCivilianAirport(civilianairport)
+func (civilianairport *CivilianAirport) Commit(stage *StageStruct) *CivilianAirport {
+	if _, ok := stage.CivilianAirports[civilianairport]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitCivilianAirport(civilianairport)
 		}
 	}
 	return civilianairport
 }
 
 // Checkout civilianairport to the back repo (if it is already staged)
-func (civilianairport *CivilianAirport) Checkout() *CivilianAirport {
-	if _, ok := Stage.CivilianAirports[civilianairport]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutCivilianAirport(civilianairport)
+func (civilianairport *CivilianAirport) Checkout(stage *StageStruct) *CivilianAirport {
+	if _, ok := stage.CivilianAirports[civilianairport]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutCivilianAirport(civilianairport)
 		}
 	}
 	return civilianairport
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of civilianairport to the model stage
-func (civilianairport *CivilianAirport) StageCopy() *CivilianAirport {
-	_civilianairport := new(CivilianAirport)
-	*_civilianairport = *civilianairport
-	_civilianairport.Stage()
-	return _civilianairport
-}
-
-// StageAndCommit appends civilianairport to the model stage and commit to the orm repo
-func (civilianairport *CivilianAirport) StageAndCommit() *CivilianAirport {
-	civilianairport.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMCivilianAirport(civilianairport)
-	}
-	return civilianairport
-}
-
-// DeleteStageAndCommit appends civilianairport to the model stage and commit to the orm repo
-func (civilianairport *CivilianAirport) DeleteStageAndCommit() *CivilianAirport {
-	civilianairport.Unstage()
-	DeleteORMCivilianAirport(civilianairport)
-	return civilianairport
-}
-
-// StageCopyAndCommit appends a copy of civilianairport to the model stage and commit to the orm repo
-func (civilianairport *CivilianAirport) StageCopyAndCommit() *CivilianAirport {
-	_civilianairport := new(CivilianAirport)
-	*_civilianairport = *civilianairport
-	_civilianairport.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMCivilianAirport(civilianairport)
-	}
-	return _civilianairport
-}
-
-// CreateORMCivilianAirport enables dynamic staging of a CivilianAirport instance
-func CreateORMCivilianAirport(civilianairport *CivilianAirport) {
-	civilianairport.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMCivilianAirport(civilianairport)
-	}
-}
-
-// DeleteORMCivilianAirport enables dynamic staging of a CivilianAirport instance
-func DeleteORMCivilianAirport(civilianairport *CivilianAirport) {
-	civilianairport.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMCivilianAirport(civilianairport)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -359,93 +304,38 @@ func (civilianairport *CivilianAirport) GetName() (res string) {
 }
 
 // Stage puts liner to the model stage
-func (liner *Liner) Stage() *Liner {
-	Stage.Liners[liner] = __member
-	Stage.Liners_mapString[liner.Name] = liner
+func (liner *Liner) Stage(stage *StageStruct) *Liner {
+	stage.Liners[liner] = __member
+	stage.Liners_mapString[liner.Name] = liner
 
 	return liner
 }
 
 // Unstage removes liner off the model stage
-func (liner *Liner) Unstage() *Liner {
-	delete(Stage.Liners, liner)
-	delete(Stage.Liners_mapString, liner.Name)
+func (liner *Liner) Unstage(stage *StageStruct) *Liner {
+	delete(stage.Liners, liner)
+	delete(stage.Liners_mapString, liner.Name)
 	return liner
 }
 
 // commit liner to the back repo (if it is already staged)
-func (liner *Liner) Commit() *Liner {
-	if _, ok := Stage.Liners[liner]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitLiner(liner)
+func (liner *Liner) Commit(stage *StageStruct) *Liner {
+	if _, ok := stage.Liners[liner]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitLiner(liner)
 		}
 	}
 	return liner
 }
 
 // Checkout liner to the back repo (if it is already staged)
-func (liner *Liner) Checkout() *Liner {
-	if _, ok := Stage.Liners[liner]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutLiner(liner)
+func (liner *Liner) Checkout(stage *StageStruct) *Liner {
+	if _, ok := stage.Liners[liner]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutLiner(liner)
 		}
 	}
 	return liner
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of liner to the model stage
-func (liner *Liner) StageCopy() *Liner {
-	_liner := new(Liner)
-	*_liner = *liner
-	_liner.Stage()
-	return _liner
-}
-
-// StageAndCommit appends liner to the model stage and commit to the orm repo
-func (liner *Liner) StageAndCommit() *Liner {
-	liner.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMLiner(liner)
-	}
-	return liner
-}
-
-// DeleteStageAndCommit appends liner to the model stage and commit to the orm repo
-func (liner *Liner) DeleteStageAndCommit() *Liner {
-	liner.Unstage()
-	DeleteORMLiner(liner)
-	return liner
-}
-
-// StageCopyAndCommit appends a copy of liner to the model stage and commit to the orm repo
-func (liner *Liner) StageCopyAndCommit() *Liner {
-	_liner := new(Liner)
-	*_liner = *liner
-	_liner.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMLiner(liner)
-	}
-	return _liner
-}
-
-// CreateORMLiner enables dynamic staging of a Liner instance
-func CreateORMLiner(liner *Liner) {
-	liner.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMLiner(liner)
-	}
-}
-
-// DeleteORMLiner enables dynamic staging of a Liner instance
-func DeleteORMLiner(liner *Liner) {
-	liner.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMLiner(liner)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -454,93 +344,38 @@ func (liner *Liner) GetName() (res string) {
 }
 
 // Stage puts message to the model stage
-func (message *Message) Stage() *Message {
-	Stage.Messages[message] = __member
-	Stage.Messages_mapString[message.Name] = message
+func (message *Message) Stage(stage *StageStruct) *Message {
+	stage.Messages[message] = __member
+	stage.Messages_mapString[message.Name] = message
 
 	return message
 }
 
 // Unstage removes message off the model stage
-func (message *Message) Unstage() *Message {
-	delete(Stage.Messages, message)
-	delete(Stage.Messages_mapString, message.Name)
+func (message *Message) Unstage(stage *StageStruct) *Message {
+	delete(stage.Messages, message)
+	delete(stage.Messages_mapString, message.Name)
 	return message
 }
 
 // commit message to the back repo (if it is already staged)
-func (message *Message) Commit() *Message {
-	if _, ok := Stage.Messages[message]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitMessage(message)
+func (message *Message) Commit(stage *StageStruct) *Message {
+	if _, ok := stage.Messages[message]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitMessage(message)
 		}
 	}
 	return message
 }
 
 // Checkout message to the back repo (if it is already staged)
-func (message *Message) Checkout() *Message {
-	if _, ok := Stage.Messages[message]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutMessage(message)
+func (message *Message) Checkout(stage *StageStruct) *Message {
+	if _, ok := stage.Messages[message]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutMessage(message)
 		}
 	}
 	return message
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of message to the model stage
-func (message *Message) StageCopy() *Message {
-	_message := new(Message)
-	*_message = *message
-	_message.Stage()
-	return _message
-}
-
-// StageAndCommit appends message to the model stage and commit to the orm repo
-func (message *Message) StageAndCommit() *Message {
-	message.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMMessage(message)
-	}
-	return message
-}
-
-// DeleteStageAndCommit appends message to the model stage and commit to the orm repo
-func (message *Message) DeleteStageAndCommit() *Message {
-	message.Unstage()
-	DeleteORMMessage(message)
-	return message
-}
-
-// StageCopyAndCommit appends a copy of message to the model stage and commit to the orm repo
-func (message *Message) StageCopyAndCommit() *Message {
-	_message := new(Message)
-	*_message = *message
-	_message.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMMessage(message)
-	}
-	return _message
-}
-
-// CreateORMMessage enables dynamic staging of a Message instance
-func CreateORMMessage(message *Message) {
-	message.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMMessage(message)
-	}
-}
-
-// DeleteORMMessage enables dynamic staging of a Message instance
-func DeleteORMMessage(message *Message) {
-	message.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMMessage(message)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -549,93 +384,38 @@ func (message *Message) GetName() (res string) {
 }
 
 // Stage puts opsline to the model stage
-func (opsline *OpsLine) Stage() *OpsLine {
-	Stage.OpsLines[opsline] = __member
-	Stage.OpsLines_mapString[opsline.Name] = opsline
+func (opsline *OpsLine) Stage(stage *StageStruct) *OpsLine {
+	stage.OpsLines[opsline] = __member
+	stage.OpsLines_mapString[opsline.Name] = opsline
 
 	return opsline
 }
 
 // Unstage removes opsline off the model stage
-func (opsline *OpsLine) Unstage() *OpsLine {
-	delete(Stage.OpsLines, opsline)
-	delete(Stage.OpsLines_mapString, opsline.Name)
+func (opsline *OpsLine) Unstage(stage *StageStruct) *OpsLine {
+	delete(stage.OpsLines, opsline)
+	delete(stage.OpsLines_mapString, opsline.Name)
 	return opsline
 }
 
 // commit opsline to the back repo (if it is already staged)
-func (opsline *OpsLine) Commit() *OpsLine {
-	if _, ok := Stage.OpsLines[opsline]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitOpsLine(opsline)
+func (opsline *OpsLine) Commit(stage *StageStruct) *OpsLine {
+	if _, ok := stage.OpsLines[opsline]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitOpsLine(opsline)
 		}
 	}
 	return opsline
 }
 
 // Checkout opsline to the back repo (if it is already staged)
-func (opsline *OpsLine) Checkout() *OpsLine {
-	if _, ok := Stage.OpsLines[opsline]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutOpsLine(opsline)
+func (opsline *OpsLine) Checkout(stage *StageStruct) *OpsLine {
+	if _, ok := stage.OpsLines[opsline]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutOpsLine(opsline)
 		}
 	}
 	return opsline
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of opsline to the model stage
-func (opsline *OpsLine) StageCopy() *OpsLine {
-	_opsline := new(OpsLine)
-	*_opsline = *opsline
-	_opsline.Stage()
-	return _opsline
-}
-
-// StageAndCommit appends opsline to the model stage and commit to the orm repo
-func (opsline *OpsLine) StageAndCommit() *OpsLine {
-	opsline.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMOpsLine(opsline)
-	}
-	return opsline
-}
-
-// DeleteStageAndCommit appends opsline to the model stage and commit to the orm repo
-func (opsline *OpsLine) DeleteStageAndCommit() *OpsLine {
-	opsline.Unstage()
-	DeleteORMOpsLine(opsline)
-	return opsline
-}
-
-// StageCopyAndCommit appends a copy of opsline to the model stage and commit to the orm repo
-func (opsline *OpsLine) StageCopyAndCommit() *OpsLine {
-	_opsline := new(OpsLine)
-	*_opsline = *opsline
-	_opsline.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMOpsLine(opsline)
-	}
-	return _opsline
-}
-
-// CreateORMOpsLine enables dynamic staging of a OpsLine instance
-func CreateORMOpsLine(opsline *OpsLine) {
-	opsline.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMOpsLine(opsline)
-	}
-}
-
-// DeleteORMOpsLine enables dynamic staging of a OpsLine instance
-func DeleteORMOpsLine(opsline *OpsLine) {
-	opsline.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMOpsLine(opsline)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -644,93 +424,38 @@ func (opsline *OpsLine) GetName() (res string) {
 }
 
 // Stage puts radar to the model stage
-func (radar *Radar) Stage() *Radar {
-	Stage.Radars[radar] = __member
-	Stage.Radars_mapString[radar.Name] = radar
+func (radar *Radar) Stage(stage *StageStruct) *Radar {
+	stage.Radars[radar] = __member
+	stage.Radars_mapString[radar.Name] = radar
 
 	return radar
 }
 
 // Unstage removes radar off the model stage
-func (radar *Radar) Unstage() *Radar {
-	delete(Stage.Radars, radar)
-	delete(Stage.Radars_mapString, radar.Name)
+func (radar *Radar) Unstage(stage *StageStruct) *Radar {
+	delete(stage.Radars, radar)
+	delete(stage.Radars_mapString, radar.Name)
 	return radar
 }
 
 // commit radar to the back repo (if it is already staged)
-func (radar *Radar) Commit() *Radar {
-	if _, ok := Stage.Radars[radar]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitRadar(radar)
+func (radar *Radar) Commit(stage *StageStruct) *Radar {
+	if _, ok := stage.Radars[radar]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitRadar(radar)
 		}
 	}
 	return radar
 }
 
 // Checkout radar to the back repo (if it is already staged)
-func (radar *Radar) Checkout() *Radar {
-	if _, ok := Stage.Radars[radar]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutRadar(radar)
+func (radar *Radar) Checkout(stage *StageStruct) *Radar {
+	if _, ok := stage.Radars[radar]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutRadar(radar)
 		}
 	}
 	return radar
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of radar to the model stage
-func (radar *Radar) StageCopy() *Radar {
-	_radar := new(Radar)
-	*_radar = *radar
-	_radar.Stage()
-	return _radar
-}
-
-// StageAndCommit appends radar to the model stage and commit to the orm repo
-func (radar *Radar) StageAndCommit() *Radar {
-	radar.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMRadar(radar)
-	}
-	return radar
-}
-
-// DeleteStageAndCommit appends radar to the model stage and commit to the orm repo
-func (radar *Radar) DeleteStageAndCommit() *Radar {
-	radar.Unstage()
-	DeleteORMRadar(radar)
-	return radar
-}
-
-// StageCopyAndCommit appends a copy of radar to the model stage and commit to the orm repo
-func (radar *Radar) StageCopyAndCommit() *Radar {
-	_radar := new(Radar)
-	*_radar = *radar
-	_radar.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMRadar(radar)
-	}
-	return _radar
-}
-
-// CreateORMRadar enables dynamic staging of a Radar instance
-func CreateORMRadar(radar *Radar) {
-	radar.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMRadar(radar)
-	}
-}
-
-// DeleteORMRadar enables dynamic staging of a Radar instance
-func DeleteORMRadar(radar *Radar) {
-	radar.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMRadar(radar)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -739,93 +464,38 @@ func (radar *Radar) GetName() (res string) {
 }
 
 // Stage puts satellite to the model stage
-func (satellite *Satellite) Stage() *Satellite {
-	Stage.Satellites[satellite] = __member
-	Stage.Satellites_mapString[satellite.Name] = satellite
+func (satellite *Satellite) Stage(stage *StageStruct) *Satellite {
+	stage.Satellites[satellite] = __member
+	stage.Satellites_mapString[satellite.Name] = satellite
 
 	return satellite
 }
 
 // Unstage removes satellite off the model stage
-func (satellite *Satellite) Unstage() *Satellite {
-	delete(Stage.Satellites, satellite)
-	delete(Stage.Satellites_mapString, satellite.Name)
+func (satellite *Satellite) Unstage(stage *StageStruct) *Satellite {
+	delete(stage.Satellites, satellite)
+	delete(stage.Satellites_mapString, satellite.Name)
 	return satellite
 }
 
 // commit satellite to the back repo (if it is already staged)
-func (satellite *Satellite) Commit() *Satellite {
-	if _, ok := Stage.Satellites[satellite]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitSatellite(satellite)
+func (satellite *Satellite) Commit(stage *StageStruct) *Satellite {
+	if _, ok := stage.Satellites[satellite]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitSatellite(satellite)
 		}
 	}
 	return satellite
 }
 
 // Checkout satellite to the back repo (if it is already staged)
-func (satellite *Satellite) Checkout() *Satellite {
-	if _, ok := Stage.Satellites[satellite]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutSatellite(satellite)
+func (satellite *Satellite) Checkout(stage *StageStruct) *Satellite {
+	if _, ok := stage.Satellites[satellite]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutSatellite(satellite)
 		}
 	}
 	return satellite
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of satellite to the model stage
-func (satellite *Satellite) StageCopy() *Satellite {
-	_satellite := new(Satellite)
-	*_satellite = *satellite
-	_satellite.Stage()
-	return _satellite
-}
-
-// StageAndCommit appends satellite to the model stage and commit to the orm repo
-func (satellite *Satellite) StageAndCommit() *Satellite {
-	satellite.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMSatellite(satellite)
-	}
-	return satellite
-}
-
-// DeleteStageAndCommit appends satellite to the model stage and commit to the orm repo
-func (satellite *Satellite) DeleteStageAndCommit() *Satellite {
-	satellite.Unstage()
-	DeleteORMSatellite(satellite)
-	return satellite
-}
-
-// StageCopyAndCommit appends a copy of satellite to the model stage and commit to the orm repo
-func (satellite *Satellite) StageCopyAndCommit() *Satellite {
-	_satellite := new(Satellite)
-	*_satellite = *satellite
-	_satellite.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMSatellite(satellite)
-	}
-	return _satellite
-}
-
-// CreateORMSatellite enables dynamic staging of a Satellite instance
-func CreateORMSatellite(satellite *Satellite) {
-	satellite.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMSatellite(satellite)
-	}
-}
-
-// DeleteORMSatellite enables dynamic staging of a Satellite instance
-func DeleteORMSatellite(satellite *Satellite) {
-	satellite.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMSatellite(satellite)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -834,93 +504,38 @@ func (satellite *Satellite) GetName() (res string) {
 }
 
 // Stage puts scenario to the model stage
-func (scenario *Scenario) Stage() *Scenario {
-	Stage.Scenarios[scenario] = __member
-	Stage.Scenarios_mapString[scenario.Name] = scenario
+func (scenario *Scenario) Stage(stage *StageStruct) *Scenario {
+	stage.Scenarios[scenario] = __member
+	stage.Scenarios_mapString[scenario.Name] = scenario
 
 	return scenario
 }
 
 // Unstage removes scenario off the model stage
-func (scenario *Scenario) Unstage() *Scenario {
-	delete(Stage.Scenarios, scenario)
-	delete(Stage.Scenarios_mapString, scenario.Name)
+func (scenario *Scenario) Unstage(stage *StageStruct) *Scenario {
+	delete(stage.Scenarios, scenario)
+	delete(stage.Scenarios_mapString, scenario.Name)
 	return scenario
 }
 
 // commit scenario to the back repo (if it is already staged)
-func (scenario *Scenario) Commit() *Scenario {
-	if _, ok := Stage.Scenarios[scenario]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CommitScenario(scenario)
+func (scenario *Scenario) Commit(stage *StageStruct) *Scenario {
+	if _, ok := stage.Scenarios[scenario]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitScenario(scenario)
 		}
 	}
 	return scenario
 }
 
 // Checkout scenario to the back repo (if it is already staged)
-func (scenario *Scenario) Checkout() *Scenario {
-	if _, ok := Stage.Scenarios[scenario]; ok {
-		if Stage.BackRepo != nil {
-			Stage.BackRepo.CheckoutScenario(scenario)
+func (scenario *Scenario) Checkout(stage *StageStruct) *Scenario {
+	if _, ok := stage.Scenarios[scenario]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutScenario(scenario)
 		}
 	}
 	return scenario
-}
-
-//
-// Legacy, to be deleted
-//
-
-// StageCopy appends a copy of scenario to the model stage
-func (scenario *Scenario) StageCopy() *Scenario {
-	_scenario := new(Scenario)
-	*_scenario = *scenario
-	_scenario.Stage()
-	return _scenario
-}
-
-// StageAndCommit appends scenario to the model stage and commit to the orm repo
-func (scenario *Scenario) StageAndCommit() *Scenario {
-	scenario.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMScenario(scenario)
-	}
-	return scenario
-}
-
-// DeleteStageAndCommit appends scenario to the model stage and commit to the orm repo
-func (scenario *Scenario) DeleteStageAndCommit() *Scenario {
-	scenario.Unstage()
-	DeleteORMScenario(scenario)
-	return scenario
-}
-
-// StageCopyAndCommit appends a copy of scenario to the model stage and commit to the orm repo
-func (scenario *Scenario) StageCopyAndCommit() *Scenario {
-	_scenario := new(Scenario)
-	*_scenario = *scenario
-	_scenario.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMScenario(scenario)
-	}
-	return _scenario
-}
-
-// CreateORMScenario enables dynamic staging of a Scenario instance
-func CreateORMScenario(scenario *Scenario) {
-	scenario.Stage()
-	if Stage.AllModelsStructCreateCallback != nil {
-		Stage.AllModelsStructCreateCallback.CreateORMScenario(scenario)
-	}
-}
-
-// DeleteORMScenario enables dynamic staging of a Scenario instance
-func DeleteORMScenario(scenario *Scenario) {
-	scenario.Unstage()
-	if Stage.AllModelsStructDeleteCallback != nil {
-		Stage.AllModelsStructDeleteCallback.DeleteORMScenario(scenario)
-	}
 }
 
 // for satisfaction of GongStruct interface
@@ -999,31 +614,31 @@ func (stage *StageStruct) Nil() { // insertion point for array nil
 
 func (stage *StageStruct) Unstage() { // insertion point for array nil
 	for civilianairport := range stage.CivilianAirports {
-		civilianairport.Unstage()
+		civilianairport.Unstage(stage)
 	}
 
 	for liner := range stage.Liners {
-		liner.Unstage()
+		liner.Unstage(stage)
 	}
 
 	for message := range stage.Messages {
-		message.Unstage()
+		message.Unstage(stage)
 	}
 
 	for opsline := range stage.OpsLines {
-		opsline.Unstage()
+		opsline.Unstage(stage)
 	}
 
 	for radar := range stage.Radars {
-		radar.Unstage()
+		radar.Unstage(stage)
 	}
 
 	for satellite := range stage.Satellites {
-		satellite.Unstage()
+		satellite.Unstage(stage)
 	}
 
 	for scenario := range stage.Scenarios {
-		scenario.Unstage()
+		scenario.Unstage(stage)
 	}
 
 }
@@ -1079,6 +694,7 @@ func GongGetSet[Type GongstructSet](stages ...*StageStruct) *Type {
 	var ret Type
 
 	var stage *StageStruct
+	_ = stage
 	if len(stages) > 0 {
 		stage = stages[0]
 	} else {
@@ -1112,6 +728,7 @@ func GongGetMap[Type GongstructMapString](stages ...*StageStruct) *Type {
 	var ret Type
 
 	var stage *StageStruct
+	_ = stage
 	if len(stages) > 0 {
 		stage = stages[0]
 	} else {
@@ -1145,6 +762,7 @@ func GetGongstructInstancesSet[Type Gongstruct](stages ...*StageStruct) *map[*Ty
 	var ret Type
 
 	var stage *StageStruct
+	_ = stage
 	if len(stages) > 0 {
 		stage = stages[0]
 	} else {
@@ -1178,6 +796,7 @@ func GetGongstructInstancesMap[Type Gongstruct](stages ...*StageStruct) *map[str
 	var ret Type
 
 	var stage *StageStruct
+	_ = stage
 	if len(stages) > 0 {
 		stage = stages[0]
 	} else {
@@ -1258,7 +877,16 @@ func GetAssociationName[Type Gongstruct]() *Type {
 // The function provides a map with keys as instances of End and values to arrays of *Start
 // the map is construed by iterating over all Start instances and populationg keys with End instances
 // and values with slice of Start instances
-func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*Start {
+func GetPointerReverseMap[Start, End Gongstruct](fieldname string, stages ...*StageStruct) map[*End][]*Start {
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
+
 	var ret Start
 
 	switch any(ret).(type) {
@@ -1274,7 +902,7 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*S
 		// insertion point for per direct association field
 		case "ReporingLine":
 			res := make(map[*OpsLine][]*Liner)
-			for liner := range Stage.Liners {
+			for liner := range stage.Liners {
 				if liner.ReporingLine != nil {
 					opsline_ := liner.ReporingLine
 					var liners []*Liner
@@ -1301,7 +929,7 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*S
 		// insertion point for per direct association field
 		case "Scenario":
 			res := make(map[*Scenario][]*OpsLine)
-			for opsline := range Stage.OpsLines {
+			for opsline := range stage.OpsLines {
 				if opsline.Scenario != nil {
 					scenario_ := opsline.Scenario
 					var opslines []*OpsLine
@@ -1342,7 +970,16 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string) map[*End][]*S
 // The function provides a map with keys as instances of End and values to *Start instances
 // the map is construed by iterating over all Start instances and populating keys with End instances
 // and values with the Start instances
-func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string) map[*End]*Start {
+func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string, stages ...*StageStruct) map[*End]*Start {
+
+	var stage *StageStruct
+	_ = stage
+	if len(stages) > 0 {
+		stage = stages[0]
+	} else {
+		stage = &Stage
+	}
+
 	var ret Start
 
 	switch any(ret).(type) {

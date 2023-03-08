@@ -26,6 +26,8 @@ func IsStaged[Type Gongstruct](stage *StageStruct, instance *Type) (ok bool) {
 	case *Scenario:
 		ok = stage.IsStagedScenario(target)
 
+	default:
+		_ = target
 	}
 	return
 }
@@ -110,6 +112,8 @@ func StageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 	case *Scenario:
 		stage.StageBranchScenario(target)
 
+	default:
+		_ = target
 	}
 }
 
@@ -121,7 +125,7 @@ func (stage *StageStruct) StageBranchCivilianAirport(civilianairport *CivilianAi
 		return
 	}
 
-	civilianairport.Stage()
+	civilianairport.Stage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 
@@ -136,7 +140,7 @@ func (stage *StageStruct) StageBranchLiner(liner *Liner) {
 		return
 	}
 
-	liner.Stage()
+	liner.Stage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 	if liner.ReporingLine != nil {
@@ -154,7 +158,7 @@ func (stage *StageStruct) StageBranchMessage(message *Message) {
 		return
 	}
 
-	message.Stage()
+	message.Stage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 
@@ -169,7 +173,7 @@ func (stage *StageStruct) StageBranchOpsLine(opsline *OpsLine) {
 		return
 	}
 
-	opsline.Stage()
+	opsline.Stage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 	if opsline.Scenario != nil {
@@ -187,7 +191,7 @@ func (stage *StageStruct) StageBranchRadar(radar *Radar) {
 		return
 	}
 
-	radar.Stage()
+	radar.Stage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 
@@ -202,7 +206,7 @@ func (stage *StageStruct) StageBranchSatellite(satellite *Satellite) {
 		return
 	}
 
-	satellite.Stage()
+	satellite.Stage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 
@@ -217,7 +221,7 @@ func (stage *StageStruct) StageBranchScenario(scenario *Scenario) {
 		return
 	}
 
-	scenario.Stage()
+	scenario.Stage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 
@@ -255,6 +259,8 @@ func UnstageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 	case *Scenario:
 		stage.UnstageBranchScenario(target)
 
+	default:
+		_ = target
 	}
 }
 
@@ -266,7 +272,7 @@ func (stage *StageStruct) UnstageBranchCivilianAirport(civilianairport *Civilian
 		return
 	}
 
-	civilianairport.Unstage()
+	civilianairport.Unstage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 
@@ -281,7 +287,7 @@ func (stage *StageStruct) UnstageBranchLiner(liner *Liner) {
 		return
 	}
 
-	liner.Unstage()
+	liner.Unstage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 	if liner.ReporingLine != nil {
@@ -299,7 +305,7 @@ func (stage *StageStruct) UnstageBranchMessage(message *Message) {
 		return
 	}
 
-	message.Unstage()
+	message.Unstage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 
@@ -314,7 +320,7 @@ func (stage *StageStruct) UnstageBranchOpsLine(opsline *OpsLine) {
 		return
 	}
 
-	opsline.Unstage()
+	opsline.Unstage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 	if opsline.Scenario != nil {
@@ -332,7 +338,7 @@ func (stage *StageStruct) UnstageBranchRadar(radar *Radar) {
 		return
 	}
 
-	radar.Unstage()
+	radar.Unstage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 
@@ -347,7 +353,7 @@ func (stage *StageStruct) UnstageBranchSatellite(satellite *Satellite) {
 		return
 	}
 
-	satellite.Unstage()
+	satellite.Unstage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 
@@ -362,7 +368,7 @@ func (stage *StageStruct) UnstageBranchScenario(scenario *Scenario) {
 		return
 	}
 
-	scenario.Unstage()
+	scenario.Unstage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 

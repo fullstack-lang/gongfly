@@ -47,23 +47,22 @@ type RadarInput struct {
 // default: genericError
 //
 //	200: radarDBResponse
-func GetRadars(c *gin.Context) {
-	db := orm.BackRepo.BackRepoRadar.GetDB()
+func (controller *Controller) GetRadars(c *gin.Context) {
 
 	// source slice
 	var radarDBs []orm.RadarDB
 
-	// type Values map[string][]string
 	values := c.Request.URL.Query()
+	stackPath := ""
 	if len(values) == 1 {
 		value := values["GONG__StackPath"]
 		if len(value) == 1 {
-			// we have a single parameter
-			// we assume it is the stack
-			stackParam := value[0]
-			log.Println("GONG__StackPath", stackParam)
+			stackPath = value[0]
+			log.Println("GetRadars", "GONG__StackPath", stackPath)
 		}
 	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoRadar.GetDB()
 
 	query := db.Find(&radarDBs)
 	if query.Error != nil {
@@ -108,7 +107,19 @@ func GetRadars(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func PostRadar(c *gin.Context) {
+func (controller *Controller) PostRadar(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("PostRadars", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoRadar.GetDB()
 
 	// Validate input
 	var input orm.RadarAPI
@@ -128,7 +139,6 @@ func PostRadar(c *gin.Context) {
 	radarDB.RadarPointersEnconding = input.RadarPointersEnconding
 	radarDB.CopyBasicFieldsFromRadar(&input.Radar)
 
-	db := orm.BackRepo.BackRepoRadar.GetDB()
 	query := db.Create(&radarDB)
 	if query.Error != nil {
 		var returnError GenericError
@@ -140,16 +150,16 @@ func PostRadar(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	orm.BackRepo.BackRepoRadar.CheckoutPhaseOneInstance(&radarDB)
-	radar := (*orm.BackRepo.BackRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
+	backRepo.BackRepoRadar.CheckoutPhaseOneInstance(&radarDB)
+	radar := (*backRepo.BackRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
 
 	if radar != nil {
-		models.AfterCreateFromFront(&models.Stage, radar)
+		models.AfterCreateFromFront(backRepo.GetStage(), radar)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, radarDB)
 }
@@ -164,21 +174,19 @@ func PostRadar(c *gin.Context) {
 // default: genericError
 //
 //	200: radarDBResponse
-func GetRadar(c *gin.Context) {
+func (controller *Controller) GetRadar(c *gin.Context) {
 
-	// type Values map[string][]string
 	values := c.Request.URL.Query()
+	stackPath := ""
 	if len(values) == 1 {
-		value := values["stack"]
+		value := values["GONG__StackPath"]
 		if len(value) == 1 {
-			// we have a single parameter
-			// we assume it is the stack
-			stackParam := value[0]
-			log.Println("GET params", stackParam)
+			stackPath = value[0]
+			log.Println("GetRadar", "GONG__StackPath", stackPath)
 		}
 	}
-
-	db := orm.BackRepo.BackRepoRadar.GetDB()
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoRadar.GetDB()
 
 	// Get radarDB in DB
 	var radarDB orm.RadarDB
@@ -209,7 +217,19 @@ func GetRadar(c *gin.Context) {
 // default: genericError
 //
 //	200: radarDBResponse
-func UpdateRadar(c *gin.Context) {
+func (controller *Controller) UpdateRadar(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("UpdateRadar", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoRadar.GetDB()
 
 	// Validate input
 	var input orm.RadarAPI
@@ -218,8 +238,6 @@ func UpdateRadar(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	db := orm.BackRepo.BackRepoRadar.GetDB()
 
 	// Get model if exist
 	var radarDB orm.RadarDB
@@ -255,16 +273,16 @@ func UpdateRadar(c *gin.Context) {
 	radarDB.CopyBasicFieldsToRadar(radarNew)
 
 	// get stage instance from DB instance, and call callback function
-	radarOld := (*orm.BackRepo.BackRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
+	radarOld := (*backRepo.BackRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
 	if radarOld != nil {
-		models.AfterUpdateFromFront(&models.Stage, radarOld, radarNew)
+		models.AfterUpdateFromFront(backRepo.GetStage(), radarOld, radarNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	// in some cases, with the marshalling of the stage, this operation might
 	// generates a checkout
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the radarDB
 	c.JSON(http.StatusOK, radarDB)
@@ -279,8 +297,19 @@ func UpdateRadar(c *gin.Context) {
 // default: genericError
 //
 //	200: radarDBResponse
-func DeleteRadar(c *gin.Context) {
-	db := orm.BackRepo.BackRepoRadar.GetDB()
+func (controller *Controller) DeleteRadar(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("DeleteRadar", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoRadar.GetDB()
 
 	// Get model if exist
 	var radarDB orm.RadarDB
@@ -301,14 +330,14 @@ func DeleteRadar(c *gin.Context) {
 	radarDB.CopyBasicFieldsToRadar(radarDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	radarStaged := (*orm.BackRepo.BackRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
+	radarStaged := (*backRepo.BackRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
 	if radarStaged != nil {
-		models.AfterDeleteFromFront(&models.Stage, radarStaged, radarDeleted)
+		models.AfterDeleteFromFront(backRepo.GetStage(), radarStaged, radarDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

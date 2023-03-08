@@ -74,6 +74,8 @@ export class DialogData {
   IntermediateStruct: string = "" // the "AclassBclassUse" 
   IntermediateStructField: string = "" // the "Bclass" as field
   NextAssociationStruct: string = "" // the "Bclass"
+
+  GONG__StackPath: string = ""
 }
 
 export enum SelectionMode {
@@ -88,6 +90,8 @@ export enum SelectionMode {
   providedIn: 'root'
 })
 export class FrontRepoService {
+
+  GONG__StackPath: string = ""
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -135,12 +139,12 @@ export class FrontRepoService {
     Observable<EventDB[]>,
     Observable<GongsimCommandDB[]>,
     Observable<GongsimStatusDB[]>,
-  ] = [ // insertion point sub template 
-      this.dummyagentService.getDummyAgents(),
-      this.engineService.getEngines(),
-      this.eventService.getEvents(),
-      this.gongsimcommandService.getGongsimCommands(),
-      this.gongsimstatusService.getGongsimStatuss(),
+  ] = [ // insertion point sub template
+      this.dummyagentService.getDummyAgents(this.GONG__StackPath),
+      this.engineService.getEngines(this.GONG__StackPath),
+      this.eventService.getEvents(this.GONG__StackPath),
+      this.gongsimcommandService.getGongsimCommands(this.GONG__StackPath),
+      this.gongsimstatusService.getGongsimStatuss(this.GONG__StackPath),
     ];
 
   //
@@ -149,7 +153,18 @@ export class FrontRepoService {
   // This is an observable. Therefore, the control flow forks with
   // - pull() return immediatly the observable
   // - the observable observer, if it subscribe, is called when all GET calls are performs
-  pull(): Observable<FrontRepo> {
+  pull(GONG__StackPath: string = ""): Observable<FrontRepo> {
+
+    this.GONG__StackPath = GONG__StackPath
+
+    this.observableFrontRepo = [ // insertion point sub template
+      this.dummyagentService.getDummyAgents(this.GONG__StackPath),
+      this.engineService.getEngines(this.GONG__StackPath),
+      this.eventService.getEvents(this.GONG__StackPath),
+      this.gongsimcommandService.getGongsimCommands(this.GONG__StackPath),
+      this.gongsimstatusService.getGongsimStatuss(this.GONG__StackPath),
+    ]
+
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest(

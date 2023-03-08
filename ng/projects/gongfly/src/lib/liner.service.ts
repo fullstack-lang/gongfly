@@ -21,10 +21,6 @@ import { OpsLineDB } from './opsline-db'
 })
 export class LinerService {
 
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-  };
-
   // Kamar Raïmo: Adding a way to communicate between components that share information
   // so that they are notified of a change.
   LinerServiceChanged: BehaviorSubject<string> = new BehaviorSubject("");
@@ -33,7 +29,6 @@ export class LinerService {
 
   constructor(
     private http: HttpClient,
-    private location: Location,
     @Inject(DOCUMENT) private document: Document
   ) {
     // path to the service share the same origin with the path to the document
@@ -68,15 +63,19 @@ export class LinerService {
     );
   }
 
-  //////// Save methods //////////
-
   /** POST: add a new liner to the server */
-  postLiner(linerdb: LinerDB): Observable<LinerDB> {
+  postLiner(linerdb: LinerDB, GONG__StackPath: string): Observable<LinerDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
     linerdb.ReporingLine = new OpsLineDB
 
-    return this.http.post<LinerDB>(this.linersUrl, linerdb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+	return this.http.post<LinerDB>(this.linersUrl, linerdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`posted linerdb id=${linerdb.ID}`)
@@ -86,25 +85,37 @@ export class LinerService {
   }
 
   /** DELETE: delete the linerdb from the server */
-  deleteLiner(linerdb: LinerDB | number): Observable<LinerDB> {
+  deleteLiner(linerdb: LinerDB | number, GONG__StackPath: string): Observable<LinerDB> {
     const id = typeof linerdb === 'number' ? linerdb : linerdb.ID;
     const url = `${this.linersUrl}/${id}`;
 
-    return this.http.delete<LinerDB>(url, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.delete<LinerDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted linerdb id=${id}`)),
       catchError(this.handleError<LinerDB>('deleteLiner'))
     );
   }
 
   /** PUT: update the linerdb on the server */
-  updateLiner(linerdb: LinerDB): Observable<LinerDB> {
+  updateLiner(linerdb: LinerDB, GONG__StackPath: string): Observable<LinerDB> {
     const id = typeof linerdb === 'number' ? linerdb : linerdb.ID;
     const url = `${this.linersUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
     linerdb.ReporingLine = new OpsLineDB
 
-    return this.http.put<LinerDB>(url, linerdb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.put<LinerDB>(url, linerdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated linerdb id=${linerdb.ID}`)

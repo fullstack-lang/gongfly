@@ -126,6 +126,13 @@ type BackRepoRadarStruct struct {
 	Map_RadarDBID_RadarPtr *map[uint]*models.Radar
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoRadar *BackRepoRadarStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoRadar.stage
+	return
 }
 
 func (backRepoRadar *BackRepoRadarStruct) GetDB() *gorm.DB {
@@ -140,7 +147,7 @@ func (backRepoRadar *BackRepoRadarStruct) GetRadarDBFromRadarPtr(radar *models.R
 }
 
 // BackRepoRadar.Init set up the BackRepo of the Radar
-func (backRepoRadar *BackRepoRadarStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoRadar *BackRepoRadarStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoRadar.Map_RadarDBID_RadarPtr != nil {
 		err := errors.New("In Init, backRepoRadar.Map_RadarDBID_RadarPtr should be nil")
@@ -167,6 +174,7 @@ func (backRepoRadar *BackRepoRadarStruct) Init(db *gorm.DB) (Error error) {
 	backRepoRadar.Map_RadarPtr_RadarDBID = &tmpID
 
 	backRepoRadar.db = db
+	backRepoRadar.stage = stage
 	return
 }
 
@@ -285,7 +293,7 @@ func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseOne() (Error error) {
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	radarInstancesToBeRemovedFromTheStage := make(map[*models.Radar]any)
-	for key, value := range models.Stage.Radars {
+	for key, value := range backRepoRadar.stage.Radars {
 		radarInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -303,7 +311,7 @@ func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseOne() (Error error) {
 
 	// remove from stage and back repo's 3 maps all radars that are not in the checkout
 	for radar := range radarInstancesToBeRemovedFromTheStage {
-		radar.Unstage()
+		radar.Unstage(backRepoRadar.GetStage())
 
 		// remove instance from the back repo 3 maps
 		radarID := (*backRepoRadar.Map_RadarPtr_RadarDBID)[radar]
@@ -328,12 +336,12 @@ func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseOneInstance(radarDB *Rada
 
 		// append model store with the new element
 		radar.Name = radarDB.Name_Data.String
-		radar.Stage()
+		radar.Stage(backRepoRadar.GetStage())
 	}
 	radarDB.CopyBasicFieldsToRadar(radar)
 
 	// in some cases, the instance might have been unstaged. It is necessary to stage it again
-	radar.Stage()
+	radar.Stage(backRepoRadar.GetStage())
 
 	// preserve pointer to radarDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_RadarDBID_RadarDB)[radarDB hold variable pointers

@@ -207,7 +207,7 @@ export class SatellitesTableComponent implements OnInit {
 
   ngOnInit(): void {
     let stackPath = this.activatedRoute.snapshot.paramMap.get('GONG__StackPath')
-    if ( stackPath != undefined) {
+    if (stackPath != undefined) {
       this.GONG__StackPath = stackPath
     }
 
@@ -243,10 +243,14 @@ export class SatellitesTableComponent implements OnInit {
           let mapOfSourceInstances = this.frontRepo[this.dialogData.SourceStruct + "s" as keyof FrontRepo] as Map<number, SatelliteDB>
           let sourceInstance = mapOfSourceInstances.get(this.dialogData.ID)!
 
-          let sourceField = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as SatelliteDB[]
-          for (let associationInstance of sourceField) {
-            let satellite = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as SatelliteDB
-            this.initialSelection.push(satellite)
+          // we associates on sourceInstance of type SourceStruct with a MANY MANY associations to SatelliteDB
+          // the field name is sourceField
+          let sourceFieldArray = sourceInstance[this.dialogData.SourceField as keyof typeof sourceInstance]! as unknown as SatelliteDB[]
+          if (sourceFieldArray != null) {
+            for (let associationInstance of sourceFieldArray) {
+              let satellite = associationInstance[this.dialogData.IntermediateStructField as keyof typeof associationInstance] as unknown as SatelliteDB
+              this.initialSelection.push(satellite)
+            }
           }
 
           this.selection = new SelectionModel<SatelliteDB>(allowMultiSelect, this.initialSelection);
@@ -267,7 +271,7 @@ export class SatellitesTableComponent implements OnInit {
     // list of satellites is truncated of satellite before the delete
     this.satellites = this.satellites.filter(h => h !== satellite);
 
-    this.satelliteService.deleteSatellite(satelliteID).subscribe(
+    this.satelliteService.deleteSatellite(satelliteID, this.GONG__StackPath).subscribe(
       satellite => {
         this.satelliteService.SatelliteServiceChanged.next("delete")
       }
@@ -333,7 +337,7 @@ export class SatellitesTableComponent implements OnInit {
 
       // update all satellite (only update selection & initial selection)
       for (let satellite of toUpdate) {
-        this.satelliteService.updateSatellite(satellite)
+        this.satelliteService.updateSatellite(satellite, this.GONG__StackPath)
           .subscribe(satellite => {
             this.satelliteService.SatelliteServiceChanged.next("update")
           });

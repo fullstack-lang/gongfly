@@ -47,11 +47,23 @@ type VLineInput struct {
 // default: genericError
 //
 //	200: vlineDBResponse
-func GetVLines(c *gin.Context) {
-	db := orm.BackRepo.BackRepoVLine.GetDB()
+func (controller *Controller) GetVLines(c *gin.Context) {
 
 	// source slice
 	var vlineDBs []orm.VLineDB
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetVLines", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoVLine.GetDB()
+
 	query := db.Find(&vlineDBs)
 	if query.Error != nil {
 		var returnError GenericError
@@ -95,8 +107,19 @@ func GetVLines(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func PostVLine(c *gin.Context) {
-	db := orm.BackRepo.BackRepoVLine.GetDB()
+func (controller *Controller) PostVLine(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("PostVLines", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoVLine.GetDB()
 
 	// Validate input
 	var input orm.VLineAPI
@@ -127,16 +150,16 @@ func PostVLine(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	orm.BackRepo.BackRepoVLine.CheckoutPhaseOneInstance(&vlineDB)
-	vline := (*orm.BackRepo.BackRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
+	backRepo.BackRepoVLine.CheckoutPhaseOneInstance(&vlineDB)
+	vline := (*backRepo.BackRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
 
 	if vline != nil {
-		models.AfterCreateFromFront(&models.Stage, vline)
+		models.AfterCreateFromFront(backRepo.GetStage(), vline)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, vlineDB)
 }
@@ -151,8 +174,19 @@ func PostVLine(c *gin.Context) {
 // default: genericError
 //
 //	200: vlineDBResponse
-func GetVLine(c *gin.Context) {
-	db := orm.BackRepo.BackRepoVLine.GetDB()
+func (controller *Controller) GetVLine(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetVLine", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoVLine.GetDB()
 
 	// Get vlineDB in DB
 	var vlineDB orm.VLineDB
@@ -183,8 +217,27 @@ func GetVLine(c *gin.Context) {
 // default: genericError
 //
 //	200: vlineDBResponse
-func UpdateVLine(c *gin.Context) {
-	db := orm.BackRepo.BackRepoVLine.GetDB()
+func (controller *Controller) UpdateVLine(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("UpdateVLine", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoVLine.GetDB()
+
+	// Validate input
+	var input orm.VLineAPI
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	// Get model if exist
 	var vlineDB orm.VLineDB
@@ -198,14 +251,6 @@ func UpdateVLine(c *gin.Context) {
 		returnError.Body.Message = query.Error.Error()
 		log.Println(query.Error.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
-		return
-	}
-
-	// Validate input
-	var input orm.VLineAPI
-	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -228,16 +273,16 @@ func UpdateVLine(c *gin.Context) {
 	vlineDB.CopyBasicFieldsToVLine(vlineNew)
 
 	// get stage instance from DB instance, and call callback function
-	vlineOld := (*orm.BackRepo.BackRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
+	vlineOld := (*backRepo.BackRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
 	if vlineOld != nil {
-		models.AfterUpdateFromFront(&models.Stage, vlineOld, vlineNew)
+		models.AfterUpdateFromFront(backRepo.GetStage(), vlineOld, vlineNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	// in some cases, with the marshalling of the stage, this operation might
 	// generates a checkout
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the vlineDB
 	c.JSON(http.StatusOK, vlineDB)
@@ -252,8 +297,19 @@ func UpdateVLine(c *gin.Context) {
 // default: genericError
 //
 //	200: vlineDBResponse
-func DeleteVLine(c *gin.Context) {
-	db := orm.BackRepo.BackRepoVLine.GetDB()
+func (controller *Controller) DeleteVLine(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("DeleteVLine", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoVLine.GetDB()
 
 	// Get model if exist
 	var vlineDB orm.VLineDB
@@ -274,14 +330,14 @@ func DeleteVLine(c *gin.Context) {
 	vlineDB.CopyBasicFieldsToVLine(vlineDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	vlineStaged := (*orm.BackRepo.BackRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
+	vlineStaged := (*backRepo.BackRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
 	if vlineStaged != nil {
-		models.AfterDeleteFromFront(&models.Stage, vlineStaged, vlineDeleted)
+		models.AfterDeleteFromFront(backRepo.GetStage(), vlineStaged, vlineDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

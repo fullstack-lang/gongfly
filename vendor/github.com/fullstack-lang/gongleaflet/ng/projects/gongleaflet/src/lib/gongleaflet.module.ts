@@ -42,52 +42,42 @@ import { GongstructSelectionService } from './gongstruct-selection.service'
 import { CheckoutSchedulersTableComponent } from './checkoutschedulers-table/checkoutschedulers-table.component'
 import { CheckoutSchedulerSortingComponent } from './checkoutscheduler-sorting/checkoutscheduler-sorting.component'
 import { CheckoutSchedulerDetailComponent } from './checkoutscheduler-detail/checkoutscheduler-detail.component'
-import { CheckoutSchedulerPresentationComponent } from './checkoutscheduler-presentation/checkoutscheduler-presentation.component'
 
 import { CirclesTableComponent } from './circles-table/circles-table.component'
 import { CircleSortingComponent } from './circle-sorting/circle-sorting.component'
 import { CircleDetailComponent } from './circle-detail/circle-detail.component'
-import { CirclePresentationComponent } from './circle-presentation/circle-presentation.component'
 
 import { DivIconsTableComponent } from './divicons-table/divicons-table.component'
 import { DivIconSortingComponent } from './divicon-sorting/divicon-sorting.component'
 import { DivIconDetailComponent } from './divicon-detail/divicon-detail.component'
-import { DivIconPresentationComponent } from './divicon-presentation/divicon-presentation.component'
 
 import { LayerGroupsTableComponent } from './layergroups-table/layergroups-table.component'
 import { LayerGroupSortingComponent } from './layergroup-sorting/layergroup-sorting.component'
 import { LayerGroupDetailComponent } from './layergroup-detail/layergroup-detail.component'
-import { LayerGroupPresentationComponent } from './layergroup-presentation/layergroup-presentation.component'
 
 import { LayerGroupUsesTableComponent } from './layergroupuses-table/layergroupuses-table.component'
 import { LayerGroupUseSortingComponent } from './layergroupuse-sorting/layergroupuse-sorting.component'
 import { LayerGroupUseDetailComponent } from './layergroupuse-detail/layergroupuse-detail.component'
-import { LayerGroupUsePresentationComponent } from './layergroupuse-presentation/layergroupuse-presentation.component'
 
 import { MapOptionssTableComponent } from './mapoptionss-table/mapoptionss-table.component'
 import { MapOptionsSortingComponent } from './mapoptions-sorting/mapoptions-sorting.component'
 import { MapOptionsDetailComponent } from './mapoptions-detail/mapoptions-detail.component'
-import { MapOptionsPresentationComponent } from './mapoptions-presentation/mapoptions-presentation.component'
 
 import { MarkersTableComponent } from './markers-table/markers-table.component'
 import { MarkerSortingComponent } from './marker-sorting/marker-sorting.component'
 import { MarkerDetailComponent } from './marker-detail/marker-detail.component'
-import { MarkerPresentationComponent } from './marker-presentation/marker-presentation.component'
 
 import { UserClicksTableComponent } from './userclicks-table/userclicks-table.component'
 import { UserClickSortingComponent } from './userclick-sorting/userclick-sorting.component'
 import { UserClickDetailComponent } from './userclick-detail/userclick-detail.component'
-import { UserClickPresentationComponent } from './userclick-presentation/userclick-presentation.component'
 
 import { VLinesTableComponent } from './vlines-table/vlines-table.component'
 import { VLineSortingComponent } from './vline-sorting/vline-sorting.component'
 import { VLineDetailComponent } from './vline-detail/vline-detail.component'
-import { VLinePresentationComponent } from './vline-presentation/vline-presentation.component'
 
 import { VisualTracksTableComponent } from './visualtracks-table/visualtracks-table.component'
 import { VisualTrackSortingComponent } from './visualtrack-sorting/visualtrack-sorting.component'
 import { VisualTrackDetailComponent } from './visualtrack-detail/visualtrack-detail.component'
-import { VisualTrackPresentationComponent } from './visualtrack-presentation/visualtrack-presentation.component'
 
 
 @NgModule({
@@ -96,52 +86,42 @@ import { VisualTrackPresentationComponent } from './visualtrack-presentation/vis
 		CheckoutSchedulersTableComponent,
 		CheckoutSchedulerSortingComponent,
 		CheckoutSchedulerDetailComponent,
-		CheckoutSchedulerPresentationComponent,
 
 		CirclesTableComponent,
 		CircleSortingComponent,
 		CircleDetailComponent,
-		CirclePresentationComponent,
 
 		DivIconsTableComponent,
 		DivIconSortingComponent,
 		DivIconDetailComponent,
-		DivIconPresentationComponent,
 
 		LayerGroupsTableComponent,
 		LayerGroupSortingComponent,
 		LayerGroupDetailComponent,
-		LayerGroupPresentationComponent,
 
 		LayerGroupUsesTableComponent,
 		LayerGroupUseSortingComponent,
 		LayerGroupUseDetailComponent,
-		LayerGroupUsePresentationComponent,
 
 		MapOptionssTableComponent,
 		MapOptionsSortingComponent,
 		MapOptionsDetailComponent,
-		MapOptionsPresentationComponent,
 
 		MarkersTableComponent,
 		MarkerSortingComponent,
 		MarkerDetailComponent,
-		MarkerPresentationComponent,
 
 		UserClicksTableComponent,
 		UserClickSortingComponent,
 		UserClickDetailComponent,
-		UserClickPresentationComponent,
 
 		VLinesTableComponent,
 		VLineSortingComponent,
 		VLineDetailComponent,
-		VLinePresentationComponent,
 
 		VisualTracksTableComponent,
 		VisualTrackSortingComponent,
 		VisualTrackDetailComponent,
-		VisualTrackPresentationComponent,
 
 
 		SplitterComponent,
@@ -185,52 +165,42 @@ import { VisualTrackPresentationComponent } from './visualtrack-presentation/vis
 		CheckoutSchedulersTableComponent,
 		CheckoutSchedulerSortingComponent,
 		CheckoutSchedulerDetailComponent,
-		CheckoutSchedulerPresentationComponent,
 
 		CirclesTableComponent,
 		CircleSortingComponent,
 		CircleDetailComponent,
-		CirclePresentationComponent,
 
 		DivIconsTableComponent,
 		DivIconSortingComponent,
 		DivIconDetailComponent,
-		DivIconPresentationComponent,
 
 		LayerGroupsTableComponent,
 		LayerGroupSortingComponent,
 		LayerGroupDetailComponent,
-		LayerGroupPresentationComponent,
 
 		LayerGroupUsesTableComponent,
 		LayerGroupUseSortingComponent,
 		LayerGroupUseDetailComponent,
-		LayerGroupUsePresentationComponent,
 
 		MapOptionssTableComponent,
 		MapOptionsSortingComponent,
 		MapOptionsDetailComponent,
-		MapOptionsPresentationComponent,
 
 		MarkersTableComponent,
 		MarkerSortingComponent,
 		MarkerDetailComponent,
-		MarkerPresentationComponent,
 
 		UserClicksTableComponent,
 		UserClickSortingComponent,
 		UserClickDetailComponent,
-		UserClickPresentationComponent,
 
 		VLinesTableComponent,
 		VLineSortingComponent,
 		VLineDetailComponent,
-		VLinePresentationComponent,
 
 		VisualTracksTableComponent,
 		VisualTrackSortingComponent,
 		VisualTrackDetailComponent,
-		VisualTrackPresentationComponent,
 
 
 		SplitterComponent,

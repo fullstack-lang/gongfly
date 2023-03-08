@@ -108,6 +108,13 @@ type BackRepoDummyAgentStruct struct {
 	Map_DummyAgentDBID_DummyAgentPtr *map[uint]*models.DummyAgent
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoDummyAgent *BackRepoDummyAgentStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoDummyAgent.stage
+	return
 }
 
 func (backRepoDummyAgent *BackRepoDummyAgentStruct) GetDB() *gorm.DB {
@@ -122,7 +129,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) GetDummyAgentDBFromDummyAgen
 }
 
 // BackRepoDummyAgent.Init set up the BackRepo of the DummyAgent
-func (backRepoDummyAgent *BackRepoDummyAgentStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoDummyAgent *BackRepoDummyAgentStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr != nil {
 		err := errors.New("In Init, backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr should be nil")
@@ -149,6 +156,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) Init(db *gorm.DB) (Error err
 	backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID = &tmpID
 
 	backRepoDummyAgent.db = db
+	backRepoDummyAgent.stage = stage
 	return
 }
 
@@ -255,8 +263,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseTwoInstance(backR
 // BackRepoDummyAgent.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseOne() (Error error) {
 
 	dummyagentDBArray := make([]DummyAgentDB, 0)
@@ -268,7 +275,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseOne() (Error er
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	dummyagentInstancesToBeRemovedFromTheStage := make(map[*models.DummyAgent]any)
-	for key, value := range models.Stage.DummyAgents {
+	for key, value := range backRepoDummyAgent.stage.DummyAgents {
 		dummyagentInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -286,7 +293,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseOne() (Error er
 
 	// remove from stage and back repo's 3 maps all dummyagents that are not in the checkout
 	for dummyagent := range dummyagentInstancesToBeRemovedFromTheStage {
-		dummyagent.Unstage()
+		dummyagent.Unstage(backRepoDummyAgent.GetStage())
 
 		// remove instance from the back repo 3 maps
 		dummyagentID := (*backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID)[dummyagent]
@@ -311,9 +318,12 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseOneInstance(dum
 
 		// append model store with the new element
 		dummyagent.Name = dummyagentDB.Name_Data.String
-		dummyagent.Stage()
+		dummyagent.Stage(backRepoDummyAgent.GetStage())
 	}
 	dummyagentDB.CopyBasicFieldsToDummyAgent(dummyagent)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	dummyagent.Stage(backRepoDummyAgent.GetStage())
 
 	// preserve pointer to dummyagentDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_DummyAgentDBID_DummyAgentDB)[dummyagentDB hold variable pointers

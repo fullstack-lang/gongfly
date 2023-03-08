@@ -20,10 +20,6 @@ import { ScenarioDB } from './scenario-db';
 })
 export class ScenarioService {
 
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-  };
-
   // Kamar Raïmo: Adding a way to communicate between components that share information
   // so that they are notified of a change.
   ScenarioServiceChanged: BehaviorSubject<string> = new BehaviorSubject("");
@@ -32,7 +28,6 @@ export class ScenarioService {
 
   constructor(
     private http: HttpClient,
-    private location: Location,
     @Inject(DOCUMENT) private document: Document
   ) {
     // path to the service share the same origin with the path to the document
@@ -67,14 +62,18 @@ export class ScenarioService {
     );
   }
 
-  //////// Save methods //////////
-
   /** POST: add a new scenario to the server */
-  postScenario(scenariodb: ScenarioDB): Observable<ScenarioDB> {
+  postScenario(scenariodb: ScenarioDB, GONG__StackPath: string): Observable<ScenarioDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.post<ScenarioDB>(this.scenariosUrl, scenariodb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+	return this.http.post<ScenarioDB>(this.scenariosUrl, scenariodb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`posted scenariodb id=${scenariodb.ID}`)
@@ -84,24 +83,36 @@ export class ScenarioService {
   }
 
   /** DELETE: delete the scenariodb from the server */
-  deleteScenario(scenariodb: ScenarioDB | number): Observable<ScenarioDB> {
+  deleteScenario(scenariodb: ScenarioDB | number, GONG__StackPath: string): Observable<ScenarioDB> {
     const id = typeof scenariodb === 'number' ? scenariodb : scenariodb.ID;
     const url = `${this.scenariosUrl}/${id}`;
 
-    return this.http.delete<ScenarioDB>(url, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.delete<ScenarioDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted scenariodb id=${id}`)),
       catchError(this.handleError<ScenarioDB>('deleteScenario'))
     );
   }
 
   /** PUT: update the scenariodb on the server */
-  updateScenario(scenariodb: ScenarioDB): Observable<ScenarioDB> {
+  updateScenario(scenariodb: ScenarioDB, GONG__StackPath: string): Observable<ScenarioDB> {
     const id = typeof scenariodb === 'number' ? scenariodb : scenariodb.ID;
     const url = `${this.scenariosUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
-    return this.http.put<ScenarioDB>(url, scenariodb, this.httpOptions).pipe(
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    };
+
+    return this.http.put<ScenarioDB>(url, scenariodb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
         this.log(`updated scenariodb id=${scenariodb.ID}`)

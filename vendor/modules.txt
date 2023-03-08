@@ -39,24 +39,24 @@ github.com/erikstmartin/go-testdb
 # github.com/frankban/quicktest v1.13.1
 ## explicit; go 1.13
 github.com/frankban/quicktest
-# github.com/fullstack-lang/gong v0.0.0-20230119145155-a181f3eb1dec
+# github.com/fullstack-lang/gong v0.0.0-20230306155759-3d518b8d8cea
 ## explicit; go 1.19
 github.com/fullstack-lang/gong/go/controllers
 github.com/fullstack-lang/gong/go/fullstack
 github.com/fullstack-lang/gong/go/models
 github.com/fullstack-lang/gong/go/orm
 github.com/fullstack-lang/gong/ng/projects
-# github.com/fullstack-lang/gongdoc v0.0.0-20230119144130-6270ec04e6a8
+# github.com/fullstack-lang/gongdoc v0.0.0-20230304034746-882fe82b8517
 ## explicit; go 1.19
 github.com/fullstack-lang/gongdoc/go/controllers
 github.com/fullstack-lang/gongdoc/go/fullstack
 github.com/fullstack-lang/gongdoc/go/load
 github.com/fullstack-lang/gongdoc/go/models
+github.com/fullstack-lang/gongdoc/go/node2gongdoc
 github.com/fullstack-lang/gongdoc/go/orm
 github.com/fullstack-lang/gongdoc/go/static
-github.com/fullstack-lang/gongdoc/go/walk
 github.com/fullstack-lang/gongdoc/ng/projects
-# github.com/fullstack-lang/gongleaflet v0.0.0-20230115094737-858e8050a2bb
+# github.com/fullstack-lang/gongleaflet v0.0.0-20230306164440-f7bcba12f999
 ## explicit; go 1.18
 github.com/fullstack-lang/gongleaflet/go/controllers
 github.com/fullstack-lang/gongleaflet/go/fullstack
@@ -78,13 +78,13 @@ github.com/fullstack-lang/gongng2charts/go/fullstack
 github.com/fullstack-lang/gongng2charts/go/models
 github.com/fullstack-lang/gongng2charts/go/orm
 github.com/fullstack-lang/gongng2charts/ng/projects
-# github.com/fullstack-lang/gongsim v0.0.0-20221129154211-fb78d34ae83f
+# github.com/fullstack-lang/gongsim v0.0.0-20230307171238-311b614ae3ec
 ## explicit; go 1.18
 github.com/fullstack-lang/gongsim/go/controllers
 github.com/fullstack-lang/gongsim/go/fullstack
 github.com/fullstack-lang/gongsim/go/models
 github.com/fullstack-lang/gongsim/go/orm
-github.com/fullstack-lang/gongsim/ng
+github.com/fullstack-lang/gongsim/ng/projects
 # github.com/gin-contrib/cors v1.4.0
 ## explicit; go 1.13
 github.com/gin-contrib/cors

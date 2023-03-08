@@ -47,11 +47,23 @@ type EngineInput struct {
 // default: genericError
 //
 //	200: engineDBResponse
-func GetEngines(c *gin.Context) {
-	db := orm.BackRepo.BackRepoEngine.GetDB()
+func (controller *Controller) GetEngines(c *gin.Context) {
 
 	// source slice
 	var engineDBs []orm.EngineDB
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetEngines", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoEngine.GetDB()
+
 	query := db.Find(&engineDBs)
 	if query.Error != nil {
 		var returnError GenericError
@@ -95,8 +107,19 @@ func GetEngines(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func PostEngine(c *gin.Context) {
-	db := orm.BackRepo.BackRepoEngine.GetDB()
+func (controller *Controller) PostEngine(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("PostEngines", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoEngine.GetDB()
 
 	// Validate input
 	var input orm.EngineAPI
@@ -127,16 +150,16 @@ func PostEngine(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	orm.BackRepo.BackRepoEngine.CheckoutPhaseOneInstance(&engineDB)
-	engine := (*orm.BackRepo.BackRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID]
+	backRepo.BackRepoEngine.CheckoutPhaseOneInstance(&engineDB)
+	engine := (*backRepo.BackRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID]
 
 	if engine != nil {
-		models.AfterCreateFromFront(&models.Stage, engine)
+		models.AfterCreateFromFront(backRepo.GetStage(), engine)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, engineDB)
 }
@@ -151,8 +174,19 @@ func PostEngine(c *gin.Context) {
 // default: genericError
 //
 //	200: engineDBResponse
-func GetEngine(c *gin.Context) {
-	db := orm.BackRepo.BackRepoEngine.GetDB()
+func (controller *Controller) GetEngine(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("GetEngine", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoEngine.GetDB()
 
 	// Get engineDB in DB
 	var engineDB orm.EngineDB
@@ -183,8 +217,27 @@ func GetEngine(c *gin.Context) {
 // default: genericError
 //
 //	200: engineDBResponse
-func UpdateEngine(c *gin.Context) {
-	db := orm.BackRepo.BackRepoEngine.GetDB()
+func (controller *Controller) UpdateEngine(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("UpdateEngine", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoEngine.GetDB()
+
+	// Validate input
+	var input orm.EngineAPI
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	// Get model if exist
 	var engineDB orm.EngineDB
@@ -198,14 +251,6 @@ func UpdateEngine(c *gin.Context) {
 		returnError.Body.Message = query.Error.Error()
 		log.Println(query.Error.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
-		return
-	}
-
-	// Validate input
-	var input orm.EngineAPI
-	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -228,16 +273,16 @@ func UpdateEngine(c *gin.Context) {
 	engineDB.CopyBasicFieldsToEngine(engineNew)
 
 	// get stage instance from DB instance, and call callback function
-	engineOld := (*orm.BackRepo.BackRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID]
+	engineOld := (*backRepo.BackRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID]
 	if engineOld != nil {
-		models.AfterUpdateFromFront(&models.Stage, engineOld, engineNew)
+		models.AfterUpdateFromFront(backRepo.GetStage(), engineOld, engineNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	// in some cases, with the marshalling of the stage, this operation might
 	// generates a checkout
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	// return status OK with the marshalling of the the engineDB
 	c.JSON(http.StatusOK, engineDB)
@@ -252,8 +297,19 @@ func UpdateEngine(c *gin.Context) {
 // default: genericError
 //
 //	200: engineDBResponse
-func DeleteEngine(c *gin.Context) {
-	db := orm.BackRepo.BackRepoEngine.GetDB()
+func (controller *Controller) DeleteEngine(c *gin.Context) {
+
+	values := c.Request.URL.Query()
+	stackPath := ""
+	if len(values) == 1 {
+		value := values["GONG__StackPath"]
+		if len(value) == 1 {
+			stackPath = value[0]
+			log.Println("DeleteEngine", "GONG__StackPath", stackPath)
+		}
+	}
+	backRepo := controller.Map_BackRepos[stackPath]
+	db := backRepo.BackRepoEngine.GetDB()
 
 	// Get model if exist
 	var engineDB orm.EngineDB
@@ -274,14 +330,14 @@ func DeleteEngine(c *gin.Context) {
 	engineDB.CopyBasicFieldsToEngine(engineDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	engineStaged := (*orm.BackRepo.BackRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID]
+	engineStaged := (*backRepo.BackRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID]
 	if engineStaged != nil {
-		models.AfterDeleteFromFront(&models.Stage, engineStaged, engineDeleted)
+		models.AfterDeleteFromFront(backRepo.GetStage(), engineStaged, engineDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
-	orm.BackRepo.IncrementPushFromFrontNb()
+	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

@@ -166,6 +166,13 @@ type BackRepoVLineStruct struct {
 	Map_VLineDBID_VLinePtr *map[uint]*models.VLine
 
 	db *gorm.DB
+
+	stage *models.StageStruct
+}
+
+func (backRepoVLine *BackRepoVLineStruct) GetStage() (stage *models.StageStruct) {
+	stage = backRepoVLine.stage
+	return
 }
 
 func (backRepoVLine *BackRepoVLineStruct) GetDB() *gorm.DB {
@@ -180,7 +187,7 @@ func (backRepoVLine *BackRepoVLineStruct) GetVLineDBFromVLinePtr(vline *models.V
 }
 
 // BackRepoVLine.Init set up the BackRepo of the VLine
-func (backRepoVLine *BackRepoVLineStruct) Init(db *gorm.DB) (Error error) {
+func (backRepoVLine *BackRepoVLineStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
 
 	if backRepoVLine.Map_VLineDBID_VLinePtr != nil {
 		err := errors.New("In Init, backRepoVLine.Map_VLineDBID_VLinePtr should be nil")
@@ -207,6 +214,7 @@ func (backRepoVLine *BackRepoVLineStruct) Init(db *gorm.DB) (Error error) {
 	backRepoVLine.Map_VLinePtr_VLineDBID = &tmpID
 
 	backRepoVLine.db = db
+	backRepoVLine.stage = stage
 	return
 }
 
@@ -322,8 +330,7 @@ func (backRepoVLine *BackRepoVLineStruct) CommitPhaseTwoInstance(backRepo *BackR
 // BackRepoVLine.CheckoutPhaseOne Checkouts all BackRepo instances to the Stage
 //
 // Phase One will result in having instances on the stage aligned with the back repo
-// pointers are not initialized yet (this is for pahse two)
-//
+// pointers are not initialized yet (this is for phase two)
 func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseOne() (Error error) {
 
 	vlineDBArray := make([]VLineDB, 0)
@@ -335,7 +342,7 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseOne() (Error error) {
 	// list of instances to be removed
 	// start from the initial map on the stage and remove instances that have been checked out
 	vlineInstancesToBeRemovedFromTheStage := make(map[*models.VLine]any)
-	for key, value := range models.Stage.VLines {
+	for key, value := range backRepoVLine.stage.VLines {
 		vlineInstancesToBeRemovedFromTheStage[key] = value
 	}
 
@@ -353,7 +360,7 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseOne() (Error error) {
 
 	// remove from stage and back repo's 3 maps all vlines that are not in the checkout
 	for vline := range vlineInstancesToBeRemovedFromTheStage {
-		vline.Unstage()
+		vline.Unstage(backRepoVLine.GetStage())
 
 		// remove instance from the back repo 3 maps
 		vlineID := (*backRepoVLine.Map_VLinePtr_VLineDBID)[vline]
@@ -378,9 +385,12 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseOneInstance(vlineDB *VLin
 
 		// append model store with the new element
 		vline.Name = vlineDB.Name_Data.String
-		vline.Stage()
+		vline.Stage(backRepoVLine.GetStage())
 	}
 	vlineDB.CopyBasicFieldsToVLine(vline)
+
+	// in some cases, the instance might have been unstaged. It is necessary to stage it again
+	vline.Stage(backRepoVLine.GetStage())
 
 	// preserve pointer to vlineDB. Otherwise, pointer will is recycled and the map of pointers
 	// Map_VLineDBID_VLineDB)[vlineDB hold variable pointers
