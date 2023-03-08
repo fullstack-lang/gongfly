@@ -110,7 +110,7 @@ func main() {
 	if *diagrams {
 		gongdoc_load.Load(
 			"gongfly",
-			"gongfly/go/models",
+			"github.com/fullstack-lang/gongfly/go/models",
 			gongfly.GoDir,
 			r,
 			*embeddedDiagrams,
