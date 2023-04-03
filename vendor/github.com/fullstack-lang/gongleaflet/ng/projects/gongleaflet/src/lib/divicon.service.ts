@@ -42,22 +42,26 @@ export class DivIconService {
   }
 
   /** GET divicons from the server */
-  getDivIcons(GONG__StackPath: string = ""): Observable<DivIconDB[]> {
+  getDivIcons(GONG__StackPath: string): Observable<DivIconDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<DivIconDB[]>(this.diviconsUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched divicons')),
+        tap(),
+		// tap(_ => this.log('fetched divicons')),
         catchError(this.handleError<DivIconDB[]>('getDivIcons', []))
       );
   }
 
   /** GET divicon by id. Will 404 if id not found */
-  getDivIcon(id: number): Observable<DivIconDB> {
+  getDivIcon(id: number, GONG__StackPath: string): Observable<DivIconDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.diviconsUrl}/${id}`;
-    return this.http.get<DivIconDB>(url).pipe(
-      tap(_ => this.log(`fetched divicon id=${id}`)),
+    return this.http.get<DivIconDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched divicon id=${id}`)),
       catchError(this.handleError<DivIconDB>(`getDivIcon id=${id}`))
     );
   }
@@ -73,10 +77,10 @@ export class DivIconService {
       params: params
     }
 
-	return this.http.post<DivIconDB>(this.diviconsUrl, divicondb, httpOptions).pipe(
+    return this.http.post<DivIconDB>(this.diviconsUrl, divicondb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted divicondb id=${divicondb.ID}`)
+        // this.log(`posted divicondb id=${divicondb.ID}`)
       }),
       catchError(this.handleError<DivIconDB>('postDivIcon'))
     );
@@ -127,11 +131,11 @@ export class DivIconService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in DivIconService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("DivIconService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -142,6 +146,6 @@ export class DivIconService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

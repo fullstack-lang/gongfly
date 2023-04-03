@@ -4,6 +4,7 @@ package models
 import (
 	"errors"
 	"fmt"
+	"sync"
 )
 
 // errUnkownEnum is returns when a value cannot match enum values
@@ -86,18 +87,11 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	// store meta package import
 	MetaPackageImportPath  string
 	MetaPackageImportAlias string
-	Map_DocLink_Renaming   map[string]GONG__Identifier
 
-	// map_Gongstruct_BackPointer is storage of back pointers
-	map_Gongstruct_BackPointer map[any]any
-}
-
-func SetBackPointer[T Gongstruct](stageStruct *StageStruct, instance *T, backPointer any) {
-	stageStruct.map_Gongstruct_BackPointer[instance] = backPointer
-}
-func GetBackPointer[T Gongstruct](stageStruct *StageStruct, instance *T) (backPointer any) {
-	backPointer, _ = stageStruct.map_Gongstruct_BackPointer[instance]
-	return
+	// to be removed after fix of [issue](https://github.com/golang/go/issues/57559)
+	// map to enable docLink renaming when an identifier is renamed
+	Map_DocLink_Renaming map[string]GONG__Identifier
+	// the to be removed stops here
 }
 
 type GONG__Identifier struct {
@@ -154,26 +148,44 @@ type BackRepoInterface interface {
 	GetLastPushFromFrontNb() uint
 }
 
-// swagger:ignore instructs the gong compiler (gongc) to avoid this particular struct
-var Stage StageStruct = StageStruct{ // insertion point for array initiatialisation
-	DummyAgents:           make(map[*DummyAgent]any),
-	DummyAgents_mapString: make(map[string]*DummyAgent),
+var _stage *StageStruct
 
-	Engines:           make(map[*Engine]any),
-	Engines_mapString: make(map[string]*Engine),
+var once sync.Once
 
-	Events:           make(map[*Event]any),
-	Events_mapString: make(map[string]*Event),
+func GetDefaultStage() *StageStruct {
+	once.Do(func() {
+		_stage = NewStage()
+	})
+	return _stage
+}
 
-	GongsimCommands:           make(map[*GongsimCommand]any),
-	GongsimCommands_mapString: make(map[string]*GongsimCommand),
+func NewStage() (stage *StageStruct) {
 
-	GongsimStatuss:           make(map[*GongsimStatus]any),
-	GongsimStatuss_mapString: make(map[string]*GongsimStatus),
+	stage = &StageStruct{ // insertion point for array initiatialisation
+		DummyAgents:           make(map[*DummyAgent]any),
+		DummyAgents_mapString: make(map[string]*DummyAgent),
 
-	// end of insertion point
-	Map_GongStructName_InstancesNb: make(map[string]int),
-	map_Gongstruct_BackPointer:     make(map[any]any),
+		Engines:           make(map[*Engine]any),
+		Engines_mapString: make(map[string]*Engine),
+
+		Events:           make(map[*Event]any),
+		Events_mapString: make(map[string]*Event),
+
+		GongsimCommands:           make(map[*GongsimCommand]any),
+		GongsimCommands_mapString: make(map[string]*GongsimCommand),
+
+		GongsimStatuss:           make(map[*GongsimStatus]any),
+		GongsimStatuss_mapString: make(map[string]*GongsimStatus),
+
+		// end of insertion point
+		Map_GongStructName_InstancesNb: make(map[string]int),
+
+		// to be removed after fix of [issue](https://github.com/golang/go/issues/57559)
+		Map_DocLink_Renaming: make(map[string]GONG__Identifier),
+		// the to be removed stops here
+	}
+
+	return
 }
 
 func (stage *StageStruct) Commit() {
@@ -552,16 +564,8 @@ type GongstructMapString interface {
 
 // GongGetSet returns the set staged GongstructType instances
 // it is usefull because it allows refactoring of gong struct identifier
-func GongGetSet[Type GongstructSet](stages ...*StageStruct) *Type {
+func GongGetSet[Type GongstructSet](stage *StageStruct) *Type {
 	var ret Type
-
-	var stage *StageStruct
-	_ = stage
-	if len(stages) > 0 {
-		stage = stages[0]
-	} else {
-		stage = &Stage
-	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
@@ -582,16 +586,8 @@ func GongGetSet[Type GongstructSet](stages ...*StageStruct) *Type {
 
 // GongGetMap returns the map of staged GongstructType instances
 // it is usefull because it allows refactoring of gong struct identifier
-func GongGetMap[Type GongstructMapString](stages ...*StageStruct) *Type {
+func GongGetMap[Type GongstructMapString](stage *StageStruct) *Type {
 	var ret Type
-
-	var stage *StageStruct
-	_ = stage
-	if len(stages) > 0 {
-		stage = stages[0]
-	} else {
-		stage = &Stage
-	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
@@ -612,16 +608,8 @@ func GongGetMap[Type GongstructMapString](stages ...*StageStruct) *Type {
 
 // GetGongstructInstancesSet returns the set staged GongstructType instances
 // it is usefull because it allows refactoring of gongstruct identifier
-func GetGongstructInstancesSet[Type Gongstruct](stages ...*StageStruct) *map[*Type]any {
+func GetGongstructInstancesSet[Type Gongstruct](stage *StageStruct) *map[*Type]any {
 	var ret Type
-
-	var stage *StageStruct
-	_ = stage
-	if len(stages) > 0 {
-		stage = stages[0]
-	} else {
-		stage = &Stage
-	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
@@ -642,16 +630,8 @@ func GetGongstructInstancesSet[Type Gongstruct](stages ...*StageStruct) *map[*Ty
 
 // GetGongstructInstancesMap returns the map of staged GongstructType instances
 // it is usefull because it allows refactoring of gong struct identifier
-func GetGongstructInstancesMap[Type Gongstruct](stages ...*StageStruct) *map[string]*Type {
+func GetGongstructInstancesMap[Type Gongstruct](stage *StageStruct) *map[string]*Type {
 	var ret Type
-
-	var stage *StageStruct
-	_ = stage
-	if len(stages) > 0 {
-		stage = stages[0]
-	} else {
-		stage = &Stage
-	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
@@ -694,6 +674,8 @@ func GetAssociationName[Type Gongstruct]() *Type {
 	case GongsimCommand:
 		return any(&GongsimCommand{
 			// Initialisation of associations
+			// field is initialized with an instance of Engine with the name of the field
+			Engine: &Engine{Name: "Engine"},
 		}).(*Type)
 	case GongsimStatus:
 		return any(&GongsimStatus{
@@ -711,15 +693,7 @@ func GetAssociationName[Type Gongstruct]() *Type {
 // The function provides a map with keys as instances of End and values to arrays of *Start
 // the map is construed by iterating over all Start instances and populationg keys with End instances
 // and values with slice of Start instances
-func GetPointerReverseMap[Start, End Gongstruct](fieldname string, stages ...*StageStruct) map[*End][]*Start {
-
-	var stage *StageStruct
-	_ = stage
-	if len(stages) > 0 {
-		stage = stages[0]
-	} else {
-		stage = &Stage
-	}
+func GetPointerReverseMap[Start, End Gongstruct](fieldname string, stage *StageStruct) map[*End][]*Start {
 
 	var ret Start
 
@@ -744,6 +718,23 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string, stages ...*St
 	case GongsimCommand:
 		switch fieldname {
 		// insertion point for per direct association field
+		case "Engine":
+			res := make(map[*Engine][]*GongsimCommand)
+			for gongsimcommand := range stage.GongsimCommands {
+				if gongsimcommand.Engine != nil {
+					engine_ := gongsimcommand.Engine
+					var gongsimcommands []*GongsimCommand
+					_, ok := res[engine_]
+					if ok {
+						gongsimcommands = res[engine_]
+					} else {
+						gongsimcommands = make([]*GongsimCommand, 0)
+					}
+					gongsimcommands = append(gongsimcommands, gongsimcommand)
+					res[engine_] = gongsimcommands
+				}
+			}
+			return any(res).(map[*End][]*Start)
 		}
 	// reverse maps of direct associations of GongsimStatus
 	case GongsimStatus:
@@ -760,15 +751,7 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string, stages ...*St
 // The function provides a map with keys as instances of End and values to *Start instances
 // the map is construed by iterating over all Start instances and populating keys with End instances
 // and values with the Start instances
-func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string, stages ...*StageStruct) map[*End]*Start {
-
-	var stage *StageStruct
-	_ = stage
-	if len(stages) > 0 {
-		stage = stages[0]
-	} else {
-		stage = &Stage
-	}
+func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string, stage *StageStruct) map[*End]*Start {
 
 	var ret Start
 
@@ -839,7 +822,7 @@ func GetFields[Type Gongstruct]() (res []string) {
 	case Event:
 		res = []string{"Name", "Duration"}
 	case GongsimCommand:
-		res = []string{"Name", "Command", "CommandDate", "SpeedCommandType", "DateSpeedCommand"}
+		res = []string{"Name", "Command", "CommandDate", "SpeedCommandType", "DateSpeedCommand", "Engine"}
 	case GongsimStatus:
 		res = []string{"Name", "CurrentCommand", "CompletionDate", "CurrentSpeedCommand", "SpeedCommandCompletionDate"}
 	}
@@ -904,6 +887,10 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = enum.ToCodeString()
 		case "DateSpeedCommand":
 			res = any(instance).(GongsimCommand).DateSpeedCommand
+		case "Engine":
+			if any(instance).(GongsimCommand).Engine != nil {
+				res = any(instance).(GongsimCommand).Engine.Name
+			}
 		}
 	case GongsimStatus:
 		switch fieldName {

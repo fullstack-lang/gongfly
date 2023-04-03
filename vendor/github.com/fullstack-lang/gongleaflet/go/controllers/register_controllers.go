@@ -38,17 +38,10 @@ type ValidationError struct {
 	} `json:"body"`
 }
 
-// RegisterControllers register controllers
-func RegisterControllers(r *gin.Engine) {
+// registerControllers register controllers
+func registerControllers(r *gin.Engine) {
 	v1 := r.Group("/api/github.com/fullstack-lang/gongleaflet/go")
 	{ // insertion point for registrations
-		v1.GET("/v1/checkoutschedulers", GetController().GetCheckoutSchedulers)
-		v1.GET("/v1/checkoutschedulers/:id", GetController().GetCheckoutScheduler)
-		v1.POST("/v1/checkoutschedulers", GetController().PostCheckoutScheduler)
-		v1.PATCH("/v1/checkoutschedulers/:id", GetController().UpdateCheckoutScheduler)
-		v1.PUT("/v1/checkoutschedulers/:id", GetController().UpdateCheckoutScheduler)
-		v1.DELETE("/v1/checkoutschedulers/:id", GetController().DeleteCheckoutScheduler)
-
 		v1.GET("/v1/circles", GetController().GetCircles)
 		v1.GET("/v1/circles/:id", GetController().GetCircle)
 		v1.POST("/v1/circles", GetController().PostCircle)
@@ -135,7 +128,7 @@ func (controller *Controller) GetLastCommitFromBackNb(c *gin.Context) {
 }
 
 // swagger:route GET /pushfromfrontnb backrepo GetLastPushFromFrontNb
-func(controller *Controller) GetLastPushFromFrontNb(c *gin.Context) {
+func (controller *Controller) GetLastPushFromFrontNb(c *gin.Context) {
 	values := c.Request.URL.Query()
 	stackPath := ""
 	if len(values) == 1 {

@@ -42,22 +42,26 @@ export class GongsimStatusService {
   }
 
   /** GET gongsimstatuss from the server */
-  getGongsimStatuss(GONG__StackPath: string = ""): Observable<GongsimStatusDB[]> {
+  getGongsimStatuss(GONG__StackPath: string): Observable<GongsimStatusDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<GongsimStatusDB[]>(this.gongsimstatussUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched gongsimstatuss')),
+        tap(),
+		// tap(_ => this.log('fetched gongsimstatuss')),
         catchError(this.handleError<GongsimStatusDB[]>('getGongsimStatuss', []))
       );
   }
 
   /** GET gongsimstatus by id. Will 404 if id not found */
-  getGongsimStatus(id: number): Observable<GongsimStatusDB> {
+  getGongsimStatus(id: number, GONG__StackPath: string): Observable<GongsimStatusDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.gongsimstatussUrl}/${id}`;
-    return this.http.get<GongsimStatusDB>(url).pipe(
-      tap(_ => this.log(`fetched gongsimstatus id=${id}`)),
+    return this.http.get<GongsimStatusDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched gongsimstatus id=${id}`)),
       catchError(this.handleError<GongsimStatusDB>(`getGongsimStatus id=${id}`))
     );
   }
@@ -73,10 +77,10 @@ export class GongsimStatusService {
       params: params
     }
 
-	return this.http.post<GongsimStatusDB>(this.gongsimstatussUrl, gongsimstatusdb, httpOptions).pipe(
+    return this.http.post<GongsimStatusDB>(this.gongsimstatussUrl, gongsimstatusdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted gongsimstatusdb id=${gongsimstatusdb.ID}`)
+        // this.log(`posted gongsimstatusdb id=${gongsimstatusdb.ID}`)
       }),
       catchError(this.handleError<GongsimStatusDB>('postGongsimStatus'))
     );
@@ -127,11 +131,11 @@ export class GongsimStatusService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in GongsimStatusService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("GongsimStatusService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -142,6 +146,6 @@ export class GongsimStatusService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

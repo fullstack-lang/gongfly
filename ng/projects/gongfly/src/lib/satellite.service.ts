@@ -42,22 +42,26 @@ export class SatelliteService {
   }
 
   /** GET satellites from the server */
-  getSatellites(GONG__StackPath: string = ""): Observable<SatelliteDB[]> {
+  getSatellites(GONG__StackPath: string): Observable<SatelliteDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<SatelliteDB[]>(this.satellitesUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched satellites')),
+        tap(),
+		// tap(_ => this.log('fetched satellites')),
         catchError(this.handleError<SatelliteDB[]>('getSatellites', []))
       );
   }
 
   /** GET satellite by id. Will 404 if id not found */
-  getSatellite(id: number): Observable<SatelliteDB> {
+  getSatellite(id: number, GONG__StackPath: string): Observable<SatelliteDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.satellitesUrl}/${id}`;
-    return this.http.get<SatelliteDB>(url).pipe(
-      tap(_ => this.log(`fetched satellite id=${id}`)),
+    return this.http.get<SatelliteDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched satellite id=${id}`)),
       catchError(this.handleError<SatelliteDB>(`getSatellite id=${id}`))
     );
   }
@@ -73,10 +77,10 @@ export class SatelliteService {
       params: params
     }
 
-	return this.http.post<SatelliteDB>(this.satellitesUrl, satellitedb, httpOptions).pipe(
+    return this.http.post<SatelliteDB>(this.satellitesUrl, satellitedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted satellitedb id=${satellitedb.ID}`)
+        // this.log(`posted satellitedb id=${satellitedb.ID}`)
       }),
       catchError(this.handleError<SatelliteDB>('postSatellite'))
     );
@@ -127,11 +131,11 @@ export class SatelliteService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in SatelliteService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("SatelliteService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -142,6 +146,6 @@ export class SatelliteService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

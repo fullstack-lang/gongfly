@@ -30,26 +30,12 @@ import (
 	gongsim_fullstack "github.com/fullstack-lang/gongsim/go/fullstack"
 	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
 
-	gongmarkdown_fullstack "github.com/fullstack-lang/gongmarkdown/go/fullstack"
-	gongmarkdown_models "github.com/fullstack-lang/gongmarkdown/go/models"
-
-	gongng2charts_fullstack "github.com/fullstack-lang/gongng2charts/go/fullstack"
-	gongng2charts_models "github.com/fullstack-lang/gongng2charts/go/models"
-
 	// for diagrams
 	gongdoc_load "github.com/fullstack-lang/gongdoc/go/load"
 
 	// for carto display
 	gongleaflet_fullstack "github.com/fullstack-lang/gongleaflet/go/fullstack"
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
-
-	// for document display
-
-	// for the scheduler
-	"github.com/fullstack-lang/gongfly/go/gongfly2markdown"
-
-	// for the scheduler
-	"github.com/fullstack-lang/gongfly/go/gongfly2gongng2charts"
 )
 
 var (
@@ -79,8 +65,6 @@ func main() {
 
 	gongsim_fullstack.Init(r)
 	gongleaflet_fullstack.Init(r)
-	gongmarkdown_fullstack.Init(r)
-	gongng2charts_fullstack.Init(r)
 
 	// attach specific engine callback to the model
 	simulation := gonglfy_engine.NewSimulation()
@@ -121,11 +105,6 @@ func main() {
 	gongfly_models.Stage.Commit()
 	gongsim_models.Stage.Commit()
 	gongleaflet_models.Stage.Commit()
-	gongmarkdown_models.Stage.Commit()
-	gongng2charts_models.Stage.Commit()
-
-	go gongfly2markdown.GenerateDocumentationSchedulerSingloton.CheckoutScheduler()
-	go gongfly2gongng2charts.GenerateChartSchedulerSingloton.CheckoutScheduler()
 
 	log.Print("Demoatc simulation is ready, waiting for client interactions (play/pause/...)")
 

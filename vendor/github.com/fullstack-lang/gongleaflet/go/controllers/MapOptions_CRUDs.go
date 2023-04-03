@@ -151,7 +151,7 @@ func (controller *Controller) PostMapOptions(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoMapOptions.CheckoutPhaseOneInstance(&mapoptionsDB)
-	mapoptions := (*backRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
+	mapoptions := backRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr[mapoptionsDB.ID]
 
 	if mapoptions != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), mapoptions)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateMapOptions(c *gin.Context) {
 	mapoptionsDB.CopyBasicFieldsToMapOptions(mapoptionsNew)
 
 	// get stage instance from DB instance, and call callback function
-	mapoptionsOld := (*backRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
+	mapoptionsOld := backRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr[mapoptionsDB.ID]
 	if mapoptionsOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), mapoptionsOld, mapoptionsNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteMapOptions(c *gin.Context) {
 	mapoptionsDB.CopyBasicFieldsToMapOptions(mapoptionsDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	mapoptionsStaged := (*backRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
+	mapoptionsStaged := backRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr[mapoptionsDB.ID]
 	if mapoptionsStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), mapoptionsStaged, mapoptionsDeleted)
 	}

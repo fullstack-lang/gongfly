@@ -151,7 +151,7 @@ func (controller *Controller) PostEngine(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoEngine.CheckoutPhaseOneInstance(&engineDB)
-	engine := (*backRepo.BackRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID]
+	engine := backRepo.BackRepoEngine.Map_EngineDBID_EnginePtr[engineDB.ID]
 
 	if engine != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), engine)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateEngine(c *gin.Context) {
 	engineDB.CopyBasicFieldsToEngine(engineNew)
 
 	// get stage instance from DB instance, and call callback function
-	engineOld := (*backRepo.BackRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID]
+	engineOld := backRepo.BackRepoEngine.Map_EngineDBID_EnginePtr[engineDB.ID]
 	if engineOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), engineOld, engineNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteEngine(c *gin.Context) {
 	engineDB.CopyBasicFieldsToEngine(engineDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	engineStaged := (*backRepo.BackRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID]
+	engineStaged := backRepo.BackRepoEngine.Map_EngineDBID_EnginePtr[engineDB.ID]
 	if engineStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), engineStaged, engineDeleted)
 	}

@@ -147,13 +147,13 @@ var Satellite_Fields = []string{
 
 type BackRepoSatelliteStruct struct {
 	// stores SatelliteDB according to their gorm ID
-	Map_SatelliteDBID_SatelliteDB *map[uint]*SatelliteDB
+	Map_SatelliteDBID_SatelliteDB map[uint]*SatelliteDB
 
 	// stores SatelliteDB ID according to Satellite address
-	Map_SatellitePtr_SatelliteDBID *map[*models.Satellite]uint
+	Map_SatellitePtr_SatelliteDBID map[*models.Satellite]uint
 
 	// stores Satellite according to their gorm ID
-	Map_SatelliteDBID_SatellitePtr *map[uint]*models.Satellite
+	Map_SatelliteDBID_SatellitePtr map[uint]*models.Satellite
 
 	db *gorm.DB
 
@@ -171,40 +171,8 @@ func (backRepoSatellite *BackRepoSatelliteStruct) GetDB() *gorm.DB {
 
 // GetSatelliteDBFromSatellitePtr is a handy function to access the back repo instance from the stage instance
 func (backRepoSatellite *BackRepoSatelliteStruct) GetSatelliteDBFromSatellitePtr(satellite *models.Satellite) (satelliteDB *SatelliteDB) {
-	id := (*backRepoSatellite.Map_SatellitePtr_SatelliteDBID)[satellite]
-	satelliteDB = (*backRepoSatellite.Map_SatelliteDBID_SatelliteDB)[id]
-	return
-}
-
-// BackRepoSatellite.Init set up the BackRepo of the Satellite
-func (backRepoSatellite *BackRepoSatelliteStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoSatellite.Map_SatelliteDBID_SatellitePtr != nil {
-		err := errors.New("In Init, backRepoSatellite.Map_SatelliteDBID_SatellitePtr should be nil")
-		return err
-	}
-
-	if backRepoSatellite.Map_SatelliteDBID_SatelliteDB != nil {
-		err := errors.New("In Init, backRepoSatellite.Map_SatelliteDBID_SatelliteDB should be nil")
-		return err
-	}
-
-	if backRepoSatellite.Map_SatellitePtr_SatelliteDBID != nil {
-		err := errors.New("In Init, backRepoSatellite.Map_SatellitePtr_SatelliteDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.Satellite, 0)
-	backRepoSatellite.Map_SatelliteDBID_SatellitePtr = &tmp
-
-	tmpDB := make(map[uint]*SatelliteDB, 0)
-	backRepoSatellite.Map_SatelliteDBID_SatelliteDB = &tmpDB
-
-	tmpID := make(map[*models.Satellite]uint, 0)
-	backRepoSatellite.Map_SatellitePtr_SatelliteDBID = &tmpID
-
-	backRepoSatellite.db = db
-	backRepoSatellite.stage = stage
+	id := backRepoSatellite.Map_SatellitePtr_SatelliteDBID[satellite]
+	satelliteDB = backRepoSatellite.Map_SatelliteDBID_SatelliteDB[id]
 	return
 }
 
@@ -218,7 +186,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseOne(stage *models.S
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, satellite := range *backRepoSatellite.Map_SatelliteDBID_SatellitePtr {
+	for id, satellite := range backRepoSatellite.Map_SatelliteDBID_SatellitePtr {
 		if _, ok := stage.Satellites[satellite]; !ok {
 			backRepoSatellite.CommitDeleteInstance(id)
 		}
@@ -230,19 +198,19 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseOne(stage *models.S
 // BackRepoSatellite.CommitDeleteInstance commits deletion of Satellite to the BackRepo
 func (backRepoSatellite *BackRepoSatelliteStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	satellite := (*backRepoSatellite.Map_SatelliteDBID_SatellitePtr)[id]
+	satellite := backRepoSatellite.Map_SatelliteDBID_SatellitePtr[id]
 
 	// satellite is not staged anymore, remove satelliteDB
-	satelliteDB := (*backRepoSatellite.Map_SatelliteDBID_SatelliteDB)[id]
+	satelliteDB := backRepoSatellite.Map_SatelliteDBID_SatelliteDB[id]
 	query := backRepoSatellite.db.Unscoped().Delete(&satelliteDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoSatellite.Map_SatellitePtr_SatelliteDBID), satellite)
-	delete((*backRepoSatellite.Map_SatelliteDBID_SatellitePtr), id)
-	delete((*backRepoSatellite.Map_SatelliteDBID_SatelliteDB), id)
+	delete(backRepoSatellite.Map_SatellitePtr_SatelliteDBID, satellite)
+	delete(backRepoSatellite.Map_SatelliteDBID_SatellitePtr, id)
+	delete(backRepoSatellite.Map_SatelliteDBID_SatelliteDB, id)
 
 	return
 }
@@ -252,7 +220,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitDeleteInstance(id uint) 
 func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseOneInstance(satellite *models.Satellite) (Error error) {
 
 	// check if the satellite is not commited yet
-	if _, ok := (*backRepoSatellite.Map_SatellitePtr_SatelliteDBID)[satellite]; ok {
+	if _, ok := backRepoSatellite.Map_SatellitePtr_SatelliteDBID[satellite]; ok {
 		return
 	}
 
@@ -266,9 +234,9 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseOneInstance(satelli
 	}
 
 	// update stores
-	(*backRepoSatellite.Map_SatellitePtr_SatelliteDBID)[satellite] = satelliteDB.ID
-	(*backRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID] = satellite
-	(*backRepoSatellite.Map_SatelliteDBID_SatelliteDB)[satelliteDB.ID] = &satelliteDB
+	backRepoSatellite.Map_SatellitePtr_SatelliteDBID[satellite] = satelliteDB.ID
+	backRepoSatellite.Map_SatelliteDBID_SatellitePtr[satelliteDB.ID] = satellite
+	backRepoSatellite.Map_SatelliteDBID_SatelliteDB[satelliteDB.ID] = &satelliteDB
 
 	return
 }
@@ -277,7 +245,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseOneInstance(satelli
 // Phase Two is the update of instance with the field in the database
 func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, satellite := range *backRepoSatellite.Map_SatelliteDBID_SatellitePtr {
+	for idx, satellite := range backRepoSatellite.Map_SatelliteDBID_SatellitePtr {
 		backRepoSatellite.CommitPhaseTwoInstance(backRepo, idx, satellite)
 	}
 
@@ -289,7 +257,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseTwo(backRepo *BackR
 func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, satellite *models.Satellite) (Error error) {
 
 	// fetch matching satelliteDB
-	if satelliteDB, ok := (*backRepoSatellite.Map_SatelliteDBID_SatelliteDB)[idx]; ok {
+	if satelliteDB, ok := backRepoSatellite.Map_SatelliteDBID_SatelliteDB[idx]; ok {
 
 		satelliteDB.CopyBasicFieldsFromSatellite(satellite)
 
@@ -333,7 +301,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseOne() (Error erro
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		satellite, ok := (*backRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
+		satellite, ok := backRepoSatellite.Map_SatelliteDBID_SatellitePtr[satelliteDB.ID]
 		if ok {
 			delete(satelliteInstancesToBeRemovedFromTheStage, satellite)
 		}
@@ -344,10 +312,10 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseOne() (Error erro
 		satellite.Unstage(backRepoSatellite.GetStage())
 
 		// remove instance from the back repo 3 maps
-		satelliteID := (*backRepoSatellite.Map_SatellitePtr_SatelliteDBID)[satellite]
-		delete((*backRepoSatellite.Map_SatellitePtr_SatelliteDBID), satellite)
-		delete((*backRepoSatellite.Map_SatelliteDBID_SatelliteDB), satelliteID)
-		delete((*backRepoSatellite.Map_SatelliteDBID_SatellitePtr), satelliteID)
+		satelliteID := backRepoSatellite.Map_SatellitePtr_SatelliteDBID[satellite]
+		delete(backRepoSatellite.Map_SatellitePtr_SatelliteDBID, satellite)
+		delete(backRepoSatellite.Map_SatelliteDBID_SatelliteDB, satelliteID)
+		delete(backRepoSatellite.Map_SatelliteDBID_SatellitePtr, satelliteID)
 	}
 
 	return
@@ -357,12 +325,12 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseOne() (Error erro
 // models version of the satelliteDB
 func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseOneInstance(satelliteDB *SatelliteDB) (Error error) {
 
-	satellite, ok := (*backRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
+	satellite, ok := backRepoSatellite.Map_SatelliteDBID_SatellitePtr[satelliteDB.ID]
 	if !ok {
 		satellite = new(models.Satellite)
 
-		(*backRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID] = satellite
-		(*backRepoSatellite.Map_SatellitePtr_SatelliteDBID)[satellite] = satelliteDB.ID
+		backRepoSatellite.Map_SatelliteDBID_SatellitePtr[satelliteDB.ID] = satellite
+		backRepoSatellite.Map_SatellitePtr_SatelliteDBID[satellite] = satelliteDB.ID
 
 		// append model store with the new element
 		satellite.Name = satelliteDB.Name_Data.String
@@ -377,7 +345,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseOneInstance(satel
 	// Map_SatelliteDBID_SatelliteDB)[satelliteDB hold variable pointers
 	satelliteDB_Data := *satelliteDB
 	preservedPtrToSatellite := &satelliteDB_Data
-	(*backRepoSatellite.Map_SatelliteDBID_SatelliteDB)[satelliteDB.ID] = preservedPtrToSatellite
+	backRepoSatellite.Map_SatelliteDBID_SatelliteDB[satelliteDB.ID] = preservedPtrToSatellite
 
 	return
 }
@@ -387,7 +355,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseOneInstance(satel
 func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, satelliteDB := range *backRepoSatellite.Map_SatelliteDBID_SatelliteDB {
+	for _, satelliteDB := range backRepoSatellite.Map_SatelliteDBID_SatelliteDB {
 		backRepoSatellite.CheckoutPhaseTwoInstance(backRepo, satelliteDB)
 	}
 	return
@@ -397,7 +365,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseTwo(backRepo *Bac
 // Phase Two is the update of instance with the field in the database
 func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, satelliteDB *SatelliteDB) (Error error) {
 
-	satellite := (*backRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
+	satellite := backRepoSatellite.Map_SatelliteDBID_SatellitePtr[satelliteDB.ID]
 	_ = satellite // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
@@ -407,7 +375,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseTwoInstance(backR
 // CommitSatellite allows commit of a single satellite (if already staged)
 func (backRepo *BackRepoStruct) CommitSatellite(satellite *models.Satellite) {
 	backRepo.BackRepoSatellite.CommitPhaseOneInstance(satellite)
-	if id, ok := (*backRepo.BackRepoSatellite.Map_SatellitePtr_SatelliteDBID)[satellite]; ok {
+	if id, ok := backRepo.BackRepoSatellite.Map_SatellitePtr_SatelliteDBID[satellite]; ok {
 		backRepo.BackRepoSatellite.CommitPhaseTwoInstance(backRepo, id, satellite)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -416,9 +384,9 @@ func (backRepo *BackRepoStruct) CommitSatellite(satellite *models.Satellite) {
 // CommitSatellite allows checkout of a single satellite (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutSatellite(satellite *models.Satellite) {
 	// check if the satellite is staged
-	if _, ok := (*backRepo.BackRepoSatellite.Map_SatellitePtr_SatelliteDBID)[satellite]; ok {
+	if _, ok := backRepo.BackRepoSatellite.Map_SatellitePtr_SatelliteDBID[satellite]; ok {
 
-		if id, ok := (*backRepo.BackRepoSatellite.Map_SatellitePtr_SatelliteDBID)[satellite]; ok {
+		if id, ok := backRepo.BackRepoSatellite.Map_SatellitePtr_SatelliteDBID[satellite]; ok {
 			var satelliteDB SatelliteDB
 			satelliteDB.ID = id
 
@@ -540,7 +508,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*SatelliteDB, 0)
-	for _, satelliteDB := range *backRepoSatellite.Map_SatelliteDBID_SatelliteDB {
+	for _, satelliteDB := range backRepoSatellite.Map_SatelliteDBID_SatelliteDB {
 		forBackup = append(forBackup, satelliteDB)
 	}
 
@@ -566,7 +534,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*SatelliteDB, 0)
-	for _, satelliteDB := range *backRepoSatellite.Map_SatelliteDBID_SatelliteDB {
+	for _, satelliteDB := range backRepoSatellite.Map_SatelliteDBID_SatelliteDB {
 		forBackup = append(forBackup, satelliteDB)
 	}
 
@@ -631,7 +599,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) rowVisitorSatellite(row *xlsx.
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoSatellite.Map_SatelliteDBID_SatelliteDB)[satelliteDB.ID] = satelliteDB
+		backRepoSatellite.Map_SatelliteDBID_SatelliteDB[satelliteDB.ID] = satelliteDB
 		BackRepoSatelliteid_atBckpTime_newID[satelliteDB_ID_atBackupTime] = satelliteDB.ID
 	}
 	return nil
@@ -668,7 +636,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) RestorePhaseOne(dirPath string
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoSatellite.Map_SatelliteDBID_SatelliteDB)[satelliteDB.ID] = satelliteDB
+		backRepoSatellite.Map_SatelliteDBID_SatelliteDB[satelliteDB.ID] = satelliteDB
 		BackRepoSatelliteid_atBckpTime_newID[satelliteDB_ID_atBackupTime] = satelliteDB.ID
 	}
 
@@ -681,7 +649,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) RestorePhaseOne(dirPath string
 // to compute new index
 func (backRepoSatellite *BackRepoSatelliteStruct) RestorePhaseTwo() {
 
-	for _, satelliteDB := range *backRepoSatellite.Map_SatelliteDBID_SatelliteDB {
+	for _, satelliteDB := range backRepoSatellite.Map_SatelliteDBID_SatelliteDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = satelliteDB

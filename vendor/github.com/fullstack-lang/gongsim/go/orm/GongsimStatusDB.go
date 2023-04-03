@@ -117,13 +117,13 @@ var GongsimStatus_Fields = []string{
 
 type BackRepoGongsimStatusStruct struct {
 	// stores GongsimStatusDB according to their gorm ID
-	Map_GongsimStatusDBID_GongsimStatusDB *map[uint]*GongsimStatusDB
+	Map_GongsimStatusDBID_GongsimStatusDB map[uint]*GongsimStatusDB
 
 	// stores GongsimStatusDB ID according to GongsimStatus address
-	Map_GongsimStatusPtr_GongsimStatusDBID *map[*models.GongsimStatus]uint
+	Map_GongsimStatusPtr_GongsimStatusDBID map[*models.GongsimStatus]uint
 
 	// stores GongsimStatus according to their gorm ID
-	Map_GongsimStatusDBID_GongsimStatusPtr *map[uint]*models.GongsimStatus
+	Map_GongsimStatusDBID_GongsimStatusPtr map[uint]*models.GongsimStatus
 
 	db *gorm.DB
 
@@ -141,40 +141,8 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) GetDB() *gorm.DB {
 
 // GetGongsimStatusDBFromGongsimStatusPtr is a handy function to access the back repo instance from the stage instance
 func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) GetGongsimStatusDBFromGongsimStatusPtr(gongsimstatus *models.GongsimStatus) (gongsimstatusDB *GongsimStatusDB) {
-	id := (*backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID)[gongsimstatus]
-	gongsimstatusDB = (*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB)[id]
-	return
-}
-
-// BackRepoGongsimStatus.Init set up the BackRepo of the GongsimStatus
-func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr != nil {
-		err := errors.New("In Init, backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr should be nil")
-		return err
-	}
-
-	if backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB != nil {
-		err := errors.New("In Init, backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB should be nil")
-		return err
-	}
-
-	if backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID != nil {
-		err := errors.New("In Init, backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.GongsimStatus, 0)
-	backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr = &tmp
-
-	tmpDB := make(map[uint]*GongsimStatusDB, 0)
-	backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB = &tmpDB
-
-	tmpID := make(map[*models.GongsimStatus]uint, 0)
-	backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID = &tmpID
-
-	backRepoGongsimStatus.db = db
-	backRepoGongsimStatus.stage = stage
+	id := backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID[gongsimstatus]
+	gongsimstatusDB = backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[id]
 	return
 }
 
@@ -188,7 +156,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseOne(stage *
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, gongsimstatus := range *backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr {
+	for id, gongsimstatus := range backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr {
 		if _, ok := stage.GongsimStatuss[gongsimstatus]; !ok {
 			backRepoGongsimStatus.CommitDeleteInstance(id)
 		}
@@ -200,19 +168,19 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseOne(stage *
 // BackRepoGongsimStatus.CommitDeleteInstance commits deletion of GongsimStatus to the BackRepo
 func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	gongsimstatus := (*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr)[id]
+	gongsimstatus := backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr[id]
 
 	// gongsimstatus is not staged anymore, remove gongsimstatusDB
-	gongsimstatusDB := (*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB)[id]
+	gongsimstatusDB := backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[id]
 	query := backRepoGongsimStatus.db.Unscoped().Delete(&gongsimstatusDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID), gongsimstatus)
-	delete((*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr), id)
-	delete((*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB), id)
+	delete(backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID, gongsimstatus)
+	delete(backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr, id)
+	delete(backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB, id)
 
 	return
 }
@@ -222,7 +190,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitDeleteInstance(i
 func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseOneInstance(gongsimstatus *models.GongsimStatus) (Error error) {
 
 	// check if the gongsimstatus is not commited yet
-	if _, ok := (*backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID)[gongsimstatus]; ok {
+	if _, ok := backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID[gongsimstatus]; ok {
 		return
 	}
 
@@ -236,9 +204,9 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseOneInstance
 	}
 
 	// update stores
-	(*backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID)[gongsimstatus] = gongsimstatusDB.ID
-	(*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr)[gongsimstatusDB.ID] = gongsimstatus
-	(*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB)[gongsimstatusDB.ID] = &gongsimstatusDB
+	backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID[gongsimstatus] = gongsimstatusDB.ID
+	backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr[gongsimstatusDB.ID] = gongsimstatus
+	backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[gongsimstatusDB.ID] = &gongsimstatusDB
 
 	return
 }
@@ -247,7 +215,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseOneInstance
 // Phase Two is the update of instance with the field in the database
 func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, gongsimstatus := range *backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr {
+	for idx, gongsimstatus := range backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr {
 		backRepoGongsimStatus.CommitPhaseTwoInstance(backRepo, idx, gongsimstatus)
 	}
 
@@ -259,7 +227,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseTwo(backRep
 func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, gongsimstatus *models.GongsimStatus) (Error error) {
 
 	// fetch matching gongsimstatusDB
-	if gongsimstatusDB, ok := (*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB)[idx]; ok {
+	if gongsimstatusDB, ok := backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[idx]; ok {
 
 		gongsimstatusDB.CopyBasicFieldsFromGongsimStatus(gongsimstatus)
 
@@ -303,7 +271,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseOne() (Er
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		gongsimstatus, ok := (*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr)[gongsimstatusDB.ID]
+		gongsimstatus, ok := backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr[gongsimstatusDB.ID]
 		if ok {
 			delete(gongsimstatusInstancesToBeRemovedFromTheStage, gongsimstatus)
 		}
@@ -314,10 +282,10 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseOne() (Er
 		gongsimstatus.Unstage(backRepoGongsimStatus.GetStage())
 
 		// remove instance from the back repo 3 maps
-		gongsimstatusID := (*backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID)[gongsimstatus]
-		delete((*backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID), gongsimstatus)
-		delete((*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB), gongsimstatusID)
-		delete((*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr), gongsimstatusID)
+		gongsimstatusID := backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID[gongsimstatus]
+		delete(backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID, gongsimstatus)
+		delete(backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB, gongsimstatusID)
+		delete(backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr, gongsimstatusID)
 	}
 
 	return
@@ -327,12 +295,12 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseOne() (Er
 // models version of the gongsimstatusDB
 func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseOneInstance(gongsimstatusDB *GongsimStatusDB) (Error error) {
 
-	gongsimstatus, ok := (*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr)[gongsimstatusDB.ID]
+	gongsimstatus, ok := backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr[gongsimstatusDB.ID]
 	if !ok {
 		gongsimstatus = new(models.GongsimStatus)
 
-		(*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr)[gongsimstatusDB.ID] = gongsimstatus
-		(*backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID)[gongsimstatus] = gongsimstatusDB.ID
+		backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr[gongsimstatusDB.ID] = gongsimstatus
+		backRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID[gongsimstatus] = gongsimstatusDB.ID
 
 		// append model store with the new element
 		gongsimstatus.Name = gongsimstatusDB.Name_Data.String
@@ -347,7 +315,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseOneInstan
 	// Map_GongsimStatusDBID_GongsimStatusDB)[gongsimstatusDB hold variable pointers
 	gongsimstatusDB_Data := *gongsimstatusDB
 	preservedPtrToGongsimStatus := &gongsimstatusDB_Data
-	(*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB)[gongsimstatusDB.ID] = preservedPtrToGongsimStatus
+	backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[gongsimstatusDB.ID] = preservedPtrToGongsimStatus
 
 	return
 }
@@ -357,7 +325,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseOneInstan
 func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, gongsimstatusDB := range *backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB {
+	for _, gongsimstatusDB := range backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB {
 		backRepoGongsimStatus.CheckoutPhaseTwoInstance(backRepo, gongsimstatusDB)
 	}
 	return
@@ -367,7 +335,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseTwo(backR
 // Phase Two is the update of instance with the field in the database
 func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, gongsimstatusDB *GongsimStatusDB) (Error error) {
 
-	gongsimstatus := (*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr)[gongsimstatusDB.ID]
+	gongsimstatus := backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr[gongsimstatusDB.ID]
 	_ = gongsimstatus // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
@@ -377,7 +345,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseTwoInstan
 // CommitGongsimStatus allows commit of a single gongsimstatus (if already staged)
 func (backRepo *BackRepoStruct) CommitGongsimStatus(gongsimstatus *models.GongsimStatus) {
 	backRepo.BackRepoGongsimStatus.CommitPhaseOneInstance(gongsimstatus)
-	if id, ok := (*backRepo.BackRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID)[gongsimstatus]; ok {
+	if id, ok := backRepo.BackRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID[gongsimstatus]; ok {
 		backRepo.BackRepoGongsimStatus.CommitPhaseTwoInstance(backRepo, id, gongsimstatus)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -386,9 +354,9 @@ func (backRepo *BackRepoStruct) CommitGongsimStatus(gongsimstatus *models.Gongsi
 // CommitGongsimStatus allows checkout of a single gongsimstatus (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutGongsimStatus(gongsimstatus *models.GongsimStatus) {
 	// check if the gongsimstatus is staged
-	if _, ok := (*backRepo.BackRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID)[gongsimstatus]; ok {
+	if _, ok := backRepo.BackRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID[gongsimstatus]; ok {
 
-		if id, ok := (*backRepo.BackRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID)[gongsimstatus]; ok {
+		if id, ok := backRepo.BackRepoGongsimStatus.Map_GongsimStatusPtr_GongsimStatusDBID[gongsimstatus]; ok {
 			var gongsimstatusDB GongsimStatusDB
 			gongsimstatusDB.ID = id
 
@@ -470,7 +438,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) Backup(dirPath string)
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*GongsimStatusDB, 0)
-	for _, gongsimstatusDB := range *backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB {
+	for _, gongsimstatusDB := range backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB {
 		forBackup = append(forBackup, gongsimstatusDB)
 	}
 
@@ -496,7 +464,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) BackupXL(file *xlsx.Fi
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*GongsimStatusDB, 0)
-	for _, gongsimstatusDB := range *backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB {
+	for _, gongsimstatusDB := range backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB {
 		forBackup = append(forBackup, gongsimstatusDB)
 	}
 
@@ -561,7 +529,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) rowVisitorGongsimStatu
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB)[gongsimstatusDB.ID] = gongsimstatusDB
+		backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[gongsimstatusDB.ID] = gongsimstatusDB
 		BackRepoGongsimStatusid_atBckpTime_newID[gongsimstatusDB_ID_atBackupTime] = gongsimstatusDB.ID
 	}
 	return nil
@@ -598,7 +566,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) RestorePhaseOne(dirPat
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB)[gongsimstatusDB.ID] = gongsimstatusDB
+		backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[gongsimstatusDB.ID] = gongsimstatusDB
 		BackRepoGongsimStatusid_atBckpTime_newID[gongsimstatusDB_ID_atBackupTime] = gongsimstatusDB.ID
 	}
 
@@ -611,7 +579,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) RestorePhaseOne(dirPat
 // to compute new index
 func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) RestorePhaseTwo() {
 
-	for _, gongsimstatusDB := range *backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB {
+	for _, gongsimstatusDB := range backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = gongsimstatusDB

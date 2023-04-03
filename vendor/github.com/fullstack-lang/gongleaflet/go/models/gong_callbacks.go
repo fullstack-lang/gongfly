@@ -5,10 +5,6 @@ func AfterCreateFromFront[Type Gongstruct](stage *StageStruct, instance *Type) {
 
 	switch target := any(instance).(type) {
 	// insertion point
-	case *CheckoutScheduler:
-		if stage.OnAfterCheckoutSchedulerCreateCallback != nil {
-			stage.OnAfterCheckoutSchedulerCreateCallback.OnAfterCreate(stage, target)
-		}
 	case *Circle:
 		if stage.OnAfterCircleCreateCallback != nil {
 			stage.OnAfterCircleCreateCallback.OnAfterCreate(stage, target)
@@ -55,11 +51,6 @@ func AfterUpdateFromFront[Type Gongstruct](stage *StageStruct, old, new *Type) {
 
 	switch oldTarget := any(old).(type) {
 	// insertion point
-	case *CheckoutScheduler:
-		newTarget := any(new).(*CheckoutScheduler)
-		if stage.OnAfterCheckoutSchedulerUpdateCallback != nil {
-			stage.OnAfterCheckoutSchedulerUpdateCallback.OnAfterUpdate(stage, oldTarget, newTarget)
-		}
 	case *Circle:
 		newTarget := any(new).(*Circle)
 		if stage.OnAfterCircleUpdateCallback != nil {
@@ -115,11 +106,6 @@ func AfterDeleteFromFront[Type Gongstruct](stage *StageStruct, staged, front *Ty
 
 	switch front := any(front).(type) {
 	// insertion point
-	case *CheckoutScheduler:
-		if stage.OnAfterCheckoutSchedulerDeleteCallback != nil {
-			staged := any(staged).(*CheckoutScheduler)
-			stage.OnAfterCheckoutSchedulerDeleteCallback.OnAfterDelete(stage, staged, front)
-		}
 	case *Circle:
 		if stage.OnAfterCircleDeleteCallback != nil {
 			staged := any(staged).(*Circle)
@@ -175,10 +161,6 @@ func AfterReadFromFront[Type Gongstruct](stage *StageStruct, instance *Type) {
 
 	switch target := any(instance).(type) {
 	// insertion point
-	case *CheckoutScheduler:
-		if stage.OnAfterCheckoutSchedulerReadCallback != nil {
-			stage.OnAfterCheckoutSchedulerReadCallback.OnAfterRead(stage, target)
-		}
 	case *Circle:
 		if stage.OnAfterCircleReadCallback != nil {
 			stage.OnAfterCircleReadCallback.OnAfterRead(stage, target)
@@ -226,9 +208,6 @@ func SetCallbackAfterUpdateFromFront[Type Gongstruct](stage *StageStruct, callba
 	var instance Type
 	switch any(instance).(type) {
 		// insertion point
-	case *CheckoutScheduler:
-		stage.OnAfterCheckoutSchedulerUpdateCallback = any(callback).(OnAfterUpdateInterface[CheckoutScheduler])
-	
 	case *Circle:
 		stage.OnAfterCircleUpdateCallback = any(callback).(OnAfterUpdateInterface[Circle])
 	
@@ -263,9 +242,6 @@ func SetCallbackAfterCreateFromFront[Type Gongstruct](stage *StageStruct, callba
 	var instance Type
 	switch any(instance).(type) {
 		// insertion point
-	case *CheckoutScheduler:
-		stage.OnAfterCheckoutSchedulerCreateCallback = any(callback).(OnAfterCreateInterface[CheckoutScheduler])
-	
 	case *Circle:
 		stage.OnAfterCircleCreateCallback = any(callback).(OnAfterCreateInterface[Circle])
 	
@@ -300,9 +276,6 @@ func SetCallbackAfterDeleteFromFront[Type Gongstruct](stage *StageStruct, callba
 	var instance Type
 	switch any(instance).(type) {
 		// insertion point
-	case *CheckoutScheduler:
-		stage.OnAfterCheckoutSchedulerDeleteCallback = any(callback).(OnAfterDeleteInterface[CheckoutScheduler])
-	
 	case *Circle:
 		stage.OnAfterCircleDeleteCallback = any(callback).(OnAfterDeleteInterface[Circle])
 	
@@ -337,9 +310,6 @@ func SetCallbackAfterReadFromFront[Type Gongstruct](stage *StageStruct, callback
 	var instance Type
 	switch any(instance).(type) {
 		// insertion point
-	case *CheckoutScheduler:
-		stage.OnAfterCheckoutSchedulerReadCallback = any(callback).(OnAfterReadInterface[CheckoutScheduler])
-	
 	case *Circle:
 		stage.OnAfterCircleReadCallback = any(callback).(OnAfterReadInterface[Circle])
 	

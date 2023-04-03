@@ -151,7 +151,7 @@ func (controller *Controller) PostLayerGroup(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoLayerGroup.CheckoutPhaseOneInstance(&layergroupDB)
-	layergroup := (*backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
+	layergroup := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[layergroupDB.ID]
 
 	if layergroup != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), layergroup)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateLayerGroup(c *gin.Context) {
 	layergroupDB.CopyBasicFieldsToLayerGroup(layergroupNew)
 
 	// get stage instance from DB instance, and call callback function
-	layergroupOld := (*backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
+	layergroupOld := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[layergroupDB.ID]
 	if layergroupOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), layergroupOld, layergroupNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteLayerGroup(c *gin.Context) {
 	layergroupDB.CopyBasicFieldsToLayerGroup(layergroupDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	layergroupStaged := (*backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
+	layergroupStaged := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[layergroupDB.ID]
 	if layergroupStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), layergroupStaged, layergroupDeleted)
 	}

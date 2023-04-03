@@ -5,9 +5,6 @@ func IsStaged[Type Gongstruct](stage *StageStruct, instance *Type) (ok bool) {
 
 	switch target := any(instance).(type) {
 	// insertion point for stage
-	case *CheckoutScheduler:
-		ok = stage.IsStagedCheckoutScheduler(target)
-
 	case *Circle:
 		ok = stage.IsStagedCircle(target)
 
@@ -42,13 +39,6 @@ func IsStaged[Type Gongstruct](stage *StageStruct, instance *Type) (ok bool) {
 }
 
 // insertion point for stage per struct
-	func (stage *StageStruct) IsStagedCheckoutScheduler(checkoutscheduler *CheckoutScheduler) (ok bool) {
-
-		_, ok = stage.CheckoutSchedulers[checkoutscheduler]
-	
-		return
-	}
-
 	func (stage *StageStruct) IsStagedCircle(circle *Circle) (ok bool) {
 
 		_, ok = stage.Circles[circle]
@@ -121,9 +111,6 @@ func StageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 
 	switch target := any(instance).(type) {
 	// insertion point for stage branch
-	case *CheckoutScheduler:
-		stage.StageBranchCheckoutScheduler(target)
-
 	case *Circle:
 		stage.StageBranchCircle(target)
 
@@ -157,21 +144,6 @@ func StageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 }
 
 // insertion point for stage branch per struct
-func (stage *StageStruct) StageBranchCheckoutScheduler(checkoutscheduler *CheckoutScheduler) {
-
-	// check if instance is already staged
-	if IsStaged(stage, checkoutscheduler) {
-		return
-	}
-
-	checkoutscheduler.Stage(stage)
-
-	//insertion point for the staging of instances referenced by pointers
-
-	//insertion point for the staging of instances referenced by slice of pointers
-
-}
-
 func (stage *StageStruct) StageBranchCircle(circle *Circle) {
 
 	// check if instance is already staged
@@ -340,9 +312,6 @@ func UnstageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 
 	switch target := any(instance).(type) {
 	// insertion point for unstage branch
-	case *CheckoutScheduler:
-		stage.UnstageBranchCheckoutScheduler(target)
-
 	case *Circle:
 		stage.UnstageBranchCircle(target)
 
@@ -376,21 +345,6 @@ func UnstageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 }
 
 // insertion point for unstage branch per struct
-func (stage *StageStruct) UnstageBranchCheckoutScheduler(checkoutscheduler *CheckoutScheduler) {
-
-	// check if instance is already staged
-	if ! IsStaged(stage, checkoutscheduler) {
-		return
-	}
-
-	checkoutscheduler.Unstage(stage)
-
-	//insertion point for the staging of instances referenced by pointers
-
-	//insertion point for the staging of instances referenced by slice of pointers
-
-}
-
 func (stage *StageStruct) UnstageBranchCircle(circle *Circle) {
 
 	// check if instance is already staged

@@ -99,13 +99,13 @@ var DummyAgent_Fields = []string{
 
 type BackRepoDummyAgentStruct struct {
 	// stores DummyAgentDB according to their gorm ID
-	Map_DummyAgentDBID_DummyAgentDB *map[uint]*DummyAgentDB
+	Map_DummyAgentDBID_DummyAgentDB map[uint]*DummyAgentDB
 
 	// stores DummyAgentDB ID according to DummyAgent address
-	Map_DummyAgentPtr_DummyAgentDBID *map[*models.DummyAgent]uint
+	Map_DummyAgentPtr_DummyAgentDBID map[*models.DummyAgent]uint
 
 	// stores DummyAgent according to their gorm ID
-	Map_DummyAgentDBID_DummyAgentPtr *map[uint]*models.DummyAgent
+	Map_DummyAgentDBID_DummyAgentPtr map[uint]*models.DummyAgent
 
 	db *gorm.DB
 
@@ -123,40 +123,8 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) GetDB() *gorm.DB {
 
 // GetDummyAgentDBFromDummyAgentPtr is a handy function to access the back repo instance from the stage instance
 func (backRepoDummyAgent *BackRepoDummyAgentStruct) GetDummyAgentDBFromDummyAgentPtr(dummyagent *models.DummyAgent) (dummyagentDB *DummyAgentDB) {
-	id := (*backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID)[dummyagent]
-	dummyagentDB = (*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB)[id]
-	return
-}
-
-// BackRepoDummyAgent.Init set up the BackRepo of the DummyAgent
-func (backRepoDummyAgent *BackRepoDummyAgentStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr != nil {
-		err := errors.New("In Init, backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr should be nil")
-		return err
-	}
-
-	if backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB != nil {
-		err := errors.New("In Init, backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB should be nil")
-		return err
-	}
-
-	if backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID != nil {
-		err := errors.New("In Init, backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.DummyAgent, 0)
-	backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr = &tmp
-
-	tmpDB := make(map[uint]*DummyAgentDB, 0)
-	backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB = &tmpDB
-
-	tmpID := make(map[*models.DummyAgent]uint, 0)
-	backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID = &tmpID
-
-	backRepoDummyAgent.db = db
-	backRepoDummyAgent.stage = stage
+	id := backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID[dummyagent]
+	dummyagentDB = backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[id]
 	return
 }
 
@@ -170,7 +138,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseOne(stage *models
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, dummyagent := range *backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr {
+	for id, dummyagent := range backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr {
 		if _, ok := stage.DummyAgents[dummyagent]; !ok {
 			backRepoDummyAgent.CommitDeleteInstance(id)
 		}
@@ -182,19 +150,19 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseOne(stage *models
 // BackRepoDummyAgent.CommitDeleteInstance commits deletion of DummyAgent to the BackRepo
 func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	dummyagent := (*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[id]
+	dummyagent := backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr[id]
 
 	// dummyagent is not staged anymore, remove dummyagentDB
-	dummyagentDB := (*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB)[id]
+	dummyagentDB := backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[id]
 	query := backRepoDummyAgent.db.Unscoped().Delete(&dummyagentDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID), dummyagent)
-	delete((*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr), id)
-	delete((*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB), id)
+	delete(backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID, dummyagent)
+	delete(backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr, id)
+	delete(backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB, id)
 
 	return
 }
@@ -204,7 +172,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitDeleteInstance(id uint
 func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseOneInstance(dummyagent *models.DummyAgent) (Error error) {
 
 	// check if the dummyagent is not commited yet
-	if _, ok := (*backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID)[dummyagent]; ok {
+	if _, ok := backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID[dummyagent]; ok {
 		return
 	}
 
@@ -218,9 +186,9 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseOneInstance(dummy
 	}
 
 	// update stores
-	(*backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID)[dummyagent] = dummyagentDB.ID
-	(*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID] = dummyagent
-	(*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB)[dummyagentDB.ID] = &dummyagentDB
+	backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID[dummyagent] = dummyagentDB.ID
+	backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr[dummyagentDB.ID] = dummyagent
+	backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[dummyagentDB.ID] = &dummyagentDB
 
 	return
 }
@@ -229,7 +197,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseOneInstance(dummy
 // Phase Two is the update of instance with the field in the database
 func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, dummyagent := range *backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr {
+	for idx, dummyagent := range backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr {
 		backRepoDummyAgent.CommitPhaseTwoInstance(backRepo, idx, dummyagent)
 	}
 
@@ -241,7 +209,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseTwo(backRepo *Bac
 func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, dummyagent *models.DummyAgent) (Error error) {
 
 	// fetch matching dummyagentDB
-	if dummyagentDB, ok := (*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB)[idx]; ok {
+	if dummyagentDB, ok := backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[idx]; ok {
 
 		dummyagentDB.CopyBasicFieldsFromDummyAgent(dummyagent)
 
@@ -285,7 +253,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseOne() (Error er
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		dummyagent, ok := (*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
+		dummyagent, ok := backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr[dummyagentDB.ID]
 		if ok {
 			delete(dummyagentInstancesToBeRemovedFromTheStage, dummyagent)
 		}
@@ -296,10 +264,10 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseOne() (Error er
 		dummyagent.Unstage(backRepoDummyAgent.GetStage())
 
 		// remove instance from the back repo 3 maps
-		dummyagentID := (*backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID)[dummyagent]
-		delete((*backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID), dummyagent)
-		delete((*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB), dummyagentID)
-		delete((*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr), dummyagentID)
+		dummyagentID := backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID[dummyagent]
+		delete(backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID, dummyagent)
+		delete(backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB, dummyagentID)
+		delete(backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr, dummyagentID)
 	}
 
 	return
@@ -309,12 +277,12 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseOne() (Error er
 // models version of the dummyagentDB
 func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseOneInstance(dummyagentDB *DummyAgentDB) (Error error) {
 
-	dummyagent, ok := (*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
+	dummyagent, ok := backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr[dummyagentDB.ID]
 	if !ok {
 		dummyagent = new(models.DummyAgent)
 
-		(*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID] = dummyagent
-		(*backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID)[dummyagent] = dummyagentDB.ID
+		backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr[dummyagentDB.ID] = dummyagent
+		backRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID[dummyagent] = dummyagentDB.ID
 
 		// append model store with the new element
 		dummyagent.Name = dummyagentDB.Name_Data.String
@@ -329,7 +297,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseOneInstance(dum
 	// Map_DummyAgentDBID_DummyAgentDB)[dummyagentDB hold variable pointers
 	dummyagentDB_Data := *dummyagentDB
 	preservedPtrToDummyAgent := &dummyagentDB_Data
-	(*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB)[dummyagentDB.ID] = preservedPtrToDummyAgent
+	backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[dummyagentDB.ID] = preservedPtrToDummyAgent
 
 	return
 }
@@ -339,7 +307,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseOneInstance(dum
 func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, dummyagentDB := range *backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB {
+	for _, dummyagentDB := range backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB {
 		backRepoDummyAgent.CheckoutPhaseTwoInstance(backRepo, dummyagentDB)
 	}
 	return
@@ -349,7 +317,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseTwo(backRepo *B
 // Phase Two is the update of instance with the field in the database
 func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, dummyagentDB *DummyAgentDB) (Error error) {
 
-	dummyagent := (*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
+	dummyagent := backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr[dummyagentDB.ID]
 	_ = dummyagent // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
@@ -359,7 +327,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseTwoInstance(bac
 // CommitDummyAgent allows commit of a single dummyagent (if already staged)
 func (backRepo *BackRepoStruct) CommitDummyAgent(dummyagent *models.DummyAgent) {
 	backRepo.BackRepoDummyAgent.CommitPhaseOneInstance(dummyagent)
-	if id, ok := (*backRepo.BackRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID)[dummyagent]; ok {
+	if id, ok := backRepo.BackRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID[dummyagent]; ok {
 		backRepo.BackRepoDummyAgent.CommitPhaseTwoInstance(backRepo, id, dummyagent)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -368,9 +336,9 @@ func (backRepo *BackRepoStruct) CommitDummyAgent(dummyagent *models.DummyAgent) 
 // CommitDummyAgent allows checkout of a single dummyagent (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutDummyAgent(dummyagent *models.DummyAgent) {
 	// check if the dummyagent is staged
-	if _, ok := (*backRepo.BackRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID)[dummyagent]; ok {
+	if _, ok := backRepo.BackRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID[dummyagent]; ok {
 
-		if id, ok := (*backRepo.BackRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID)[dummyagent]; ok {
+		if id, ok := backRepo.BackRepoDummyAgent.Map_DummyAgentPtr_DummyAgentDBID[dummyagent]; ok {
 			var dummyagentDB DummyAgentDB
 			dummyagentDB.ID = id
 
@@ -428,7 +396,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*DummyAgentDB, 0)
-	for _, dummyagentDB := range *backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB {
+	for _, dummyagentDB := range backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB {
 		forBackup = append(forBackup, dummyagentDB)
 	}
 
@@ -454,7 +422,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*DummyAgentDB, 0)
-	for _, dummyagentDB := range *backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB {
+	for _, dummyagentDB := range backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB {
 		forBackup = append(forBackup, dummyagentDB)
 	}
 
@@ -519,7 +487,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) rowVisitorDummyAgent(row *xl
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB)[dummyagentDB.ID] = dummyagentDB
+		backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[dummyagentDB.ID] = dummyagentDB
 		BackRepoDummyAgentid_atBckpTime_newID[dummyagentDB_ID_atBackupTime] = dummyagentDB.ID
 	}
 	return nil
@@ -556,7 +524,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) RestorePhaseOne(dirPath stri
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB)[dummyagentDB.ID] = dummyagentDB
+		backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[dummyagentDB.ID] = dummyagentDB
 		BackRepoDummyAgentid_atBckpTime_newID[dummyagentDB_ID_atBackupTime] = dummyagentDB.ID
 	}
 
@@ -569,7 +537,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) RestorePhaseOne(dirPath stri
 // to compute new index
 func (backRepoDummyAgent *BackRepoDummyAgentStruct) RestorePhaseTwo() {
 
-	for _, dummyagentDB := range *backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB {
+	for _, dummyagentDB := range backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = dummyagentDB

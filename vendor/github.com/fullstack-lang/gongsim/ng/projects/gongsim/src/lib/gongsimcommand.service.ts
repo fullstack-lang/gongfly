@@ -14,6 +14,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { GongsimCommandDB } from './gongsimcommand-db';
 
 // insertion point for imports
+import { EngineDB } from './engine-db'
 
 @Injectable({
   providedIn: 'root'
@@ -42,22 +43,26 @@ export class GongsimCommandService {
   }
 
   /** GET gongsimcommands from the server */
-  getGongsimCommands(GONG__StackPath: string = ""): Observable<GongsimCommandDB[]> {
+  getGongsimCommands(GONG__StackPath: string): Observable<GongsimCommandDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<GongsimCommandDB[]>(this.gongsimcommandsUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched gongsimcommands')),
+        tap(),
+		// tap(_ => this.log('fetched gongsimcommands')),
         catchError(this.handleError<GongsimCommandDB[]>('getGongsimCommands', []))
       );
   }
 
   /** GET gongsimcommand by id. Will 404 if id not found */
-  getGongsimCommand(id: number): Observable<GongsimCommandDB> {
+  getGongsimCommand(id: number, GONG__StackPath: string): Observable<GongsimCommandDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.gongsimcommandsUrl}/${id}`;
-    return this.http.get<GongsimCommandDB>(url).pipe(
-      tap(_ => this.log(`fetched gongsimcommand id=${id}`)),
+    return this.http.get<GongsimCommandDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched gongsimcommand id=${id}`)),
       catchError(this.handleError<GongsimCommandDB>(`getGongsimCommand id=${id}`))
     );
   }
@@ -66,6 +71,7 @@ export class GongsimCommandService {
   postGongsimCommand(gongsimcommanddb: GongsimCommandDB, GONG__StackPath: string): Observable<GongsimCommandDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    gongsimcommanddb.Engine = new EngineDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -73,10 +79,10 @@ export class GongsimCommandService {
       params: params
     }
 
-	return this.http.post<GongsimCommandDB>(this.gongsimcommandsUrl, gongsimcommanddb, httpOptions).pipe(
+    return this.http.post<GongsimCommandDB>(this.gongsimcommandsUrl, gongsimcommanddb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted gongsimcommanddb id=${gongsimcommanddb.ID}`)
+        // this.log(`posted gongsimcommanddb id=${gongsimcommanddb.ID}`)
       }),
       catchError(this.handleError<GongsimCommandDB>('postGongsimCommand'))
     );
@@ -105,6 +111,7 @@ export class GongsimCommandService {
     const url = `${this.gongsimcommandsUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    gongsimcommanddb.Engine = new EngineDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -127,11 +134,11 @@ export class GongsimCommandService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in GongsimCommandService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("GongsimCommandService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -142,6 +149,6 @@ export class GongsimCommandService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

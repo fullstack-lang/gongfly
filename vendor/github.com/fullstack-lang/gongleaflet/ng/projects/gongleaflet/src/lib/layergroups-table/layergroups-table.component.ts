@@ -19,6 +19,8 @@ import { LayerGroupService } from '../layergroup.service'
 
 // insertion point for additional imports
 
+import { RouteService } from '../route-service';
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -116,6 +118,8 @@ export class LayerGroupsTableComponent implements OnInit {
 
     private router: Router,
     private activatedRoute: ActivatedRoute,
+
+    private routeService: RouteService,
   ) {
 
     // compute mode
@@ -234,18 +238,15 @@ export class LayerGroupsTableComponent implements OnInit {
 
   }
 
-  // display layergroup in router
-  displayLayerGroupInRouter(layergroupID: number) {
-    this.router.navigate(["github_com_fullstack_lang_gongleaflet_go-" + "layergroup-display", layergroupID])
-  }
-
   // set editor outlet
   setEditorRouterOutlet(layergroupID: number) {
-    this.router.navigate([{
-      outlets: {
-        github_com_fullstack_lang_gongleaflet_go_editor: ["github_com_fullstack_lang_gongleaflet_go-" + "layergroup-detail", layergroupID, this.GONG__StackPath]
-      }
-    }]);
+    let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + "layergroup" + "-detail"
+
+    let outletConf: any = {}
+    outletConf[outletName] = [fullPath, layergroupID, this.GONG__StackPath]
+
+    this.router.navigate([{ outlets: outletConf }])
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

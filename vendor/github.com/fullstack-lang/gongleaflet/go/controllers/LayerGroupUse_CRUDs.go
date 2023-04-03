@@ -151,7 +151,7 @@ func (controller *Controller) PostLayerGroupUse(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoLayerGroupUse.CheckoutPhaseOneInstance(&layergroupuseDB)
-	layergroupuse := (*backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr)[layergroupuseDB.ID]
+	layergroupuse := backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr[layergroupuseDB.ID]
 
 	if layergroupuse != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), layergroupuse)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateLayerGroupUse(c *gin.Context) {
 	layergroupuseDB.CopyBasicFieldsToLayerGroupUse(layergroupuseNew)
 
 	// get stage instance from DB instance, and call callback function
-	layergroupuseOld := (*backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr)[layergroupuseDB.ID]
+	layergroupuseOld := backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr[layergroupuseDB.ID]
 	if layergroupuseOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), layergroupuseOld, layergroupuseNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteLayerGroupUse(c *gin.Context) {
 	layergroupuseDB.CopyBasicFieldsToLayerGroupUse(layergroupuseDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	layergroupuseStaged := (*backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr)[layergroupuseDB.ID]
+	layergroupuseStaged := backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr[layergroupuseDB.ID]
 	if layergroupuseStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), layergroupuseStaged, layergroupuseDeleted)
 	}

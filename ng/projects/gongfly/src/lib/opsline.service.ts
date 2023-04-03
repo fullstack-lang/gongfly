@@ -43,22 +43,26 @@ export class OpsLineService {
   }
 
   /** GET opslines from the server */
-  getOpsLines(GONG__StackPath: string = ""): Observable<OpsLineDB[]> {
+  getOpsLines(GONG__StackPath: string): Observable<OpsLineDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<OpsLineDB[]>(this.opslinesUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched opslines')),
+        tap(),
+		// tap(_ => this.log('fetched opslines')),
         catchError(this.handleError<OpsLineDB[]>('getOpsLines', []))
       );
   }
 
   /** GET opsline by id. Will 404 if id not found */
-  getOpsLine(id: number): Observable<OpsLineDB> {
+  getOpsLine(id: number, GONG__StackPath: string): Observable<OpsLineDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.opslinesUrl}/${id}`;
-    return this.http.get<OpsLineDB>(url).pipe(
-      tap(_ => this.log(`fetched opsline id=${id}`)),
+    return this.http.get<OpsLineDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched opsline id=${id}`)),
       catchError(this.handleError<OpsLineDB>(`getOpsLine id=${id}`))
     );
   }
@@ -75,10 +79,10 @@ export class OpsLineService {
       params: params
     }
 
-	return this.http.post<OpsLineDB>(this.opslinesUrl, opslinedb, httpOptions).pipe(
+    return this.http.post<OpsLineDB>(this.opslinesUrl, opslinedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted opslinedb id=${opslinedb.ID}`)
+        // this.log(`posted opslinedb id=${opslinedb.ID}`)
       }),
       catchError(this.handleError<OpsLineDB>('postOpsLine'))
     );
@@ -130,11 +134,11 @@ export class OpsLineService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in OpsLineService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("OpsLineService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -145,6 +149,6 @@ export class OpsLineService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

@@ -151,7 +151,7 @@ func (controller *Controller) PostOpsLine(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoOpsLine.CheckoutPhaseOneInstance(&opslineDB)
-	opsline := (*backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
+	opsline := backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[opslineDB.ID]
 
 	if opsline != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), opsline)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateOpsLine(c *gin.Context) {
 	opslineDB.CopyBasicFieldsToOpsLine(opslineNew)
 
 	// get stage instance from DB instance, and call callback function
-	opslineOld := (*backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
+	opslineOld := backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[opslineDB.ID]
 	if opslineOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), opslineOld, opslineNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteOpsLine(c *gin.Context) {
 	opslineDB.CopyBasicFieldsToOpsLine(opslineDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	opslineStaged := (*backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
+	opslineStaged := backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[opslineDB.ID]
 	if opslineStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), opslineStaged, opslineDeleted)
 	}

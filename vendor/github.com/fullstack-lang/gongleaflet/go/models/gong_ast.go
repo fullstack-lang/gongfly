@@ -30,9 +30,6 @@ const (
 // ParseAstFile Parse pathToFile and stages all instances
 // declared in the file
 func ParseAstFile(stage *StageStruct, pathToFile string) error {
-	// map to store renaming docLink
-	// to be removed after fix of [issue](https://github.com/golang/go/issues/57559)
-	stage.Map_DocLink_Renaming = make(map[string]GONG__Identifier, 0)
 
 	fileOfInterest, err := filepath.Abs(pathToFile)
 	if err != nil {
@@ -306,7 +303,6 @@ func ParseAstFileFromAst(stage *StageStruct, inFile *ast.File, fset *token.FileS
 var __gong__map_Indentifiers_gongstructName = make(map[string]string)
 
 // insertion point for identifiers maps
-var __gong__map_CheckoutScheduler = make(map[string]*CheckoutScheduler)
 var __gong__map_Circle = make(map[string]*Circle)
 var __gong__map_DivIcon = make(map[string]*DivIcon)
 var __gong__map_LayerGroup = make(map[string]*LayerGroup)
@@ -488,10 +484,6 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 									// this is the place where an instance is created
 									switch gongstructName {
 									// insertion point for identifiers
-									case "CheckoutScheduler":
-										instanceCheckoutScheduler := (&CheckoutScheduler{Name: instanceName}).Stage(stage)
-										instance = any(instanceCheckoutScheduler)
-										__gong__map_CheckoutScheduler[identifier] = instanceCheckoutScheduler
 									case "Circle":
 										instanceCircle := (&Circle{Name: instanceName}).Stage(stage)
 										instance = any(instanceCircle)
@@ -564,10 +556,6 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 						}
 						switch gongstructName {
 						// insertion point for basic lit assignments
-						case "CheckoutScheduler":
-							switch fieldName {
-							// insertion point for date assign code
-							}
 						case "Circle":
 							switch fieldName {
 							// insertion point for date assign code
@@ -633,10 +621,6 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					}
 					switch gongstructName {
 					// insertion point for slice of pointers assignments
-					case "CheckoutScheduler":
-						switch fieldName {
-						// insertion point for slice of pointers assign code
-						}
 					case "Circle":
 						switch fieldName {
 						// insertion point for slice of pointers assign code
@@ -715,21 +699,6 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 
 			switch gongstructName {
 			// insertion point for basic lit assignments
-			case "CheckoutScheduler":
-				switch fieldName {
-				// insertion point for field dependant code
-				case "Name":
-					// remove first and last char
-					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
-					__gong__map_CheckoutScheduler[identifier].Name = fielValue
-				case "NbUpdatesFromFront":
-					// convert string to int
-					fielValue, err := strconv.ParseInt(basicLit.Value, 10, 64)
-					if err != nil {
-						log.Fatalln(err)
-					}
-					__gong__map_CheckoutScheduler[identifier].NbUpdatesFromFront = int(fielValue)
-				}
 			case "Circle":
 				switch fieldName {
 				// insertion point for field dependant code
@@ -994,10 +963,6 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 			}
 			switch gongstructName {
 			// insertion point for bool & pointers assignments
-			case "CheckoutScheduler":
-				switch fieldName {
-				// insertion point for field dependant code
-				}
 			case "Circle":
 				switch fieldName {
 				// insertion point for field dependant code
@@ -1118,10 +1083,6 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 				_ = enumValue
 				switch gongstructName {
 				// insertion point for enums assignments
-				case "CheckoutScheduler":
-					switch fieldName {
-					// insertion point for enum assign code
-					}
 				case "Circle":
 					switch fieldName {
 					// insertion point for enum assign code

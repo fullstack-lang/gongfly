@@ -19,6 +19,8 @@ import { LinerService } from '../liner.service'
 
 // insertion point for additional imports
 
+import { RouteService } from '../route-service';
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -170,6 +172,8 @@ export class LinersTableComponent implements OnInit {
 
     private router: Router,
     private activatedRoute: ActivatedRoute,
+
+    private routeService: RouteService,
   ) {
 
     // compute mode
@@ -314,18 +318,15 @@ export class LinersTableComponent implements OnInit {
 
   }
 
-  // display liner in router
-  displayLinerInRouter(linerID: number) {
-    this.router.navigate(["github_com_fullstack_lang_gongfly_go-" + "liner-display", linerID])
-  }
-
   // set editor outlet
   setEditorRouterOutlet(linerID: number) {
-    this.router.navigate([{
-      outlets: {
-        github_com_fullstack_lang_gongfly_go_editor: ["github_com_fullstack_lang_gongfly_go-" + "liner-detail", linerID, this.GONG__StackPath]
-      }
-    }]);
+    let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + "liner" + "-detail"
+
+    let outletConf: any = {}
+    outletConf[outletName] = [fullPath, linerID, this.GONG__StackPath]
+
+    this.router.navigate([{ outlets: outletConf }])
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

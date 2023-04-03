@@ -43,22 +43,26 @@ export class LinerService {
   }
 
   /** GET liners from the server */
-  getLiners(GONG__StackPath: string = ""): Observable<LinerDB[]> {
+  getLiners(GONG__StackPath: string): Observable<LinerDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<LinerDB[]>(this.linersUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched liners')),
+        tap(),
+		// tap(_ => this.log('fetched liners')),
         catchError(this.handleError<LinerDB[]>('getLiners', []))
       );
   }
 
   /** GET liner by id. Will 404 if id not found */
-  getLiner(id: number): Observable<LinerDB> {
+  getLiner(id: number, GONG__StackPath: string): Observable<LinerDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.linersUrl}/${id}`;
-    return this.http.get<LinerDB>(url).pipe(
-      tap(_ => this.log(`fetched liner id=${id}`)),
+    return this.http.get<LinerDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched liner id=${id}`)),
       catchError(this.handleError<LinerDB>(`getLiner id=${id}`))
     );
   }
@@ -75,10 +79,10 @@ export class LinerService {
       params: params
     }
 
-	return this.http.post<LinerDB>(this.linersUrl, linerdb, httpOptions).pipe(
+    return this.http.post<LinerDB>(this.linersUrl, linerdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted linerdb id=${linerdb.ID}`)
+        // this.log(`posted linerdb id=${linerdb.ID}`)
       }),
       catchError(this.handleError<LinerDB>('postLiner'))
     );
@@ -130,11 +134,11 @@ export class LinerService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in LinerService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("LinerService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -145,6 +149,6 @@ export class LinerService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

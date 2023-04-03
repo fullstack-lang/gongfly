@@ -42,18 +42,3 @@ type VisualTrackInterface interface {
 	GetName() (name string)
 	GetLayerGroupName() string
 }
-
-func (visualTrack *VisualTrack) UpdateTrack() {
-	if visualTrack.VisualTrackInterface != nil {
-		visualTrack.Name = visualTrack.VisualTrackInterface.GetName()
-
-		visualTrack.Lat = visualTrack.VisualTrackInterface.GetLat()
-		visualTrack.Lng = visualTrack.VisualTrackInterface.GetLng()
-		visualTrack.Heading = visualTrack.VisualTrackInterface.GetHeading()
-		visualTrack.Level = visualTrack.VisualTrackInterface.GetLevel()
-		visualTrack.Speed = visualTrack.VisualTrackInterface.GetSpeed()
-		visualTrack.VerticalSpeed = visualTrack.VisualTrackInterface.GetVerticalSpeed()
-
-		visualTrack.LayerGroup = computeLayerGroupFromLayerGroupName(visualTrack.VisualTrackInterface.GetLayerGroupName())
-	}
-}

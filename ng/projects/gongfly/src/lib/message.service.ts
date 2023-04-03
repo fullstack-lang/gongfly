@@ -42,22 +42,26 @@ export class MessageService {
   }
 
   /** GET messages from the server */
-  getMessages(GONG__StackPath: string = ""): Observable<MessageDB[]> {
+  getMessages(GONG__StackPath: string): Observable<MessageDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<MessageDB[]>(this.messagesUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched messages')),
+        tap(),
+		// tap(_ => this.log('fetched messages')),
         catchError(this.handleError<MessageDB[]>('getMessages', []))
       );
   }
 
   /** GET message by id. Will 404 if id not found */
-  getMessage(id: number): Observable<MessageDB> {
+  getMessage(id: number, GONG__StackPath: string): Observable<MessageDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.messagesUrl}/${id}`;
-    return this.http.get<MessageDB>(url).pipe(
-      tap(_ => this.log(`fetched message id=${id}`)),
+    return this.http.get<MessageDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched message id=${id}`)),
       catchError(this.handleError<MessageDB>(`getMessage id=${id}`))
     );
   }
@@ -73,10 +77,10 @@ export class MessageService {
       params: params
     }
 
-	return this.http.post<MessageDB>(this.messagesUrl, messagedb, httpOptions).pipe(
+    return this.http.post<MessageDB>(this.messagesUrl, messagedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted messagedb id=${messagedb.ID}`)
+        // this.log(`posted messagedb id=${messagedb.ID}`)
       }),
       catchError(this.handleError<MessageDB>('postMessage'))
     );
@@ -127,11 +131,11 @@ export class MessageService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in MessageService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("MessageService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -142,6 +146,6 @@ export class MessageService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

@@ -99,13 +99,13 @@ var LayerGroup_Fields = []string{
 
 type BackRepoLayerGroupStruct struct {
 	// stores LayerGroupDB according to their gorm ID
-	Map_LayerGroupDBID_LayerGroupDB *map[uint]*LayerGroupDB
+	Map_LayerGroupDBID_LayerGroupDB map[uint]*LayerGroupDB
 
 	// stores LayerGroupDB ID according to LayerGroup address
-	Map_LayerGroupPtr_LayerGroupDBID *map[*models.LayerGroup]uint
+	Map_LayerGroupPtr_LayerGroupDBID map[*models.LayerGroup]uint
 
 	// stores LayerGroup according to their gorm ID
-	Map_LayerGroupDBID_LayerGroupPtr *map[uint]*models.LayerGroup
+	Map_LayerGroupDBID_LayerGroupPtr map[uint]*models.LayerGroup
 
 	db *gorm.DB
 
@@ -123,40 +123,8 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) GetDB() *gorm.DB {
 
 // GetLayerGroupDBFromLayerGroupPtr is a handy function to access the back repo instance from the stage instance
 func (backRepoLayerGroup *BackRepoLayerGroupStruct) GetLayerGroupDBFromLayerGroupPtr(layergroup *models.LayerGroup) (layergroupDB *LayerGroupDB) {
-	id := (*backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[layergroup]
-	layergroupDB = (*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB)[id]
-	return
-}
-
-// BackRepoLayerGroup.Init set up the BackRepo of the LayerGroup
-func (backRepoLayerGroup *BackRepoLayerGroupStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr != nil {
-		err := errors.New("In Init, backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr should be nil")
-		return err
-	}
-
-	if backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB != nil {
-		err := errors.New("In Init, backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB should be nil")
-		return err
-	}
-
-	if backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID != nil {
-		err := errors.New("In Init, backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.LayerGroup, 0)
-	backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr = &tmp
-
-	tmpDB := make(map[uint]*LayerGroupDB, 0)
-	backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB = &tmpDB
-
-	tmpID := make(map[*models.LayerGroup]uint, 0)
-	backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID = &tmpID
-
-	backRepoLayerGroup.db = db
-	backRepoLayerGroup.stage = stage
+	id := backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID[layergroup]
+	layergroupDB = backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[id]
 	return
 }
 
@@ -170,7 +138,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitPhaseOne(stage *models
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, layergroup := range *backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr {
+	for id, layergroup := range backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr {
 		if _, ok := stage.LayerGroups[layergroup]; !ok {
 			backRepoLayerGroup.CommitDeleteInstance(id)
 		}
@@ -182,19 +150,19 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitPhaseOne(stage *models
 // BackRepoLayerGroup.CommitDeleteInstance commits deletion of LayerGroup to the BackRepo
 func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	layergroup := (*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[id]
+	layergroup := backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[id]
 
 	// layergroup is not staged anymore, remove layergroupDB
-	layergroupDB := (*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB)[id]
+	layergroupDB := backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[id]
 	query := backRepoLayerGroup.db.Unscoped().Delete(&layergroupDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID), layergroup)
-	delete((*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr), id)
-	delete((*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB), id)
+	delete(backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID, layergroup)
+	delete(backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr, id)
+	delete(backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB, id)
 
 	return
 }
@@ -204,7 +172,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitDeleteInstance(id uint
 func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitPhaseOneInstance(layergroup *models.LayerGroup) (Error error) {
 
 	// check if the layergroup is not commited yet
-	if _, ok := (*backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[layergroup]; ok {
+	if _, ok := backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID[layergroup]; ok {
 		return
 	}
 
@@ -218,9 +186,9 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitPhaseOneInstance(layer
 	}
 
 	// update stores
-	(*backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[layergroup] = layergroupDB.ID
-	(*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID] = layergroup
-	(*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB)[layergroupDB.ID] = &layergroupDB
+	backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID[layergroup] = layergroupDB.ID
+	backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[layergroupDB.ID] = layergroup
+	backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[layergroupDB.ID] = &layergroupDB
 
 	return
 }
@@ -229,7 +197,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitPhaseOneInstance(layer
 // Phase Two is the update of instance with the field in the database
 func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, layergroup := range *backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr {
+	for idx, layergroup := range backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr {
 		backRepoLayerGroup.CommitPhaseTwoInstance(backRepo, idx, layergroup)
 	}
 
@@ -241,7 +209,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitPhaseTwo(backRepo *Bac
 func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, layergroup *models.LayerGroup) (Error error) {
 
 	// fetch matching layergroupDB
-	if layergroupDB, ok := (*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB)[idx]; ok {
+	if layergroupDB, ok := backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[idx]; ok {
 
 		layergroupDB.CopyBasicFieldsFromLayerGroup(layergroup)
 
@@ -285,7 +253,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CheckoutPhaseOne() (Error er
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		layergroup, ok := (*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
+		layergroup, ok := backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[layergroupDB.ID]
 		if ok {
 			delete(layergroupInstancesToBeRemovedFromTheStage, layergroup)
 		}
@@ -296,10 +264,10 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CheckoutPhaseOne() (Error er
 		layergroup.Unstage(backRepoLayerGroup.GetStage())
 
 		// remove instance from the back repo 3 maps
-		layergroupID := (*backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[layergroup]
-		delete((*backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID), layergroup)
-		delete((*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB), layergroupID)
-		delete((*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr), layergroupID)
+		layergroupID := backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID[layergroup]
+		delete(backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID, layergroup)
+		delete(backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB, layergroupID)
+		delete(backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr, layergroupID)
 	}
 
 	return
@@ -309,12 +277,12 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CheckoutPhaseOne() (Error er
 // models version of the layergroupDB
 func (backRepoLayerGroup *BackRepoLayerGroupStruct) CheckoutPhaseOneInstance(layergroupDB *LayerGroupDB) (Error error) {
 
-	layergroup, ok := (*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
+	layergroup, ok := backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[layergroupDB.ID]
 	if !ok {
 		layergroup = new(models.LayerGroup)
 
-		(*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID] = layergroup
-		(*backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[layergroup] = layergroupDB.ID
+		backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[layergroupDB.ID] = layergroup
+		backRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID[layergroup] = layergroupDB.ID
 
 		// append model store with the new element
 		layergroup.Name = layergroupDB.Name_Data.String
@@ -329,7 +297,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CheckoutPhaseOneInstance(lay
 	// Map_LayerGroupDBID_LayerGroupDB)[layergroupDB hold variable pointers
 	layergroupDB_Data := *layergroupDB
 	preservedPtrToLayerGroup := &layergroupDB_Data
-	(*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB)[layergroupDB.ID] = preservedPtrToLayerGroup
+	backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[layergroupDB.ID] = preservedPtrToLayerGroup
 
 	return
 }
@@ -339,7 +307,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CheckoutPhaseOneInstance(lay
 func (backRepoLayerGroup *BackRepoLayerGroupStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, layergroupDB := range *backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB {
+	for _, layergroupDB := range backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB {
 		backRepoLayerGroup.CheckoutPhaseTwoInstance(backRepo, layergroupDB)
 	}
 	return
@@ -349,7 +317,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CheckoutPhaseTwo(backRepo *B
 // Phase Two is the update of instance with the field in the database
 func (backRepoLayerGroup *BackRepoLayerGroupStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, layergroupDB *LayerGroupDB) (Error error) {
 
-	layergroup := (*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[layergroupDB.ID]
+	layergroup := backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[layergroupDB.ID]
 	_ = layergroup // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
@@ -359,7 +327,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CheckoutPhaseTwoInstance(bac
 // CommitLayerGroup allows commit of a single layergroup (if already staged)
 func (backRepo *BackRepoStruct) CommitLayerGroup(layergroup *models.LayerGroup) {
 	backRepo.BackRepoLayerGroup.CommitPhaseOneInstance(layergroup)
-	if id, ok := (*backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[layergroup]; ok {
+	if id, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID[layergroup]; ok {
 		backRepo.BackRepoLayerGroup.CommitPhaseTwoInstance(backRepo, id, layergroup)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -368,9 +336,9 @@ func (backRepo *BackRepoStruct) CommitLayerGroup(layergroup *models.LayerGroup) 
 // CommitLayerGroup allows checkout of a single layergroup (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutLayerGroup(layergroup *models.LayerGroup) {
 	// check if the layergroup is staged
-	if _, ok := (*backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[layergroup]; ok {
+	if _, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID[layergroup]; ok {
 
-		if id, ok := (*backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[layergroup]; ok {
+		if id, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID[layergroup]; ok {
 			var layergroupDB LayerGroupDB
 			layergroupDB.ID = id
 
@@ -428,7 +396,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*LayerGroupDB, 0)
-	for _, layergroupDB := range *backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB {
+	for _, layergroupDB := range backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB {
 		forBackup = append(forBackup, layergroupDB)
 	}
 
@@ -454,7 +422,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*LayerGroupDB, 0)
-	for _, layergroupDB := range *backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB {
+	for _, layergroupDB := range backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB {
 		forBackup = append(forBackup, layergroupDB)
 	}
 
@@ -519,7 +487,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) rowVisitorLayerGroup(row *xl
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB)[layergroupDB.ID] = layergroupDB
+		backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[layergroupDB.ID] = layergroupDB
 		BackRepoLayerGroupid_atBckpTime_newID[layergroupDB_ID_atBackupTime] = layergroupDB.ID
 	}
 	return nil
@@ -556,7 +524,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) RestorePhaseOne(dirPath stri
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB)[layergroupDB.ID] = layergroupDB
+		backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[layergroupDB.ID] = layergroupDB
 		BackRepoLayerGroupid_atBckpTime_newID[layergroupDB_ID_atBackupTime] = layergroupDB.ID
 	}
 
@@ -569,7 +537,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) RestorePhaseOne(dirPath stri
 // to compute new index
 func (backRepoLayerGroup *BackRepoLayerGroupStruct) RestorePhaseTwo() {
 
-	for _, layergroupDB := range *backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB {
+	for _, layergroupDB := range backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = layergroupDB

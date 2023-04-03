@@ -1,12 +1,10 @@
 <div id="atcmapid">
     <ng-container *ngIf="leafletMapOptions">
-        <div style="height:100%;width:100%;" leaflet [leafletOptions]="leafletMapOptions"
-            (leafletMapReady)="onMapReady($event)" (leafletClick)="onMapClick($event)"
-            [leafletLayers]="rootOfLayerGroups">
+        <div style="height:100%;width:100%;" leaflet [leafletOptions]="leafletMapOptions" (leafletMapReady)="onMapReady($event)" (leafletClick)="onMapClick($event)" [leafletLayers]="rootOfLayerGroups">
             <!-- <div ></div>
             <div [leafletLayers]="visualTracksHistory"></div> -->
         </div>
-        <app-cartoatc-control-settings [mapName]="mapName"></app-cartoatc-control-settings>
+        <app-cartoatc-control-settings [GONG__StackPath]="GONG__StackPath" [mapName]="mapName"></app-cartoatc-control-settings>
     </ng-container>
     <ng-container *ngIf="!leafletMapOptions">
         <div class="cartoatc--empty">

@@ -42,22 +42,26 @@ export class RadarService {
   }
 
   /** GET radars from the server */
-  getRadars(GONG__StackPath: string = ""): Observable<RadarDB[]> {
+  getRadars(GONG__StackPath: string): Observable<RadarDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<RadarDB[]>(this.radarsUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched radars')),
+        tap(),
+		// tap(_ => this.log('fetched radars')),
         catchError(this.handleError<RadarDB[]>('getRadars', []))
       );
   }
 
   /** GET radar by id. Will 404 if id not found */
-  getRadar(id: number): Observable<RadarDB> {
+  getRadar(id: number, GONG__StackPath: string): Observable<RadarDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.radarsUrl}/${id}`;
-    return this.http.get<RadarDB>(url).pipe(
-      tap(_ => this.log(`fetched radar id=${id}`)),
+    return this.http.get<RadarDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched radar id=${id}`)),
       catchError(this.handleError<RadarDB>(`getRadar id=${id}`))
     );
   }
@@ -73,10 +77,10 @@ export class RadarService {
       params: params
     }
 
-	return this.http.post<RadarDB>(this.radarsUrl, radardb, httpOptions).pipe(
+    return this.http.post<RadarDB>(this.radarsUrl, radardb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted radardb id=${radardb.ID}`)
+        // this.log(`posted radardb id=${radardb.ID}`)
       }),
       catchError(this.handleError<RadarDB>('postRadar'))
     );
@@ -127,11 +131,11 @@ export class RadarService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in RadarService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("RadarService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -142,6 +146,6 @@ export class RadarService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

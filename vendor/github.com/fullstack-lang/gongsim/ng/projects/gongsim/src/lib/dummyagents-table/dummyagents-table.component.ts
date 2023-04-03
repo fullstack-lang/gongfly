@@ -19,6 +19,8 @@ import { DummyAgentService } from '../dummyagent.service'
 
 // insertion point for additional imports
 
+import { RouteService } from '../route-service';
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -116,6 +118,8 @@ export class DummyAgentsTableComponent implements OnInit {
 
     private router: Router,
     private activatedRoute: ActivatedRoute,
+
+    private routeService: RouteService,
   ) {
 
     // compute mode
@@ -234,18 +238,15 @@ export class DummyAgentsTableComponent implements OnInit {
 
   }
 
-  // display dummyagent in router
-  displayDummyAgentInRouter(dummyagentID: number) {
-    this.router.navigate(["github_com_fullstack_lang_gongsim_go-" + "dummyagent-display", dummyagentID])
-  }
-
   // set editor outlet
   setEditorRouterOutlet(dummyagentID: number) {
-    this.router.navigate([{
-      outlets: {
-        github_com_fullstack_lang_gongsim_go_editor: ["github_com_fullstack_lang_gongsim_go-" + "dummyagent-detail", dummyagentID, this.GONG__StackPath]
-      }
-    }]);
+    let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + "dummyagent" + "-detail"
+
+    let outletConf: any = {}
+    outletConf[outletName] = [fullPath, dummyagentID, this.GONG__StackPath]
+
+    this.router.navigate([{ outlets: outletConf }])
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

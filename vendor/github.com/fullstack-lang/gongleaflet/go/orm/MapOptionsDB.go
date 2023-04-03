@@ -149,13 +149,13 @@ var MapOptions_Fields = []string{
 
 type BackRepoMapOptionsStruct struct {
 	// stores MapOptionsDB according to their gorm ID
-	Map_MapOptionsDBID_MapOptionsDB *map[uint]*MapOptionsDB
+	Map_MapOptionsDBID_MapOptionsDB map[uint]*MapOptionsDB
 
 	// stores MapOptionsDB ID according to MapOptions address
-	Map_MapOptionsPtr_MapOptionsDBID *map[*models.MapOptions]uint
+	Map_MapOptionsPtr_MapOptionsDBID map[*models.MapOptions]uint
 
 	// stores MapOptions according to their gorm ID
-	Map_MapOptionsDBID_MapOptionsPtr *map[uint]*models.MapOptions
+	Map_MapOptionsDBID_MapOptionsPtr map[uint]*models.MapOptions
 
 	db *gorm.DB
 
@@ -173,40 +173,8 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) GetDB() *gorm.DB {
 
 // GetMapOptionsDBFromMapOptionsPtr is a handy function to access the back repo instance from the stage instance
 func (backRepoMapOptions *BackRepoMapOptionsStruct) GetMapOptionsDBFromMapOptionsPtr(mapoptions *models.MapOptions) (mapoptionsDB *MapOptionsDB) {
-	id := (*backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID)[mapoptions]
-	mapoptionsDB = (*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB)[id]
-	return
-}
-
-// BackRepoMapOptions.Init set up the BackRepo of the MapOptions
-func (backRepoMapOptions *BackRepoMapOptionsStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr != nil {
-		err := errors.New("In Init, backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr should be nil")
-		return err
-	}
-
-	if backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB != nil {
-		err := errors.New("In Init, backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB should be nil")
-		return err
-	}
-
-	if backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID != nil {
-		err := errors.New("In Init, backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.MapOptions, 0)
-	backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr = &tmp
-
-	tmpDB := make(map[uint]*MapOptionsDB, 0)
-	backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB = &tmpDB
-
-	tmpID := make(map[*models.MapOptions]uint, 0)
-	backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID = &tmpID
-
-	backRepoMapOptions.db = db
-	backRepoMapOptions.stage = stage
+	id := backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID[mapoptions]
+	mapoptionsDB = backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB[id]
 	return
 }
 
@@ -220,7 +188,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitPhaseOne(stage *models
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, mapoptions := range *backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr {
+	for id, mapoptions := range backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr {
 		if _, ok := stage.MapOptionss[mapoptions]; !ok {
 			backRepoMapOptions.CommitDeleteInstance(id)
 		}
@@ -232,19 +200,19 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitPhaseOne(stage *models
 // BackRepoMapOptions.CommitDeleteInstance commits deletion of MapOptions to the BackRepo
 func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	mapoptions := (*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[id]
+	mapoptions := backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr[id]
 
 	// mapoptions is not staged anymore, remove mapoptionsDB
-	mapoptionsDB := (*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB)[id]
+	mapoptionsDB := backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB[id]
 	query := backRepoMapOptions.db.Unscoped().Delete(&mapoptionsDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID), mapoptions)
-	delete((*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr), id)
-	delete((*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB), id)
+	delete(backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID, mapoptions)
+	delete(backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr, id)
+	delete(backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB, id)
 
 	return
 }
@@ -254,7 +222,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitDeleteInstance(id uint
 func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitPhaseOneInstance(mapoptions *models.MapOptions) (Error error) {
 
 	// check if the mapoptions is not commited yet
-	if _, ok := (*backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID)[mapoptions]; ok {
+	if _, ok := backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID[mapoptions]; ok {
 		return
 	}
 
@@ -268,9 +236,9 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitPhaseOneInstance(mapop
 	}
 
 	// update stores
-	(*backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID)[mapoptions] = mapoptionsDB.ID
-	(*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID] = mapoptions
-	(*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB)[mapoptionsDB.ID] = &mapoptionsDB
+	backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID[mapoptions] = mapoptionsDB.ID
+	backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr[mapoptionsDB.ID] = mapoptions
+	backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB[mapoptionsDB.ID] = &mapoptionsDB
 
 	return
 }
@@ -279,7 +247,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitPhaseOneInstance(mapop
 // Phase Two is the update of instance with the field in the database
 func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, mapoptions := range *backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr {
+	for idx, mapoptions := range backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr {
 		backRepoMapOptions.CommitPhaseTwoInstance(backRepo, idx, mapoptions)
 	}
 
@@ -291,7 +259,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitPhaseTwo(backRepo *Bac
 func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, mapoptions *models.MapOptions) (Error error) {
 
 	// fetch matching mapoptionsDB
-	if mapoptionsDB, ok := (*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB)[idx]; ok {
+	if mapoptionsDB, ok := backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB[idx]; ok {
 
 		mapoptionsDB.CopyBasicFieldsFromMapOptions(mapoptions)
 
@@ -354,7 +322,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseOne() (Error er
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		mapoptions, ok := (*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
+		mapoptions, ok := backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr[mapoptionsDB.ID]
 		if ok {
 			delete(mapoptionsInstancesToBeRemovedFromTheStage, mapoptions)
 		}
@@ -365,10 +333,10 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseOne() (Error er
 		mapoptions.Unstage(backRepoMapOptions.GetStage())
 
 		// remove instance from the back repo 3 maps
-		mapoptionsID := (*backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID)[mapoptions]
-		delete((*backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID), mapoptions)
-		delete((*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB), mapoptionsID)
-		delete((*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr), mapoptionsID)
+		mapoptionsID := backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID[mapoptions]
+		delete(backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID, mapoptions)
+		delete(backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB, mapoptionsID)
+		delete(backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr, mapoptionsID)
 	}
 
 	return
@@ -378,12 +346,12 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseOne() (Error er
 // models version of the mapoptionsDB
 func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseOneInstance(mapoptionsDB *MapOptionsDB) (Error error) {
 
-	mapoptions, ok := (*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
+	mapoptions, ok := backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr[mapoptionsDB.ID]
 	if !ok {
 		mapoptions = new(models.MapOptions)
 
-		(*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID] = mapoptions
-		(*backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID)[mapoptions] = mapoptionsDB.ID
+		backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr[mapoptionsDB.ID] = mapoptions
+		backRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID[mapoptions] = mapoptionsDB.ID
 
 		// append model store with the new element
 		mapoptions.Name = mapoptionsDB.Name_Data.String
@@ -398,7 +366,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseOneInstance(map
 	// Map_MapOptionsDBID_MapOptionsDB)[mapoptionsDB hold variable pointers
 	mapoptionsDB_Data := *mapoptionsDB
 	preservedPtrToMapOptions := &mapoptionsDB_Data
-	(*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB)[mapoptionsDB.ID] = preservedPtrToMapOptions
+	backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB[mapoptionsDB.ID] = preservedPtrToMapOptions
 
 	return
 }
@@ -408,7 +376,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseOneInstance(map
 func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, mapoptionsDB := range *backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB {
+	for _, mapoptionsDB := range backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB {
 		backRepoMapOptions.CheckoutPhaseTwoInstance(backRepo, mapoptionsDB)
 	}
 	return
@@ -418,7 +386,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseTwo(backRepo *B
 // Phase Two is the update of instance with the field in the database
 func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, mapoptionsDB *MapOptionsDB) (Error error) {
 
-	mapoptions := (*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr)[mapoptionsDB.ID]
+	mapoptions := backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr[mapoptionsDB.ID]
 	_ = mapoptions // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
@@ -428,11 +396,11 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseTwoInstance(bac
 	// 1. reset the slice
 	mapoptions.LayerGroupUses = mapoptions.LayerGroupUses[:0]
 	// 2. loop all instances in the type in the association end
-	for _, layergroupuseDB_AssocEnd := range *backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUseDB {
+	for _, layergroupuseDB_AssocEnd := range backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUseDB {
 		// 3. Does the ID encoding at the end and the ID at the start matches ?
 		if layergroupuseDB_AssocEnd.MapOptions_LayerGroupUsesDBID.Int64 == int64(mapoptionsDB.ID) {
 			// 4. fetch the associated instance in the stage
-			layergroupuse_AssocEnd := (*backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr)[layergroupuseDB_AssocEnd.ID]
+			layergroupuse_AssocEnd := backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr[layergroupuseDB_AssocEnd.ID]
 			// 5. append it the association slice
 			mapoptions.LayerGroupUses = append(mapoptions.LayerGroupUses, layergroupuse_AssocEnd)
 		}
@@ -440,11 +408,11 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseTwoInstance(bac
 
 	// sort the array according to the order
 	sort.Slice(mapoptions.LayerGroupUses, func(i, j int) bool {
-		layergroupuseDB_i_ID := (*backRepo.BackRepoLayerGroupUse.Map_LayerGroupUsePtr_LayerGroupUseDBID)[mapoptions.LayerGroupUses[i]]
-		layergroupuseDB_j_ID := (*backRepo.BackRepoLayerGroupUse.Map_LayerGroupUsePtr_LayerGroupUseDBID)[mapoptions.LayerGroupUses[j]]
+		layergroupuseDB_i_ID := backRepo.BackRepoLayerGroupUse.Map_LayerGroupUsePtr_LayerGroupUseDBID[mapoptions.LayerGroupUses[i]]
+		layergroupuseDB_j_ID := backRepo.BackRepoLayerGroupUse.Map_LayerGroupUsePtr_LayerGroupUseDBID[mapoptions.LayerGroupUses[j]]
 
-		layergroupuseDB_i := (*backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUseDB)[layergroupuseDB_i_ID]
-		layergroupuseDB_j := (*backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUseDB)[layergroupuseDB_j_ID]
+		layergroupuseDB_i := backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUseDB[layergroupuseDB_i_ID]
+		layergroupuseDB_j := backRepo.BackRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUseDB[layergroupuseDB_j_ID]
 
 		return layergroupuseDB_i.MapOptions_LayerGroupUsesDBID_Index.Int64 < layergroupuseDB_j.MapOptions_LayerGroupUsesDBID_Index.Int64
 	})
@@ -455,7 +423,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseTwoInstance(bac
 // CommitMapOptions allows commit of a single mapoptions (if already staged)
 func (backRepo *BackRepoStruct) CommitMapOptions(mapoptions *models.MapOptions) {
 	backRepo.BackRepoMapOptions.CommitPhaseOneInstance(mapoptions)
-	if id, ok := (*backRepo.BackRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID)[mapoptions]; ok {
+	if id, ok := backRepo.BackRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID[mapoptions]; ok {
 		backRepo.BackRepoMapOptions.CommitPhaseTwoInstance(backRepo, id, mapoptions)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -464,9 +432,9 @@ func (backRepo *BackRepoStruct) CommitMapOptions(mapoptions *models.MapOptions) 
 // CommitMapOptions allows checkout of a single mapoptions (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutMapOptions(mapoptions *models.MapOptions) {
 	// check if the mapoptions is staged
-	if _, ok := (*backRepo.BackRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID)[mapoptions]; ok {
+	if _, ok := backRepo.BackRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID[mapoptions]; ok {
 
-		if id, ok := (*backRepo.BackRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID)[mapoptions]; ok {
+		if id, ok := backRepo.BackRepoMapOptions.Map_MapOptionsPtr_MapOptionsDBID[mapoptions]; ok {
 			var mapoptionsDB MapOptionsDB
 			mapoptionsDB.ID = id
 
@@ -588,7 +556,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*MapOptionsDB, 0)
-	for _, mapoptionsDB := range *backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB {
+	for _, mapoptionsDB := range backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB {
 		forBackup = append(forBackup, mapoptionsDB)
 	}
 
@@ -614,7 +582,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*MapOptionsDB, 0)
-	for _, mapoptionsDB := range *backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB {
+	for _, mapoptionsDB := range backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB {
 		forBackup = append(forBackup, mapoptionsDB)
 	}
 
@@ -679,7 +647,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) rowVisitorMapOptions(row *xl
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB)[mapoptionsDB.ID] = mapoptionsDB
+		backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB[mapoptionsDB.ID] = mapoptionsDB
 		BackRepoMapOptionsid_atBckpTime_newID[mapoptionsDB_ID_atBackupTime] = mapoptionsDB.ID
 	}
 	return nil
@@ -716,7 +684,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) RestorePhaseOne(dirPath stri
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB)[mapoptionsDB.ID] = mapoptionsDB
+		backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB[mapoptionsDB.ID] = mapoptionsDB
 		BackRepoMapOptionsid_atBckpTime_newID[mapoptionsDB_ID_atBackupTime] = mapoptionsDB.ID
 	}
 
@@ -729,7 +697,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) RestorePhaseOne(dirPath stri
 // to compute new index
 func (backRepoMapOptions *BackRepoMapOptionsStruct) RestorePhaseTwo() {
 
-	for _, mapoptionsDB := range *backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB {
+	for _, mapoptionsDB := range backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = mapoptionsDB

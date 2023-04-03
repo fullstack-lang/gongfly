@@ -39,11 +39,6 @@ export class FrontRepo { // insertion point sub template
   GongsimStatuss_batch = new Map<number, GongsimStatusDB>(); // same but only in last GET (for finding repo instances to delete)
 }
 
-//
-// Store of all instances of the stack
-//
-export const FrontRepoSingloton = new (FrontRepo)
-
 // the table component is called in different ways
 //
 // DISPLAY or ASSOCIATION MODE
@@ -96,6 +91,11 @@ export class FrontRepoService {
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
+
+  //
+  // Store of all instances of the stack
+  //
+  frontRepo = new (FrontRepo)
 
   constructor(
     private http: HttpClient, // insertion point sub template 
@@ -194,29 +194,29 @@ export class FrontRepoService {
             // First Step: init map of instances
             // insertion point sub template for init 
             // init the array
-            FrontRepoSingloton.DummyAgents_array = dummyagents
+            this.frontRepo.DummyAgents_array = dummyagents
 
             // clear the map that counts DummyAgent in the GET
-            FrontRepoSingloton.DummyAgents_batch.clear()
+            this.frontRepo.DummyAgents_batch.clear()
 
             dummyagents.forEach(
               dummyagent => {
-                FrontRepoSingloton.DummyAgents.set(dummyagent.ID, dummyagent)
-                FrontRepoSingloton.DummyAgents_batch.set(dummyagent.ID, dummyagent)
+                this.frontRepo.DummyAgents.set(dummyagent.ID, dummyagent)
+                this.frontRepo.DummyAgents_batch.set(dummyagent.ID, dummyagent)
               }
             )
 
             // clear dummyagents that are absent from the batch
-            FrontRepoSingloton.DummyAgents.forEach(
+            this.frontRepo.DummyAgents.forEach(
               dummyagent => {
-                if (FrontRepoSingloton.DummyAgents_batch.get(dummyagent.ID) == undefined) {
-                  FrontRepoSingloton.DummyAgents.delete(dummyagent.ID)
+                if (this.frontRepo.DummyAgents_batch.get(dummyagent.ID) == undefined) {
+                  this.frontRepo.DummyAgents.delete(dummyagent.ID)
                 }
               }
             )
 
             // sort DummyAgents_array array
-            FrontRepoSingloton.DummyAgents_array.sort((t1, t2) => {
+            this.frontRepo.DummyAgents_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -227,29 +227,29 @@ export class FrontRepoService {
             });
 
             // init the array
-            FrontRepoSingloton.Engines_array = engines
+            this.frontRepo.Engines_array = engines
 
             // clear the map that counts Engine in the GET
-            FrontRepoSingloton.Engines_batch.clear()
+            this.frontRepo.Engines_batch.clear()
 
             engines.forEach(
               engine => {
-                FrontRepoSingloton.Engines.set(engine.ID, engine)
-                FrontRepoSingloton.Engines_batch.set(engine.ID, engine)
+                this.frontRepo.Engines.set(engine.ID, engine)
+                this.frontRepo.Engines_batch.set(engine.ID, engine)
               }
             )
 
             // clear engines that are absent from the batch
-            FrontRepoSingloton.Engines.forEach(
+            this.frontRepo.Engines.forEach(
               engine => {
-                if (FrontRepoSingloton.Engines_batch.get(engine.ID) == undefined) {
-                  FrontRepoSingloton.Engines.delete(engine.ID)
+                if (this.frontRepo.Engines_batch.get(engine.ID) == undefined) {
+                  this.frontRepo.Engines.delete(engine.ID)
                 }
               }
             )
 
             // sort Engines_array array
-            FrontRepoSingloton.Engines_array.sort((t1, t2) => {
+            this.frontRepo.Engines_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -260,29 +260,29 @@ export class FrontRepoService {
             });
 
             // init the array
-            FrontRepoSingloton.Events_array = events
+            this.frontRepo.Events_array = events
 
             // clear the map that counts Event in the GET
-            FrontRepoSingloton.Events_batch.clear()
+            this.frontRepo.Events_batch.clear()
 
             events.forEach(
               event => {
-                FrontRepoSingloton.Events.set(event.ID, event)
-                FrontRepoSingloton.Events_batch.set(event.ID, event)
+                this.frontRepo.Events.set(event.ID, event)
+                this.frontRepo.Events_batch.set(event.ID, event)
               }
             )
 
             // clear events that are absent from the batch
-            FrontRepoSingloton.Events.forEach(
+            this.frontRepo.Events.forEach(
               event => {
-                if (FrontRepoSingloton.Events_batch.get(event.ID) == undefined) {
-                  FrontRepoSingloton.Events.delete(event.ID)
+                if (this.frontRepo.Events_batch.get(event.ID) == undefined) {
+                  this.frontRepo.Events.delete(event.ID)
                 }
               }
             )
 
             // sort Events_array array
-            FrontRepoSingloton.Events_array.sort((t1, t2) => {
+            this.frontRepo.Events_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -293,29 +293,29 @@ export class FrontRepoService {
             });
 
             // init the array
-            FrontRepoSingloton.GongsimCommands_array = gongsimcommands
+            this.frontRepo.GongsimCommands_array = gongsimcommands
 
             // clear the map that counts GongsimCommand in the GET
-            FrontRepoSingloton.GongsimCommands_batch.clear()
+            this.frontRepo.GongsimCommands_batch.clear()
 
             gongsimcommands.forEach(
               gongsimcommand => {
-                FrontRepoSingloton.GongsimCommands.set(gongsimcommand.ID, gongsimcommand)
-                FrontRepoSingloton.GongsimCommands_batch.set(gongsimcommand.ID, gongsimcommand)
+                this.frontRepo.GongsimCommands.set(gongsimcommand.ID, gongsimcommand)
+                this.frontRepo.GongsimCommands_batch.set(gongsimcommand.ID, gongsimcommand)
               }
             )
 
             // clear gongsimcommands that are absent from the batch
-            FrontRepoSingloton.GongsimCommands.forEach(
+            this.frontRepo.GongsimCommands.forEach(
               gongsimcommand => {
-                if (FrontRepoSingloton.GongsimCommands_batch.get(gongsimcommand.ID) == undefined) {
-                  FrontRepoSingloton.GongsimCommands.delete(gongsimcommand.ID)
+                if (this.frontRepo.GongsimCommands_batch.get(gongsimcommand.ID) == undefined) {
+                  this.frontRepo.GongsimCommands.delete(gongsimcommand.ID)
                 }
               }
             )
 
             // sort GongsimCommands_array array
-            FrontRepoSingloton.GongsimCommands_array.sort((t1, t2) => {
+            this.frontRepo.GongsimCommands_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -326,29 +326,29 @@ export class FrontRepoService {
             });
 
             // init the array
-            FrontRepoSingloton.GongsimStatuss_array = gongsimstatuss
+            this.frontRepo.GongsimStatuss_array = gongsimstatuss
 
             // clear the map that counts GongsimStatus in the GET
-            FrontRepoSingloton.GongsimStatuss_batch.clear()
+            this.frontRepo.GongsimStatuss_batch.clear()
 
             gongsimstatuss.forEach(
               gongsimstatus => {
-                FrontRepoSingloton.GongsimStatuss.set(gongsimstatus.ID, gongsimstatus)
-                FrontRepoSingloton.GongsimStatuss_batch.set(gongsimstatus.ID, gongsimstatus)
+                this.frontRepo.GongsimStatuss.set(gongsimstatus.ID, gongsimstatus)
+                this.frontRepo.GongsimStatuss_batch.set(gongsimstatus.ID, gongsimstatus)
               }
             )
 
             // clear gongsimstatuss that are absent from the batch
-            FrontRepoSingloton.GongsimStatuss.forEach(
+            this.frontRepo.GongsimStatuss.forEach(
               gongsimstatus => {
-                if (FrontRepoSingloton.GongsimStatuss_batch.get(gongsimstatus.ID) == undefined) {
-                  FrontRepoSingloton.GongsimStatuss.delete(gongsimstatus.ID)
+                if (this.frontRepo.GongsimStatuss_batch.get(gongsimstatus.ID) == undefined) {
+                  this.frontRepo.GongsimStatuss.delete(gongsimstatus.ID)
                 }
               }
             )
 
             // sort GongsimStatuss_array array
-            FrontRepoSingloton.GongsimStatuss_array.sort((t1, t2) => {
+            this.frontRepo.GongsimStatuss_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -386,6 +386,13 @@ export class FrontRepoService {
             gongsimcommands.forEach(
               gongsimcommand => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
+                // insertion point for pointer field Engine redeeming
+                {
+                  let _engine = this.frontRepo.Engines.get(gongsimcommand.EngineID.Int64)
+                  if (_engine) {
+                    gongsimcommand.Engine = _engine
+                  }
+                }
 
                 // insertion point for redeeming ONE-MANY associations
               }
@@ -399,7 +406,7 @@ export class FrontRepoService {
             )
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }
@@ -413,24 +420,24 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.dummyagentService.getDummyAgents()
+          this.dummyagentService.getDummyAgents(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             dummyagents,
           ]) => {
             // init the array
-            FrontRepoSingloton.DummyAgents_array = dummyagents
+            this.frontRepo.DummyAgents_array = dummyagents
 
             // clear the map that counts DummyAgent in the GET
-            FrontRepoSingloton.DummyAgents_batch.clear()
+            this.frontRepo.DummyAgents_batch.clear()
 
             // 
             // First Step: init map of instances
             // insertion point sub template 
             dummyagents.forEach(
               dummyagent => {
-                FrontRepoSingloton.DummyAgents.set(dummyagent.ID, dummyagent)
-                FrontRepoSingloton.DummyAgents_batch.set(dummyagent.ID, dummyagent)
+                this.frontRepo.DummyAgents.set(dummyagent.ID, dummyagent)
+                this.frontRepo.DummyAgents_batch.set(dummyagent.ID, dummyagent)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
 
@@ -439,10 +446,10 @@ export class FrontRepoService {
             )
 
             // clear dummyagents that are absent from the GET
-            FrontRepoSingloton.DummyAgents.forEach(
+            this.frontRepo.DummyAgents.forEach(
               dummyagent => {
-                if (FrontRepoSingloton.DummyAgents_batch.get(dummyagent.ID) == undefined) {
-                  FrontRepoSingloton.DummyAgents.delete(dummyagent.ID)
+                if (this.frontRepo.DummyAgents_batch.get(dummyagent.ID) == undefined) {
+                  this.frontRepo.DummyAgents.delete(dummyagent.ID)
                 }
               }
             )
@@ -452,7 +459,7 @@ export class FrontRepoService {
             // insertion point sub template 
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }
@@ -464,24 +471,24 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.engineService.getEngines()
+          this.engineService.getEngines(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             engines,
           ]) => {
             // init the array
-            FrontRepoSingloton.Engines_array = engines
+            this.frontRepo.Engines_array = engines
 
             // clear the map that counts Engine in the GET
-            FrontRepoSingloton.Engines_batch.clear()
+            this.frontRepo.Engines_batch.clear()
 
             // 
             // First Step: init map of instances
             // insertion point sub template 
             engines.forEach(
               engine => {
-                FrontRepoSingloton.Engines.set(engine.ID, engine)
-                FrontRepoSingloton.Engines_batch.set(engine.ID, engine)
+                this.frontRepo.Engines.set(engine.ID, engine)
+                this.frontRepo.Engines_batch.set(engine.ID, engine)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
 
@@ -490,10 +497,10 @@ export class FrontRepoService {
             )
 
             // clear engines that are absent from the GET
-            FrontRepoSingloton.Engines.forEach(
+            this.frontRepo.Engines.forEach(
               engine => {
-                if (FrontRepoSingloton.Engines_batch.get(engine.ID) == undefined) {
-                  FrontRepoSingloton.Engines.delete(engine.ID)
+                if (this.frontRepo.Engines_batch.get(engine.ID) == undefined) {
+                  this.frontRepo.Engines.delete(engine.ID)
                 }
               }
             )
@@ -503,7 +510,7 @@ export class FrontRepoService {
             // insertion point sub template 
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }
@@ -515,24 +522,24 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.eventService.getEvents()
+          this.eventService.getEvents(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             events,
           ]) => {
             // init the array
-            FrontRepoSingloton.Events_array = events
+            this.frontRepo.Events_array = events
 
             // clear the map that counts Event in the GET
-            FrontRepoSingloton.Events_batch.clear()
+            this.frontRepo.Events_batch.clear()
 
             // 
             // First Step: init map of instances
             // insertion point sub template 
             events.forEach(
               event => {
-                FrontRepoSingloton.Events.set(event.ID, event)
-                FrontRepoSingloton.Events_batch.set(event.ID, event)
+                this.frontRepo.Events.set(event.ID, event)
+                this.frontRepo.Events_batch.set(event.ID, event)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
 
@@ -541,10 +548,10 @@ export class FrontRepoService {
             )
 
             // clear events that are absent from the GET
-            FrontRepoSingloton.Events.forEach(
+            this.frontRepo.Events.forEach(
               event => {
-                if (FrontRepoSingloton.Events_batch.get(event.ID) == undefined) {
-                  FrontRepoSingloton.Events.delete(event.ID)
+                if (this.frontRepo.Events_batch.get(event.ID) == undefined) {
+                  this.frontRepo.Events.delete(event.ID)
                 }
               }
             )
@@ -554,7 +561,7 @@ export class FrontRepoService {
             // insertion point sub template 
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }
@@ -566,36 +573,43 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongsimcommandService.getGongsimCommands()
+          this.gongsimcommandService.getGongsimCommands(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             gongsimcommands,
           ]) => {
             // init the array
-            FrontRepoSingloton.GongsimCommands_array = gongsimcommands
+            this.frontRepo.GongsimCommands_array = gongsimcommands
 
             // clear the map that counts GongsimCommand in the GET
-            FrontRepoSingloton.GongsimCommands_batch.clear()
+            this.frontRepo.GongsimCommands_batch.clear()
 
             // 
             // First Step: init map of instances
             // insertion point sub template 
             gongsimcommands.forEach(
               gongsimcommand => {
-                FrontRepoSingloton.GongsimCommands.set(gongsimcommand.ID, gongsimcommand)
-                FrontRepoSingloton.GongsimCommands_batch.set(gongsimcommand.ID, gongsimcommand)
+                this.frontRepo.GongsimCommands.set(gongsimcommand.ID, gongsimcommand)
+                this.frontRepo.GongsimCommands_batch.set(gongsimcommand.ID, gongsimcommand)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
+                // insertion point for pointer field Engine redeeming
+                {
+                  let _engine = this.frontRepo.Engines.get(gongsimcommand.EngineID.Int64)
+                  if (_engine) {
+                    gongsimcommand.Engine = _engine
+                  }
+                }
 
                 // insertion point for redeeming ONE-MANY associations
               }
             )
 
             // clear gongsimcommands that are absent from the GET
-            FrontRepoSingloton.GongsimCommands.forEach(
+            this.frontRepo.GongsimCommands.forEach(
               gongsimcommand => {
-                if (FrontRepoSingloton.GongsimCommands_batch.get(gongsimcommand.ID) == undefined) {
-                  FrontRepoSingloton.GongsimCommands.delete(gongsimcommand.ID)
+                if (this.frontRepo.GongsimCommands_batch.get(gongsimcommand.ID) == undefined) {
+                  this.frontRepo.GongsimCommands.delete(gongsimcommand.ID)
                 }
               }
             )
@@ -605,7 +619,7 @@ export class FrontRepoService {
             // insertion point sub template 
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }
@@ -617,24 +631,24 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongsimstatusService.getGongsimStatuss()
+          this.gongsimstatusService.getGongsimStatuss(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             gongsimstatuss,
           ]) => {
             // init the array
-            FrontRepoSingloton.GongsimStatuss_array = gongsimstatuss
+            this.frontRepo.GongsimStatuss_array = gongsimstatuss
 
             // clear the map that counts GongsimStatus in the GET
-            FrontRepoSingloton.GongsimStatuss_batch.clear()
+            this.frontRepo.GongsimStatuss_batch.clear()
 
             // 
             // First Step: init map of instances
             // insertion point sub template 
             gongsimstatuss.forEach(
               gongsimstatus => {
-                FrontRepoSingloton.GongsimStatuss.set(gongsimstatus.ID, gongsimstatus)
-                FrontRepoSingloton.GongsimStatuss_batch.set(gongsimstatus.ID, gongsimstatus)
+                this.frontRepo.GongsimStatuss.set(gongsimstatus.ID, gongsimstatus)
+                this.frontRepo.GongsimStatuss_batch.set(gongsimstatus.ID, gongsimstatus)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
 
@@ -643,10 +657,10 @@ export class FrontRepoService {
             )
 
             // clear gongsimstatuss that are absent from the GET
-            FrontRepoSingloton.GongsimStatuss.forEach(
+            this.frontRepo.GongsimStatuss.forEach(
               gongsimstatus => {
-                if (FrontRepoSingloton.GongsimStatuss_batch.get(gongsimstatus.ID) == undefined) {
-                  FrontRepoSingloton.GongsimStatuss.delete(gongsimstatus.ID)
+                if (this.frontRepo.GongsimStatuss_batch.get(gongsimstatus.ID) == undefined) {
+                  this.frontRepo.GongsimStatuss.delete(gongsimstatus.ID)
                 }
               }
             )
@@ -656,7 +670,7 @@ export class FrontRepoService {
             // insertion point sub template 
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }

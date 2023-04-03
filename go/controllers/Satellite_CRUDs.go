@@ -151,7 +151,7 @@ func (controller *Controller) PostSatellite(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoSatellite.CheckoutPhaseOneInstance(&satelliteDB)
-	satellite := (*backRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
+	satellite := backRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr[satelliteDB.ID]
 
 	if satellite != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), satellite)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateSatellite(c *gin.Context) {
 	satelliteDB.CopyBasicFieldsToSatellite(satelliteNew)
 
 	// get stage instance from DB instance, and call callback function
-	satelliteOld := (*backRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
+	satelliteOld := backRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr[satelliteDB.ID]
 	if satelliteOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), satelliteOld, satelliteNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteSatellite(c *gin.Context) {
 	satelliteDB.CopyBasicFieldsToSatellite(satelliteDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	satelliteStaged := (*backRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr)[satelliteDB.ID]
+	satelliteStaged := backRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr[satelliteDB.ID]
 	if satelliteStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), satelliteStaged, satelliteDeleted)
 	}

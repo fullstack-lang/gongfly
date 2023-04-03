@@ -151,7 +151,7 @@ func (controller *Controller) PostLiner(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoLiner.CheckoutPhaseOneInstance(&linerDB)
-	liner := (*backRepo.BackRepoLiner.Map_LinerDBID_LinerPtr)[linerDB.ID]
+	liner := backRepo.BackRepoLiner.Map_LinerDBID_LinerPtr[linerDB.ID]
 
 	if liner != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), liner)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateLiner(c *gin.Context) {
 	linerDB.CopyBasicFieldsToLiner(linerNew)
 
 	// get stage instance from DB instance, and call callback function
-	linerOld := (*backRepo.BackRepoLiner.Map_LinerDBID_LinerPtr)[linerDB.ID]
+	linerOld := backRepo.BackRepoLiner.Map_LinerDBID_LinerPtr[linerDB.ID]
 	if linerOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), linerOld, linerNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteLiner(c *gin.Context) {
 	linerDB.CopyBasicFieldsToLiner(linerDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	linerStaged := (*backRepo.BackRepoLiner.Map_LinerDBID_LinerPtr)[linerDB.ID]
+	linerStaged := backRepo.BackRepoLiner.Map_LinerDBID_LinerPtr[linerDB.ID]
 	if linerStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), linerStaged, linerDeleted)
 	}

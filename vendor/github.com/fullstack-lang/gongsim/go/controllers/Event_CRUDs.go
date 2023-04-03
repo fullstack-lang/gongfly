@@ -151,7 +151,7 @@ func (controller *Controller) PostEvent(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoEvent.CheckoutPhaseOneInstance(&eventDB)
-	event := (*backRepo.BackRepoEvent.Map_EventDBID_EventPtr)[eventDB.ID]
+	event := backRepo.BackRepoEvent.Map_EventDBID_EventPtr[eventDB.ID]
 
 	if event != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), event)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateEvent(c *gin.Context) {
 	eventDB.CopyBasicFieldsToEvent(eventNew)
 
 	// get stage instance from DB instance, and call callback function
-	eventOld := (*backRepo.BackRepoEvent.Map_EventDBID_EventPtr)[eventDB.ID]
+	eventOld := backRepo.BackRepoEvent.Map_EventDBID_EventPtr[eventDB.ID]
 	if eventOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), eventOld, eventNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteEvent(c *gin.Context) {
 	eventDB.CopyBasicFieldsToEvent(eventDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	eventStaged := (*backRepo.BackRepoEvent.Map_EventDBID_EventPtr)[eventDB.ID]
+	eventStaged := backRepo.BackRepoEvent.Map_EventDBID_EventPtr[eventDB.ID]
 	if eventStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), eventStaged, eventDeleted)
 	}

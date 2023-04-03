@@ -1,6 +1,4 @@
 // insertion point sub template for components imports 
-  import { CheckoutSchedulersTableComponent } from './checkoutschedulers-table/checkoutschedulers-table.component'
-  import { CheckoutSchedulerSortingComponent } from './checkoutscheduler-sorting/checkoutscheduler-sorting.component'
   import { CirclesTableComponent } from './circles-table/circles-table.component'
   import { CircleSortingComponent } from './circle-sorting/circle-sorting.component'
   import { DivIconsTableComponent } from './divicons-table/divicons-table.component'
@@ -21,8 +19,6 @@
   import { VisualTrackSortingComponent } from './visualtrack-sorting/visualtrack-sorting.component'
 
 // insertion point sub template for map of components per struct 
-  export const MapOfCheckoutSchedulersComponents: Map<string, any> = new Map([["CheckoutSchedulersTableComponent", CheckoutSchedulersTableComponent],])
-  export const MapOfCheckoutSchedulerSortingComponents: Map<string, any> = new Map([["CheckoutSchedulerSortingComponent", CheckoutSchedulerSortingComponent],])
   export const MapOfCirclesComponents: Map<string, any> = new Map([["CirclesTableComponent", CirclesTableComponent],])
   export const MapOfCircleSortingComponents: Map<string, any> = new Map([["CircleSortingComponent", CircleSortingComponent],])
   export const MapOfDivIconsComponents: Map<string, any> = new Map([["DivIconsTableComponent", DivIconsTableComponent],])
@@ -47,7 +43,6 @@ export const MapOfComponents: Map<string, any> =
   new Map(
     [
       // insertion point sub template for map of components 
-      ["CheckoutScheduler", MapOfCheckoutSchedulersComponents],
       ["Circle", MapOfCirclesComponents],
       ["DivIcon", MapOfDivIconsComponents],
       ["LayerGroup", MapOfLayerGroupsComponents],
@@ -65,7 +60,6 @@ export const MapOfSortingComponents: Map<string, any> =
   new Map(
     [
     // insertion point sub template for map of sorting components 
-      ["CheckoutScheduler", MapOfCheckoutSchedulerSortingComponents],
       ["Circle", MapOfCircleSortingComponents],
       ["DivIcon", MapOfDivIconSortingComponents],
       ["LayerGroup", MapOfLayerGroupSortingComponents],

@@ -175,13 +175,13 @@ var Liner_Fields = []string{
 
 type BackRepoLinerStruct struct {
 	// stores LinerDB according to their gorm ID
-	Map_LinerDBID_LinerDB *map[uint]*LinerDB
+	Map_LinerDBID_LinerDB map[uint]*LinerDB
 
 	// stores LinerDB ID according to Liner address
-	Map_LinerPtr_LinerDBID *map[*models.Liner]uint
+	Map_LinerPtr_LinerDBID map[*models.Liner]uint
 
 	// stores Liner according to their gorm ID
-	Map_LinerDBID_LinerPtr *map[uint]*models.Liner
+	Map_LinerDBID_LinerPtr map[uint]*models.Liner
 
 	db *gorm.DB
 
@@ -199,40 +199,8 @@ func (backRepoLiner *BackRepoLinerStruct) GetDB() *gorm.DB {
 
 // GetLinerDBFromLinerPtr is a handy function to access the back repo instance from the stage instance
 func (backRepoLiner *BackRepoLinerStruct) GetLinerDBFromLinerPtr(liner *models.Liner) (linerDB *LinerDB) {
-	id := (*backRepoLiner.Map_LinerPtr_LinerDBID)[liner]
-	linerDB = (*backRepoLiner.Map_LinerDBID_LinerDB)[id]
-	return
-}
-
-// BackRepoLiner.Init set up the BackRepo of the Liner
-func (backRepoLiner *BackRepoLinerStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoLiner.Map_LinerDBID_LinerPtr != nil {
-		err := errors.New("In Init, backRepoLiner.Map_LinerDBID_LinerPtr should be nil")
-		return err
-	}
-
-	if backRepoLiner.Map_LinerDBID_LinerDB != nil {
-		err := errors.New("In Init, backRepoLiner.Map_LinerDBID_LinerDB should be nil")
-		return err
-	}
-
-	if backRepoLiner.Map_LinerPtr_LinerDBID != nil {
-		err := errors.New("In Init, backRepoLiner.Map_LinerPtr_LinerDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.Liner, 0)
-	backRepoLiner.Map_LinerDBID_LinerPtr = &tmp
-
-	tmpDB := make(map[uint]*LinerDB, 0)
-	backRepoLiner.Map_LinerDBID_LinerDB = &tmpDB
-
-	tmpID := make(map[*models.Liner]uint, 0)
-	backRepoLiner.Map_LinerPtr_LinerDBID = &tmpID
-
-	backRepoLiner.db = db
-	backRepoLiner.stage = stage
+	id := backRepoLiner.Map_LinerPtr_LinerDBID[liner]
+	linerDB = backRepoLiner.Map_LinerDBID_LinerDB[id]
 	return
 }
 
@@ -246,7 +214,7 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseOne(stage *models.StageStru
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, liner := range *backRepoLiner.Map_LinerDBID_LinerPtr {
+	for id, liner := range backRepoLiner.Map_LinerDBID_LinerPtr {
 		if _, ok := stage.Liners[liner]; !ok {
 			backRepoLiner.CommitDeleteInstance(id)
 		}
@@ -258,19 +226,19 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseOne(stage *models.StageStru
 // BackRepoLiner.CommitDeleteInstance commits deletion of Liner to the BackRepo
 func (backRepoLiner *BackRepoLinerStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	liner := (*backRepoLiner.Map_LinerDBID_LinerPtr)[id]
+	liner := backRepoLiner.Map_LinerDBID_LinerPtr[id]
 
 	// liner is not staged anymore, remove linerDB
-	linerDB := (*backRepoLiner.Map_LinerDBID_LinerDB)[id]
+	linerDB := backRepoLiner.Map_LinerDBID_LinerDB[id]
 	query := backRepoLiner.db.Unscoped().Delete(&linerDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoLiner.Map_LinerPtr_LinerDBID), liner)
-	delete((*backRepoLiner.Map_LinerDBID_LinerPtr), id)
-	delete((*backRepoLiner.Map_LinerDBID_LinerDB), id)
+	delete(backRepoLiner.Map_LinerPtr_LinerDBID, liner)
+	delete(backRepoLiner.Map_LinerDBID_LinerPtr, id)
+	delete(backRepoLiner.Map_LinerDBID_LinerDB, id)
 
 	return
 }
@@ -280,7 +248,7 @@ func (backRepoLiner *BackRepoLinerStruct) CommitDeleteInstance(id uint) (Error e
 func (backRepoLiner *BackRepoLinerStruct) CommitPhaseOneInstance(liner *models.Liner) (Error error) {
 
 	// check if the liner is not commited yet
-	if _, ok := (*backRepoLiner.Map_LinerPtr_LinerDBID)[liner]; ok {
+	if _, ok := backRepoLiner.Map_LinerPtr_LinerDBID[liner]; ok {
 		return
 	}
 
@@ -294,9 +262,9 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseOneInstance(liner *models.L
 	}
 
 	// update stores
-	(*backRepoLiner.Map_LinerPtr_LinerDBID)[liner] = linerDB.ID
-	(*backRepoLiner.Map_LinerDBID_LinerPtr)[linerDB.ID] = liner
-	(*backRepoLiner.Map_LinerDBID_LinerDB)[linerDB.ID] = &linerDB
+	backRepoLiner.Map_LinerPtr_LinerDBID[liner] = linerDB.ID
+	backRepoLiner.Map_LinerDBID_LinerPtr[linerDB.ID] = liner
+	backRepoLiner.Map_LinerDBID_LinerDB[linerDB.ID] = &linerDB
 
 	return
 }
@@ -305,7 +273,7 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseOneInstance(liner *models.L
 // Phase Two is the update of instance with the field in the database
 func (backRepoLiner *BackRepoLinerStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, liner := range *backRepoLiner.Map_LinerDBID_LinerPtr {
+	for idx, liner := range backRepoLiner.Map_LinerDBID_LinerPtr {
 		backRepoLiner.CommitPhaseTwoInstance(backRepo, idx, liner)
 	}
 
@@ -317,7 +285,7 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseTwo(backRepo *BackRepoStruc
 func (backRepoLiner *BackRepoLinerStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, liner *models.Liner) (Error error) {
 
 	// fetch matching linerDB
-	if linerDB, ok := (*backRepoLiner.Map_LinerDBID_LinerDB)[idx]; ok {
+	if linerDB, ok := backRepoLiner.Map_LinerDBID_LinerDB[idx]; ok {
 
 		linerDB.CopyBasicFieldsFromLiner(liner)
 
@@ -325,7 +293,7 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseTwoInstance(backRepo *BackR
 		// commit pointer value liner.ReporingLine translates to updating the liner.ReporingLineID
 		linerDB.ReporingLineID.Valid = true // allow for a 0 value (nil association)
 		if liner.ReporingLine != nil {
-			if ReporingLineId, ok := (*backRepo.BackRepoOpsLine.Map_OpsLinePtr_OpsLineDBID)[liner.ReporingLine]; ok {
+			if ReporingLineId, ok := backRepo.BackRepoOpsLine.Map_OpsLinePtr_OpsLineDBID[liner.ReporingLine]; ok {
 				linerDB.ReporingLineID.Int64 = int64(ReporingLineId)
 				linerDB.ReporingLineID.Valid = true
 			}
@@ -370,7 +338,7 @@ func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseOne() (Error error) {
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		liner, ok := (*backRepoLiner.Map_LinerDBID_LinerPtr)[linerDB.ID]
+		liner, ok := backRepoLiner.Map_LinerDBID_LinerPtr[linerDB.ID]
 		if ok {
 			delete(linerInstancesToBeRemovedFromTheStage, liner)
 		}
@@ -381,10 +349,10 @@ func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseOne() (Error error) {
 		liner.Unstage(backRepoLiner.GetStage())
 
 		// remove instance from the back repo 3 maps
-		linerID := (*backRepoLiner.Map_LinerPtr_LinerDBID)[liner]
-		delete((*backRepoLiner.Map_LinerPtr_LinerDBID), liner)
-		delete((*backRepoLiner.Map_LinerDBID_LinerDB), linerID)
-		delete((*backRepoLiner.Map_LinerDBID_LinerPtr), linerID)
+		linerID := backRepoLiner.Map_LinerPtr_LinerDBID[liner]
+		delete(backRepoLiner.Map_LinerPtr_LinerDBID, liner)
+		delete(backRepoLiner.Map_LinerDBID_LinerDB, linerID)
+		delete(backRepoLiner.Map_LinerDBID_LinerPtr, linerID)
 	}
 
 	return
@@ -394,12 +362,12 @@ func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseOne() (Error error) {
 // models version of the linerDB
 func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseOneInstance(linerDB *LinerDB) (Error error) {
 
-	liner, ok := (*backRepoLiner.Map_LinerDBID_LinerPtr)[linerDB.ID]
+	liner, ok := backRepoLiner.Map_LinerDBID_LinerPtr[linerDB.ID]
 	if !ok {
 		liner = new(models.Liner)
 
-		(*backRepoLiner.Map_LinerDBID_LinerPtr)[linerDB.ID] = liner
-		(*backRepoLiner.Map_LinerPtr_LinerDBID)[liner] = linerDB.ID
+		backRepoLiner.Map_LinerDBID_LinerPtr[linerDB.ID] = liner
+		backRepoLiner.Map_LinerPtr_LinerDBID[liner] = linerDB.ID
 
 		// append model store with the new element
 		liner.Name = linerDB.Name_Data.String
@@ -414,7 +382,7 @@ func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseOneInstance(linerDB *Line
 	// Map_LinerDBID_LinerDB)[linerDB hold variable pointers
 	linerDB_Data := *linerDB
 	preservedPtrToLiner := &linerDB_Data
-	(*backRepoLiner.Map_LinerDBID_LinerDB)[linerDB.ID] = preservedPtrToLiner
+	backRepoLiner.Map_LinerDBID_LinerDB[linerDB.ID] = preservedPtrToLiner
 
 	return
 }
@@ -424,7 +392,7 @@ func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseOneInstance(linerDB *Line
 func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, linerDB := range *backRepoLiner.Map_LinerDBID_LinerDB {
+	for _, linerDB := range backRepoLiner.Map_LinerDBID_LinerDB {
 		backRepoLiner.CheckoutPhaseTwoInstance(backRepo, linerDB)
 	}
 	return
@@ -434,13 +402,13 @@ func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseTwo(backRepo *BackRepoStr
 // Phase Two is the update of instance with the field in the database
 func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, linerDB *LinerDB) (Error error) {
 
-	liner := (*backRepoLiner.Map_LinerDBID_LinerPtr)[linerDB.ID]
+	liner := backRepoLiner.Map_LinerDBID_LinerPtr[linerDB.ID]
 	_ = liner // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
 	// ReporingLine field
 	if linerDB.ReporingLineID.Int64 != 0 {
-		liner.ReporingLine = (*backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[uint(linerDB.ReporingLineID.Int64)]
+		liner.ReporingLine = backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[uint(linerDB.ReporingLineID.Int64)]
 	}
 	return
 }
@@ -448,7 +416,7 @@ func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseTwoInstance(backRepo *Bac
 // CommitLiner allows commit of a single liner (if already staged)
 func (backRepo *BackRepoStruct) CommitLiner(liner *models.Liner) {
 	backRepo.BackRepoLiner.CommitPhaseOneInstance(liner)
-	if id, ok := (*backRepo.BackRepoLiner.Map_LinerPtr_LinerDBID)[liner]; ok {
+	if id, ok := backRepo.BackRepoLiner.Map_LinerPtr_LinerDBID[liner]; ok {
 		backRepo.BackRepoLiner.CommitPhaseTwoInstance(backRepo, id, liner)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -457,9 +425,9 @@ func (backRepo *BackRepoStruct) CommitLiner(liner *models.Liner) {
 // CommitLiner allows checkout of a single liner (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutLiner(liner *models.Liner) {
 	// check if the liner is staged
-	if _, ok := (*backRepo.BackRepoLiner.Map_LinerPtr_LinerDBID)[liner]; ok {
+	if _, ok := backRepo.BackRepoLiner.Map_LinerPtr_LinerDBID[liner]; ok {
 
-		if id, ok := (*backRepo.BackRepoLiner.Map_LinerPtr_LinerDBID)[liner]; ok {
+		if id, ok := backRepo.BackRepoLiner.Map_LinerPtr_LinerDBID[liner]; ok {
 			var linerDB LinerDB
 			linerDB.ID = id
 
@@ -613,7 +581,7 @@ func (backRepoLiner *BackRepoLinerStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*LinerDB, 0)
-	for _, linerDB := range *backRepoLiner.Map_LinerDBID_LinerDB {
+	for _, linerDB := range backRepoLiner.Map_LinerDBID_LinerDB {
 		forBackup = append(forBackup, linerDB)
 	}
 
@@ -639,7 +607,7 @@ func (backRepoLiner *BackRepoLinerStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*LinerDB, 0)
-	for _, linerDB := range *backRepoLiner.Map_LinerDBID_LinerDB {
+	for _, linerDB := range backRepoLiner.Map_LinerDBID_LinerDB {
 		forBackup = append(forBackup, linerDB)
 	}
 
@@ -704,7 +672,7 @@ func (backRepoLiner *BackRepoLinerStruct) rowVisitorLiner(row *xlsx.Row) error {
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoLiner.Map_LinerDBID_LinerDB)[linerDB.ID] = linerDB
+		backRepoLiner.Map_LinerDBID_LinerDB[linerDB.ID] = linerDB
 		BackRepoLinerid_atBckpTime_newID[linerDB_ID_atBackupTime] = linerDB.ID
 	}
 	return nil
@@ -741,7 +709,7 @@ func (backRepoLiner *BackRepoLinerStruct) RestorePhaseOne(dirPath string) {
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoLiner.Map_LinerDBID_LinerDB)[linerDB.ID] = linerDB
+		backRepoLiner.Map_LinerDBID_LinerDB[linerDB.ID] = linerDB
 		BackRepoLinerid_atBckpTime_newID[linerDB_ID_atBackupTime] = linerDB.ID
 	}
 
@@ -754,7 +722,7 @@ func (backRepoLiner *BackRepoLinerStruct) RestorePhaseOne(dirPath string) {
 // to compute new index
 func (backRepoLiner *BackRepoLinerStruct) RestorePhaseTwo() {
 
-	for _, linerDB := range *backRepoLiner.Map_LinerDBID_LinerDB {
+	for _, linerDB := range backRepoLiner.Map_LinerDBID_LinerDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = linerDB

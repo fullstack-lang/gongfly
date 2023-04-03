@@ -28,15 +28,3 @@ type MarkerInterface interface {
 	GetName() (name string)
 	GetLayerGroupName() string
 }
-
-func (marker *Marker) UpdateMarker() {
-	if marker.MarkerInteface != nil {
-		marker.Name = marker.MarkerInteface.GetName()
-
-		marker.Lat = marker.MarkerInteface.GetLat()
-		marker.Lng = marker.MarkerInteface.GetLng()
-
-		marker.LayerGroup =
-			computeLayerGroupFromLayerGroupName(marker.MarkerInteface.GetLayerGroupName())
-	}
-}

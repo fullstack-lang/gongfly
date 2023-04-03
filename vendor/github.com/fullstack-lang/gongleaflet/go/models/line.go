@@ -69,35 +69,3 @@ type LineInterface interface {
 	GetMessageBackward() string      // message to display
 
 }
-
-func (visualLine *VLine) UpdateLine() {
-	if visualLine.LineInterface != nil {
-		visualLine.Name = visualLine.LineInterface.GetName()
-
-		visualLine.StartLat = visualLine.LineInterface.GetStartLat()
-		visualLine.StartLng = visualLine.LineInterface.GetStartLng()
-
-		visualLine.EndLat = visualLine.LineInterface.GetEndLat()
-		visualLine.EndLng = visualLine.LineInterface.GetEndLng()
-
-		visualLine.LayerGroup =
-			computeLayerGroupFromLayerGroupName(visualLine.LineInterface.GetLayerGroupName())
-
-		// transmission status
-		if visualLine.LineInterface.GetIsTransmitting() {
-			visualLine.IsTransmitting = IS_TRANSMITTING
-		} else {
-			visualLine.IsTransmitting = IS_NOT_TRANSMITTING
-		}
-		visualLine.Message = visualLine.LineInterface.GetMessage()
-
-		// transmission status
-		if visualLine.LineInterface.GetIsTransmittingBackward() {
-			visualLine.IsTransmittingBackward = IS_TRANSMITTING
-		} else {
-			visualLine.IsTransmittingBackward = IS_NOT_TRANSMITTING
-		}
-		visualLine.MessageBackward = visualLine.LineInterface.GetMessageBackward()
-
-	}
-}

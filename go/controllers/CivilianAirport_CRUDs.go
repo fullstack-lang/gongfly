@@ -151,7 +151,7 @@ func (controller *Controller) PostCivilianAirport(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoCivilianAirport.CheckoutPhaseOneInstance(&civilianairportDB)
-	civilianairport := (*backRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
+	civilianairport := backRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr[civilianairportDB.ID]
 
 	if civilianairport != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), civilianairport)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateCivilianAirport(c *gin.Context) {
 	civilianairportDB.CopyBasicFieldsToCivilianAirport(civilianairportNew)
 
 	// get stage instance from DB instance, and call callback function
-	civilianairportOld := (*backRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
+	civilianairportOld := backRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr[civilianairportDB.ID]
 	if civilianairportOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), civilianairportOld, civilianairportNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteCivilianAirport(c *gin.Context) {
 	civilianairportDB.CopyBasicFieldsToCivilianAirport(civilianairportDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	civilianairportStaged := (*backRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
+	civilianairportStaged := backRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr[civilianairportDB.ID]
 	if civilianairportStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), civilianairportStaged, civilianairportDeleted)
 	}

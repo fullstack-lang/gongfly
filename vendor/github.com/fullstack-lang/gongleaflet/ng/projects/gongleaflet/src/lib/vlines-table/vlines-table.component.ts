@@ -19,6 +19,8 @@ import { VLineService } from '../vline.service'
 
 // insertion point for additional imports
 
+import { RouteService } from '../route-service';
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -158,6 +160,8 @@ export class VLinesTableComponent implements OnInit {
 
     private router: Router,
     private activatedRoute: ActivatedRoute,
+
+    private routeService: RouteService,
   ) {
 
     // compute mode
@@ -296,18 +300,15 @@ export class VLinesTableComponent implements OnInit {
 
   }
 
-  // display vline in router
-  displayVLineInRouter(vlineID: number) {
-    this.router.navigate(["github_com_fullstack_lang_gongleaflet_go-" + "vline-display", vlineID])
-  }
-
   // set editor outlet
   setEditorRouterOutlet(vlineID: number) {
-    this.router.navigate([{
-      outlets: {
-        github_com_fullstack_lang_gongleaflet_go_editor: ["github_com_fullstack_lang_gongleaflet_go-" + "vline-detail", vlineID, this.GONG__StackPath]
-      }
-    }]);
+    let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + "vline" + "-detail"
+
+    let outletConf: any = {}
+    outletConf[outletName] = [fullPath, vlineID, this.GONG__StackPath]
+
+    this.router.navigate([{ outlets: outletConf }])
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

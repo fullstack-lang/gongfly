@@ -22,6 +22,8 @@ export const DEFAULT_ICON_SIZE = 60
 })
 export class MapoptionsComponent implements OnInit {
 
+  @Input() GONG__StackPath: string = ""
+
   // 1. name of the initial map (must match the name in the backend)
   // 2. the corresponding gong MapOptions object
   // 3. the corresponding [leafletOptions]="mapOptions" that is passed to the leaflet map in the html
@@ -141,7 +143,7 @@ export class MapoptionsComponent implements OnInit {
       userClick.Lat = e.latlng.lat
       userClick.Lng = e.latlng.lng
 
-      this.userClickService.postUserClick(userClick, "").subscribe(
+      this.userClickService.postUserClick(userClick, this.GONG__StackPath).subscribe(
         (userClick) => {
           console.log("user clicked")
           this.userClickService.UserClickServiceChanged.next("post")
@@ -153,7 +155,7 @@ export class MapoptionsComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 
@@ -177,22 +179,12 @@ export class MapoptionsComponent implements OnInit {
         // timer to refresh the map if something has changed in the back
         this.obsTimer.subscribe(
           () => {
-            this.commitNbFromBackService.getCommitNbFromBack().subscribe(
+            this.commitNbFromBackService.getCommitNbFromBack(500, this.GONG__StackPath).subscribe(
               commitNbFromBack => {
                 // console.log("commit nb in the back " + commitNb + " local commit nb " + this.commitNb)
                 if (commitNbFromBack > this.commitNb) {
                   this.refreshMapWithMarkers()
                   this.commitNb = commitNbFromBack
-                }
-              }
-            )
-
-            this.pushFromFrontService.getPushFromFrontNb().subscribe(
-              pushFromFrontNb => {
-                // console.log("commit nb in the back " + commitNb + " local commit nb " + this.commitNb)
-                if (pushFromFrontNb > this.commitFromFrontNb) {
-                  this.refreshMapWithMarkers()
-                  this.commitFromFrontNb = pushFromFrontNb
                 }
               }
             )
@@ -593,7 +585,7 @@ export class MapoptionsComponent implements OnInit {
 
   refreshMapWithMarkers() {
 
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 

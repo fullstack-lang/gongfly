@@ -182,8 +182,8 @@ func (agent *Agent) QueueEvent(event EventInterface) {
 }
 
 // Implements the interface function
-func AppendToSingloton(agent AgentInterface) AgentInterface {
-	EngineSingloton.AppendAgent(agent)
+func AppendToSingloton(engine *Engine, agent AgentInterface) AgentInterface {
+	engine.AppendAgent(agent)
 	return agent
 }
 
@@ -191,11 +191,11 @@ func AppendToSingloton(agent AgentInterface) AgentInterface {
 // with fire time equals to EngineSingloton current time
 //
 // return the agent
-func (agent *Agent) QueueUpdateEvent(duration time.Duration) *Agent {
+func (agent *Agent) QueueUpdateEvent(engine *Engine, duration time.Duration) *Agent {
 
 	// washer checks its state every 30''
 	var event UpdateState
-	event.fireTime = EngineSingloton.GetCurrentTime()
+	event.fireTime = engine.GetCurrentTime()
 	event.Period = duration
 	event.Name = "Update event with duration " + duration.String()
 

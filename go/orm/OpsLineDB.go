@@ -129,13 +129,13 @@ var OpsLine_Fields = []string{
 
 type BackRepoOpsLineStruct struct {
 	// stores OpsLineDB according to their gorm ID
-	Map_OpsLineDBID_OpsLineDB *map[uint]*OpsLineDB
+	Map_OpsLineDBID_OpsLineDB map[uint]*OpsLineDB
 
 	// stores OpsLineDB ID according to OpsLine address
-	Map_OpsLinePtr_OpsLineDBID *map[*models.OpsLine]uint
+	Map_OpsLinePtr_OpsLineDBID map[*models.OpsLine]uint
 
 	// stores OpsLine according to their gorm ID
-	Map_OpsLineDBID_OpsLinePtr *map[uint]*models.OpsLine
+	Map_OpsLineDBID_OpsLinePtr map[uint]*models.OpsLine
 
 	db *gorm.DB
 
@@ -153,40 +153,8 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) GetDB() *gorm.DB {
 
 // GetOpsLineDBFromOpsLinePtr is a handy function to access the back repo instance from the stage instance
 func (backRepoOpsLine *BackRepoOpsLineStruct) GetOpsLineDBFromOpsLinePtr(opsline *models.OpsLine) (opslineDB *OpsLineDB) {
-	id := (*backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID)[opsline]
-	opslineDB = (*backRepoOpsLine.Map_OpsLineDBID_OpsLineDB)[id]
-	return
-}
-
-// BackRepoOpsLine.Init set up the BackRepo of the OpsLine
-func (backRepoOpsLine *BackRepoOpsLineStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr != nil {
-		err := errors.New("In Init, backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr should be nil")
-		return err
-	}
-
-	if backRepoOpsLine.Map_OpsLineDBID_OpsLineDB != nil {
-		err := errors.New("In Init, backRepoOpsLine.Map_OpsLineDBID_OpsLineDB should be nil")
-		return err
-	}
-
-	if backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID != nil {
-		err := errors.New("In Init, backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.OpsLine, 0)
-	backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr = &tmp
-
-	tmpDB := make(map[uint]*OpsLineDB, 0)
-	backRepoOpsLine.Map_OpsLineDBID_OpsLineDB = &tmpDB
-
-	tmpID := make(map[*models.OpsLine]uint, 0)
-	backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID = &tmpID
-
-	backRepoOpsLine.db = db
-	backRepoOpsLine.stage = stage
+	id := backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID[opsline]
+	opslineDB = backRepoOpsLine.Map_OpsLineDBID_OpsLineDB[id]
 	return
 }
 
@@ -200,7 +168,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseOne(stage *models.Stage
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, opsline := range *backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr {
+	for id, opsline := range backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr {
 		if _, ok := stage.OpsLines[opsline]; !ok {
 			backRepoOpsLine.CommitDeleteInstance(id)
 		}
@@ -212,19 +180,19 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseOne(stage *models.Stage
 // BackRepoOpsLine.CommitDeleteInstance commits deletion of OpsLine to the BackRepo
 func (backRepoOpsLine *BackRepoOpsLineStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	opsline := (*backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[id]
+	opsline := backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[id]
 
 	// opsline is not staged anymore, remove opslineDB
-	opslineDB := (*backRepoOpsLine.Map_OpsLineDBID_OpsLineDB)[id]
+	opslineDB := backRepoOpsLine.Map_OpsLineDBID_OpsLineDB[id]
 	query := backRepoOpsLine.db.Unscoped().Delete(&opslineDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID), opsline)
-	delete((*backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr), id)
-	delete((*backRepoOpsLine.Map_OpsLineDBID_OpsLineDB), id)
+	delete(backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID, opsline)
+	delete(backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr, id)
+	delete(backRepoOpsLine.Map_OpsLineDBID_OpsLineDB, id)
 
 	return
 }
@@ -234,7 +202,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitDeleteInstance(id uint) (Err
 func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseOneInstance(opsline *models.OpsLine) (Error error) {
 
 	// check if the opsline is not commited yet
-	if _, ok := (*backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID)[opsline]; ok {
+	if _, ok := backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID[opsline]; ok {
 		return
 	}
 
@@ -248,9 +216,9 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseOneInstance(opsline *mo
 	}
 
 	// update stores
-	(*backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID)[opsline] = opslineDB.ID
-	(*backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID] = opsline
-	(*backRepoOpsLine.Map_OpsLineDBID_OpsLineDB)[opslineDB.ID] = &opslineDB
+	backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID[opsline] = opslineDB.ID
+	backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[opslineDB.ID] = opsline
+	backRepoOpsLine.Map_OpsLineDBID_OpsLineDB[opslineDB.ID] = &opslineDB
 
 	return
 }
@@ -259,7 +227,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseOneInstance(opsline *mo
 // Phase Two is the update of instance with the field in the database
 func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, opsline := range *backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr {
+	for idx, opsline := range backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr {
 		backRepoOpsLine.CommitPhaseTwoInstance(backRepo, idx, opsline)
 	}
 
@@ -271,7 +239,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseTwo(backRepo *BackRepoS
 func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, opsline *models.OpsLine) (Error error) {
 
 	// fetch matching opslineDB
-	if opslineDB, ok := (*backRepoOpsLine.Map_OpsLineDBID_OpsLineDB)[idx]; ok {
+	if opslineDB, ok := backRepoOpsLine.Map_OpsLineDBID_OpsLineDB[idx]; ok {
 
 		opslineDB.CopyBasicFieldsFromOpsLine(opsline)
 
@@ -279,7 +247,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseTwoInstance(backRepo *B
 		// commit pointer value opsline.Scenario translates to updating the opsline.ScenarioID
 		opslineDB.ScenarioID.Valid = true // allow for a 0 value (nil association)
 		if opsline.Scenario != nil {
-			if ScenarioId, ok := (*backRepo.BackRepoScenario.Map_ScenarioPtr_ScenarioDBID)[opsline.Scenario]; ok {
+			if ScenarioId, ok := backRepo.BackRepoScenario.Map_ScenarioPtr_ScenarioDBID[opsline.Scenario]; ok {
 				opslineDB.ScenarioID.Int64 = int64(ScenarioId)
 				opslineDB.ScenarioID.Valid = true
 			}
@@ -324,7 +292,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseOne() (Error error) {
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		opsline, ok := (*backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
+		opsline, ok := backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[opslineDB.ID]
 		if ok {
 			delete(opslineInstancesToBeRemovedFromTheStage, opsline)
 		}
@@ -335,10 +303,10 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseOne() (Error error) {
 		opsline.Unstage(backRepoOpsLine.GetStage())
 
 		// remove instance from the back repo 3 maps
-		opslineID := (*backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID)[opsline]
-		delete((*backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID), opsline)
-		delete((*backRepoOpsLine.Map_OpsLineDBID_OpsLineDB), opslineID)
-		delete((*backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr), opslineID)
+		opslineID := backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID[opsline]
+		delete(backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID, opsline)
+		delete(backRepoOpsLine.Map_OpsLineDBID_OpsLineDB, opslineID)
+		delete(backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr, opslineID)
 	}
 
 	return
@@ -348,12 +316,12 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseOne() (Error error) {
 // models version of the opslineDB
 func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseOneInstance(opslineDB *OpsLineDB) (Error error) {
 
-	opsline, ok := (*backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
+	opsline, ok := backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[opslineDB.ID]
 	if !ok {
 		opsline = new(models.OpsLine)
 
-		(*backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID] = opsline
-		(*backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID)[opsline] = opslineDB.ID
+		backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[opslineDB.ID] = opsline
+		backRepoOpsLine.Map_OpsLinePtr_OpsLineDBID[opsline] = opslineDB.ID
 
 		// append model store with the new element
 		opsline.Name = opslineDB.Name_Data.String
@@ -368,7 +336,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseOneInstance(opslineDB
 	// Map_OpsLineDBID_OpsLineDB)[opslineDB hold variable pointers
 	opslineDB_Data := *opslineDB
 	preservedPtrToOpsLine := &opslineDB_Data
-	(*backRepoOpsLine.Map_OpsLineDBID_OpsLineDB)[opslineDB.ID] = preservedPtrToOpsLine
+	backRepoOpsLine.Map_OpsLineDBID_OpsLineDB[opslineDB.ID] = preservedPtrToOpsLine
 
 	return
 }
@@ -378,7 +346,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseOneInstance(opslineDB
 func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, opslineDB := range *backRepoOpsLine.Map_OpsLineDBID_OpsLineDB {
+	for _, opslineDB := range backRepoOpsLine.Map_OpsLineDBID_OpsLineDB {
 		backRepoOpsLine.CheckoutPhaseTwoInstance(backRepo, opslineDB)
 	}
 	return
@@ -388,13 +356,13 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseTwo(backRepo *BackRep
 // Phase Two is the update of instance with the field in the database
 func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, opslineDB *OpsLineDB) (Error error) {
 
-	opsline := (*backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr)[opslineDB.ID]
+	opsline := backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[opslineDB.ID]
 	_ = opsline // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
 	// Scenario field
 	if opslineDB.ScenarioID.Int64 != 0 {
-		opsline.Scenario = (*backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr)[uint(opslineDB.ScenarioID.Int64)]
+		opsline.Scenario = backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr[uint(opslineDB.ScenarioID.Int64)]
 	}
 	return
 }
@@ -402,7 +370,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseTwoInstance(backRepo 
 // CommitOpsLine allows commit of a single opsline (if already staged)
 func (backRepo *BackRepoStruct) CommitOpsLine(opsline *models.OpsLine) {
 	backRepo.BackRepoOpsLine.CommitPhaseOneInstance(opsline)
-	if id, ok := (*backRepo.BackRepoOpsLine.Map_OpsLinePtr_OpsLineDBID)[opsline]; ok {
+	if id, ok := backRepo.BackRepoOpsLine.Map_OpsLinePtr_OpsLineDBID[opsline]; ok {
 		backRepo.BackRepoOpsLine.CommitPhaseTwoInstance(backRepo, id, opsline)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -411,9 +379,9 @@ func (backRepo *BackRepoStruct) CommitOpsLine(opsline *models.OpsLine) {
 // CommitOpsLine allows checkout of a single opsline (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutOpsLine(opsline *models.OpsLine) {
 	// check if the opsline is staged
-	if _, ok := (*backRepo.BackRepoOpsLine.Map_OpsLinePtr_OpsLineDBID)[opsline]; ok {
+	if _, ok := backRepo.BackRepoOpsLine.Map_OpsLinePtr_OpsLineDBID[opsline]; ok {
 
-		if id, ok := (*backRepo.BackRepoOpsLine.Map_OpsLinePtr_OpsLineDBID)[opsline]; ok {
+		if id, ok := backRepo.BackRepoOpsLine.Map_OpsLinePtr_OpsLineDBID[opsline]; ok {
 			var opslineDB OpsLineDB
 			opslineDB.ID = id
 
@@ -503,7 +471,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*OpsLineDB, 0)
-	for _, opslineDB := range *backRepoOpsLine.Map_OpsLineDBID_OpsLineDB {
+	for _, opslineDB := range backRepoOpsLine.Map_OpsLineDBID_OpsLineDB {
 		forBackup = append(forBackup, opslineDB)
 	}
 
@@ -529,7 +497,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*OpsLineDB, 0)
-	for _, opslineDB := range *backRepoOpsLine.Map_OpsLineDBID_OpsLineDB {
+	for _, opslineDB := range backRepoOpsLine.Map_OpsLineDBID_OpsLineDB {
 		forBackup = append(forBackup, opslineDB)
 	}
 
@@ -594,7 +562,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) rowVisitorOpsLine(row *xlsx.Row) e
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoOpsLine.Map_OpsLineDBID_OpsLineDB)[opslineDB.ID] = opslineDB
+		backRepoOpsLine.Map_OpsLineDBID_OpsLineDB[opslineDB.ID] = opslineDB
 		BackRepoOpsLineid_atBckpTime_newID[opslineDB_ID_atBackupTime] = opslineDB.ID
 	}
 	return nil
@@ -631,7 +599,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) RestorePhaseOne(dirPath string) {
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoOpsLine.Map_OpsLineDBID_OpsLineDB)[opslineDB.ID] = opslineDB
+		backRepoOpsLine.Map_OpsLineDBID_OpsLineDB[opslineDB.ID] = opslineDB
 		BackRepoOpsLineid_atBckpTime_newID[opslineDB_ID_atBackupTime] = opslineDB.ID
 	}
 
@@ -644,7 +612,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) RestorePhaseOne(dirPath string) {
 // to compute new index
 func (backRepoOpsLine *BackRepoOpsLineStruct) RestorePhaseTwo() {
 
-	for _, opslineDB := range *backRepoOpsLine.Map_OpsLineDBID_OpsLineDB {
+	for _, opslineDB := range backRepoOpsLine.Map_OpsLineDBID_OpsLineDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = opslineDB

@@ -1,7 +1,5 @@
 package models
 
-import "log"
-
 // LayerGroup is the gong version of the leaflet LayerGroup
 //
 // swagger:model LayerGroup
@@ -24,21 +22,6 @@ func (LayerGroup *LayerGroup) UpdateLayerGroup() {
 		LayerGroup.Name = LayerGroup.LayerGroupInterface.GetLayerName()
 		LayerGroup.DisplayName = LayerGroup.LayerGroupInterface.GetLayerName()
 	}
-}
-
-// little simple algo for the visual layer computation
-func computeLayerGroupFromLayerGroupName(layerGroupName string) (layerGroup *LayerGroup) {
-
-	for _layerGroup := range Stage.LayerGroups {
-		if _layerGroup.Name == layerGroupName {
-			layerGroup = _layerGroup
-			continue
-		}
-	}
-	if layerGroup == nil {
-		log.Printf("Unknown layer %s ", layerGroupName)
-	}
-	return
 }
 
 var DefaultLayerGroup *LayerGroup

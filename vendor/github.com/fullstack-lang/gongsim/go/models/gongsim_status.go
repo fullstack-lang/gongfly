@@ -16,4 +16,4 @@ var GongsimStatusSingloton = (&GongsimStatus{
 	CurrentSpeedCommand:        COMMAND_SPEED_STEADY,
 	CompletionDate:             "",
 	SpeedCommandCompletionDate: "",
-}).Stage(&Stage)
+}).Stage(GetDefaultStage())

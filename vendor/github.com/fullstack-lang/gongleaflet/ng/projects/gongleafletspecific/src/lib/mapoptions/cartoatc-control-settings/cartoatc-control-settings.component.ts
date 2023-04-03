@@ -22,6 +22,8 @@ export class CartoatcControlSettingsComponent implements OnInit {
   // mapMap
   @Input() mapName!: string
 
+  @Input() GONG__StackPath: string = ""
+
   // the gong front repo
   frontRepo?: gongleaflet.FrontRepo
   gongleafletMapOptions?: gongleaflet.MapOptionsDB
@@ -40,7 +42,7 @@ export class CartoatcControlSettingsComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.frontRepoService.pull().subscribe(
+    this.frontRepoService.pull(this.GONG__StackPath).subscribe(
       frontRepo => {
         this.frontRepo = frontRepo
 
@@ -89,7 +91,7 @@ export class CartoatcControlSettingsComponent implements OnInit {
     if (layerGroupUse) {
       layerGroupUse.Display = !layerGroupUse.Display
 
-      this.layerGroupUseService.updateLayerGroupUse(layerGroupUse, "").subscribe(
+      this.layerGroupUseService.updateLayerGroupUse(layerGroupUse, this.GONG__StackPath).subscribe(
         () => {
           console.log("layer group use " + layerGroupUse?.Name + " display value updated to " + layerGroupUse?.Display)
 

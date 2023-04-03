@@ -51,11 +51,6 @@ export class FrontRepo { // insertion point sub template
   Scenarios_batch = new Map<number, ScenarioDB>(); // same but only in last GET (for finding repo instances to delete)
 }
 
-//
-// Store of all instances of the stack
-//
-export const FrontRepoSingloton = new (FrontRepo)
-
 // the table component is called in different ways
 //
 // DISPLAY or ASSOCIATION MODE
@@ -108,6 +103,11 @@ export class FrontRepoService {
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
+
+  //
+  // Store of all instances of the stack
+  //
+  frontRepo = new (FrontRepo)
 
   constructor(
     private http: HttpClient, // insertion point sub template 
@@ -220,29 +220,29 @@ export class FrontRepoService {
             // First Step: init map of instances
             // insertion point sub template for init 
             // init the array
-            FrontRepoSingloton.CivilianAirports_array = civilianairports
+            this.frontRepo.CivilianAirports_array = civilianairports
 
             // clear the map that counts CivilianAirport in the GET
-            FrontRepoSingloton.CivilianAirports_batch.clear()
+            this.frontRepo.CivilianAirports_batch.clear()
 
             civilianairports.forEach(
               civilianairport => {
-                FrontRepoSingloton.CivilianAirports.set(civilianairport.ID, civilianairport)
-                FrontRepoSingloton.CivilianAirports_batch.set(civilianairport.ID, civilianairport)
+                this.frontRepo.CivilianAirports.set(civilianairport.ID, civilianairport)
+                this.frontRepo.CivilianAirports_batch.set(civilianairport.ID, civilianairport)
               }
             )
 
             // clear civilianairports that are absent from the batch
-            FrontRepoSingloton.CivilianAirports.forEach(
+            this.frontRepo.CivilianAirports.forEach(
               civilianairport => {
-                if (FrontRepoSingloton.CivilianAirports_batch.get(civilianairport.ID) == undefined) {
-                  FrontRepoSingloton.CivilianAirports.delete(civilianairport.ID)
+                if (this.frontRepo.CivilianAirports_batch.get(civilianairport.ID) == undefined) {
+                  this.frontRepo.CivilianAirports.delete(civilianairport.ID)
                 }
               }
             )
 
             // sort CivilianAirports_array array
-            FrontRepoSingloton.CivilianAirports_array.sort((t1, t2) => {
+            this.frontRepo.CivilianAirports_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -253,29 +253,29 @@ export class FrontRepoService {
             });
 
             // init the array
-            FrontRepoSingloton.Liners_array = liners
+            this.frontRepo.Liners_array = liners
 
             // clear the map that counts Liner in the GET
-            FrontRepoSingloton.Liners_batch.clear()
+            this.frontRepo.Liners_batch.clear()
 
             liners.forEach(
               liner => {
-                FrontRepoSingloton.Liners.set(liner.ID, liner)
-                FrontRepoSingloton.Liners_batch.set(liner.ID, liner)
+                this.frontRepo.Liners.set(liner.ID, liner)
+                this.frontRepo.Liners_batch.set(liner.ID, liner)
               }
             )
 
             // clear liners that are absent from the batch
-            FrontRepoSingloton.Liners.forEach(
+            this.frontRepo.Liners.forEach(
               liner => {
-                if (FrontRepoSingloton.Liners_batch.get(liner.ID) == undefined) {
-                  FrontRepoSingloton.Liners.delete(liner.ID)
+                if (this.frontRepo.Liners_batch.get(liner.ID) == undefined) {
+                  this.frontRepo.Liners.delete(liner.ID)
                 }
               }
             )
 
             // sort Liners_array array
-            FrontRepoSingloton.Liners_array.sort((t1, t2) => {
+            this.frontRepo.Liners_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -286,29 +286,29 @@ export class FrontRepoService {
             });
 
             // init the array
-            FrontRepoSingloton.Messages_array = messages
+            this.frontRepo.Messages_array = messages
 
             // clear the map that counts Message in the GET
-            FrontRepoSingloton.Messages_batch.clear()
+            this.frontRepo.Messages_batch.clear()
 
             messages.forEach(
               message => {
-                FrontRepoSingloton.Messages.set(message.ID, message)
-                FrontRepoSingloton.Messages_batch.set(message.ID, message)
+                this.frontRepo.Messages.set(message.ID, message)
+                this.frontRepo.Messages_batch.set(message.ID, message)
               }
             )
 
             // clear messages that are absent from the batch
-            FrontRepoSingloton.Messages.forEach(
+            this.frontRepo.Messages.forEach(
               message => {
-                if (FrontRepoSingloton.Messages_batch.get(message.ID) == undefined) {
-                  FrontRepoSingloton.Messages.delete(message.ID)
+                if (this.frontRepo.Messages_batch.get(message.ID) == undefined) {
+                  this.frontRepo.Messages.delete(message.ID)
                 }
               }
             )
 
             // sort Messages_array array
-            FrontRepoSingloton.Messages_array.sort((t1, t2) => {
+            this.frontRepo.Messages_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -319,29 +319,29 @@ export class FrontRepoService {
             });
 
             // init the array
-            FrontRepoSingloton.OpsLines_array = opslines
+            this.frontRepo.OpsLines_array = opslines
 
             // clear the map that counts OpsLine in the GET
-            FrontRepoSingloton.OpsLines_batch.clear()
+            this.frontRepo.OpsLines_batch.clear()
 
             opslines.forEach(
               opsline => {
-                FrontRepoSingloton.OpsLines.set(opsline.ID, opsline)
-                FrontRepoSingloton.OpsLines_batch.set(opsline.ID, opsline)
+                this.frontRepo.OpsLines.set(opsline.ID, opsline)
+                this.frontRepo.OpsLines_batch.set(opsline.ID, opsline)
               }
             )
 
             // clear opslines that are absent from the batch
-            FrontRepoSingloton.OpsLines.forEach(
+            this.frontRepo.OpsLines.forEach(
               opsline => {
-                if (FrontRepoSingloton.OpsLines_batch.get(opsline.ID) == undefined) {
-                  FrontRepoSingloton.OpsLines.delete(opsline.ID)
+                if (this.frontRepo.OpsLines_batch.get(opsline.ID) == undefined) {
+                  this.frontRepo.OpsLines.delete(opsline.ID)
                 }
               }
             )
 
             // sort OpsLines_array array
-            FrontRepoSingloton.OpsLines_array.sort((t1, t2) => {
+            this.frontRepo.OpsLines_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -352,29 +352,29 @@ export class FrontRepoService {
             });
 
             // init the array
-            FrontRepoSingloton.Radars_array = radars
+            this.frontRepo.Radars_array = radars
 
             // clear the map that counts Radar in the GET
-            FrontRepoSingloton.Radars_batch.clear()
+            this.frontRepo.Radars_batch.clear()
 
             radars.forEach(
               radar => {
-                FrontRepoSingloton.Radars.set(radar.ID, radar)
-                FrontRepoSingloton.Radars_batch.set(radar.ID, radar)
+                this.frontRepo.Radars.set(radar.ID, radar)
+                this.frontRepo.Radars_batch.set(radar.ID, radar)
               }
             )
 
             // clear radars that are absent from the batch
-            FrontRepoSingloton.Radars.forEach(
+            this.frontRepo.Radars.forEach(
               radar => {
-                if (FrontRepoSingloton.Radars_batch.get(radar.ID) == undefined) {
-                  FrontRepoSingloton.Radars.delete(radar.ID)
+                if (this.frontRepo.Radars_batch.get(radar.ID) == undefined) {
+                  this.frontRepo.Radars.delete(radar.ID)
                 }
               }
             )
 
             // sort Radars_array array
-            FrontRepoSingloton.Radars_array.sort((t1, t2) => {
+            this.frontRepo.Radars_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -385,29 +385,29 @@ export class FrontRepoService {
             });
 
             // init the array
-            FrontRepoSingloton.Satellites_array = satellites
+            this.frontRepo.Satellites_array = satellites
 
             // clear the map that counts Satellite in the GET
-            FrontRepoSingloton.Satellites_batch.clear()
+            this.frontRepo.Satellites_batch.clear()
 
             satellites.forEach(
               satellite => {
-                FrontRepoSingloton.Satellites.set(satellite.ID, satellite)
-                FrontRepoSingloton.Satellites_batch.set(satellite.ID, satellite)
+                this.frontRepo.Satellites.set(satellite.ID, satellite)
+                this.frontRepo.Satellites_batch.set(satellite.ID, satellite)
               }
             )
 
             // clear satellites that are absent from the batch
-            FrontRepoSingloton.Satellites.forEach(
+            this.frontRepo.Satellites.forEach(
               satellite => {
-                if (FrontRepoSingloton.Satellites_batch.get(satellite.ID) == undefined) {
-                  FrontRepoSingloton.Satellites.delete(satellite.ID)
+                if (this.frontRepo.Satellites_batch.get(satellite.ID) == undefined) {
+                  this.frontRepo.Satellites.delete(satellite.ID)
                 }
               }
             )
 
             // sort Satellites_array array
-            FrontRepoSingloton.Satellites_array.sort((t1, t2) => {
+            this.frontRepo.Satellites_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -418,29 +418,29 @@ export class FrontRepoService {
             });
 
             // init the array
-            FrontRepoSingloton.Scenarios_array = scenarios
+            this.frontRepo.Scenarios_array = scenarios
 
             // clear the map that counts Scenario in the GET
-            FrontRepoSingloton.Scenarios_batch.clear()
+            this.frontRepo.Scenarios_batch.clear()
 
             scenarios.forEach(
               scenario => {
-                FrontRepoSingloton.Scenarios.set(scenario.ID, scenario)
-                FrontRepoSingloton.Scenarios_batch.set(scenario.ID, scenario)
+                this.frontRepo.Scenarios.set(scenario.ID, scenario)
+                this.frontRepo.Scenarios_batch.set(scenario.ID, scenario)
               }
             )
 
             // clear scenarios that are absent from the batch
-            FrontRepoSingloton.Scenarios.forEach(
+            this.frontRepo.Scenarios.forEach(
               scenario => {
-                if (FrontRepoSingloton.Scenarios_batch.get(scenario.ID) == undefined) {
-                  FrontRepoSingloton.Scenarios.delete(scenario.ID)
+                if (this.frontRepo.Scenarios_batch.get(scenario.ID) == undefined) {
+                  this.frontRepo.Scenarios.delete(scenario.ID)
                 }
               }
             )
 
             // sort Scenarios_array array
-            FrontRepoSingloton.Scenarios_array.sort((t1, t2) => {
+            this.frontRepo.Scenarios_array.sort((t1, t2) => {
               if (t1.Name > t2.Name) {
                 return 1;
               }
@@ -466,7 +466,7 @@ export class FrontRepoService {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
                 // insertion point for pointer field ReporingLine redeeming
                 {
-                  let _opsline = FrontRepoSingloton.OpsLines.get(liner.ReporingLineID.Int64)
+                  let _opsline = this.frontRepo.OpsLines.get(liner.ReporingLineID.Int64)
                   if (_opsline) {
                     liner.ReporingLine = _opsline
                   }
@@ -487,7 +487,7 @@ export class FrontRepoService {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
                 // insertion point for pointer field Scenario redeeming
                 {
-                  let _scenario = FrontRepoSingloton.Scenarios.get(opsline.ScenarioID.Int64)
+                  let _scenario = this.frontRepo.Scenarios.get(opsline.ScenarioID.Int64)
                   if (_scenario) {
                     opsline.Scenario = _scenario
                   }
@@ -519,7 +519,7 @@ export class FrontRepoService {
             )
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }
@@ -533,24 +533,24 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.civilianairportService.getCivilianAirports()
+          this.civilianairportService.getCivilianAirports(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             civilianairports,
           ]) => {
             // init the array
-            FrontRepoSingloton.CivilianAirports_array = civilianairports
+            this.frontRepo.CivilianAirports_array = civilianairports
 
             // clear the map that counts CivilianAirport in the GET
-            FrontRepoSingloton.CivilianAirports_batch.clear()
+            this.frontRepo.CivilianAirports_batch.clear()
 
             // 
             // First Step: init map of instances
             // insertion point sub template 
             civilianairports.forEach(
               civilianairport => {
-                FrontRepoSingloton.CivilianAirports.set(civilianairport.ID, civilianairport)
-                FrontRepoSingloton.CivilianAirports_batch.set(civilianairport.ID, civilianairport)
+                this.frontRepo.CivilianAirports.set(civilianairport.ID, civilianairport)
+                this.frontRepo.CivilianAirports_batch.set(civilianairport.ID, civilianairport)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
 
@@ -559,10 +559,10 @@ export class FrontRepoService {
             )
 
             // clear civilianairports that are absent from the GET
-            FrontRepoSingloton.CivilianAirports.forEach(
+            this.frontRepo.CivilianAirports.forEach(
               civilianairport => {
-                if (FrontRepoSingloton.CivilianAirports_batch.get(civilianairport.ID) == undefined) {
-                  FrontRepoSingloton.CivilianAirports.delete(civilianairport.ID)
+                if (this.frontRepo.CivilianAirports_batch.get(civilianairport.ID) == undefined) {
+                  this.frontRepo.CivilianAirports.delete(civilianairport.ID)
                 }
               }
             )
@@ -572,7 +572,7 @@ export class FrontRepoService {
             // insertion point sub template 
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }
@@ -584,29 +584,29 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.linerService.getLiners()
+          this.linerService.getLiners(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             liners,
           ]) => {
             // init the array
-            FrontRepoSingloton.Liners_array = liners
+            this.frontRepo.Liners_array = liners
 
             // clear the map that counts Liner in the GET
-            FrontRepoSingloton.Liners_batch.clear()
+            this.frontRepo.Liners_batch.clear()
 
             // 
             // First Step: init map of instances
             // insertion point sub template 
             liners.forEach(
               liner => {
-                FrontRepoSingloton.Liners.set(liner.ID, liner)
-                FrontRepoSingloton.Liners_batch.set(liner.ID, liner)
+                this.frontRepo.Liners.set(liner.ID, liner)
+                this.frontRepo.Liners_batch.set(liner.ID, liner)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
                 // insertion point for pointer field ReporingLine redeeming
                 {
-                  let _opsline = FrontRepoSingloton.OpsLines.get(liner.ReporingLineID.Int64)
+                  let _opsline = this.frontRepo.OpsLines.get(liner.ReporingLineID.Int64)
                   if (_opsline) {
                     liner.ReporingLine = _opsline
                   }
@@ -617,10 +617,10 @@ export class FrontRepoService {
             )
 
             // clear liners that are absent from the GET
-            FrontRepoSingloton.Liners.forEach(
+            this.frontRepo.Liners.forEach(
               liner => {
-                if (FrontRepoSingloton.Liners_batch.get(liner.ID) == undefined) {
-                  FrontRepoSingloton.Liners.delete(liner.ID)
+                if (this.frontRepo.Liners_batch.get(liner.ID) == undefined) {
+                  this.frontRepo.Liners.delete(liner.ID)
                 }
               }
             )
@@ -630,7 +630,7 @@ export class FrontRepoService {
             // insertion point sub template 
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }
@@ -642,24 +642,24 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.messageService.getMessages()
+          this.messageService.getMessages(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             messages,
           ]) => {
             // init the array
-            FrontRepoSingloton.Messages_array = messages
+            this.frontRepo.Messages_array = messages
 
             // clear the map that counts Message in the GET
-            FrontRepoSingloton.Messages_batch.clear()
+            this.frontRepo.Messages_batch.clear()
 
             // 
             // First Step: init map of instances
             // insertion point sub template 
             messages.forEach(
               message => {
-                FrontRepoSingloton.Messages.set(message.ID, message)
-                FrontRepoSingloton.Messages_batch.set(message.ID, message)
+                this.frontRepo.Messages.set(message.ID, message)
+                this.frontRepo.Messages_batch.set(message.ID, message)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
 
@@ -668,10 +668,10 @@ export class FrontRepoService {
             )
 
             // clear messages that are absent from the GET
-            FrontRepoSingloton.Messages.forEach(
+            this.frontRepo.Messages.forEach(
               message => {
-                if (FrontRepoSingloton.Messages_batch.get(message.ID) == undefined) {
-                  FrontRepoSingloton.Messages.delete(message.ID)
+                if (this.frontRepo.Messages_batch.get(message.ID) == undefined) {
+                  this.frontRepo.Messages.delete(message.ID)
                 }
               }
             )
@@ -681,7 +681,7 @@ export class FrontRepoService {
             // insertion point sub template 
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }
@@ -693,29 +693,29 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.opslineService.getOpsLines()
+          this.opslineService.getOpsLines(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             opslines,
           ]) => {
             // init the array
-            FrontRepoSingloton.OpsLines_array = opslines
+            this.frontRepo.OpsLines_array = opslines
 
             // clear the map that counts OpsLine in the GET
-            FrontRepoSingloton.OpsLines_batch.clear()
+            this.frontRepo.OpsLines_batch.clear()
 
             // 
             // First Step: init map of instances
             // insertion point sub template 
             opslines.forEach(
               opsline => {
-                FrontRepoSingloton.OpsLines.set(opsline.ID, opsline)
-                FrontRepoSingloton.OpsLines_batch.set(opsline.ID, opsline)
+                this.frontRepo.OpsLines.set(opsline.ID, opsline)
+                this.frontRepo.OpsLines_batch.set(opsline.ID, opsline)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
                 // insertion point for pointer field Scenario redeeming
                 {
-                  let _scenario = FrontRepoSingloton.Scenarios.get(opsline.ScenarioID.Int64)
+                  let _scenario = this.frontRepo.Scenarios.get(opsline.ScenarioID.Int64)
                   if (_scenario) {
                     opsline.Scenario = _scenario
                   }
@@ -726,10 +726,10 @@ export class FrontRepoService {
             )
 
             // clear opslines that are absent from the GET
-            FrontRepoSingloton.OpsLines.forEach(
+            this.frontRepo.OpsLines.forEach(
               opsline => {
-                if (FrontRepoSingloton.OpsLines_batch.get(opsline.ID) == undefined) {
-                  FrontRepoSingloton.OpsLines.delete(opsline.ID)
+                if (this.frontRepo.OpsLines_batch.get(opsline.ID) == undefined) {
+                  this.frontRepo.OpsLines.delete(opsline.ID)
                 }
               }
             )
@@ -739,7 +739,7 @@ export class FrontRepoService {
             // insertion point sub template 
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }
@@ -751,24 +751,24 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.radarService.getRadars()
+          this.radarService.getRadars(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             radars,
           ]) => {
             // init the array
-            FrontRepoSingloton.Radars_array = radars
+            this.frontRepo.Radars_array = radars
 
             // clear the map that counts Radar in the GET
-            FrontRepoSingloton.Radars_batch.clear()
+            this.frontRepo.Radars_batch.clear()
 
             // 
             // First Step: init map of instances
             // insertion point sub template 
             radars.forEach(
               radar => {
-                FrontRepoSingloton.Radars.set(radar.ID, radar)
-                FrontRepoSingloton.Radars_batch.set(radar.ID, radar)
+                this.frontRepo.Radars.set(radar.ID, radar)
+                this.frontRepo.Radars_batch.set(radar.ID, radar)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
 
@@ -777,10 +777,10 @@ export class FrontRepoService {
             )
 
             // clear radars that are absent from the GET
-            FrontRepoSingloton.Radars.forEach(
+            this.frontRepo.Radars.forEach(
               radar => {
-                if (FrontRepoSingloton.Radars_batch.get(radar.ID) == undefined) {
-                  FrontRepoSingloton.Radars.delete(radar.ID)
+                if (this.frontRepo.Radars_batch.get(radar.ID) == undefined) {
+                  this.frontRepo.Radars.delete(radar.ID)
                 }
               }
             )
@@ -790,7 +790,7 @@ export class FrontRepoService {
             // insertion point sub template 
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }
@@ -802,24 +802,24 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.satelliteService.getSatellites()
+          this.satelliteService.getSatellites(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             satellites,
           ]) => {
             // init the array
-            FrontRepoSingloton.Satellites_array = satellites
+            this.frontRepo.Satellites_array = satellites
 
             // clear the map that counts Satellite in the GET
-            FrontRepoSingloton.Satellites_batch.clear()
+            this.frontRepo.Satellites_batch.clear()
 
             // 
             // First Step: init map of instances
             // insertion point sub template 
             satellites.forEach(
               satellite => {
-                FrontRepoSingloton.Satellites.set(satellite.ID, satellite)
-                FrontRepoSingloton.Satellites_batch.set(satellite.ID, satellite)
+                this.frontRepo.Satellites.set(satellite.ID, satellite)
+                this.frontRepo.Satellites_batch.set(satellite.ID, satellite)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
 
@@ -828,10 +828,10 @@ export class FrontRepoService {
             )
 
             // clear satellites that are absent from the GET
-            FrontRepoSingloton.Satellites.forEach(
+            this.frontRepo.Satellites.forEach(
               satellite => {
-                if (FrontRepoSingloton.Satellites_batch.get(satellite.ID) == undefined) {
-                  FrontRepoSingloton.Satellites.delete(satellite.ID)
+                if (this.frontRepo.Satellites_batch.get(satellite.ID) == undefined) {
+                  this.frontRepo.Satellites.delete(satellite.ID)
                 }
               }
             )
@@ -841,7 +841,7 @@ export class FrontRepoService {
             // insertion point sub template 
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }
@@ -853,24 +853,24 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.scenarioService.getScenarios()
+          this.scenarioService.getScenarios(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             scenarios,
           ]) => {
             // init the array
-            FrontRepoSingloton.Scenarios_array = scenarios
+            this.frontRepo.Scenarios_array = scenarios
 
             // clear the map that counts Scenario in the GET
-            FrontRepoSingloton.Scenarios_batch.clear()
+            this.frontRepo.Scenarios_batch.clear()
 
             // 
             // First Step: init map of instances
             // insertion point sub template 
             scenarios.forEach(
               scenario => {
-                FrontRepoSingloton.Scenarios.set(scenario.ID, scenario)
-                FrontRepoSingloton.Scenarios_batch.set(scenario.ID, scenario)
+                this.frontRepo.Scenarios.set(scenario.ID, scenario)
+                this.frontRepo.Scenarios_batch.set(scenario.ID, scenario)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
 
@@ -879,10 +879,10 @@ export class FrontRepoService {
             )
 
             // clear scenarios that are absent from the GET
-            FrontRepoSingloton.Scenarios.forEach(
+            this.frontRepo.Scenarios.forEach(
               scenario => {
-                if (FrontRepoSingloton.Scenarios_batch.get(scenario.ID) == undefined) {
-                  FrontRepoSingloton.Scenarios.delete(scenario.ID)
+                if (this.frontRepo.Scenarios_batch.get(scenario.ID) == undefined) {
+                  this.frontRepo.Scenarios.delete(scenario.ID)
                 }
               }
             )
@@ -892,7 +892,7 @@ export class FrontRepoService {
             // insertion point sub template 
 
             // hand over control flow to observer
-            observer.next(FrontRepoSingloton)
+            observer.next(this.frontRepo)
           }
         )
       }

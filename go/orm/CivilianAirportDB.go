@@ -105,13 +105,13 @@ var CivilianAirport_Fields = []string{
 
 type BackRepoCivilianAirportStruct struct {
 	// stores CivilianAirportDB according to their gorm ID
-	Map_CivilianAirportDBID_CivilianAirportDB *map[uint]*CivilianAirportDB
+	Map_CivilianAirportDBID_CivilianAirportDB map[uint]*CivilianAirportDB
 
 	// stores CivilianAirportDB ID according to CivilianAirport address
-	Map_CivilianAirportPtr_CivilianAirportDBID *map[*models.CivilianAirport]uint
+	Map_CivilianAirportPtr_CivilianAirportDBID map[*models.CivilianAirport]uint
 
 	// stores CivilianAirport according to their gorm ID
-	Map_CivilianAirportDBID_CivilianAirportPtr *map[uint]*models.CivilianAirport
+	Map_CivilianAirportDBID_CivilianAirportPtr map[uint]*models.CivilianAirport
 
 	db *gorm.DB
 
@@ -129,40 +129,8 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) GetDB() *gorm.DB {
 
 // GetCivilianAirportDBFromCivilianAirportPtr is a handy function to access the back repo instance from the stage instance
 func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) GetCivilianAirportDBFromCivilianAirportPtr(civilianairport *models.CivilianAirport) (civilianairportDB *CivilianAirportDB) {
-	id := (*backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID)[civilianairport]
-	civilianairportDB = (*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB)[id]
-	return
-}
-
-// BackRepoCivilianAirport.Init set up the BackRepo of the CivilianAirport
-func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr != nil {
-		err := errors.New("In Init, backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr should be nil")
-		return err
-	}
-
-	if backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB != nil {
-		err := errors.New("In Init, backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB should be nil")
-		return err
-	}
-
-	if backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID != nil {
-		err := errors.New("In Init, backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.CivilianAirport, 0)
-	backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr = &tmp
-
-	tmpDB := make(map[uint]*CivilianAirportDB, 0)
-	backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB = &tmpDB
-
-	tmpID := make(map[*models.CivilianAirport]uint, 0)
-	backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID = &tmpID
-
-	backRepoCivilianAirport.db = db
-	backRepoCivilianAirport.stage = stage
+	id := backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID[civilianairport]
+	civilianairportDB = backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[id]
 	return
 }
 
@@ -176,7 +144,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseOne(sta
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, civilianairport := range *backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr {
+	for id, civilianairport := range backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr {
 		if _, ok := stage.CivilianAirports[civilianairport]; !ok {
 			backRepoCivilianAirport.CommitDeleteInstance(id)
 		}
@@ -188,19 +156,19 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseOne(sta
 // BackRepoCivilianAirport.CommitDeleteInstance commits deletion of CivilianAirport to the BackRepo
 func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	civilianairport := (*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[id]
+	civilianairport := backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr[id]
 
 	// civilianairport is not staged anymore, remove civilianairportDB
-	civilianairportDB := (*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB)[id]
+	civilianairportDB := backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[id]
 	query := backRepoCivilianAirport.db.Unscoped().Delete(&civilianairportDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID), civilianairport)
-	delete((*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr), id)
-	delete((*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB), id)
+	delete(backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID, civilianairport)
+	delete(backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr, id)
+	delete(backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB, id)
 
 	return
 }
@@ -210,7 +178,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitDeleteInstan
 func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseOneInstance(civilianairport *models.CivilianAirport) (Error error) {
 
 	// check if the civilianairport is not commited yet
-	if _, ok := (*backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID)[civilianairport]; ok {
+	if _, ok := backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID[civilianairport]; ok {
 		return
 	}
 
@@ -224,9 +192,9 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseOneInst
 	}
 
 	// update stores
-	(*backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID)[civilianairport] = civilianairportDB.ID
-	(*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID] = civilianairport
-	(*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB)[civilianairportDB.ID] = &civilianairportDB
+	backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID[civilianairport] = civilianairportDB.ID
+	backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr[civilianairportDB.ID] = civilianairport
+	backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[civilianairportDB.ID] = &civilianairportDB
 
 	return
 }
@@ -235,7 +203,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseOneInst
 // Phase Two is the update of instance with the field in the database
 func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, civilianairport := range *backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr {
+	for idx, civilianairport := range backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr {
 		backRepoCivilianAirport.CommitPhaseTwoInstance(backRepo, idx, civilianairport)
 	}
 
@@ -247,7 +215,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseTwo(bac
 func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, civilianairport *models.CivilianAirport) (Error error) {
 
 	// fetch matching civilianairportDB
-	if civilianairportDB, ok := (*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB)[idx]; ok {
+	if civilianairportDB, ok := backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[idx]; ok {
 
 		civilianairportDB.CopyBasicFieldsFromCivilianAirport(civilianairport)
 
@@ -291,7 +259,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseOne()
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		civilianairport, ok := (*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
+		civilianairport, ok := backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr[civilianairportDB.ID]
 		if ok {
 			delete(civilianairportInstancesToBeRemovedFromTheStage, civilianairport)
 		}
@@ -302,10 +270,10 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseOne()
 		civilianairport.Unstage(backRepoCivilianAirport.GetStage())
 
 		// remove instance from the back repo 3 maps
-		civilianairportID := (*backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID)[civilianairport]
-		delete((*backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID), civilianairport)
-		delete((*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB), civilianairportID)
-		delete((*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr), civilianairportID)
+		civilianairportID := backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID[civilianairport]
+		delete(backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID, civilianairport)
+		delete(backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB, civilianairportID)
+		delete(backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr, civilianairportID)
 	}
 
 	return
@@ -315,12 +283,12 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseOne()
 // models version of the civilianairportDB
 func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseOneInstance(civilianairportDB *CivilianAirportDB) (Error error) {
 
-	civilianairport, ok := (*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
+	civilianairport, ok := backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr[civilianairportDB.ID]
 	if !ok {
 		civilianairport = new(models.CivilianAirport)
 
-		(*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID] = civilianairport
-		(*backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID)[civilianairport] = civilianairportDB.ID
+		backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr[civilianairportDB.ID] = civilianairport
+		backRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID[civilianairport] = civilianairportDB.ID
 
 		// append model store with the new element
 		civilianairport.Name = civilianairportDB.Name_Data.String
@@ -335,7 +303,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseOneIn
 	// Map_CivilianAirportDBID_CivilianAirportDB)[civilianairportDB hold variable pointers
 	civilianairportDB_Data := *civilianairportDB
 	preservedPtrToCivilianAirport := &civilianairportDB_Data
-	(*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB)[civilianairportDB.ID] = preservedPtrToCivilianAirport
+	backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[civilianairportDB.ID] = preservedPtrToCivilianAirport
 
 	return
 }
@@ -345,7 +313,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseOneIn
 func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, civilianairportDB := range *backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB {
+	for _, civilianairportDB := range backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB {
 		backRepoCivilianAirport.CheckoutPhaseTwoInstance(backRepo, civilianairportDB)
 	}
 	return
@@ -355,7 +323,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseTwo(b
 // Phase Two is the update of instance with the field in the database
 func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, civilianairportDB *CivilianAirportDB) (Error error) {
 
-	civilianairport := (*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr)[civilianairportDB.ID]
+	civilianairport := backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr[civilianairportDB.ID]
 	_ = civilianairport // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
@@ -365,7 +333,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseTwoIn
 // CommitCivilianAirport allows commit of a single civilianairport (if already staged)
 func (backRepo *BackRepoStruct) CommitCivilianAirport(civilianairport *models.CivilianAirport) {
 	backRepo.BackRepoCivilianAirport.CommitPhaseOneInstance(civilianairport)
-	if id, ok := (*backRepo.BackRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID)[civilianairport]; ok {
+	if id, ok := backRepo.BackRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID[civilianairport]; ok {
 		backRepo.BackRepoCivilianAirport.CommitPhaseTwoInstance(backRepo, id, civilianairport)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -374,9 +342,9 @@ func (backRepo *BackRepoStruct) CommitCivilianAirport(civilianairport *models.Ci
 // CommitCivilianAirport allows checkout of a single civilianairport (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutCivilianAirport(civilianairport *models.CivilianAirport) {
 	// check if the civilianairport is staged
-	if _, ok := (*backRepo.BackRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID)[civilianairport]; ok {
+	if _, ok := backRepo.BackRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID[civilianairport]; ok {
 
-		if id, ok := (*backRepo.BackRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID)[civilianairport]; ok {
+		if id, ok := backRepo.BackRepoCivilianAirport.Map_CivilianAirportPtr_CivilianAirportDBID[civilianairport]; ok {
 			var civilianairportDB CivilianAirportDB
 			civilianairportDB.ID = id
 
@@ -442,7 +410,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) Backup(dirPath str
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*CivilianAirportDB, 0)
-	for _, civilianairportDB := range *backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB {
+	for _, civilianairportDB := range backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB {
 		forBackup = append(forBackup, civilianairportDB)
 	}
 
@@ -468,7 +436,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) BackupXL(file *xls
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*CivilianAirportDB, 0)
-	for _, civilianairportDB := range *backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB {
+	for _, civilianairportDB := range backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB {
 		forBackup = append(forBackup, civilianairportDB)
 	}
 
@@ -533,7 +501,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) rowVisitorCivilian
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB)[civilianairportDB.ID] = civilianairportDB
+		backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[civilianairportDB.ID] = civilianairportDB
 		BackRepoCivilianAirportid_atBckpTime_newID[civilianairportDB_ID_atBackupTime] = civilianairportDB.ID
 	}
 	return nil
@@ -570,7 +538,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) RestorePhaseOne(di
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB)[civilianairportDB.ID] = civilianairportDB
+		backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[civilianairportDB.ID] = civilianairportDB
 		BackRepoCivilianAirportid_atBckpTime_newID[civilianairportDB_ID_atBackupTime] = civilianairportDB.ID
 	}
 
@@ -583,7 +551,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) RestorePhaseOne(di
 // to compute new index
 func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) RestorePhaseTwo() {
 
-	for _, civilianairportDB := range *backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB {
+	for _, civilianairportDB := range backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = civilianairportDB

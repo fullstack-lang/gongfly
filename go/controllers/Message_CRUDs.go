@@ -151,7 +151,7 @@ func (controller *Controller) PostMessage(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoMessage.CheckoutPhaseOneInstance(&messageDB)
-	message := (*backRepo.BackRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
+	message := backRepo.BackRepoMessage.Map_MessageDBID_MessagePtr[messageDB.ID]
 
 	if message != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), message)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateMessage(c *gin.Context) {
 	messageDB.CopyBasicFieldsToMessage(messageNew)
 
 	// get stage instance from DB instance, and call callback function
-	messageOld := (*backRepo.BackRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
+	messageOld := backRepo.BackRepoMessage.Map_MessageDBID_MessagePtr[messageDB.ID]
 	if messageOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), messageOld, messageNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteMessage(c *gin.Context) {
 	messageDB.CopyBasicFieldsToMessage(messageDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	messageStaged := (*backRepo.BackRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
+	messageStaged := backRepo.BackRepoMessage.Map_MessageDBID_MessagePtr[messageDB.ID]
 	if messageStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), messageStaged, messageDeleted)
 	}

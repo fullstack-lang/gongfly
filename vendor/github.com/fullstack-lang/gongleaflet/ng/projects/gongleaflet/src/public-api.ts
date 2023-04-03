@@ -13,13 +13,8 @@ export * from './lib/null-int64'
 export * from './lib/commitnbfromback.service'
 export * from './lib/gongstruct-selection.service'
 export * from './lib/push_from_front_nb.service'
+export * from './lib/route-service'
 
-
-export * from './lib/checkoutscheduler-detail/checkoutscheduler-detail.component'
-export * from './lib/checkoutscheduler-sorting/checkoutscheduler-sorting.component'
-export * from './lib/checkoutschedulers-table/checkoutschedulers-table.component'
-export * from './lib/checkoutscheduler-db'
-export * from './lib/checkoutscheduler.service'
 
 export * from './lib/circle-detail/circle-detail.component'
 export * from './lib/circle-sorting/circle-sorting.component'

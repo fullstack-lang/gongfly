@@ -42,22 +42,26 @@ export class ScenarioService {
   }
 
   /** GET scenarios from the server */
-  getScenarios(GONG__StackPath: string = ""): Observable<ScenarioDB[]> {
+  getScenarios(GONG__StackPath: string): Observable<ScenarioDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<ScenarioDB[]>(this.scenariosUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched scenarios')),
+        tap(),
+		// tap(_ => this.log('fetched scenarios')),
         catchError(this.handleError<ScenarioDB[]>('getScenarios', []))
       );
   }
 
   /** GET scenario by id. Will 404 if id not found */
-  getScenario(id: number): Observable<ScenarioDB> {
+  getScenario(id: number, GONG__StackPath: string): Observable<ScenarioDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.scenariosUrl}/${id}`;
-    return this.http.get<ScenarioDB>(url).pipe(
-      tap(_ => this.log(`fetched scenario id=${id}`)),
+    return this.http.get<ScenarioDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched scenario id=${id}`)),
       catchError(this.handleError<ScenarioDB>(`getScenario id=${id}`))
     );
   }
@@ -73,10 +77,10 @@ export class ScenarioService {
       params: params
     }
 
-	return this.http.post<ScenarioDB>(this.scenariosUrl, scenariodb, httpOptions).pipe(
+    return this.http.post<ScenarioDB>(this.scenariosUrl, scenariodb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted scenariodb id=${scenariodb.ID}`)
+        // this.log(`posted scenariodb id=${scenariodb.ID}`)
       }),
       catchError(this.handleError<ScenarioDB>('postScenario'))
     );
@@ -127,11 +131,11 @@ export class ScenarioService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in ScenarioService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("ScenarioService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -142,6 +146,6 @@ export class ScenarioService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

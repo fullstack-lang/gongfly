@@ -99,13 +99,13 @@ var Event_Fields = []string{
 
 type BackRepoEventStruct struct {
 	// stores EventDB according to their gorm ID
-	Map_EventDBID_EventDB *map[uint]*EventDB
+	Map_EventDBID_EventDB map[uint]*EventDB
 
 	// stores EventDB ID according to Event address
-	Map_EventPtr_EventDBID *map[*models.Event]uint
+	Map_EventPtr_EventDBID map[*models.Event]uint
 
 	// stores Event according to their gorm ID
-	Map_EventDBID_EventPtr *map[uint]*models.Event
+	Map_EventDBID_EventPtr map[uint]*models.Event
 
 	db *gorm.DB
 
@@ -123,40 +123,8 @@ func (backRepoEvent *BackRepoEventStruct) GetDB() *gorm.DB {
 
 // GetEventDBFromEventPtr is a handy function to access the back repo instance from the stage instance
 func (backRepoEvent *BackRepoEventStruct) GetEventDBFromEventPtr(event *models.Event) (eventDB *EventDB) {
-	id := (*backRepoEvent.Map_EventPtr_EventDBID)[event]
-	eventDB = (*backRepoEvent.Map_EventDBID_EventDB)[id]
-	return
-}
-
-// BackRepoEvent.Init set up the BackRepo of the Event
-func (backRepoEvent *BackRepoEventStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoEvent.Map_EventDBID_EventPtr != nil {
-		err := errors.New("In Init, backRepoEvent.Map_EventDBID_EventPtr should be nil")
-		return err
-	}
-
-	if backRepoEvent.Map_EventDBID_EventDB != nil {
-		err := errors.New("In Init, backRepoEvent.Map_EventDBID_EventDB should be nil")
-		return err
-	}
-
-	if backRepoEvent.Map_EventPtr_EventDBID != nil {
-		err := errors.New("In Init, backRepoEvent.Map_EventPtr_EventDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.Event, 0)
-	backRepoEvent.Map_EventDBID_EventPtr = &tmp
-
-	tmpDB := make(map[uint]*EventDB, 0)
-	backRepoEvent.Map_EventDBID_EventDB = &tmpDB
-
-	tmpID := make(map[*models.Event]uint, 0)
-	backRepoEvent.Map_EventPtr_EventDBID = &tmpID
-
-	backRepoEvent.db = db
-	backRepoEvent.stage = stage
+	id := backRepoEvent.Map_EventPtr_EventDBID[event]
+	eventDB = backRepoEvent.Map_EventDBID_EventDB[id]
 	return
 }
 
@@ -170,7 +138,7 @@ func (backRepoEvent *BackRepoEventStruct) CommitPhaseOne(stage *models.StageStru
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, event := range *backRepoEvent.Map_EventDBID_EventPtr {
+	for id, event := range backRepoEvent.Map_EventDBID_EventPtr {
 		if _, ok := stage.Events[event]; !ok {
 			backRepoEvent.CommitDeleteInstance(id)
 		}
@@ -182,19 +150,19 @@ func (backRepoEvent *BackRepoEventStruct) CommitPhaseOne(stage *models.StageStru
 // BackRepoEvent.CommitDeleteInstance commits deletion of Event to the BackRepo
 func (backRepoEvent *BackRepoEventStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	event := (*backRepoEvent.Map_EventDBID_EventPtr)[id]
+	event := backRepoEvent.Map_EventDBID_EventPtr[id]
 
 	// event is not staged anymore, remove eventDB
-	eventDB := (*backRepoEvent.Map_EventDBID_EventDB)[id]
+	eventDB := backRepoEvent.Map_EventDBID_EventDB[id]
 	query := backRepoEvent.db.Unscoped().Delete(&eventDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoEvent.Map_EventPtr_EventDBID), event)
-	delete((*backRepoEvent.Map_EventDBID_EventPtr), id)
-	delete((*backRepoEvent.Map_EventDBID_EventDB), id)
+	delete(backRepoEvent.Map_EventPtr_EventDBID, event)
+	delete(backRepoEvent.Map_EventDBID_EventPtr, id)
+	delete(backRepoEvent.Map_EventDBID_EventDB, id)
 
 	return
 }
@@ -204,7 +172,7 @@ func (backRepoEvent *BackRepoEventStruct) CommitDeleteInstance(id uint) (Error e
 func (backRepoEvent *BackRepoEventStruct) CommitPhaseOneInstance(event *models.Event) (Error error) {
 
 	// check if the event is not commited yet
-	if _, ok := (*backRepoEvent.Map_EventPtr_EventDBID)[event]; ok {
+	if _, ok := backRepoEvent.Map_EventPtr_EventDBID[event]; ok {
 		return
 	}
 
@@ -218,9 +186,9 @@ func (backRepoEvent *BackRepoEventStruct) CommitPhaseOneInstance(event *models.E
 	}
 
 	// update stores
-	(*backRepoEvent.Map_EventPtr_EventDBID)[event] = eventDB.ID
-	(*backRepoEvent.Map_EventDBID_EventPtr)[eventDB.ID] = event
-	(*backRepoEvent.Map_EventDBID_EventDB)[eventDB.ID] = &eventDB
+	backRepoEvent.Map_EventPtr_EventDBID[event] = eventDB.ID
+	backRepoEvent.Map_EventDBID_EventPtr[eventDB.ID] = event
+	backRepoEvent.Map_EventDBID_EventDB[eventDB.ID] = &eventDB
 
 	return
 }
@@ -229,7 +197,7 @@ func (backRepoEvent *BackRepoEventStruct) CommitPhaseOneInstance(event *models.E
 // Phase Two is the update of instance with the field in the database
 func (backRepoEvent *BackRepoEventStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, event := range *backRepoEvent.Map_EventDBID_EventPtr {
+	for idx, event := range backRepoEvent.Map_EventDBID_EventPtr {
 		backRepoEvent.CommitPhaseTwoInstance(backRepo, idx, event)
 	}
 
@@ -241,7 +209,7 @@ func (backRepoEvent *BackRepoEventStruct) CommitPhaseTwo(backRepo *BackRepoStruc
 func (backRepoEvent *BackRepoEventStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, event *models.Event) (Error error) {
 
 	// fetch matching eventDB
-	if eventDB, ok := (*backRepoEvent.Map_EventDBID_EventDB)[idx]; ok {
+	if eventDB, ok := backRepoEvent.Map_EventDBID_EventDB[idx]; ok {
 
 		eventDB.CopyBasicFieldsFromEvent(event)
 
@@ -285,7 +253,7 @@ func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseOne() (Error error) {
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		event, ok := (*backRepoEvent.Map_EventDBID_EventPtr)[eventDB.ID]
+		event, ok := backRepoEvent.Map_EventDBID_EventPtr[eventDB.ID]
 		if ok {
 			delete(eventInstancesToBeRemovedFromTheStage, event)
 		}
@@ -296,10 +264,10 @@ func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseOne() (Error error) {
 		event.Unstage(backRepoEvent.GetStage())
 
 		// remove instance from the back repo 3 maps
-		eventID := (*backRepoEvent.Map_EventPtr_EventDBID)[event]
-		delete((*backRepoEvent.Map_EventPtr_EventDBID), event)
-		delete((*backRepoEvent.Map_EventDBID_EventDB), eventID)
-		delete((*backRepoEvent.Map_EventDBID_EventPtr), eventID)
+		eventID := backRepoEvent.Map_EventPtr_EventDBID[event]
+		delete(backRepoEvent.Map_EventPtr_EventDBID, event)
+		delete(backRepoEvent.Map_EventDBID_EventDB, eventID)
+		delete(backRepoEvent.Map_EventDBID_EventPtr, eventID)
 	}
 
 	return
@@ -309,12 +277,12 @@ func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseOne() (Error error) {
 // models version of the eventDB
 func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseOneInstance(eventDB *EventDB) (Error error) {
 
-	event, ok := (*backRepoEvent.Map_EventDBID_EventPtr)[eventDB.ID]
+	event, ok := backRepoEvent.Map_EventDBID_EventPtr[eventDB.ID]
 	if !ok {
 		event = new(models.Event)
 
-		(*backRepoEvent.Map_EventDBID_EventPtr)[eventDB.ID] = event
-		(*backRepoEvent.Map_EventPtr_EventDBID)[event] = eventDB.ID
+		backRepoEvent.Map_EventDBID_EventPtr[eventDB.ID] = event
+		backRepoEvent.Map_EventPtr_EventDBID[event] = eventDB.ID
 
 		// append model store with the new element
 		event.Name = eventDB.Name_Data.String
@@ -329,7 +297,7 @@ func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseOneInstance(eventDB *Even
 	// Map_EventDBID_EventDB)[eventDB hold variable pointers
 	eventDB_Data := *eventDB
 	preservedPtrToEvent := &eventDB_Data
-	(*backRepoEvent.Map_EventDBID_EventDB)[eventDB.ID] = preservedPtrToEvent
+	backRepoEvent.Map_EventDBID_EventDB[eventDB.ID] = preservedPtrToEvent
 
 	return
 }
@@ -339,7 +307,7 @@ func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseOneInstance(eventDB *Even
 func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, eventDB := range *backRepoEvent.Map_EventDBID_EventDB {
+	for _, eventDB := range backRepoEvent.Map_EventDBID_EventDB {
 		backRepoEvent.CheckoutPhaseTwoInstance(backRepo, eventDB)
 	}
 	return
@@ -349,7 +317,7 @@ func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseTwo(backRepo *BackRepoStr
 // Phase Two is the update of instance with the field in the database
 func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, eventDB *EventDB) (Error error) {
 
-	event := (*backRepoEvent.Map_EventDBID_EventPtr)[eventDB.ID]
+	event := backRepoEvent.Map_EventDBID_EventPtr[eventDB.ID]
 	_ = event // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
@@ -359,7 +327,7 @@ func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseTwoInstance(backRepo *Bac
 // CommitEvent allows commit of a single event (if already staged)
 func (backRepo *BackRepoStruct) CommitEvent(event *models.Event) {
 	backRepo.BackRepoEvent.CommitPhaseOneInstance(event)
-	if id, ok := (*backRepo.BackRepoEvent.Map_EventPtr_EventDBID)[event]; ok {
+	if id, ok := backRepo.BackRepoEvent.Map_EventPtr_EventDBID[event]; ok {
 		backRepo.BackRepoEvent.CommitPhaseTwoInstance(backRepo, id, event)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -368,9 +336,9 @@ func (backRepo *BackRepoStruct) CommitEvent(event *models.Event) {
 // CommitEvent allows checkout of a single event (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutEvent(event *models.Event) {
 	// check if the event is staged
-	if _, ok := (*backRepo.BackRepoEvent.Map_EventPtr_EventDBID)[event]; ok {
+	if _, ok := backRepo.BackRepoEvent.Map_EventPtr_EventDBID[event]; ok {
 
-		if id, ok := (*backRepo.BackRepoEvent.Map_EventPtr_EventDBID)[event]; ok {
+		if id, ok := backRepo.BackRepoEvent.Map_EventPtr_EventDBID[event]; ok {
 			var eventDB EventDB
 			eventDB.ID = id
 
@@ -428,7 +396,7 @@ func (backRepoEvent *BackRepoEventStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*EventDB, 0)
-	for _, eventDB := range *backRepoEvent.Map_EventDBID_EventDB {
+	for _, eventDB := range backRepoEvent.Map_EventDBID_EventDB {
 		forBackup = append(forBackup, eventDB)
 	}
 
@@ -454,7 +422,7 @@ func (backRepoEvent *BackRepoEventStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*EventDB, 0)
-	for _, eventDB := range *backRepoEvent.Map_EventDBID_EventDB {
+	for _, eventDB := range backRepoEvent.Map_EventDBID_EventDB {
 		forBackup = append(forBackup, eventDB)
 	}
 
@@ -519,7 +487,7 @@ func (backRepoEvent *BackRepoEventStruct) rowVisitorEvent(row *xlsx.Row) error {
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoEvent.Map_EventDBID_EventDB)[eventDB.ID] = eventDB
+		backRepoEvent.Map_EventDBID_EventDB[eventDB.ID] = eventDB
 		BackRepoEventid_atBckpTime_newID[eventDB_ID_atBackupTime] = eventDB.ID
 	}
 	return nil
@@ -556,7 +524,7 @@ func (backRepoEvent *BackRepoEventStruct) RestorePhaseOne(dirPath string) {
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoEvent.Map_EventDBID_EventDB)[eventDB.ID] = eventDB
+		backRepoEvent.Map_EventDBID_EventDB[eventDB.ID] = eventDB
 		BackRepoEventid_atBckpTime_newID[eventDB_ID_atBackupTime] = eventDB.ID
 	}
 
@@ -569,7 +537,7 @@ func (backRepoEvent *BackRepoEventStruct) RestorePhaseOne(dirPath string) {
 // to compute new index
 func (backRepoEvent *BackRepoEventStruct) RestorePhaseTwo() {
 
-	for _, eventDB := range *backRepoEvent.Map_EventDBID_EventDB {
+	for _, eventDB := range backRepoEvent.Map_EventDBID_EventDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = eventDB

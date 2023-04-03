@@ -151,7 +151,7 @@ func (controller *Controller) PostVLine(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoVLine.CheckoutPhaseOneInstance(&vlineDB)
-	vline := (*backRepo.BackRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
+	vline := backRepo.BackRepoVLine.Map_VLineDBID_VLinePtr[vlineDB.ID]
 
 	if vline != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), vline)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateVLine(c *gin.Context) {
 	vlineDB.CopyBasicFieldsToVLine(vlineNew)
 
 	// get stage instance from DB instance, and call callback function
-	vlineOld := (*backRepo.BackRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
+	vlineOld := backRepo.BackRepoVLine.Map_VLineDBID_VLinePtr[vlineDB.ID]
 	if vlineOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), vlineOld, vlineNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteVLine(c *gin.Context) {
 	vlineDB.CopyBasicFieldsToVLine(vlineDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	vlineStaged := (*backRepo.BackRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
+	vlineStaged := backRepo.BackRepoVLine.Map_VLineDBID_VLinePtr[vlineDB.ID]
 	if vlineStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), vlineStaged, vlineDeleted)
 	}

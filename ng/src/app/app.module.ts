@@ -45,13 +45,6 @@ import { GongleafletspecificModule } from 'gongleafletspecific'
 
 import { AppRoutingModule } from './app-routing.module';
 
-import { MarkdownModule } from 'ngx-markdown'
-import { GongmarkdownModule } from 'gongmarkdown'
-import { GongmarkdownspecificModule } from 'gongmarkdownspecific'
-
-import { Gongng2chartsModule } from 'gongng2charts'
-import { Gongng2chartsspecificModule } from 'gongng2chartsspecific'
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -96,17 +89,6 @@ import { Gongng2chartsspecificModule } from 'gongng2chartsspecific'
 
     //
     GongModule,
-
-    MarkdownModule.forRoot(),
-
-    // gongmarkdown stack
-    GongmarkdownModule,
-    GongmarkdownspecificModule,
-
-    // gongng2charts stack
-    Gongng2chartsModule,
-    Gongng2chartsspecificModule,
-
     GongflyModule
   ],
   providers: [],
