@@ -13,8 +13,8 @@ type CivilianAirport struct {
 	Name string
 }
 
-func (civilianAirport *CivilianAirport) Register() (res *CivilianAirport) {
-	gongsim_models.AppendToSingloton(civilianAirport)
+func (civilianAirport *CivilianAirport) Register(engine *gongsim_models.Engine) (res *CivilianAirport) {
+	gongsim_models.AppendToSingloton(engine, civilianAirport)
 	res = civilianAirport
 	return
 }

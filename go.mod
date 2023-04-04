@@ -13,7 +13,7 @@ require (
 	github.com/joshuaferrara/go-satellite v0.0.0-20220611180459-512638c64e5b
 	github.com/kellydunn/golang-geo v0.7.0
 	github.com/tealeg/xlsx/v3 v3.2.4
-	github.com/xuri/excelize/v2 v2.7.0
+	github.com/xuri/excelize/v2 v2.6.1
 	gorm.io/gorm v1.24.6
 )
 

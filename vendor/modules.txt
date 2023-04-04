@@ -57,11 +57,7 @@ github.com/fullstack-lang/gongleaflet/go/orm
 github.com/fullstack-lang/gongleaflet/ng/projects
 # github.com/fullstack-lang/gongsim v0.0.0-20230402080527-f5bb63b62bcc
 ## explicit; go 1.18
-github.com/fullstack-lang/gongsim/go/controllers
-github.com/fullstack-lang/gongsim/go/fullstack
 github.com/fullstack-lang/gongsim/go/models
-github.com/fullstack-lang/gongsim/go/orm
-github.com/fullstack-lang/gongsim/ng/projects
 # github.com/gin-contrib/cors v1.4.0
 ## explicit; go 1.13
 github.com/gin-contrib/cors
@@ -225,8 +221,8 @@ github.com/ugorji/go/codec
 # github.com/xuri/efp v0.0.0-20220603152613-6918739fd470
 ## explicit; go 1.11
 github.com/xuri/efp
-# github.com/xuri/excelize/v2 v2.7.0
-## explicit; go 1.16
+# github.com/xuri/excelize/v2 v2.6.1
+## explicit; go 1.15
 github.com/xuri/excelize/v2
 # github.com/xuri/nfp v0.0.0-20220409054826-5e722a1d9e22
 ## explicit; go 1.15

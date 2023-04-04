@@ -15,11 +15,12 @@ var Scenario1 = (&models.Scenario{
 	Lng: CDG_LFPG.Lng,
 
 	MessageVisualSpeed: 5000,
-}).Stage(&models.Stage)
+})
 
-func init() {
+func LoadScenario(stage *models.StageStruct) {
 	Scenario1.SetStart(time.Date(2020, time.January, 1, 6, 0, 0, 0, time.UTC))
 	Scenario1.SetEnd(time.Date(2020, time.January, 1, 11, 0, 0, 0, time.UTC))
 	Scenario1.SetStart(time.Now().UTC())
 	Scenario1.SetEnd(time.Now().UTC().Add(24 * time.Hour))
+	Scenario1.Stage(stage)
 }

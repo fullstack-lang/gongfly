@@ -28,8 +28,8 @@ type Radar struct {
 	Range float64
 }
 
-func (Radar *Radar) Register() (res *Radar) {
-	gongsim_models.AppendToSingloton(Radar)
+func (Radar *Radar) Register(engine *gongsim_models.Engine) (res *Radar) {
+	gongsim_models.AppendToSingloton(engine, Radar)
 	res = Radar
 	return
 }

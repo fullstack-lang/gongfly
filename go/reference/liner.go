@@ -24,4 +24,9 @@ var Sc1_AF_CDG_HYE_ref = models.Liner{
 	TargetLocationLat:  TLN_LFTH_ref.Lat,
 	TargetLocationLng:  TLN_LFTH_ref.Lng,
 }
-var Sc1_AF_3577_MDM = Sc1_AF_CDG_HYE_ref.Stage(&models.Stage).Register()
+
+var Sc1_AF_3577_MDM *models.Liner
+
+func LoadLiners(stage *models.StageStruct, engine *gongsim_models.Engine) {
+	Sc1_AF_3577_MDM = Sc1_AF_CDG_HYE_ref.Stage(stage).Register(engine)
+}

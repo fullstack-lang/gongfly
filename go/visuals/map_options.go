@@ -23,22 +23,30 @@ var MapOptions = (&gongleaflet_models.MapOptions{
 		CenterLayerGroupUse,
 		SatelitteLayerGroupUse,
 	},
-}).Stage(&gongleaflet_models.Stage)
+})
 
 var AircraftLayerGroupUse = (&gongleaflet_models.LayerGroupUse{
 	Name:       string(gongfly_models.Aircraft_),
 	LayerGroup: AircraftLayerGroup,
 	Display:    true,
-}).Stage(&gongleaflet_models.Stage)
+})
 
 var SatelitteLayerGroupUse = (&gongleaflet_models.LayerGroupUse{
 	Name:       string(gongfly_models.Satellite_),
 	LayerGroup: SatelliteLayerGroup,
 	Display:    true,
-}).Stage(&gongleaflet_models.Stage)
+})
 
 var CenterLayerGroupUse = (&gongleaflet_models.LayerGroupUse{
 	Name:       string(gongfly_models.Center_),
 	LayerGroup: CenterLayerGroup,
 	Display:    true,
-}).Stage(&gongleaflet_models.Stage)
+})
+
+func LoadLayerGroupsUse(stage *gongleaflet_models.StageStruct) {
+
+	MapOptions.Stage(stage)
+	AircraftLayerGroupUse.Stage(stage)
+	SatelitteLayerGroupUse.Stage(stage)
+	CenterLayerGroupUse.Stage(stage)
+}
