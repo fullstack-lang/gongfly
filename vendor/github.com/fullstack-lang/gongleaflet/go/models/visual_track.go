@@ -1,5 +1,7 @@
 package models
 
+import "log"
+
 // VisualTrack provides all necessary elements to the front to display a track
 //
 // # In leaflet, it is translated into a MovingMarker
@@ -16,6 +18,9 @@ type VisualTrack struct {
 
 	// access to the models instance that contains the original information
 	// swagger:ignore
+	// a moving object has to implement this interface to
+	// be displayed as a visual interface
+	//
 	VisualTrackInterface VisualTrackInterface `gorm:"-"`
 
 	DivIcon *DivIcon
@@ -25,20 +30,49 @@ type VisualTrack struct {
 
 	// if true, display level and speed below the icon
 	DisplayLevelAndSpeed bool
+
+	// the stage of the visual track
+	stage *StageStruct
 }
 
-type VisualTrackInterface interface {
+func (visualTrack *VisualTrack) UpdateTrack() {
+	if visualTrack.VisualTrackInterface != nil {
+		visualTrack.Name = visualTrack.VisualTrackInterface.GetName()
 
-	// position
-	GetLat() (lat float64)
-	GetLng() (lng float64)
+		visualTrack.Lat = visualTrack.VisualTrackInterface.GetLat()
+		visualTrack.Lng = visualTrack.VisualTrackInterface.GetLng()
+		visualTrack.Heading = visualTrack.VisualTrackInterface.GetHeading()
+		visualTrack.Level = visualTrack.VisualTrackInterface.GetLevel()
+		visualTrack.Speed = visualTrack.VisualTrackInterface.GetSpeed()
+		visualTrack.VerticalSpeed = visualTrack.VisualTrackInterface.GetVerticalSpeed()
 
-	// cinemetic
-	GetHeading() (heading float64)
-	GetSpeed() (speed float64)
-	GetVerticalSpeed() (verticalSpeed float64)
-	GetLevel() (level float64)
+		visualTrack.LayerGroup = ComputeLayerGroupFromLayerGroupName(visualTrack.stage, visualTrack.VisualTrackInterface.GetLayerGroupName())
+	}
+}
 
-	GetName() (name string)
-	GetLayerGroupName() string
+// AttachVisualTrack attaches an object that match the visualTrackInterface to a visual track
+// the visual track will request information from the object in order to display the track
+func AttachVisualTrack(
+	gongleafletStage *StageStruct,
+	track VisualTrackInterface,
+	divIcon *DivIcon,
+	colorEnum ColorEnum,
+	displayTrackHistory bool,
+	displayLevelAndSpeed bool) (visualTrack *VisualTrack) {
+
+	// sometimes, the visual icon is nil (not reproductible bug)
+	if divIcon == nil {
+		log.Fatal("nil visual icon")
+	}
+
+	visualTrack = new(VisualTrack).Stage(gongleafletStage)
+	visualTrack.VisualTrackInterface = track
+	visualTrack.DivIcon = divIcon
+	visualTrack.DisplayTrackHistory = displayTrackHistory
+	visualTrack.DisplayLevelAndSpeed = displayLevelAndSpeed
+	visualTrack.ColorEnum = colorEnum
+	visualTrack.stage = gongleafletStage
+	visualTrack.UpdateTrack()
+
+	return
 }

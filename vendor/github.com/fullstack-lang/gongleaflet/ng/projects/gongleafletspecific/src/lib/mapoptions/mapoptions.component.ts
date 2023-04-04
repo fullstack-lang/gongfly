@@ -175,21 +175,16 @@ export class MapoptionsComponent implements OnInit {
         this.leafletMapOptions = manageLeafletItems.visualMapToLeafletMapOptions(gongMapOptions)
         this.refreshMapWithMarkers()
 
-        //
-        // timer to refresh the map if something has changed in the back
-        this.obsTimer.subscribe(
-          () => {
-            this.commitNbFromBackService.getCommitNbFromBack(500, this.GONG__StackPath).subscribe(
-              commitNbFromBack => {
-                // console.log("commit nb in the back " + commitNb + " local commit nb " + this.commitNb)
-                if (commitNbFromBack > this.commitNb) {
-                  this.refreshMapWithMarkers()
-                  this.commitNb = commitNbFromBack
-                }
-              }
-            )
+        this.commitNbFromBackService.getCommitNbFromBack(500, this.GONG__StackPath).subscribe(
+          commitNbFromBack => {
+            // console.log("commit nb in the back " + commitNb + " local commit nb " + this.commitNb)
+            if (commitNbFromBack > this.commitNb) {
+              this.refreshMapWithMarkers()
+              this.commitNb = commitNbFromBack
+            }
           }
         )
+
       }
     )
   }

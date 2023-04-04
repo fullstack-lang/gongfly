@@ -1,5 +1,7 @@
 package models
 
+import "log"
+
 // LayerGroup is the gong version of the leaflet LayerGroup
 //
 // swagger:model LayerGroup
@@ -25,3 +27,18 @@ func (LayerGroup *LayerGroup) UpdateLayerGroup() {
 }
 
 var DefaultLayerGroup *LayerGroup
+
+// little simple algo for the visual layer computation
+func ComputeLayerGroupFromLayerGroupName(gongleafletStage *StageStruct, layerGroupName string) (layerGroup *LayerGroup) {
+
+	for _layerGroup := range gongleafletStage.LayerGroups {
+		if _layerGroup.Name == layerGroupName {
+			layerGroup = _layerGroup
+			continue
+		}
+	}
+	if layerGroup == nil {
+		log.Printf("Unknown layer %s ", layerGroupName)
+	}
+	return
+}
