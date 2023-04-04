@@ -12,8 +12,8 @@ var Sc1_AF_CDG_HYE_ref = models.Liner{
 	},
 	Name: "AF CDG->HYE",
 	MovingObject: models.MovingObject{
-		Lat:     CDG_LFPG.Lat,
-		Lng:     CDG_LFPG.Lng + visualShiftInMinutes,
+		Lat:     CDG_LFPG_ref.Lat,
+		Lng:     CDG_LFPG_ref.Lng + visualShiftInMinutes,
 		Level:   220.0,
 		Speed:   900.0,
 		Heading: 90.0,

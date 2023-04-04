@@ -11,7 +11,9 @@ import (
 	gongfly_models "github.com/fullstack-lang/gongfly/go/models"
 	gongfly_static "github.com/fullstack-lang/gongfly/go/static"
 
-	"github.com/fullstack-lang/gongfly/go/icons"
+	gongfly_icons "github.com/fullstack-lang/gongfly/go/icons"
+	"github.com/fullstack-lang/gongfly/go/reference"
+	"github.com/fullstack-lang/gongfly/go/simulation"
 
 	gongfly_visuals "github.com/fullstack-lang/gongfly/go/visuals"
 
@@ -71,38 +73,22 @@ func main() {
 	gongsimStage := gongsim_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongsim/go/models")
 	_ = gongsimStage
 
-	icons.LoadIcons(gongleafletStage)
+	simulation := simulation.NewSimulation(gongflyStage, gongsimStage, gongleafletStage)
+
+	// load all elments
+	gongfly_icons.LoadIcons(gongleafletStage)
+	reference.LoadCenters(gongflyStage, simulation.GetEngine())
+	reference.LoadLiners(gongflyStage, simulation.GetEngine())
+	reference.LoadSatellites(gongflyStage, simulation.GetEngine())
+	reference.LoadScenario(gongflyStage)
 
 	defaultLayer := new(gongleaflet_models.LayerGroup).Stage(gongleafletStage)
 	defaultLayer.Name = "default"
 	defaultLayer.DisplayName = "default"
+
 	gongfly_visuals.AttachVisualElementsToModelElements(
 		gongflyStage,
 		gongleafletStage, defaultLayer)
-
-	if *unmarshallFromCode != "" {
-		gongflyStage.Checkout()
-		gongflyStage.Reset()
-		gongflyStage.Commit()
-		err := gongfly_models.ParseAstFile(gongflyStage, *unmarshallFromCode)
-
-		// if the application is run with -unmarshallFromCode=xxx.go -marshallOnCommit
-		// xxx.go might be absent the first time. However, this shall not be a show stopper.
-		if err != nil {
-			log.Println("no file to read " + err.Error())
-		}
-
-		gongflyStage.Commit()
-	} else {
-		// in case the database is used, checkout the content to the stage
-		gongflyStage.Checkout()
-	}
-
-	// hook automatic marshall to go code at every commit
-	if *marshallOnCommit != "" {
-		hook := new(BeforeCommitImplementation)
-		gongflyStage.OnInitCommitFromFrontCallback = hook
-	}
 
 	gongdoc_load.Load(
 		"gongfly",
@@ -112,6 +98,11 @@ func main() {
 		r,
 		*embeddedDiagrams,
 		&gongflyStage.Map_GongStructName_InstancesNb)
+
+	// commits stages
+	gongflyStage.Commit()
+	gongsimStage.Commit()
+	gongleafletStage.Commit()
 
 	log.Printf("Server ready serve on localhost:8080")
 	r.Run()

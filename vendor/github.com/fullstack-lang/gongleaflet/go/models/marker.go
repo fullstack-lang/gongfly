@@ -23,8 +23,8 @@ type Marker struct {
 	// access to the models instance that contains the original information
 	MarkerInteface MarkerInterface `gorm:"-"`
 
-	// the stage of the visual track
-	stage *StageStruct
+	// the Stage_ of the visual track
+	Stage_ *StageStruct
 }
 
 type MarkerInterface interface {
@@ -43,7 +43,7 @@ func (marker *Marker) UpdateMarker() {
 
 		marker.LayerGroup =
 			ComputeLayerGroupFromLayerGroupName(
-				marker.stage,
+				marker.Stage_,
 				marker.MarkerInteface.GetLayerGroupName())
 	}
 }
@@ -63,7 +63,7 @@ func AttachMarker(
 	marker.MarkerInteface = markerInterface
 	marker.ColorEnum = colorEnum
 	marker.DivIcon = divIcon
-	marker.stage = gongleafletStage
+	marker.Stage_ = gongleafletStage
 	marker.UpdateMarker()
 
 	return

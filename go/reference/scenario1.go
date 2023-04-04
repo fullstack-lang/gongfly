@@ -11,8 +11,8 @@ var Scenario1 = (&models.Scenario{
 
 	ZoomLevel: 6,
 
-	Lat: (CDG_LFPG.Lat + TLN_LFTH_ref.Lat) / 2.0,
-	Lng: CDG_LFPG.Lng,
+	Lat: (CDG_LFPG_ref.Lat + TLN_LFTH_ref.Lat) / 2.0,
+	Lng: CDG_LFPG_ref.Lng,
 
 	MessageVisualSpeed: 5000,
 })

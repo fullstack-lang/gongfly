@@ -3,9 +3,9 @@ package visuals
 import (
 	"log"
 
+	gongfly_icons "github.com/fullstack-lang/gongfly/go/icons"
 	gongfly_models "github.com/fullstack-lang/gongfly/go/models"
 
-	gongleaflet_icons "github.com/fullstack-lang/gongleaflet/go/icons"
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
 )
 
@@ -31,6 +31,7 @@ func attachVisualTrack(
 	visualTrack.DisplayLevelAndSpeed = displayLevelAndSpeed
 	visualTrack.ColorEnum = colorEnum
 	visualTrack.LayerGroup = layerGroup
+	visualTrack.Stage_ = gongleafletStage
 	visualTrack.UpdateTrack()
 }
 
@@ -47,6 +48,7 @@ func attachMarker(
 	visualCenter.MarkerInteface = visualCenterInterface
 	visualCenter.ColorEnum = colorEnum
 	visualCenter.DivIcon = divIcon
+	visualCenter.Stage_ = gongleafletStage
 	visualCenter.UpdateMarker()
 }
 
@@ -55,6 +57,7 @@ func attachLine(
 	gongleafletStage *gongleaflet_models.StageStruct,
 	visualLineInterface gongleaflet_models.LineInterface,
 	DashStyleEnum gongleaflet_models.DashStyleEnum) {
+
 	visualLine := new(gongleaflet_models.VLine).Stage(gongleafletStage)
 	visualLine.DashStyleEnum = DashStyleEnum
 	visualLine.LineInterface = visualLineInterface
@@ -72,6 +75,9 @@ func attachCircle(
 	visualCircle.UpdateCircle()
 }
 
+// AttachVisualElementsToModelElements performs the
+// link between the simulation objects and their visual
+// representation on the leaflet map
 func AttachVisualElementsToModelElements(
 	gongflyStage *gongfly_models.StageStruct,
 	gongleafletStage *gongleaflet_models.StageStruct,
@@ -79,27 +85,27 @@ func AttachVisualElementsToModelElements(
 
 	for obj := range gongflyStage.Messages {
 		attachVisualTrack(gongleafletStage,
-			obj, gongleaflet_icons.Arrow, gongleaflet_models.GREY, layerGroup, false, false)
+			obj, gongfly_icons.Arrow, gongleaflet_models.GREY, layerGroup, false, false)
 	}
 	for obj := range gongflyStage.Liners {
 		attachVisualTrack(gongleafletStage,
-			obj, gongleaflet_icons.Airplane, gongleaflet_models.GREY, layerGroup, true, true)
+			obj, gongfly_icons.Airplane, gongleaflet_models.GREY, layerGroup, true, true)
 	}
 	for obj := range gongflyStage.Satellites {
 		attachVisualTrack(gongleafletStage,
-			obj, gongleaflet_icons.Satellite, gongleaflet_models.GREY, layerGroup, true, true)
+			obj, gongfly_icons.Satellite, gongleaflet_models.GREY, layerGroup, true, true)
 	}
 	for obj := range gongflyStage.Radars {
 		attachMarker(gongleafletStage,
 			obj,
 			gongleaflet_models.LIGHT_BROWN_8D6E63,
-			gongleaflet_icons.Radar)
+			gongfly_icons.Radar)
 		attachCircle(gongleafletStage,
 			obj, gongleaflet_models.FIVE_TWENTY)
 	}
 	for obj := range gongflyStage.CivilianAirports {
 		attachMarker(gongleafletStage,
-			obj, gongleaflet_models.BLUE, gongleaflet_icons.Airport)
+			obj, gongleaflet_models.BLUE, gongfly_icons.Airport)
 	}
 	for obj := range gongflyStage.OpsLines {
 		attachLine(gongleafletStage,

@@ -42,6 +42,10 @@ var Arrow *gongleaflet_models.DivIcon
 var cross_rot45 string
 var Cross *gongleaflet_models.DivIcon
 
+//go:embed satellite.svg
+var satellite string
+var Satellite *gongleaflet_models.DivIcon
+
 func LoadIcons(gongleafletStage *gongleaflet_models.StageStruct) {
 
 	Airplane = (&gongleaflet_models.DivIcon{
@@ -87,5 +91,10 @@ func LoadIcons(gongleafletStage *gongleaflet_models.StageStruct) {
 	Cross = (&gongleaflet_models.DivIcon{
 		Name: "Cross",
 		SVG:  cross_rot45,
+	}).Stage(gongleafletStage)
+
+	Satellite = (&gongleaflet_models.DivIcon{
+		Name: "Satellite",
+		SVG:  satellite,
 	}).Stage(gongleafletStage)
 }

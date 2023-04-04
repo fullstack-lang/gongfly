@@ -31,8 +31,8 @@ type VisualTrack struct {
 	// if true, display level and speed below the icon
 	DisplayLevelAndSpeed bool
 
-	// the stage of the visual track
-	stage *StageStruct
+	// the Stage_ of the visual track
+	Stage_ *StageStruct
 }
 
 func (visualTrack *VisualTrack) UpdateTrack() {
@@ -46,7 +46,7 @@ func (visualTrack *VisualTrack) UpdateTrack() {
 		visualTrack.Speed = visualTrack.VisualTrackInterface.GetSpeed()
 		visualTrack.VerticalSpeed = visualTrack.VisualTrackInterface.GetVerticalSpeed()
 
-		visualTrack.LayerGroup = ComputeLayerGroupFromLayerGroupName(visualTrack.stage, visualTrack.VisualTrackInterface.GetLayerGroupName())
+		visualTrack.LayerGroup = ComputeLayerGroupFromLayerGroupName(visualTrack.Stage_, visualTrack.VisualTrackInterface.GetLayerGroupName())
 	}
 }
 
@@ -71,7 +71,7 @@ func AttachVisualTrack(
 	visualTrack.DisplayTrackHistory = displayTrackHistory
 	visualTrack.DisplayLevelAndSpeed = displayLevelAndSpeed
 	visualTrack.ColorEnum = colorEnum
-	visualTrack.stage = gongleafletStage
+	visualTrack.Stage_ = gongleafletStage
 	visualTrack.UpdateTrack()
 
 	return

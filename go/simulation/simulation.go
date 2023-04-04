@@ -23,6 +23,11 @@ type Simulation struct {
 	engine           *gongsim_models.Engine
 }
 
+func (simulation *Simulation) GetEngine() (engine *gongsim_models.Engine) {
+	engine = simulation.engine
+	return
+}
+
 func (simulation *Simulation) setInitialStateVectorOfAgentsAndSimulation() {
 
 	// start and end date
@@ -40,7 +45,7 @@ func (simulation *Simulation) setInitialStateVectorOfAgentsAndSimulation() {
 
 // NewSimulation ...
 func NewSimulation(
-	target_modelsStage *gongfly_models.StageStruct,
+	gongflyStage *gongfly_models.StageStruct,
 	gongsimStage *gongsim_models.StageStruct,
 	gongleafletStage *gongleaflet_models.StageStruct) (simulation *Simulation) {
 
@@ -49,7 +54,7 @@ func NewSimulation(
 	//
 	engine := new(gongsim_models.Engine).Stage(gongsimStage)
 	simulation = &Simulation{
-		gongflyStage:     target_modelsStage,
+		gongflyStage:     gongflyStage,
 		gongleafletStage: gongleafletStage,
 		gongsimStage:     gongsimStage,
 		engine:           engine,
