@@ -57,7 +57,11 @@ github.com/fullstack-lang/gongleaflet/go/orm
 github.com/fullstack-lang/gongleaflet/ng/projects
 # github.com/fullstack-lang/gongsim v0.0.0-20230402080527-f5bb63b62bcc
 ## explicit; go 1.18
+github.com/fullstack-lang/gongsim/go/controllers
+github.com/fullstack-lang/gongsim/go/fullstack
 github.com/fullstack-lang/gongsim/go/models
+github.com/fullstack-lang/gongsim/go/orm
+github.com/fullstack-lang/gongsim/ng/projects
 # github.com/gin-contrib/cors v1.4.0
 ## explicit; go 1.13
 github.com/gin-contrib/cors

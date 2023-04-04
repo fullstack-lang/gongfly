@@ -18,6 +18,8 @@ import (
 	gongleaflet_fullstack "github.com/fullstack-lang/gongleaflet/go/fullstack"
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
 
+	gongsim_fullstack "github.com/fullstack-lang/gongsim/go/fullstack"
+
 	gongdoc_load "github.com/fullstack-lang/gongdoc/go/load"
 )
 
@@ -65,7 +67,10 @@ func main() {
 
 	// setup stack
 	gongflyStage := gongfly_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongfly/go/models")
-	gongleafletStage := gongleaflet_fullstack.NewStackInstance(r, "github.com/fullstack-lang/leaflet/go/models")
+	gongleafletStage := gongleaflet_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongleaflet/go/models")
+	gongsimStage := gongsim_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongsim/go/models")
+	_ = gongsimStage
+
 	icons.LoadIcons(gongleafletStage)
 
 	defaultLayer := new(gongleaflet_models.LayerGroup).Stage(gongleafletStage)
