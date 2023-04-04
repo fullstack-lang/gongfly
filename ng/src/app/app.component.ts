@@ -1,37 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { Router, RouterState } from '@angular/router';
+import { Observable, combineLatest, timer } from 'rxjs'
+
 import * as gongdoc from 'gongdoc'
-
 import * as gongfly from 'gongfly'
-import { combineLatest, Observable, timer } from 'rxjs'
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  title = 'ng';
+export class AppComponent implements OnInit {
 
-  view = 'Carto view'
-  carto = 'Carto view'
-  data = 'Data view'
+  default = 'Gongfly Data/Model'
+  view = this.default
 
-  leaflet = 'Leaflet view'
+  views: string[] = [this.default];
 
-  sim = 'Sim view'
-
-  diagrams = 'UML view'
-  meta_diagrams = 'Meta diagrams view'
-
-  meta = 'Meta view'
-
-  views: string[] = [this.carto, this.data, this.leaflet, this.sim, this.diagrams, this.meta_diagrams, this.meta];
-
-  obsTimer: Observable<number> = timer(1000, 500) // due time 1', period
-  currTime: number = 0
-  ''
+  GONG__StackPath = "github.com/fullstack-lang/gongfly/go/models"
 
   constructor(
   ) {
@@ -39,10 +24,5 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
-
-  }
-
-  // callbak function that is attached to the generic engine
-  engineUpdatedCallbackFunction = (updateDisplay: boolean): void => {
   }
 }

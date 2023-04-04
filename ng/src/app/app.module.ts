@@ -4,8 +4,6 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { GongflyModule } from 'gongfly'
-import { HttpClientModule } from '@angular/common/http';
 
 // for angular material
 import { MatSliderModule } from '@angular/material/slider';
@@ -29,31 +27,25 @@ import { FormsModule } from '@angular/forms';
 // to split the screen
 import { AngularSplitModule } from 'angular-split';
 
-
-// reusable simulation library from gong
-import { GongsimcontrolModule } from 'gongsimcontrol'
-import { GongsimModule } from 'gongsim'
-
 import { GongdocModule } from 'gongdoc'
 import { GongdocdiagramsModule } from 'gongdocdiagrams'
 
 import { GongModule } from 'gong'
 
-// Leaflet
-import { GongleafletModule } from 'gongleaflet'
-import { GongleafletspecificModule } from 'gongleafletspecific'
+import { GongflyModule } from 'gongfly'
+import { GongflyspecificModule } from 'gongflyspecific'
+import { GongstructSelectionService } from 'gongfly'
 
-import { AppRoutingModule } from './app-routing.module';
+// mandatory
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-
-    AppRoutingModule,
 
     HttpClientModule,
 
@@ -75,23 +67,19 @@ import { AppRoutingModule } from './app-routing.module';
 
     AngularSplitModule,
 
-    // gongsim stack
-    GongsimcontrolModule,
-    GongsimModule,
+    // gong stack (for analysis of gong code in the current stack)
+    GongModule,
 
-    // gongdoc stack
+    // gongdoc stack (for displaying UML diagrams of the gong code in the current stack)
     GongdocModule,
     GongdocdiagramsModule,
 
-    // gongleaflet stack
-    GongleafletModule,
-    GongleafletspecificModule,
-
-    //
-    GongModule,
-    GongflyModule
+    GongflyModule,
+    GongflyspecificModule,
   ],
-  providers: [],
+  providers: [
+    GongstructSelectionService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

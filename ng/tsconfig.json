@@ -1,26 +1,14 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
-    "declaration": false,
-    "downlevelIteration": true,
-    "experimentalDecorators": true,
-    "moduleResolution": "node",
-    "importHelpers": true,
-    "target": "es2015",
-    "module": "es2020",
-    // "strict": true,
-    "strictBindCallApply": true,
-    "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
-    "strictNullChecks": true,
-    "skipLibCheck": true, // for compiling jointjs
-    "lib": [
-      "es2018",
-      "dom"
-    ],
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
     "paths": {
+
       // 
       // https://angular.io/guide/creating-libraries#use-typescript-path-mapping-for-peer-dependencies
       //
@@ -52,14 +40,18 @@
       "leaflet-rotatedmarker": [
         "./node_modules/leaflet-rotatedmarker"
       ],
-      "jointjs": [
-        "./node_modules/jointjs"
-      ],
       "lodash": [
         "./node_modules/lodash"
       ],
-      "@types/jointjs": [
-        "./node_modules/@types/jointjs"
+      "@types/loash": [
+        "./node_modules/@types/loash"
+      ],
+      "jointjs": [
+        "./node_modules/jointjs"
+      ],
+      "gongflyspecific": [
+        "projects/gongflyspecific/src/public-api.ts",
+        "dist/gongflyspecific"
       ],
       "@angular-material-components/datetime-picker": [
         "./node_modules/@angular-material-components/datetime-picker"
@@ -70,52 +62,42 @@
       "tslib": [
         "./node_modules/tslib"
       ],
-      //
-      "gongfly": [
-        "projects/gongfly/src/public-api.ts"
-      ],
-      "gongsim": [
-        "../vendor/github.com/fullstack-lang/gongsim/ng/projects/gongsim/src/public-api.ts"
-      ],
-      "gongsimcontrol": [
-        "../vendor/github.com/fullstack-lang/gongsim/ng/projects/gongsimcontrol/src/public-api.ts"
-      ],
       "gong": [
-        "../vendor/github.com/fullstack-lang/gong/ng/projects/gong/src/public-api.ts"
+      "../vendor/github.com/fullstack-lang/gong/ng/projects/gong/src/public-api.ts"
       ],
       "gongdoc": [
-        "../vendor/github.com/fullstack-lang/gongdoc/ng/projects/gongdoc/src/public-api.ts"
+      "../vendor/github.com/fullstack-lang/gongdoc/ng/projects/gongdoc/src/public-api.ts"
       ],
       "gongdocdiagrams": [
-        "../vendor/github.com/fullstack-lang/gongdoc/ng/projects/gongdocdiagrams/src/public-api.ts"
+      "../vendor/github.com/fullstack-lang/gongdoc/ng/projects/gongdocdiagrams/src/public-api.ts"
       ],
-      "gongleaflet": [
-        "../vendor/github.com/fullstack-lang/gongleaflet/ng/projects/gongleaflet/src/public-api.ts"
-      ],
-      "gongleafletspecific": [
-        "../vendor/github.com/fullstack-lang/gongleaflet/ng/projects/gongleafletspecific/src/public-api.ts"
-      ],
-      "gongmarkdown": [
-        "../vendor/github.com/fullstack-lang/gongmarkdown/ng/projects/gongmarkdown/src/public-api.ts"
-      ],
-      "gongmarkdownspecific": [
-        "../vendor/github.com/fullstack-lang/gongmarkdown/ng/projects/gongmarkdownspecific/src/public-api.ts"
-      ],
-      "ngx-markdown": [
-        "./node_modules/ngx-markdown"
-      ],
-      "gongng2charts": [
-        "../vendor/github.com/fullstack-lang/gongng2charts/ng/projects/gongng2charts/src/public-api.ts"
-      ],
-      "gongng2chartsspecific": [
-        "../vendor/github.com/fullstack-lang/gongng2charts/ng/projects/gongng2chartsspecific/src/public-api.ts"
-      ],
-      "ng2-charts": [
-        "./node_modules/ng2-charts"
-      ],
-      "chart.js": [
-        "./node_modules/chart.js"
-      ],
-    }
+
+      "gongfly": [
+        "projects/gongfly/src/public-api.ts",
+        "dist/gongfly"
+      ]
+    },
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "useDefineForClassFields": false,
+    "lib": [
+      "ES2022",
+      "dom"
+    ]
+  ,"skipLibCheck":true},
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
   }
 }

@@ -47,7 +47,7 @@ github.com/fullstack-lang/gongdoc/go/models
 github.com/fullstack-lang/gongdoc/go/node2gongdoc
 github.com/fullstack-lang/gongdoc/go/orm
 github.com/fullstack-lang/gongdoc/ng/projects
-# github.com/fullstack-lang/gongleaflet v0.0.0-20230404142630-b70ea59d05e9
+# github.com/fullstack-lang/gongleaflet v0.0.0-20230404163500-844766f5d8ca
 ## explicit; go 1.18
 github.com/fullstack-lang/gongleaflet/go/controllers
 github.com/fullstack-lang/gongleaflet/go/fullstack
