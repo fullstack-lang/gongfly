@@ -1,6 +1,8 @@
 package reference
 
 import (
+	"time"
+
 	"github.com/fullstack-lang/gongfly/go/models"
 	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
 )
@@ -70,4 +72,14 @@ func LoadSatellites(stage *models.StageStruct, engine *gongsim_models.Engine) {
 		Name:  "Sat 8",
 	}).InitFromTLE().Stage(stage).Register(engine)
 
+	// add sim event
+	Sat1.QueueUpdateEvent(engine, 1*time.Second)
+	Sat3.QueueUpdateEvent(engine, 1*time.Second)
+	Sat4.QueueUpdateEvent(engine, 1*time.Second)
+	Sat2.QueueUpdateEvent(engine, 1*time.Second)
+	ISS.QueueUpdateEvent(engine, 1*time.Second)
+	Sat5.QueueUpdateEvent(engine, 1*time.Second)
+	Sat6.QueueUpdateEvent(engine, 1*time.Second)
+	Sat7.QueueUpdateEvent(engine, 1*time.Second)
+	Sat8.QueueUpdateEvent(engine, 1*time.Second)
 }

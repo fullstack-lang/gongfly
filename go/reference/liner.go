@@ -1,6 +1,8 @@
 package reference
 
 import (
+	"time"
+
 	"github.com/fullstack-lang/gongfly/go/models"
 
 	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
@@ -29,4 +31,7 @@ var Sc1_AF_3577_MDM *models.Liner
 
 func LoadLiners(stage *models.StageStruct, engine *gongsim_models.Engine) {
 	Sc1_AF_3577_MDM = Sc1_AF_CDG_HYE_ref.Stage(stage).Register(engine)
+
+	// add sim event
+	Sc1_AF_3577_MDM.QueueUpdateEvent(engine, 1*time.Second)
 }

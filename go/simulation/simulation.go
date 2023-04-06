@@ -30,6 +30,8 @@ func (simulation *Simulation) GetEngine() (engine *gongsim_models.Engine) {
 
 func (simulation *Simulation) setInitialStateVectorOfAgentsAndSimulation() {
 
+	reference.LoadScenario(simulation.gongflyStage)
+
 	// start and end date
 	simulation.scenario = reference.Scenario1
 	simulation.engine.SetStartTime(simulation.scenario.GetStart())
@@ -53,17 +55,19 @@ func NewSimulation(
 	// simulation generic initialisation steps
 	//
 	engine := new(gongsim_models.Engine).Stage(gongsimStage)
+
 	simulation = &Simulation{
 		gongflyStage:     gongflyStage,
 		gongleafletStage: gongleafletStage,
 		gongsimStage:     gongsimStage,
 		engine:           engine,
 	}
+	engine.Simulation = simulation
 
 	//
 	// simulation initialisation
 	//
-	simulation.Reset()
+	simulation.Reset(engine)
 
 	return
 }
@@ -145,7 +149,7 @@ func (simulation *Simulation) CommitAgents(engine *gongsim_models.Engine) {
 }
 
 // Reset simulation
-func (simulation *Simulation) Reset() {
+func (simulation *Simulation) Reset(engine *gongsim_models.Engine) {
 
 	// remove all events from agents
 	for _, agent := range simulation.engine.Agents() {

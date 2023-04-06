@@ -85,10 +85,10 @@ func main() {
 
 	// load all elments
 	gongfly_icons.LoadIcons(gongleafletStage)
+
+	// reference.LoadSatellites(gongflyStage, simulation.GetEngine())
 	reference.LoadCenters(gongflyStage, simulation.GetEngine())
 	reference.LoadLiners(gongflyStage, simulation.GetEngine())
-	reference.LoadSatellites(gongflyStage, simulation.GetEngine())
-	reference.LoadScenario(gongflyStage)
 
 	defaultLayer := new(gongleaflet_models.LayerGroup).Stage(gongleafletStage)
 	defaultLayer.Name = "default"
