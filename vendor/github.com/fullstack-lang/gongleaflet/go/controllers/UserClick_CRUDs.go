@@ -151,7 +151,7 @@ func (controller *Controller) PostUserClick(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoUserClick.CheckoutPhaseOneInstance(&userclickDB)
-	userclick := (*backRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
+	userclick := backRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr[userclickDB.ID]
 
 	if userclick != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), userclick)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateUserClick(c *gin.Context) {
 	userclickDB.CopyBasicFieldsToUserClick(userclickNew)
 
 	// get stage instance from DB instance, and call callback function
-	userclickOld := (*backRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
+	userclickOld := backRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr[userclickDB.ID]
 	if userclickOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), userclickOld, userclickNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteUserClick(c *gin.Context) {
 	userclickDB.CopyBasicFieldsToUserClick(userclickDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	userclickStaged := (*backRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
+	userclickStaged := backRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr[userclickDB.ID]
 	if userclickStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), userclickStaged, userclickDeleted)
 	}

@@ -19,6 +19,8 @@ import { ScenarioService } from '../scenario.service'
 
 // insertion point for additional imports
 
+import { RouteService } from '../route-service';
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -128,6 +130,8 @@ export class ScenariosTableComponent implements OnInit {
 
     private router: Router,
     private activatedRoute: ActivatedRoute,
+
+    private routeService: RouteService,
   ) {
 
     // compute mode
@@ -252,18 +256,15 @@ export class ScenariosTableComponent implements OnInit {
 
   }
 
-  // display scenario in router
-  displayScenarioInRouter(scenarioID: number) {
-    this.router.navigate(["github_com_fullstack_lang_gongfly_go-" + "scenario-display", scenarioID])
-  }
-
   // set editor outlet
   setEditorRouterOutlet(scenarioID: number) {
-    this.router.navigate([{
-      outlets: {
-        github_com_fullstack_lang_gongfly_go_editor: ["github_com_fullstack_lang_gongfly_go-" + "scenario-detail", scenarioID, this.GONG__StackPath]
-      }
-    }]);
+    let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + "scenario" + "-detail"
+
+    let outletConf: any = {}
+    outletConf[outletName] = [fullPath, scenarioID, this.GONG__StackPath]
+
+    this.router.navigate([{ outlets: outletConf }])
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

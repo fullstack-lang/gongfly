@@ -423,6 +423,14 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		map_GongsimCommand_Identifiers[gongsimcommand] = id
 
 		// Initialisation of values
+		if gongsimcommand.Engine != nil {
+			setPointerField = PointerFieldInitStatement
+			setPointerField = strings.ReplaceAll(setPointerField, "{{Identifier}}", id)
+			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldName}}", "Engine")
+			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldNameValue}}", map_Engine_Identifiers[gongsimcommand.Engine])
+			pointersInitializesStatements += setPointerField
+		}
+
 	}
 
 	for idx, gongsimstatus := range gongsimstatusOrdered {

@@ -6,39 +6,58 @@ import (
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
 )
 
-var MapOptions = (&gongleaflet_models.MapOptions{
+var MapOptions *gongleaflet_models.MapOptions
 
-	Name:               "Whole France",
-	Lat:                gongfly_reference.Scenario1.Lat,
-	Lng:                gongfly_reference.Scenario1.Lng,
-	ZoomLevel:          gongfly_reference.Scenario1.ZoomLevel,
-	ZoomControl:        false,
-	AttributionControl: true,
-	ZoomSnap:           1,
-	UrlTemplate:        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-	Attribution:        "osm",
-	MaxZoom:            18,
-	LayerGroupUses: []*gongleaflet_models.LayerGroupUse{
-		AircraftLayerGroupUse,
-		CenterLayerGroupUse,
-		SatelitteLayerGroupUse,
-	},
-}).Stage(&gongleaflet_models.Stage)
+var AircraftLayerGroupUse *gongleaflet_models.LayerGroupUse
+var SatelitteLayerGroupUse *gongleaflet_models.LayerGroupUse
+var CenterLayerGroupUse *gongleaflet_models.LayerGroupUse
 
-var AircraftLayerGroupUse = (&gongleaflet_models.LayerGroupUse{
-	Name:       string(gongfly_models.Aircraft_),
-	LayerGroup: AircraftLayerGroup,
-	Display:    true,
-}).Stage(&gongleaflet_models.Stage)
+func LoadMapOptions(stage *gongleaflet_models.StageStruct) {
 
-var SatelitteLayerGroupUse = (&gongleaflet_models.LayerGroupUse{
-	Name:       string(gongfly_models.Satellite_),
-	LayerGroup: SatelliteLayerGroup,
-	Display:    true,
-}).Stage(&gongleaflet_models.Stage)
+	MapOptions = &(gongleaflet_models.MapOptions{
 
-var CenterLayerGroupUse = (&gongleaflet_models.LayerGroupUse{
-	Name:       string(gongfly_models.Center_),
-	LayerGroup: CenterLayerGroup,
-	Display:    true,
-}).Stage(&gongleaflet_models.Stage)
+		Name:               "Whole France",
+		Lat:                gongfly_reference.Scenario1.Lat,
+		Lng:                gongfly_reference.Scenario1.Lng,
+		ZoomLevel:          gongfly_reference.Scenario1.ZoomLevel,
+		ZoomControl:        false,
+		AttributionControl: true,
+		ZoomSnap:           1,
+		UrlTemplate:        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+		Attribution:        "osm",
+		MaxZoom:            18,
+		LayerGroupUses: []*gongleaflet_models.LayerGroupUse{
+			AircraftLayerGroupUse,
+			CenterLayerGroupUse,
+			SatelitteLayerGroupUse,
+		},
+	})
+
+	MapOptions.Stage(stage)
+
+}
+
+func LoadLayerGroupsUse(stage *gongleaflet_models.StageStruct) {
+
+	AircraftLayerGroupUse = (&gongleaflet_models.LayerGroupUse{
+		Name:       string(gongfly_models.Aircraft_),
+		LayerGroup: AircraftLayerGroup,
+		Display:    true,
+	})
+
+	SatelitteLayerGroupUse = (&gongleaflet_models.LayerGroupUse{
+		Name:       string(gongfly_models.Satellite_),
+		LayerGroup: SatelliteLayerGroup,
+		Display:    true,
+	})
+
+	CenterLayerGroupUse = (&gongleaflet_models.LayerGroupUse{
+		Name:       string(gongfly_models.Center_),
+		LayerGroup: CenterLayerGroup,
+		Display:    true,
+	})
+
+	AircraftLayerGroupUse.Stage(stage)
+	SatelitteLayerGroupUse.Stage(stage)
+	CenterLayerGroupUse.Stage(stage)
+}

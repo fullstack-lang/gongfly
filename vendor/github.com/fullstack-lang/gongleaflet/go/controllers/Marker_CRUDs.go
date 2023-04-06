@@ -151,7 +151,7 @@ func (controller *Controller) PostMarker(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoMarker.CheckoutPhaseOneInstance(&markerDB)
-	marker := (*backRepo.BackRepoMarker.Map_MarkerDBID_MarkerPtr)[markerDB.ID]
+	marker := backRepo.BackRepoMarker.Map_MarkerDBID_MarkerPtr[markerDB.ID]
 
 	if marker != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), marker)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateMarker(c *gin.Context) {
 	markerDB.CopyBasicFieldsToMarker(markerNew)
 
 	// get stage instance from DB instance, and call callback function
-	markerOld := (*backRepo.BackRepoMarker.Map_MarkerDBID_MarkerPtr)[markerDB.ID]
+	markerOld := backRepo.BackRepoMarker.Map_MarkerDBID_MarkerPtr[markerDB.ID]
 	if markerOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), markerOld, markerNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteMarker(c *gin.Context) {
 	markerDB.CopyBasicFieldsToMarker(markerDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	markerStaged := (*backRepo.BackRepoMarker.Map_MarkerDBID_MarkerPtr)[markerDB.ID]
+	markerStaged := backRepo.BackRepoMarker.Map_MarkerDBID_MarkerPtr[markerDB.ID]
 	if markerStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), markerStaged, markerDeleted)
 	}

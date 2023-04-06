@@ -19,6 +19,8 @@ import { MapOptionsService } from '../mapoptions.service'
 
 // insertion point for additional imports
 
+import { RouteService } from '../route-service';
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -146,6 +148,8 @@ export class MapOptionssTableComponent implements OnInit {
 
     private router: Router,
     private activatedRoute: ActivatedRoute,
+
+    private routeService: RouteService,
   ) {
 
     // compute mode
@@ -280,18 +284,15 @@ export class MapOptionssTableComponent implements OnInit {
 
   }
 
-  // display mapoptions in router
-  displayMapOptionsInRouter(mapoptionsID: number) {
-    this.router.navigate(["github_com_fullstack_lang_gongleaflet_go-" + "mapoptions-display", mapoptionsID])
-  }
-
   // set editor outlet
   setEditorRouterOutlet(mapoptionsID: number) {
-    this.router.navigate([{
-      outlets: {
-        github_com_fullstack_lang_gongleaflet_go_editor: ["github_com_fullstack_lang_gongleaflet_go-" + "mapoptions-detail", mapoptionsID, this.GONG__StackPath]
-      }
-    }]);
+    let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + "mapoptions" + "-detail"
+
+    let outletConf: any = {}
+    outletConf[outletName] = [fullPath, mapoptionsID, this.GONG__StackPath]
+
+    this.router.navigate([{ outlets: outletConf }])
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

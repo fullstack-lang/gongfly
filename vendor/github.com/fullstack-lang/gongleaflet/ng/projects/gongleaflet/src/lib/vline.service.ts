@@ -43,22 +43,26 @@ export class VLineService {
   }
 
   /** GET vlines from the server */
-  getVLines(GONG__StackPath: string = ""): Observable<VLineDB[]> {
+  getVLines(GONG__StackPath: string): Observable<VLineDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<VLineDB[]>(this.vlinesUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched vlines')),
+        tap(),
+		// tap(_ => this.log('fetched vlines')),
         catchError(this.handleError<VLineDB[]>('getVLines', []))
       );
   }
 
   /** GET vline by id. Will 404 if id not found */
-  getVLine(id: number): Observable<VLineDB> {
+  getVLine(id: number, GONG__StackPath: string): Observable<VLineDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.vlinesUrl}/${id}`;
-    return this.http.get<VLineDB>(url).pipe(
-      tap(_ => this.log(`fetched vline id=${id}`)),
+    return this.http.get<VLineDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched vline id=${id}`)),
       catchError(this.handleError<VLineDB>(`getVLine id=${id}`))
     );
   }
@@ -75,10 +79,10 @@ export class VLineService {
       params: params
     }
 
-	return this.http.post<VLineDB>(this.vlinesUrl, vlinedb, httpOptions).pipe(
+    return this.http.post<VLineDB>(this.vlinesUrl, vlinedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted vlinedb id=${vlinedb.ID}`)
+        // this.log(`posted vlinedb id=${vlinedb.ID}`)
       }),
       catchError(this.handleError<VLineDB>('postVLine'))
     );
@@ -130,11 +134,11 @@ export class VLineService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in VLineService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("VLineService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -145,6 +149,6 @@ export class VLineService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

@@ -42,22 +42,26 @@ export class UserClickService {
   }
 
   /** GET userclicks from the server */
-  getUserClicks(GONG__StackPath: string = ""): Observable<UserClickDB[]> {
+  getUserClicks(GONG__StackPath: string): Observable<UserClickDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<UserClickDB[]>(this.userclicksUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched userclicks')),
+        tap(),
+		// tap(_ => this.log('fetched userclicks')),
         catchError(this.handleError<UserClickDB[]>('getUserClicks', []))
       );
   }
 
   /** GET userclick by id. Will 404 if id not found */
-  getUserClick(id: number): Observable<UserClickDB> {
+  getUserClick(id: number, GONG__StackPath: string): Observable<UserClickDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.userclicksUrl}/${id}`;
-    return this.http.get<UserClickDB>(url).pipe(
-      tap(_ => this.log(`fetched userclick id=${id}`)),
+    return this.http.get<UserClickDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched userclick id=${id}`)),
       catchError(this.handleError<UserClickDB>(`getUserClick id=${id}`))
     );
   }
@@ -73,10 +77,10 @@ export class UserClickService {
       params: params
     }
 
-	return this.http.post<UserClickDB>(this.userclicksUrl, userclickdb, httpOptions).pipe(
+    return this.http.post<UserClickDB>(this.userclicksUrl, userclickdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted userclickdb id=${userclickdb.ID}`)
+        // this.log(`posted userclickdb id=${userclickdb.ID}`)
       }),
       catchError(this.handleError<UserClickDB>('postUserClick'))
     );
@@ -127,11 +131,11 @@ export class UserClickService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in UserClickService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("UserClickService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -142,6 +146,6 @@ export class UserClickService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

@@ -119,13 +119,13 @@ var Marker_Fields = []string{
 
 type BackRepoMarkerStruct struct {
 	// stores MarkerDB according to their gorm ID
-	Map_MarkerDBID_MarkerDB *map[uint]*MarkerDB
+	Map_MarkerDBID_MarkerDB map[uint]*MarkerDB
 
 	// stores MarkerDB ID according to Marker address
-	Map_MarkerPtr_MarkerDBID *map[*models.Marker]uint
+	Map_MarkerPtr_MarkerDBID map[*models.Marker]uint
 
 	// stores Marker according to their gorm ID
-	Map_MarkerDBID_MarkerPtr *map[uint]*models.Marker
+	Map_MarkerDBID_MarkerPtr map[uint]*models.Marker
 
 	db *gorm.DB
 
@@ -143,40 +143,8 @@ func (backRepoMarker *BackRepoMarkerStruct) GetDB() *gorm.DB {
 
 // GetMarkerDBFromMarkerPtr is a handy function to access the back repo instance from the stage instance
 func (backRepoMarker *BackRepoMarkerStruct) GetMarkerDBFromMarkerPtr(marker *models.Marker) (markerDB *MarkerDB) {
-	id := (*backRepoMarker.Map_MarkerPtr_MarkerDBID)[marker]
-	markerDB = (*backRepoMarker.Map_MarkerDBID_MarkerDB)[id]
-	return
-}
-
-// BackRepoMarker.Init set up the BackRepo of the Marker
-func (backRepoMarker *BackRepoMarkerStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoMarker.Map_MarkerDBID_MarkerPtr != nil {
-		err := errors.New("In Init, backRepoMarker.Map_MarkerDBID_MarkerPtr should be nil")
-		return err
-	}
-
-	if backRepoMarker.Map_MarkerDBID_MarkerDB != nil {
-		err := errors.New("In Init, backRepoMarker.Map_MarkerDBID_MarkerDB should be nil")
-		return err
-	}
-
-	if backRepoMarker.Map_MarkerPtr_MarkerDBID != nil {
-		err := errors.New("In Init, backRepoMarker.Map_MarkerPtr_MarkerDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.Marker, 0)
-	backRepoMarker.Map_MarkerDBID_MarkerPtr = &tmp
-
-	tmpDB := make(map[uint]*MarkerDB, 0)
-	backRepoMarker.Map_MarkerDBID_MarkerDB = &tmpDB
-
-	tmpID := make(map[*models.Marker]uint, 0)
-	backRepoMarker.Map_MarkerPtr_MarkerDBID = &tmpID
-
-	backRepoMarker.db = db
-	backRepoMarker.stage = stage
+	id := backRepoMarker.Map_MarkerPtr_MarkerDBID[marker]
+	markerDB = backRepoMarker.Map_MarkerDBID_MarkerDB[id]
 	return
 }
 
@@ -190,7 +158,7 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseOne(stage *models.StageSt
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, marker := range *backRepoMarker.Map_MarkerDBID_MarkerPtr {
+	for id, marker := range backRepoMarker.Map_MarkerDBID_MarkerPtr {
 		if _, ok := stage.Markers[marker]; !ok {
 			backRepoMarker.CommitDeleteInstance(id)
 		}
@@ -202,19 +170,19 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseOne(stage *models.StageSt
 // BackRepoMarker.CommitDeleteInstance commits deletion of Marker to the BackRepo
 func (backRepoMarker *BackRepoMarkerStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	marker := (*backRepoMarker.Map_MarkerDBID_MarkerPtr)[id]
+	marker := backRepoMarker.Map_MarkerDBID_MarkerPtr[id]
 
 	// marker is not staged anymore, remove markerDB
-	markerDB := (*backRepoMarker.Map_MarkerDBID_MarkerDB)[id]
+	markerDB := backRepoMarker.Map_MarkerDBID_MarkerDB[id]
 	query := backRepoMarker.db.Unscoped().Delete(&markerDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoMarker.Map_MarkerPtr_MarkerDBID), marker)
-	delete((*backRepoMarker.Map_MarkerDBID_MarkerPtr), id)
-	delete((*backRepoMarker.Map_MarkerDBID_MarkerDB), id)
+	delete(backRepoMarker.Map_MarkerPtr_MarkerDBID, marker)
+	delete(backRepoMarker.Map_MarkerDBID_MarkerPtr, id)
+	delete(backRepoMarker.Map_MarkerDBID_MarkerDB, id)
 
 	return
 }
@@ -224,7 +192,7 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitDeleteInstance(id uint) (Error
 func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseOneInstance(marker *models.Marker) (Error error) {
 
 	// check if the marker is not commited yet
-	if _, ok := (*backRepoMarker.Map_MarkerPtr_MarkerDBID)[marker]; ok {
+	if _, ok := backRepoMarker.Map_MarkerPtr_MarkerDBID[marker]; ok {
 		return
 	}
 
@@ -238,9 +206,9 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseOneInstance(marker *model
 	}
 
 	// update stores
-	(*backRepoMarker.Map_MarkerPtr_MarkerDBID)[marker] = markerDB.ID
-	(*backRepoMarker.Map_MarkerDBID_MarkerPtr)[markerDB.ID] = marker
-	(*backRepoMarker.Map_MarkerDBID_MarkerDB)[markerDB.ID] = &markerDB
+	backRepoMarker.Map_MarkerPtr_MarkerDBID[marker] = markerDB.ID
+	backRepoMarker.Map_MarkerDBID_MarkerPtr[markerDB.ID] = marker
+	backRepoMarker.Map_MarkerDBID_MarkerDB[markerDB.ID] = &markerDB
 
 	return
 }
@@ -249,7 +217,7 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseOneInstance(marker *model
 // Phase Two is the update of instance with the field in the database
 func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, marker := range *backRepoMarker.Map_MarkerDBID_MarkerPtr {
+	for idx, marker := range backRepoMarker.Map_MarkerDBID_MarkerPtr {
 		backRepoMarker.CommitPhaseTwoInstance(backRepo, idx, marker)
 	}
 
@@ -261,7 +229,7 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseTwo(backRepo *BackRepoStr
 func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, marker *models.Marker) (Error error) {
 
 	// fetch matching markerDB
-	if markerDB, ok := (*backRepoMarker.Map_MarkerDBID_MarkerDB)[idx]; ok {
+	if markerDB, ok := backRepoMarker.Map_MarkerDBID_MarkerDB[idx]; ok {
 
 		markerDB.CopyBasicFieldsFromMarker(marker)
 
@@ -269,7 +237,7 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseTwoInstance(backRepo *Bac
 		// commit pointer value marker.LayerGroup translates to updating the marker.LayerGroupID
 		markerDB.LayerGroupID.Valid = true // allow for a 0 value (nil association)
 		if marker.LayerGroup != nil {
-			if LayerGroupId, ok := (*backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[marker.LayerGroup]; ok {
+			if LayerGroupId, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID[marker.LayerGroup]; ok {
 				markerDB.LayerGroupID.Int64 = int64(LayerGroupId)
 				markerDB.LayerGroupID.Valid = true
 			}
@@ -278,7 +246,7 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseTwoInstance(backRepo *Bac
 		// commit pointer value marker.DivIcon translates to updating the marker.DivIconID
 		markerDB.DivIconID.Valid = true // allow for a 0 value (nil association)
 		if marker.DivIcon != nil {
-			if DivIconId, ok := (*backRepo.BackRepoDivIcon.Map_DivIconPtr_DivIconDBID)[marker.DivIcon]; ok {
+			if DivIconId, ok := backRepo.BackRepoDivIcon.Map_DivIconPtr_DivIconDBID[marker.DivIcon]; ok {
 				markerDB.DivIconID.Int64 = int64(DivIconId)
 				markerDB.DivIconID.Valid = true
 			}
@@ -323,7 +291,7 @@ func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseOne() (Error error) {
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		marker, ok := (*backRepoMarker.Map_MarkerDBID_MarkerPtr)[markerDB.ID]
+		marker, ok := backRepoMarker.Map_MarkerDBID_MarkerPtr[markerDB.ID]
 		if ok {
 			delete(markerInstancesToBeRemovedFromTheStage, marker)
 		}
@@ -334,10 +302,10 @@ func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseOne() (Error error) {
 		marker.Unstage(backRepoMarker.GetStage())
 
 		// remove instance from the back repo 3 maps
-		markerID := (*backRepoMarker.Map_MarkerPtr_MarkerDBID)[marker]
-		delete((*backRepoMarker.Map_MarkerPtr_MarkerDBID), marker)
-		delete((*backRepoMarker.Map_MarkerDBID_MarkerDB), markerID)
-		delete((*backRepoMarker.Map_MarkerDBID_MarkerPtr), markerID)
+		markerID := backRepoMarker.Map_MarkerPtr_MarkerDBID[marker]
+		delete(backRepoMarker.Map_MarkerPtr_MarkerDBID, marker)
+		delete(backRepoMarker.Map_MarkerDBID_MarkerDB, markerID)
+		delete(backRepoMarker.Map_MarkerDBID_MarkerPtr, markerID)
 	}
 
 	return
@@ -347,12 +315,12 @@ func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseOne() (Error error) {
 // models version of the markerDB
 func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseOneInstance(markerDB *MarkerDB) (Error error) {
 
-	marker, ok := (*backRepoMarker.Map_MarkerDBID_MarkerPtr)[markerDB.ID]
+	marker, ok := backRepoMarker.Map_MarkerDBID_MarkerPtr[markerDB.ID]
 	if !ok {
 		marker = new(models.Marker)
 
-		(*backRepoMarker.Map_MarkerDBID_MarkerPtr)[markerDB.ID] = marker
-		(*backRepoMarker.Map_MarkerPtr_MarkerDBID)[marker] = markerDB.ID
+		backRepoMarker.Map_MarkerDBID_MarkerPtr[markerDB.ID] = marker
+		backRepoMarker.Map_MarkerPtr_MarkerDBID[marker] = markerDB.ID
 
 		// append model store with the new element
 		marker.Name = markerDB.Name_Data.String
@@ -367,7 +335,7 @@ func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseOneInstance(markerDB *M
 	// Map_MarkerDBID_MarkerDB)[markerDB hold variable pointers
 	markerDB_Data := *markerDB
 	preservedPtrToMarker := &markerDB_Data
-	(*backRepoMarker.Map_MarkerDBID_MarkerDB)[markerDB.ID] = preservedPtrToMarker
+	backRepoMarker.Map_MarkerDBID_MarkerDB[markerDB.ID] = preservedPtrToMarker
 
 	return
 }
@@ -377,7 +345,7 @@ func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseOneInstance(markerDB *M
 func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, markerDB := range *backRepoMarker.Map_MarkerDBID_MarkerDB {
+	for _, markerDB := range backRepoMarker.Map_MarkerDBID_MarkerDB {
 		backRepoMarker.CheckoutPhaseTwoInstance(backRepo, markerDB)
 	}
 	return
@@ -387,17 +355,17 @@ func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseTwo(backRepo *BackRepoS
 // Phase Two is the update of instance with the field in the database
 func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, markerDB *MarkerDB) (Error error) {
 
-	marker := (*backRepoMarker.Map_MarkerDBID_MarkerPtr)[markerDB.ID]
+	marker := backRepoMarker.Map_MarkerDBID_MarkerPtr[markerDB.ID]
 	_ = marker // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
 	// LayerGroup field
 	if markerDB.LayerGroupID.Int64 != 0 {
-		marker.LayerGroup = (*backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[uint(markerDB.LayerGroupID.Int64)]
+		marker.LayerGroup = backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(markerDB.LayerGroupID.Int64)]
 	}
 	// DivIcon field
 	if markerDB.DivIconID.Int64 != 0 {
-		marker.DivIcon = (*backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr)[uint(markerDB.DivIconID.Int64)]
+		marker.DivIcon = backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[uint(markerDB.DivIconID.Int64)]
 	}
 	return
 }
@@ -405,7 +373,7 @@ func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseTwoInstance(backRepo *B
 // CommitMarker allows commit of a single marker (if already staged)
 func (backRepo *BackRepoStruct) CommitMarker(marker *models.Marker) {
 	backRepo.BackRepoMarker.CommitPhaseOneInstance(marker)
-	if id, ok := (*backRepo.BackRepoMarker.Map_MarkerPtr_MarkerDBID)[marker]; ok {
+	if id, ok := backRepo.BackRepoMarker.Map_MarkerPtr_MarkerDBID[marker]; ok {
 		backRepo.BackRepoMarker.CommitPhaseTwoInstance(backRepo, id, marker)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -414,9 +382,9 @@ func (backRepo *BackRepoStruct) CommitMarker(marker *models.Marker) {
 // CommitMarker allows checkout of a single marker (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutMarker(marker *models.Marker) {
 	// check if the marker is staged
-	if _, ok := (*backRepo.BackRepoMarker.Map_MarkerPtr_MarkerDBID)[marker]; ok {
+	if _, ok := backRepo.BackRepoMarker.Map_MarkerPtr_MarkerDBID[marker]; ok {
 
-		if id, ok := (*backRepo.BackRepoMarker.Map_MarkerPtr_MarkerDBID)[marker]; ok {
+		if id, ok := backRepo.BackRepoMarker.Map_MarkerPtr_MarkerDBID[marker]; ok {
 			var markerDB MarkerDB
 			markerDB.ID = id
 
@@ -490,7 +458,7 @@ func (backRepoMarker *BackRepoMarkerStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*MarkerDB, 0)
-	for _, markerDB := range *backRepoMarker.Map_MarkerDBID_MarkerDB {
+	for _, markerDB := range backRepoMarker.Map_MarkerDBID_MarkerDB {
 		forBackup = append(forBackup, markerDB)
 	}
 
@@ -516,7 +484,7 @@ func (backRepoMarker *BackRepoMarkerStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*MarkerDB, 0)
-	for _, markerDB := range *backRepoMarker.Map_MarkerDBID_MarkerDB {
+	for _, markerDB := range backRepoMarker.Map_MarkerDBID_MarkerDB {
 		forBackup = append(forBackup, markerDB)
 	}
 
@@ -581,7 +549,7 @@ func (backRepoMarker *BackRepoMarkerStruct) rowVisitorMarker(row *xlsx.Row) erro
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoMarker.Map_MarkerDBID_MarkerDB)[markerDB.ID] = markerDB
+		backRepoMarker.Map_MarkerDBID_MarkerDB[markerDB.ID] = markerDB
 		BackRepoMarkerid_atBckpTime_newID[markerDB_ID_atBackupTime] = markerDB.ID
 	}
 	return nil
@@ -618,7 +586,7 @@ func (backRepoMarker *BackRepoMarkerStruct) RestorePhaseOne(dirPath string) {
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoMarker.Map_MarkerDBID_MarkerDB)[markerDB.ID] = markerDB
+		backRepoMarker.Map_MarkerDBID_MarkerDB[markerDB.ID] = markerDB
 		BackRepoMarkerid_atBckpTime_newID[markerDB_ID_atBackupTime] = markerDB.ID
 	}
 
@@ -631,7 +599,7 @@ func (backRepoMarker *BackRepoMarkerStruct) RestorePhaseOne(dirPath string) {
 // to compute new index
 func (backRepoMarker *BackRepoMarkerStruct) RestorePhaseTwo() {
 
-	for _, markerDB := range *backRepoMarker.Map_MarkerDBID_MarkerDB {
+	for _, markerDB := range backRepoMarker.Map_MarkerDBID_MarkerDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = markerDB

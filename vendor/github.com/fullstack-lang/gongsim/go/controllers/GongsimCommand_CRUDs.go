@@ -151,7 +151,7 @@ func (controller *Controller) PostGongsimCommand(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoGongsimCommand.CheckoutPhaseOneInstance(&gongsimcommandDB)
-	gongsimcommand := (*backRepo.BackRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandPtr)[gongsimcommandDB.ID]
+	gongsimcommand := backRepo.BackRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandPtr[gongsimcommandDB.ID]
 
 	if gongsimcommand != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), gongsimcommand)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateGongsimCommand(c *gin.Context) {
 	gongsimcommandDB.CopyBasicFieldsToGongsimCommand(gongsimcommandNew)
 
 	// get stage instance from DB instance, and call callback function
-	gongsimcommandOld := (*backRepo.BackRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandPtr)[gongsimcommandDB.ID]
+	gongsimcommandOld := backRepo.BackRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandPtr[gongsimcommandDB.ID]
 	if gongsimcommandOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), gongsimcommandOld, gongsimcommandNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteGongsimCommand(c *gin.Context) {
 	gongsimcommandDB.CopyBasicFieldsToGongsimCommand(gongsimcommandDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	gongsimcommandStaged := (*backRepo.BackRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandPtr)[gongsimcommandDB.ID]
+	gongsimcommandStaged := backRepo.BackRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandPtr[gongsimcommandDB.ID]
 	if gongsimcommandStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), gongsimcommandStaged, gongsimcommandDeleted)
 	}

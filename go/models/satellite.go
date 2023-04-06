@@ -33,8 +33,8 @@ type Satellite struct {
 	Timestampstring string
 }
 
-func (satellite *Satellite) Register() (res *Satellite) {
-	gongsim_models.AppendToSingloton(satellite)
+func (satellite *Satellite) Register(engine *gongsim_models.Engine) (res *Satellite) {
+	gongsim_models.AppendToSingloton(engine, satellite)
 	res = satellite
 	return
 }

@@ -39,10 +39,6 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { GongstructSelectionService } from './gongstruct-selection.service'
 
 // insertion point for imports 
-import { CheckoutSchedulersTableComponent } from './checkoutschedulers-table/checkoutschedulers-table.component'
-import { CheckoutSchedulerSortingComponent } from './checkoutscheduler-sorting/checkoutscheduler-sorting.component'
-import { CheckoutSchedulerDetailComponent } from './checkoutscheduler-detail/checkoutscheduler-detail.component'
-
 import { CirclesTableComponent } from './circles-table/circles-table.component'
 import { CircleSortingComponent } from './circle-sorting/circle-sorting.component'
 import { CircleDetailComponent } from './circle-detail/circle-detail.component'
@@ -83,10 +79,6 @@ import { VisualTrackDetailComponent } from './visualtrack-detail/visualtrack-det
 @NgModule({
 	declarations: [
 		// insertion point for declarations 
-		CheckoutSchedulersTableComponent,
-		CheckoutSchedulerSortingComponent,
-		CheckoutSchedulerDetailComponent,
-
 		CirclesTableComponent,
 		CircleSortingComponent,
 		CircleDetailComponent,
@@ -162,10 +154,6 @@ import { VisualTrackDetailComponent } from './visualtrack-detail/visualtrack-det
 	],
 	exports: [
 		// insertion point for declarations 
-		CheckoutSchedulersTableComponent,
-		CheckoutSchedulerSortingComponent,
-		CheckoutSchedulerDetailComponent,
-
 		CirclesTableComponent,
 		CircleSortingComponent,
 		CircleDetailComponent,

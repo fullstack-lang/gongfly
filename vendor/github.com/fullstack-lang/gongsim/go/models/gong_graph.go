@@ -147,6 +147,9 @@ func (stage *StageStruct) StageBranchGongsimCommand(gongsimcommand *GongsimComma
 	gongsimcommand.Stage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
+	if gongsimcommand.Engine != nil {
+		StageBranch(stage, gongsimcommand.Engine)
+	}
 
 	//insertion point for the staging of instances referenced by slice of pointers
 
@@ -252,6 +255,9 @@ func (stage *StageStruct) UnstageBranchGongsimCommand(gongsimcommand *GongsimCom
 	gongsimcommand.Unstage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
+	if gongsimcommand.Engine != nil {
+		UnstageBranch(stage, gongsimcommand.Engine)
+	}
 
 	//insertion point for the staging of instances referenced by slice of pointers
 

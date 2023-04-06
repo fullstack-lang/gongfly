@@ -157,13 +157,13 @@ var VLine_Fields = []string{
 
 type BackRepoVLineStruct struct {
 	// stores VLineDB according to their gorm ID
-	Map_VLineDBID_VLineDB *map[uint]*VLineDB
+	Map_VLineDBID_VLineDB map[uint]*VLineDB
 
 	// stores VLineDB ID according to VLine address
-	Map_VLinePtr_VLineDBID *map[*models.VLine]uint
+	Map_VLinePtr_VLineDBID map[*models.VLine]uint
 
 	// stores VLine according to their gorm ID
-	Map_VLineDBID_VLinePtr *map[uint]*models.VLine
+	Map_VLineDBID_VLinePtr map[uint]*models.VLine
 
 	db *gorm.DB
 
@@ -181,40 +181,8 @@ func (backRepoVLine *BackRepoVLineStruct) GetDB() *gorm.DB {
 
 // GetVLineDBFromVLinePtr is a handy function to access the back repo instance from the stage instance
 func (backRepoVLine *BackRepoVLineStruct) GetVLineDBFromVLinePtr(vline *models.VLine) (vlineDB *VLineDB) {
-	id := (*backRepoVLine.Map_VLinePtr_VLineDBID)[vline]
-	vlineDB = (*backRepoVLine.Map_VLineDBID_VLineDB)[id]
-	return
-}
-
-// BackRepoVLine.Init set up the BackRepo of the VLine
-func (backRepoVLine *BackRepoVLineStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoVLine.Map_VLineDBID_VLinePtr != nil {
-		err := errors.New("In Init, backRepoVLine.Map_VLineDBID_VLinePtr should be nil")
-		return err
-	}
-
-	if backRepoVLine.Map_VLineDBID_VLineDB != nil {
-		err := errors.New("In Init, backRepoVLine.Map_VLineDBID_VLineDB should be nil")
-		return err
-	}
-
-	if backRepoVLine.Map_VLinePtr_VLineDBID != nil {
-		err := errors.New("In Init, backRepoVLine.Map_VLinePtr_VLineDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.VLine, 0)
-	backRepoVLine.Map_VLineDBID_VLinePtr = &tmp
-
-	tmpDB := make(map[uint]*VLineDB, 0)
-	backRepoVLine.Map_VLineDBID_VLineDB = &tmpDB
-
-	tmpID := make(map[*models.VLine]uint, 0)
-	backRepoVLine.Map_VLinePtr_VLineDBID = &tmpID
-
-	backRepoVLine.db = db
-	backRepoVLine.stage = stage
+	id := backRepoVLine.Map_VLinePtr_VLineDBID[vline]
+	vlineDB = backRepoVLine.Map_VLineDBID_VLineDB[id]
 	return
 }
 
@@ -228,7 +196,7 @@ func (backRepoVLine *BackRepoVLineStruct) CommitPhaseOne(stage *models.StageStru
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, vline := range *backRepoVLine.Map_VLineDBID_VLinePtr {
+	for id, vline := range backRepoVLine.Map_VLineDBID_VLinePtr {
 		if _, ok := stage.VLines[vline]; !ok {
 			backRepoVLine.CommitDeleteInstance(id)
 		}
@@ -240,19 +208,19 @@ func (backRepoVLine *BackRepoVLineStruct) CommitPhaseOne(stage *models.StageStru
 // BackRepoVLine.CommitDeleteInstance commits deletion of VLine to the BackRepo
 func (backRepoVLine *BackRepoVLineStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	vline := (*backRepoVLine.Map_VLineDBID_VLinePtr)[id]
+	vline := backRepoVLine.Map_VLineDBID_VLinePtr[id]
 
 	// vline is not staged anymore, remove vlineDB
-	vlineDB := (*backRepoVLine.Map_VLineDBID_VLineDB)[id]
+	vlineDB := backRepoVLine.Map_VLineDBID_VLineDB[id]
 	query := backRepoVLine.db.Unscoped().Delete(&vlineDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoVLine.Map_VLinePtr_VLineDBID), vline)
-	delete((*backRepoVLine.Map_VLineDBID_VLinePtr), id)
-	delete((*backRepoVLine.Map_VLineDBID_VLineDB), id)
+	delete(backRepoVLine.Map_VLinePtr_VLineDBID, vline)
+	delete(backRepoVLine.Map_VLineDBID_VLinePtr, id)
+	delete(backRepoVLine.Map_VLineDBID_VLineDB, id)
 
 	return
 }
@@ -262,7 +230,7 @@ func (backRepoVLine *BackRepoVLineStruct) CommitDeleteInstance(id uint) (Error e
 func (backRepoVLine *BackRepoVLineStruct) CommitPhaseOneInstance(vline *models.VLine) (Error error) {
 
 	// check if the vline is not commited yet
-	if _, ok := (*backRepoVLine.Map_VLinePtr_VLineDBID)[vline]; ok {
+	if _, ok := backRepoVLine.Map_VLinePtr_VLineDBID[vline]; ok {
 		return
 	}
 
@@ -276,9 +244,9 @@ func (backRepoVLine *BackRepoVLineStruct) CommitPhaseOneInstance(vline *models.V
 	}
 
 	// update stores
-	(*backRepoVLine.Map_VLinePtr_VLineDBID)[vline] = vlineDB.ID
-	(*backRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID] = vline
-	(*backRepoVLine.Map_VLineDBID_VLineDB)[vlineDB.ID] = &vlineDB
+	backRepoVLine.Map_VLinePtr_VLineDBID[vline] = vlineDB.ID
+	backRepoVLine.Map_VLineDBID_VLinePtr[vlineDB.ID] = vline
+	backRepoVLine.Map_VLineDBID_VLineDB[vlineDB.ID] = &vlineDB
 
 	return
 }
@@ -287,7 +255,7 @@ func (backRepoVLine *BackRepoVLineStruct) CommitPhaseOneInstance(vline *models.V
 // Phase Two is the update of instance with the field in the database
 func (backRepoVLine *BackRepoVLineStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, vline := range *backRepoVLine.Map_VLineDBID_VLinePtr {
+	for idx, vline := range backRepoVLine.Map_VLineDBID_VLinePtr {
 		backRepoVLine.CommitPhaseTwoInstance(backRepo, idx, vline)
 	}
 
@@ -299,7 +267,7 @@ func (backRepoVLine *BackRepoVLineStruct) CommitPhaseTwo(backRepo *BackRepoStruc
 func (backRepoVLine *BackRepoVLineStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, vline *models.VLine) (Error error) {
 
 	// fetch matching vlineDB
-	if vlineDB, ok := (*backRepoVLine.Map_VLineDBID_VLineDB)[idx]; ok {
+	if vlineDB, ok := backRepoVLine.Map_VLineDBID_VLineDB[idx]; ok {
 
 		vlineDB.CopyBasicFieldsFromVLine(vline)
 
@@ -307,7 +275,7 @@ func (backRepoVLine *BackRepoVLineStruct) CommitPhaseTwoInstance(backRepo *BackR
 		// commit pointer value vline.LayerGroup translates to updating the vline.LayerGroupID
 		vlineDB.LayerGroupID.Valid = true // allow for a 0 value (nil association)
 		if vline.LayerGroup != nil {
-			if LayerGroupId, ok := (*backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[vline.LayerGroup]; ok {
+			if LayerGroupId, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID[vline.LayerGroup]; ok {
 				vlineDB.LayerGroupID.Int64 = int64(LayerGroupId)
 				vlineDB.LayerGroupID.Valid = true
 			}
@@ -352,7 +320,7 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseOne() (Error error) {
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		vline, ok := (*backRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
+		vline, ok := backRepoVLine.Map_VLineDBID_VLinePtr[vlineDB.ID]
 		if ok {
 			delete(vlineInstancesToBeRemovedFromTheStage, vline)
 		}
@@ -363,10 +331,10 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseOne() (Error error) {
 		vline.Unstage(backRepoVLine.GetStage())
 
 		// remove instance from the back repo 3 maps
-		vlineID := (*backRepoVLine.Map_VLinePtr_VLineDBID)[vline]
-		delete((*backRepoVLine.Map_VLinePtr_VLineDBID), vline)
-		delete((*backRepoVLine.Map_VLineDBID_VLineDB), vlineID)
-		delete((*backRepoVLine.Map_VLineDBID_VLinePtr), vlineID)
+		vlineID := backRepoVLine.Map_VLinePtr_VLineDBID[vline]
+		delete(backRepoVLine.Map_VLinePtr_VLineDBID, vline)
+		delete(backRepoVLine.Map_VLineDBID_VLineDB, vlineID)
+		delete(backRepoVLine.Map_VLineDBID_VLinePtr, vlineID)
 	}
 
 	return
@@ -376,12 +344,12 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseOne() (Error error) {
 // models version of the vlineDB
 func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseOneInstance(vlineDB *VLineDB) (Error error) {
 
-	vline, ok := (*backRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
+	vline, ok := backRepoVLine.Map_VLineDBID_VLinePtr[vlineDB.ID]
 	if !ok {
 		vline = new(models.VLine)
 
-		(*backRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID] = vline
-		(*backRepoVLine.Map_VLinePtr_VLineDBID)[vline] = vlineDB.ID
+		backRepoVLine.Map_VLineDBID_VLinePtr[vlineDB.ID] = vline
+		backRepoVLine.Map_VLinePtr_VLineDBID[vline] = vlineDB.ID
 
 		// append model store with the new element
 		vline.Name = vlineDB.Name_Data.String
@@ -396,7 +364,7 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseOneInstance(vlineDB *VLin
 	// Map_VLineDBID_VLineDB)[vlineDB hold variable pointers
 	vlineDB_Data := *vlineDB
 	preservedPtrToVLine := &vlineDB_Data
-	(*backRepoVLine.Map_VLineDBID_VLineDB)[vlineDB.ID] = preservedPtrToVLine
+	backRepoVLine.Map_VLineDBID_VLineDB[vlineDB.ID] = preservedPtrToVLine
 
 	return
 }
@@ -406,7 +374,7 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseOneInstance(vlineDB *VLin
 func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, vlineDB := range *backRepoVLine.Map_VLineDBID_VLineDB {
+	for _, vlineDB := range backRepoVLine.Map_VLineDBID_VLineDB {
 		backRepoVLine.CheckoutPhaseTwoInstance(backRepo, vlineDB)
 	}
 	return
@@ -416,13 +384,13 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseTwo(backRepo *BackRepoStr
 // Phase Two is the update of instance with the field in the database
 func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, vlineDB *VLineDB) (Error error) {
 
-	vline := (*backRepoVLine.Map_VLineDBID_VLinePtr)[vlineDB.ID]
+	vline := backRepoVLine.Map_VLineDBID_VLinePtr[vlineDB.ID]
 	_ = vline // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
 	// LayerGroup field
 	if vlineDB.LayerGroupID.Int64 != 0 {
-		vline.LayerGroup = (*backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[uint(vlineDB.LayerGroupID.Int64)]
+		vline.LayerGroup = backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(vlineDB.LayerGroupID.Int64)]
 	}
 	return
 }
@@ -430,7 +398,7 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseTwoInstance(backRepo *Bac
 // CommitVLine allows commit of a single vline (if already staged)
 func (backRepo *BackRepoStruct) CommitVLine(vline *models.VLine) {
 	backRepo.BackRepoVLine.CommitPhaseOneInstance(vline)
-	if id, ok := (*backRepo.BackRepoVLine.Map_VLinePtr_VLineDBID)[vline]; ok {
+	if id, ok := backRepo.BackRepoVLine.Map_VLinePtr_VLineDBID[vline]; ok {
 		backRepo.BackRepoVLine.CommitPhaseTwoInstance(backRepo, id, vline)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -439,9 +407,9 @@ func (backRepo *BackRepoStruct) CommitVLine(vline *models.VLine) {
 // CommitVLine allows checkout of a single vline (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutVLine(vline *models.VLine) {
 	// check if the vline is staged
-	if _, ok := (*backRepo.BackRepoVLine.Map_VLinePtr_VLineDBID)[vline]; ok {
+	if _, ok := backRepo.BackRepoVLine.Map_VLinePtr_VLineDBID[vline]; ok {
 
-		if id, ok := (*backRepo.BackRepoVLine.Map_VLinePtr_VLineDBID)[vline]; ok {
+		if id, ok := backRepo.BackRepoVLine.Map_VLinePtr_VLineDBID[vline]; ok {
 			var vlineDB VLineDB
 			vlineDB.ID = id
 
@@ -571,7 +539,7 @@ func (backRepoVLine *BackRepoVLineStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*VLineDB, 0)
-	for _, vlineDB := range *backRepoVLine.Map_VLineDBID_VLineDB {
+	for _, vlineDB := range backRepoVLine.Map_VLineDBID_VLineDB {
 		forBackup = append(forBackup, vlineDB)
 	}
 
@@ -597,7 +565,7 @@ func (backRepoVLine *BackRepoVLineStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*VLineDB, 0)
-	for _, vlineDB := range *backRepoVLine.Map_VLineDBID_VLineDB {
+	for _, vlineDB := range backRepoVLine.Map_VLineDBID_VLineDB {
 		forBackup = append(forBackup, vlineDB)
 	}
 
@@ -662,7 +630,7 @@ func (backRepoVLine *BackRepoVLineStruct) rowVisitorVLine(row *xlsx.Row) error {
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoVLine.Map_VLineDBID_VLineDB)[vlineDB.ID] = vlineDB
+		backRepoVLine.Map_VLineDBID_VLineDB[vlineDB.ID] = vlineDB
 		BackRepoVLineid_atBckpTime_newID[vlineDB_ID_atBackupTime] = vlineDB.ID
 	}
 	return nil
@@ -699,7 +667,7 @@ func (backRepoVLine *BackRepoVLineStruct) RestorePhaseOne(dirPath string) {
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoVLine.Map_VLineDBID_VLineDB)[vlineDB.ID] = vlineDB
+		backRepoVLine.Map_VLineDBID_VLineDB[vlineDB.ID] = vlineDB
 		BackRepoVLineid_atBckpTime_newID[vlineDB_ID_atBackupTime] = vlineDB.ID
 	}
 
@@ -712,7 +680,7 @@ func (backRepoVLine *BackRepoVLineStruct) RestorePhaseOne(dirPath string) {
 // to compute new index
 func (backRepoVLine *BackRepoVLineStruct) RestorePhaseTwo() {
 
-	for _, vlineDB := range *backRepoVLine.Map_VLineDBID_VLineDB {
+	for _, vlineDB := range backRepoVLine.Map_VLineDBID_VLineDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = vlineDB

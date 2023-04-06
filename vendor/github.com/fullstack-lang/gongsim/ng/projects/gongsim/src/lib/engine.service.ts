@@ -42,22 +42,26 @@ export class EngineService {
   }
 
   /** GET engines from the server */
-  getEngines(GONG__StackPath: string = ""): Observable<EngineDB[]> {
+  getEngines(GONG__StackPath: string): Observable<EngineDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<EngineDB[]>(this.enginesUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched engines')),
+        tap(),
+		// tap(_ => this.log('fetched engines')),
         catchError(this.handleError<EngineDB[]>('getEngines', []))
       );
   }
 
   /** GET engine by id. Will 404 if id not found */
-  getEngine(id: number): Observable<EngineDB> {
+  getEngine(id: number, GONG__StackPath: string): Observable<EngineDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.enginesUrl}/${id}`;
-    return this.http.get<EngineDB>(url).pipe(
-      tap(_ => this.log(`fetched engine id=${id}`)),
+    return this.http.get<EngineDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched engine id=${id}`)),
       catchError(this.handleError<EngineDB>(`getEngine id=${id}`))
     );
   }
@@ -73,10 +77,10 @@ export class EngineService {
       params: params
     }
 
-	return this.http.post<EngineDB>(this.enginesUrl, enginedb, httpOptions).pipe(
+    return this.http.post<EngineDB>(this.enginesUrl, enginedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted enginedb id=${enginedb.ID}`)
+        // this.log(`posted enginedb id=${enginedb.ID}`)
       }),
       catchError(this.handleError<EngineDB>('postEngine'))
     );
@@ -127,11 +131,11 @@ export class EngineService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in EngineService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("EngineService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -142,6 +146,6 @@ export class EngineService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

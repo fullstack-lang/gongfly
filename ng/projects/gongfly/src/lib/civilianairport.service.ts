@@ -42,22 +42,26 @@ export class CivilianAirportService {
   }
 
   /** GET civilianairports from the server */
-  getCivilianAirports(GONG__StackPath: string = ""): Observable<CivilianAirportDB[]> {
+  getCivilianAirports(GONG__StackPath: string): Observable<CivilianAirportDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<CivilianAirportDB[]>(this.civilianairportsUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched civilianairports')),
+        tap(),
+		// tap(_ => this.log('fetched civilianairports')),
         catchError(this.handleError<CivilianAirportDB[]>('getCivilianAirports', []))
       );
   }
 
   /** GET civilianairport by id. Will 404 if id not found */
-  getCivilianAirport(id: number): Observable<CivilianAirportDB> {
+  getCivilianAirport(id: number, GONG__StackPath: string): Observable<CivilianAirportDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.civilianairportsUrl}/${id}`;
-    return this.http.get<CivilianAirportDB>(url).pipe(
-      tap(_ => this.log(`fetched civilianairport id=${id}`)),
+    return this.http.get<CivilianAirportDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched civilianairport id=${id}`)),
       catchError(this.handleError<CivilianAirportDB>(`getCivilianAirport id=${id}`))
     );
   }
@@ -73,10 +77,10 @@ export class CivilianAirportService {
       params: params
     }
 
-	return this.http.post<CivilianAirportDB>(this.civilianairportsUrl, civilianairportdb, httpOptions).pipe(
+    return this.http.post<CivilianAirportDB>(this.civilianairportsUrl, civilianairportdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted civilianairportdb id=${civilianairportdb.ID}`)
+        // this.log(`posted civilianairportdb id=${civilianairportdb.ID}`)
       }),
       catchError(this.handleError<CivilianAirportDB>('postCivilianAirport'))
     );
@@ -127,11 +131,11 @@ export class CivilianAirportService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in CivilianAirportService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("CivilianAirportService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -142,6 +146,6 @@ export class CivilianAirportService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

@@ -157,13 +157,13 @@ var VisualTrack_Fields = []string{
 
 type BackRepoVisualTrackStruct struct {
 	// stores VisualTrackDB according to their gorm ID
-	Map_VisualTrackDBID_VisualTrackDB *map[uint]*VisualTrackDB
+	Map_VisualTrackDBID_VisualTrackDB map[uint]*VisualTrackDB
 
 	// stores VisualTrackDB ID according to VisualTrack address
-	Map_VisualTrackPtr_VisualTrackDBID *map[*models.VisualTrack]uint
+	Map_VisualTrackPtr_VisualTrackDBID map[*models.VisualTrack]uint
 
 	// stores VisualTrack according to their gorm ID
-	Map_VisualTrackDBID_VisualTrackPtr *map[uint]*models.VisualTrack
+	Map_VisualTrackDBID_VisualTrackPtr map[uint]*models.VisualTrack
 
 	db *gorm.DB
 
@@ -181,40 +181,8 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) GetDB() *gorm.DB {
 
 // GetVisualTrackDBFromVisualTrackPtr is a handy function to access the back repo instance from the stage instance
 func (backRepoVisualTrack *BackRepoVisualTrackStruct) GetVisualTrackDBFromVisualTrackPtr(visualtrack *models.VisualTrack) (visualtrackDB *VisualTrackDB) {
-	id := (*backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID)[visualtrack]
-	visualtrackDB = (*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB)[id]
-	return
-}
-
-// BackRepoVisualTrack.Init set up the BackRepo of the VisualTrack
-func (backRepoVisualTrack *BackRepoVisualTrackStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr != nil {
-		err := errors.New("In Init, backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr should be nil")
-		return err
-	}
-
-	if backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB != nil {
-		err := errors.New("In Init, backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB should be nil")
-		return err
-	}
-
-	if backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID != nil {
-		err := errors.New("In Init, backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.VisualTrack, 0)
-	backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr = &tmp
-
-	tmpDB := make(map[uint]*VisualTrackDB, 0)
-	backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB = &tmpDB
-
-	tmpID := make(map[*models.VisualTrack]uint, 0)
-	backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID = &tmpID
-
-	backRepoVisualTrack.db = db
-	backRepoVisualTrack.stage = stage
+	id := backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID[visualtrack]
+	visualtrackDB = backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[id]
 	return
 }
 
@@ -228,7 +196,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseOne(stage *mode
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, visualtrack := range *backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr {
+	for id, visualtrack := range backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr {
 		if _, ok := stage.VisualTracks[visualtrack]; !ok {
 			backRepoVisualTrack.CommitDeleteInstance(id)
 		}
@@ -240,19 +208,19 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseOne(stage *mode
 // BackRepoVisualTrack.CommitDeleteInstance commits deletion of VisualTrack to the BackRepo
 func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	visualtrack := (*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr)[id]
+	visualtrack := backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr[id]
 
 	// visualtrack is not staged anymore, remove visualtrackDB
-	visualtrackDB := (*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB)[id]
+	visualtrackDB := backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[id]
 	query := backRepoVisualTrack.db.Unscoped().Delete(&visualtrackDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID), visualtrack)
-	delete((*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr), id)
-	delete((*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB), id)
+	delete(backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID, visualtrack)
+	delete(backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr, id)
+	delete(backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB, id)
 
 	return
 }
@@ -262,7 +230,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitDeleteInstance(id ui
 func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseOneInstance(visualtrack *models.VisualTrack) (Error error) {
 
 	// check if the visualtrack is not commited yet
-	if _, ok := (*backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID)[visualtrack]; ok {
+	if _, ok := backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID[visualtrack]; ok {
 		return
 	}
 
@@ -276,9 +244,9 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseOneInstance(vis
 	}
 
 	// update stores
-	(*backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID)[visualtrack] = visualtrackDB.ID
-	(*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr)[visualtrackDB.ID] = visualtrack
-	(*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB)[visualtrackDB.ID] = &visualtrackDB
+	backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID[visualtrack] = visualtrackDB.ID
+	backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr[visualtrackDB.ID] = visualtrack
+	backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[visualtrackDB.ID] = &visualtrackDB
 
 	return
 }
@@ -287,7 +255,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseOneInstance(vis
 // Phase Two is the update of instance with the field in the database
 func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, visualtrack := range *backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr {
+	for idx, visualtrack := range backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr {
 		backRepoVisualTrack.CommitPhaseTwoInstance(backRepo, idx, visualtrack)
 	}
 
@@ -299,7 +267,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseTwo(backRepo *B
 func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, visualtrack *models.VisualTrack) (Error error) {
 
 	// fetch matching visualtrackDB
-	if visualtrackDB, ok := (*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB)[idx]; ok {
+	if visualtrackDB, ok := backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[idx]; ok {
 
 		visualtrackDB.CopyBasicFieldsFromVisualTrack(visualtrack)
 
@@ -307,7 +275,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseTwoInstance(bac
 		// commit pointer value visualtrack.LayerGroup translates to updating the visualtrack.LayerGroupID
 		visualtrackDB.LayerGroupID.Valid = true // allow for a 0 value (nil association)
 		if visualtrack.LayerGroup != nil {
-			if LayerGroupId, ok := (*backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID)[visualtrack.LayerGroup]; ok {
+			if LayerGroupId, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupPtr_LayerGroupDBID[visualtrack.LayerGroup]; ok {
 				visualtrackDB.LayerGroupID.Int64 = int64(LayerGroupId)
 				visualtrackDB.LayerGroupID.Valid = true
 			}
@@ -316,7 +284,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseTwoInstance(bac
 		// commit pointer value visualtrack.DivIcon translates to updating the visualtrack.DivIconID
 		visualtrackDB.DivIconID.Valid = true // allow for a 0 value (nil association)
 		if visualtrack.DivIcon != nil {
-			if DivIconId, ok := (*backRepo.BackRepoDivIcon.Map_DivIconPtr_DivIconDBID)[visualtrack.DivIcon]; ok {
+			if DivIconId, ok := backRepo.BackRepoDivIcon.Map_DivIconPtr_DivIconDBID[visualtrack.DivIcon]; ok {
 				visualtrackDB.DivIconID.Int64 = int64(DivIconId)
 				visualtrackDB.DivIconID.Valid = true
 			}
@@ -361,7 +329,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseOne() (Error 
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		visualtrack, ok := (*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr)[visualtrackDB.ID]
+		visualtrack, ok := backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr[visualtrackDB.ID]
 		if ok {
 			delete(visualtrackInstancesToBeRemovedFromTheStage, visualtrack)
 		}
@@ -372,10 +340,10 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseOne() (Error 
 		visualtrack.Unstage(backRepoVisualTrack.GetStage())
 
 		// remove instance from the back repo 3 maps
-		visualtrackID := (*backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID)[visualtrack]
-		delete((*backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID), visualtrack)
-		delete((*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB), visualtrackID)
-		delete((*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr), visualtrackID)
+		visualtrackID := backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID[visualtrack]
+		delete(backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID, visualtrack)
+		delete(backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB, visualtrackID)
+		delete(backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr, visualtrackID)
 	}
 
 	return
@@ -385,12 +353,12 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseOne() (Error 
 // models version of the visualtrackDB
 func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseOneInstance(visualtrackDB *VisualTrackDB) (Error error) {
 
-	visualtrack, ok := (*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr)[visualtrackDB.ID]
+	visualtrack, ok := backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr[visualtrackDB.ID]
 	if !ok {
 		visualtrack = new(models.VisualTrack)
 
-		(*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr)[visualtrackDB.ID] = visualtrack
-		(*backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID)[visualtrack] = visualtrackDB.ID
+		backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr[visualtrackDB.ID] = visualtrack
+		backRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID[visualtrack] = visualtrackDB.ID
 
 		// append model store with the new element
 		visualtrack.Name = visualtrackDB.Name_Data.String
@@ -405,7 +373,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseOneInstance(v
 	// Map_VisualTrackDBID_VisualTrackDB)[visualtrackDB hold variable pointers
 	visualtrackDB_Data := *visualtrackDB
 	preservedPtrToVisualTrack := &visualtrackDB_Data
-	(*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB)[visualtrackDB.ID] = preservedPtrToVisualTrack
+	backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[visualtrackDB.ID] = preservedPtrToVisualTrack
 
 	return
 }
@@ -415,7 +383,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseOneInstance(v
 func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, visualtrackDB := range *backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB {
+	for _, visualtrackDB := range backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB {
 		backRepoVisualTrack.CheckoutPhaseTwoInstance(backRepo, visualtrackDB)
 	}
 	return
@@ -425,17 +393,17 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseTwo(backRepo 
 // Phase Two is the update of instance with the field in the database
 func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, visualtrackDB *VisualTrackDB) (Error error) {
 
-	visualtrack := (*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr)[visualtrackDB.ID]
+	visualtrack := backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr[visualtrackDB.ID]
 	_ = visualtrack // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
 	// LayerGroup field
 	if visualtrackDB.LayerGroupID.Int64 != 0 {
-		visualtrack.LayerGroup = (*backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr)[uint(visualtrackDB.LayerGroupID.Int64)]
+		visualtrack.LayerGroup = backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(visualtrackDB.LayerGroupID.Int64)]
 	}
 	// DivIcon field
 	if visualtrackDB.DivIconID.Int64 != 0 {
-		visualtrack.DivIcon = (*backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr)[uint(visualtrackDB.DivIconID.Int64)]
+		visualtrack.DivIcon = backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[uint(visualtrackDB.DivIconID.Int64)]
 	}
 	return
 }
@@ -443,7 +411,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseTwoInstance(b
 // CommitVisualTrack allows commit of a single visualtrack (if already staged)
 func (backRepo *BackRepoStruct) CommitVisualTrack(visualtrack *models.VisualTrack) {
 	backRepo.BackRepoVisualTrack.CommitPhaseOneInstance(visualtrack)
-	if id, ok := (*backRepo.BackRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID)[visualtrack]; ok {
+	if id, ok := backRepo.BackRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID[visualtrack]; ok {
 		backRepo.BackRepoVisualTrack.CommitPhaseTwoInstance(backRepo, id, visualtrack)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -452,9 +420,9 @@ func (backRepo *BackRepoStruct) CommitVisualTrack(visualtrack *models.VisualTrac
 // CommitVisualTrack allows checkout of a single visualtrack (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutVisualTrack(visualtrack *models.VisualTrack) {
 	// check if the visualtrack is staged
-	if _, ok := (*backRepo.BackRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID)[visualtrack]; ok {
+	if _, ok := backRepo.BackRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID[visualtrack]; ok {
 
-		if id, ok := (*backRepo.BackRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID)[visualtrack]; ok {
+		if id, ok := backRepo.BackRepoVisualTrack.Map_VisualTrackPtr_VisualTrackDBID[visualtrack]; ok {
 			var visualtrackDB VisualTrackDB
 			visualtrackDB.ID = id
 
@@ -576,7 +544,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*VisualTrackDB, 0)
-	for _, visualtrackDB := range *backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB {
+	for _, visualtrackDB := range backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB {
 		forBackup = append(forBackup, visualtrackDB)
 	}
 
@@ -602,7 +570,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) BackupXL(file *xlsx.File) 
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*VisualTrackDB, 0)
-	for _, visualtrackDB := range *backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB {
+	for _, visualtrackDB := range backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB {
 		forBackup = append(forBackup, visualtrackDB)
 	}
 
@@ -667,7 +635,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) rowVisitorVisualTrack(row 
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB)[visualtrackDB.ID] = visualtrackDB
+		backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[visualtrackDB.ID] = visualtrackDB
 		BackRepoVisualTrackid_atBckpTime_newID[visualtrackDB_ID_atBackupTime] = visualtrackDB.ID
 	}
 	return nil
@@ -704,7 +672,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) RestorePhaseOne(dirPath st
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB)[visualtrackDB.ID] = visualtrackDB
+		backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[visualtrackDB.ID] = visualtrackDB
 		BackRepoVisualTrackid_atBckpTime_newID[visualtrackDB_ID_atBackupTime] = visualtrackDB.ID
 	}
 
@@ -717,7 +685,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) RestorePhaseOne(dirPath st
 // to compute new index
 func (backRepoVisualTrack *BackRepoVisualTrackStruct) RestorePhaseTwo() {
 
-	for _, visualtrackDB := range *backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB {
+	for _, visualtrackDB := range backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = visualtrackDB

@@ -51,8 +51,8 @@ type Message struct {
 
 func (*Message) GetLayerGroupName() (name string) { return string(Aircraft_) }
 
-func (Message *Message) Register() (res *Message) {
-	gongsim_models.AppendToSingloton(Message)
+func (Message *Message) Register(engine *gongsim_models.Engine) (res *Message) {
+	gongsim_models.AppendToSingloton(engine, Message)
 	res = Message
 	return
 }

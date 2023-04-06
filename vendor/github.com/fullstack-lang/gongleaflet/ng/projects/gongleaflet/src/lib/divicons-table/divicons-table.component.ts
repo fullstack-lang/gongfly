@@ -19,6 +19,8 @@ import { DivIconService } from '../divicon.service'
 
 // insertion point for additional imports
 
+import { RouteService } from '../route-service';
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -116,6 +118,8 @@ export class DivIconsTableComponent implements OnInit {
 
     private router: Router,
     private activatedRoute: ActivatedRoute,
+
+    private routeService: RouteService,
   ) {
 
     // compute mode
@@ -234,18 +238,15 @@ export class DivIconsTableComponent implements OnInit {
 
   }
 
-  // display divicon in router
-  displayDivIconInRouter(diviconID: number) {
-    this.router.navigate(["github_com_fullstack_lang_gongleaflet_go-" + "divicon-display", diviconID])
-  }
-
   // set editor outlet
   setEditorRouterOutlet(diviconID: number) {
-    this.router.navigate([{
-      outlets: {
-        github_com_fullstack_lang_gongleaflet_go_editor: ["github_com_fullstack_lang_gongleaflet_go-" + "divicon-detail", diviconID, this.GONG__StackPath]
-      }
-    }]);
+    let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + "divicon" + "-detail"
+
+    let outletConf: any = {}
+    outletConf[outletName] = [fullPath, diviconID, this.GONG__StackPath]
+
+    this.router.navigate([{ outlets: outletConf }])
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

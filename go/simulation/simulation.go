@@ -4,10 +4,9 @@ import (
 	"log"
 
 	"github.com/fullstack-lang/gongfly/go/icons"
-	"github.com/fullstack-lang/gongfly/go/models"
 	"github.com/fullstack-lang/gongfly/go/reference"
 
-	target_models "github.com/fullstack-lang/gongfly/go/models"
+	gongfly_models "github.com/fullstack-lang/gongfly/go/models"
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
 	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
 )
@@ -17,34 +16,53 @@ import (
 // it is in a separate package from the models package because it handles the relation
 // to the visual representation of the simulaton object with leaflet
 type Simulation struct {
-	scenario *target_models.Scenario
+	scenario         *gongfly_models.Scenario
+	gongflyStage     *gongfly_models.StageStruct
+	gongleafletStage *gongleaflet_models.StageStruct
+	gongsimStage     *gongsim_models.StageStruct
+	engine           *gongsim_models.Engine
 }
 
-func (engineSpecific *Simulation) setInitialStateVectorOfAgentsAndSimulation() {
+func (simulation *Simulation) GetEngine() (engine *gongsim_models.Engine) {
+	engine = simulation.engine
+	return
+}
 
-	engine := gongsim_models.EngineSingloton
+func (simulation *Simulation) setInitialStateVectorOfAgentsAndSimulation() {
+
+	reference.LoadScenario(simulation.gongflyStage)
 
 	// start and end date
-	engineSpecific.scenario = reference.Scenario1
-	engine.SetStartTime(engineSpecific.scenario.GetStart())
-	engine.SetCurrentTime(engine.GetStartTime())
-	engine.State = gongsim_models.PAUSED
-	log.Printf("Sim start \t\t\t%s\n", engine.GetStartTime())
+	simulation.scenario = reference.Scenario1
+	simulation.engine.SetStartTime(simulation.scenario.GetStart())
+	simulation.engine.SetCurrentTime(simulation.engine.GetStartTime())
+	simulation.engine.State = gongsim_models.PAUSED
+	log.Printf("Sim start \t\t\t%s\n", simulation.engine.GetStartTime())
 
-	engine.SetEndTime(engineSpecific.scenario.GetEnd())
-	log.Printf("Sim end  \t\t\t%s\n", engine.EndTime)
+	simulation.engine.SetEndTime(simulation.scenario.GetEnd())
+	log.Printf("Sim end  \t\t\t%s\n", simulation.engine.EndTime)
 
-	engine.Speed = 120
+	simulation.engine.Speed = 120
 }
 
 // NewSimulation ...
-func NewSimulation() (simulation *Simulation) {
+func NewSimulation(
+	gongflyStage *gongfly_models.StageStruct,
+	gongsimStage *gongsim_models.StageStruct,
+	gongleafletStage *gongleaflet_models.StageStruct) (simulation *Simulation) {
 
 	//
 	// simulation generic initialisation steps
 	//
-	engine := gongsim_models.EngineSingloton
-	simulation = &Simulation{}
+	engine := new(gongsim_models.Engine).Stage(gongsimStage)
+
+	simulation = &Simulation{
+		gongflyStage:     gongflyStage,
+		gongleafletStage: gongleafletStage,
+		gongsimStage:     gongsimStage,
+		engine:           engine,
+	}
+	engine.Simulation = simulation
 
 	//
 	// simulation initialisation
@@ -56,23 +74,23 @@ func NewSimulation() (simulation *Simulation) {
 
 // HasAnyStateChanged is used when the simulation user ask to advance up to the next
 // state change. It is not implemented in this simulation
-func (engineSpecific *Simulation) HasAnyStateChanged(engine *gongsim_models.Engine) bool {
+func (simulation *Simulation) HasAnyStateChanged(engine *gongsim_models.Engine) bool {
 
 	return false
 }
 
 // map to store dynamicaly association between message and visual tracks
-var MapMessageVisualTrack = make(map[*target_models.Message]*gongleaflet_models.VisualTrack)
+var MapMessageVisualTrack = make(map[*gongfly_models.Message]*gongleaflet_models.VisualTrack)
 
 // CommitAgent is called by the generic engine anytime a visual refresh is needed
 // Commit will perform a write of all agent state to the back repo and the back repo
 // will be checked out by the front repo (for display sake)
-func (engineSpecific *Simulation) CommitAgents(engine *gongsim_models.Engine) {
+func (simulation *Simulation) CommitAgents(engine *gongsim_models.Engine) {
 
 	// if there are new messages, attach them to visual tracks
-	for message := range target_models.Stage.Messages {
+	for message := range simulation.gongflyStage.Messages {
 		if message.Display == true && MapMessageVisualTrack[message] == nil {
-			visualTrack := new(gongleaflet_models.VisualTrack).Stage(&gongleaflet_models.Stage)
+			visualTrack := new(gongleaflet_models.VisualTrack).Stage(simulation.gongleafletStage)
 			visualTrack.Name = message.Content
 			visualTrack.VisualTrackInterface = message
 			visualTrack.DivIcon = icons.Arrow
@@ -87,7 +105,7 @@ func (engineSpecific *Simulation) CommitAgents(engine *gongsim_models.Engine) {
 		}
 	}
 
-	nbMessages := len(target_models.Stage.Messages)
+	nbMessages := len(simulation.gongflyStage.Messages)
 	nbMessagesInMap := len(MapMessageVisualTrack)
 
 	if nbMessages < nbMessagesInMap {
@@ -95,54 +113,54 @@ func (engineSpecific *Simulation) CommitAgents(engine *gongsim_models.Engine) {
 	}
 
 	// if a message has a display value at false, delete the visual track
-	for message := range target_models.Stage.Messages {
+	for message := range simulation.gongflyStage.Messages {
 		if message.Display == false {
 			if visualTrack := MapMessageVisualTrack[message]; visualTrack != nil {
-				visualTrack.Unstage(&gongleaflet_models.Stage)
+				visualTrack.Unstage(simulation.gongleafletStage)
 				delete(MapMessageVisualTrack, message)
 			}
 		}
 	}
 
 	// update all visual tracks
-	for visualTrack := range gongleaflet_models.Stage.VisualTracks {
+	for visualTrack := range simulation.gongleafletStage.VisualTracks {
 		visualTrack.UpdateTrack()
 	}
 
 	// update all visual centers
-	for visualCenter := range gongleaflet_models.Stage.Markers {
+	for visualCenter := range simulation.gongleafletStage.Markers {
 		visualCenter.UpdateMarker()
 	}
 
 	// update all visual lines
-	for visualLine := range gongleaflet_models.Stage.VLines {
+	for visualLine := range simulation.gongleafletStage.VLines {
 		visualLine.UpdateLine()
 	}
 
 	// update all visual circles
-	for visualCircle := range gongleaflet_models.Stage.Circles {
+	for visualCircle := range simulation.gongleafletStage.Circles {
 		visualCircle.UpdateCircle()
 	}
 
 	// put all to database
-	target_models.Stage.Commit()
-	gongsim_models.Stage.Commit()
-	gongleaflet_models.Stage.Commit()
+	simulation.gongflyStage.Commit()
+	simulation.gongsimStage.Commit()
+	simulation.gongleafletStage.Commit()
 }
 
 // Reset simulation
 func (simulation *Simulation) Reset(engine *gongsim_models.Engine) {
 
 	// remove all events from agents
-	for _, agent := range engine.Agents() {
+	for _, agent := range simulation.engine.Agents() {
 		agent.Reset()
 	}
 
 	// remove all message and their VisualTracks
-	for message := range target_models.Stage.Messages {
-		message.Unstage(&models.Stage)
+	for message := range simulation.gongflyStage.Messages {
+		message.Unstage(simulation.gongflyStage)
 		if visualTrack := MapMessageVisualTrack[message]; visualTrack != nil {
-			visualTrack.Unstage(&gongleaflet_models.Stage)
+			visualTrack.Unstage(simulation.gongleafletStage)
 			delete(MapMessageVisualTrack, message)
 		}
 	}
@@ -151,8 +169,8 @@ func (simulation *Simulation) Reset(engine *gongsim_models.Engine) {
 	simulation.setInitialStateVectorOfAgentsAndSimulation()
 
 	// set the engine of all agents
-	for _, agent := range engine.Agents() {
-		agent.SetEngine(engine)
+	for _, agent := range simulation.engine.Agents() {
+		agent.SetEngine(simulation.engine)
 	}
 
 	log.Printf("Simulation reset")
@@ -162,8 +180,8 @@ func (simulation *Simulation) Reset(engine *gongsim_models.Engine) {
 // It does so by comparing successive commit nb
 func (simulation *Simulation) GetLastCommitNb() (commitNb uint) {
 
-	if models.Stage.BackRepo != nil {
-		commitNb = models.Stage.BackRepo.GetLastCommitFromBackNb()
+	if simulation.gongflyStage.BackRepo != nil {
+		commitNb = simulation.gongflyStage.BackRepo.GetLastCommitFromBackNb()
 	}
 
 	return
@@ -171,8 +189,8 @@ func (simulation *Simulation) GetLastCommitNb() (commitNb uint) {
 
 func (simulation *Simulation) GetLastCommitNbFromFront() (commitNb uint) {
 
-	if models.Stage.BackRepo != nil {
-		commitNb = models.Stage.BackRepo.GetLastPushFromFrontNb()
+	if simulation.gongflyStage.BackRepo != nil {
+		commitNb = simulation.gongflyStage.BackRepo.GetLastPushFromFrontNb()
 	}
 	return
 }
@@ -181,5 +199,5 @@ func (simulation *Simulation) GetLastCommitNbFromFront() (commitNb uint) {
 func (simulation *Simulation) CheckoutAgents(engine *gongsim_models.Engine) {
 
 	// checkout the simulation agent states
-	models.Stage.Checkout()
+	simulation.gongflyStage.Checkout()
 }

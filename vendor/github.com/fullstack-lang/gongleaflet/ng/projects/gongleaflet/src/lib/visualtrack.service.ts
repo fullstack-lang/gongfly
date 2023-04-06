@@ -44,22 +44,26 @@ export class VisualTrackService {
   }
 
   /** GET visualtracks from the server */
-  getVisualTracks(GONG__StackPath: string = ""): Observable<VisualTrackDB[]> {
+  getVisualTracks(GONG__StackPath: string): Observable<VisualTrackDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<VisualTrackDB[]>(this.visualtracksUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched visualtracks')),
+        tap(),
+		// tap(_ => this.log('fetched visualtracks')),
         catchError(this.handleError<VisualTrackDB[]>('getVisualTracks', []))
       );
   }
 
   /** GET visualtrack by id. Will 404 if id not found */
-  getVisualTrack(id: number): Observable<VisualTrackDB> {
+  getVisualTrack(id: number, GONG__StackPath: string): Observable<VisualTrackDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.visualtracksUrl}/${id}`;
-    return this.http.get<VisualTrackDB>(url).pipe(
-      tap(_ => this.log(`fetched visualtrack id=${id}`)),
+    return this.http.get<VisualTrackDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched visualtrack id=${id}`)),
       catchError(this.handleError<VisualTrackDB>(`getVisualTrack id=${id}`))
     );
   }
@@ -77,10 +81,10 @@ export class VisualTrackService {
       params: params
     }
 
-	return this.http.post<VisualTrackDB>(this.visualtracksUrl, visualtrackdb, httpOptions).pipe(
+    return this.http.post<VisualTrackDB>(this.visualtracksUrl, visualtrackdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted visualtrackdb id=${visualtrackdb.ID}`)
+        // this.log(`posted visualtrackdb id=${visualtrackdb.ID}`)
       }),
       catchError(this.handleError<VisualTrackDB>('postVisualTrack'))
     );
@@ -133,11 +137,11 @@ export class VisualTrackService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in VisualTrackService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("VisualTrackService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -148,6 +152,6 @@ export class VisualTrackService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

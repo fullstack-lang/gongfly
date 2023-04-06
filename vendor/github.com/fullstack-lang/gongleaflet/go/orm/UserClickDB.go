@@ -111,13 +111,13 @@ var UserClick_Fields = []string{
 
 type BackRepoUserClickStruct struct {
 	// stores UserClickDB according to their gorm ID
-	Map_UserClickDBID_UserClickDB *map[uint]*UserClickDB
+	Map_UserClickDBID_UserClickDB map[uint]*UserClickDB
 
 	// stores UserClickDB ID according to UserClick address
-	Map_UserClickPtr_UserClickDBID *map[*models.UserClick]uint
+	Map_UserClickPtr_UserClickDBID map[*models.UserClick]uint
 
 	// stores UserClick according to their gorm ID
-	Map_UserClickDBID_UserClickPtr *map[uint]*models.UserClick
+	Map_UserClickDBID_UserClickPtr map[uint]*models.UserClick
 
 	db *gorm.DB
 
@@ -135,40 +135,8 @@ func (backRepoUserClick *BackRepoUserClickStruct) GetDB() *gorm.DB {
 
 // GetUserClickDBFromUserClickPtr is a handy function to access the back repo instance from the stage instance
 func (backRepoUserClick *BackRepoUserClickStruct) GetUserClickDBFromUserClickPtr(userclick *models.UserClick) (userclickDB *UserClickDB) {
-	id := (*backRepoUserClick.Map_UserClickPtr_UserClickDBID)[userclick]
-	userclickDB = (*backRepoUserClick.Map_UserClickDBID_UserClickDB)[id]
-	return
-}
-
-// BackRepoUserClick.Init set up the BackRepo of the UserClick
-func (backRepoUserClick *BackRepoUserClickStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoUserClick.Map_UserClickDBID_UserClickPtr != nil {
-		err := errors.New("In Init, backRepoUserClick.Map_UserClickDBID_UserClickPtr should be nil")
-		return err
-	}
-
-	if backRepoUserClick.Map_UserClickDBID_UserClickDB != nil {
-		err := errors.New("In Init, backRepoUserClick.Map_UserClickDBID_UserClickDB should be nil")
-		return err
-	}
-
-	if backRepoUserClick.Map_UserClickPtr_UserClickDBID != nil {
-		err := errors.New("In Init, backRepoUserClick.Map_UserClickPtr_UserClickDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.UserClick, 0)
-	backRepoUserClick.Map_UserClickDBID_UserClickPtr = &tmp
-
-	tmpDB := make(map[uint]*UserClickDB, 0)
-	backRepoUserClick.Map_UserClickDBID_UserClickDB = &tmpDB
-
-	tmpID := make(map[*models.UserClick]uint, 0)
-	backRepoUserClick.Map_UserClickPtr_UserClickDBID = &tmpID
-
-	backRepoUserClick.db = db
-	backRepoUserClick.stage = stage
+	id := backRepoUserClick.Map_UserClickPtr_UserClickDBID[userclick]
+	userclickDB = backRepoUserClick.Map_UserClickDBID_UserClickDB[id]
 	return
 }
 
@@ -182,7 +150,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) CommitPhaseOne(stage *models.S
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, userclick := range *backRepoUserClick.Map_UserClickDBID_UserClickPtr {
+	for id, userclick := range backRepoUserClick.Map_UserClickDBID_UserClickPtr {
 		if _, ok := stage.UserClicks[userclick]; !ok {
 			backRepoUserClick.CommitDeleteInstance(id)
 		}
@@ -194,19 +162,19 @@ func (backRepoUserClick *BackRepoUserClickStruct) CommitPhaseOne(stage *models.S
 // BackRepoUserClick.CommitDeleteInstance commits deletion of UserClick to the BackRepo
 func (backRepoUserClick *BackRepoUserClickStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	userclick := (*backRepoUserClick.Map_UserClickDBID_UserClickPtr)[id]
+	userclick := backRepoUserClick.Map_UserClickDBID_UserClickPtr[id]
 
 	// userclick is not staged anymore, remove userclickDB
-	userclickDB := (*backRepoUserClick.Map_UserClickDBID_UserClickDB)[id]
+	userclickDB := backRepoUserClick.Map_UserClickDBID_UserClickDB[id]
 	query := backRepoUserClick.db.Unscoped().Delete(&userclickDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoUserClick.Map_UserClickPtr_UserClickDBID), userclick)
-	delete((*backRepoUserClick.Map_UserClickDBID_UserClickPtr), id)
-	delete((*backRepoUserClick.Map_UserClickDBID_UserClickDB), id)
+	delete(backRepoUserClick.Map_UserClickPtr_UserClickDBID, userclick)
+	delete(backRepoUserClick.Map_UserClickDBID_UserClickPtr, id)
+	delete(backRepoUserClick.Map_UserClickDBID_UserClickDB, id)
 
 	return
 }
@@ -216,7 +184,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) CommitDeleteInstance(id uint) 
 func (backRepoUserClick *BackRepoUserClickStruct) CommitPhaseOneInstance(userclick *models.UserClick) (Error error) {
 
 	// check if the userclick is not commited yet
-	if _, ok := (*backRepoUserClick.Map_UserClickPtr_UserClickDBID)[userclick]; ok {
+	if _, ok := backRepoUserClick.Map_UserClickPtr_UserClickDBID[userclick]; ok {
 		return
 	}
 
@@ -230,9 +198,9 @@ func (backRepoUserClick *BackRepoUserClickStruct) CommitPhaseOneInstance(usercli
 	}
 
 	// update stores
-	(*backRepoUserClick.Map_UserClickPtr_UserClickDBID)[userclick] = userclickDB.ID
-	(*backRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID] = userclick
-	(*backRepoUserClick.Map_UserClickDBID_UserClickDB)[userclickDB.ID] = &userclickDB
+	backRepoUserClick.Map_UserClickPtr_UserClickDBID[userclick] = userclickDB.ID
+	backRepoUserClick.Map_UserClickDBID_UserClickPtr[userclickDB.ID] = userclick
+	backRepoUserClick.Map_UserClickDBID_UserClickDB[userclickDB.ID] = &userclickDB
 
 	return
 }
@@ -241,7 +209,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) CommitPhaseOneInstance(usercli
 // Phase Two is the update of instance with the field in the database
 func (backRepoUserClick *BackRepoUserClickStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, userclick := range *backRepoUserClick.Map_UserClickDBID_UserClickPtr {
+	for idx, userclick := range backRepoUserClick.Map_UserClickDBID_UserClickPtr {
 		backRepoUserClick.CommitPhaseTwoInstance(backRepo, idx, userclick)
 	}
 
@@ -253,7 +221,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) CommitPhaseTwo(backRepo *BackR
 func (backRepoUserClick *BackRepoUserClickStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, userclick *models.UserClick) (Error error) {
 
 	// fetch matching userclickDB
-	if userclickDB, ok := (*backRepoUserClick.Map_UserClickDBID_UserClickDB)[idx]; ok {
+	if userclickDB, ok := backRepoUserClick.Map_UserClickDBID_UserClickDB[idx]; ok {
 
 		userclickDB.CopyBasicFieldsFromUserClick(userclick)
 
@@ -297,7 +265,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseOne() (Error erro
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		userclick, ok := (*backRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
+		userclick, ok := backRepoUserClick.Map_UserClickDBID_UserClickPtr[userclickDB.ID]
 		if ok {
 			delete(userclickInstancesToBeRemovedFromTheStage, userclick)
 		}
@@ -308,10 +276,10 @@ func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseOne() (Error erro
 		userclick.Unstage(backRepoUserClick.GetStage())
 
 		// remove instance from the back repo 3 maps
-		userclickID := (*backRepoUserClick.Map_UserClickPtr_UserClickDBID)[userclick]
-		delete((*backRepoUserClick.Map_UserClickPtr_UserClickDBID), userclick)
-		delete((*backRepoUserClick.Map_UserClickDBID_UserClickDB), userclickID)
-		delete((*backRepoUserClick.Map_UserClickDBID_UserClickPtr), userclickID)
+		userclickID := backRepoUserClick.Map_UserClickPtr_UserClickDBID[userclick]
+		delete(backRepoUserClick.Map_UserClickPtr_UserClickDBID, userclick)
+		delete(backRepoUserClick.Map_UserClickDBID_UserClickDB, userclickID)
+		delete(backRepoUserClick.Map_UserClickDBID_UserClickPtr, userclickID)
 	}
 
 	return
@@ -321,12 +289,12 @@ func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseOne() (Error erro
 // models version of the userclickDB
 func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseOneInstance(userclickDB *UserClickDB) (Error error) {
 
-	userclick, ok := (*backRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
+	userclick, ok := backRepoUserClick.Map_UserClickDBID_UserClickPtr[userclickDB.ID]
 	if !ok {
 		userclick = new(models.UserClick)
 
-		(*backRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID] = userclick
-		(*backRepoUserClick.Map_UserClickPtr_UserClickDBID)[userclick] = userclickDB.ID
+		backRepoUserClick.Map_UserClickDBID_UserClickPtr[userclickDB.ID] = userclick
+		backRepoUserClick.Map_UserClickPtr_UserClickDBID[userclick] = userclickDB.ID
 
 		// append model store with the new element
 		userclick.Name = userclickDB.Name_Data.String
@@ -341,7 +309,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseOneInstance(userc
 	// Map_UserClickDBID_UserClickDB)[userclickDB hold variable pointers
 	userclickDB_Data := *userclickDB
 	preservedPtrToUserClick := &userclickDB_Data
-	(*backRepoUserClick.Map_UserClickDBID_UserClickDB)[userclickDB.ID] = preservedPtrToUserClick
+	backRepoUserClick.Map_UserClickDBID_UserClickDB[userclickDB.ID] = preservedPtrToUserClick
 
 	return
 }
@@ -351,7 +319,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseOneInstance(userc
 func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, userclickDB := range *backRepoUserClick.Map_UserClickDBID_UserClickDB {
+	for _, userclickDB := range backRepoUserClick.Map_UserClickDBID_UserClickDB {
 		backRepoUserClick.CheckoutPhaseTwoInstance(backRepo, userclickDB)
 	}
 	return
@@ -361,7 +329,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseTwo(backRepo *Bac
 // Phase Two is the update of instance with the field in the database
 func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, userclickDB *UserClickDB) (Error error) {
 
-	userclick := (*backRepoUserClick.Map_UserClickDBID_UserClickPtr)[userclickDB.ID]
+	userclick := backRepoUserClick.Map_UserClickDBID_UserClickPtr[userclickDB.ID]
 	_ = userclick // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
@@ -371,7 +339,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseTwoInstance(backR
 // CommitUserClick allows commit of a single userclick (if already staged)
 func (backRepo *BackRepoStruct) CommitUserClick(userclick *models.UserClick) {
 	backRepo.BackRepoUserClick.CommitPhaseOneInstance(userclick)
-	if id, ok := (*backRepo.BackRepoUserClick.Map_UserClickPtr_UserClickDBID)[userclick]; ok {
+	if id, ok := backRepo.BackRepoUserClick.Map_UserClickPtr_UserClickDBID[userclick]; ok {
 		backRepo.BackRepoUserClick.CommitPhaseTwoInstance(backRepo, id, userclick)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -380,9 +348,9 @@ func (backRepo *BackRepoStruct) CommitUserClick(userclick *models.UserClick) {
 // CommitUserClick allows checkout of a single userclick (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutUserClick(userclick *models.UserClick) {
 	// check if the userclick is staged
-	if _, ok := (*backRepo.BackRepoUserClick.Map_UserClickPtr_UserClickDBID)[userclick]; ok {
+	if _, ok := backRepo.BackRepoUserClick.Map_UserClickPtr_UserClickDBID[userclick]; ok {
 
-		if id, ok := (*backRepo.BackRepoUserClick.Map_UserClickPtr_UserClickDBID)[userclick]; ok {
+		if id, ok := backRepo.BackRepoUserClick.Map_UserClickPtr_UserClickDBID[userclick]; ok {
 			var userclickDB UserClickDB
 			userclickDB.ID = id
 
@@ -456,7 +424,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*UserClickDB, 0)
-	for _, userclickDB := range *backRepoUserClick.Map_UserClickDBID_UserClickDB {
+	for _, userclickDB := range backRepoUserClick.Map_UserClickDBID_UserClickDB {
 		forBackup = append(forBackup, userclickDB)
 	}
 
@@ -482,7 +450,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*UserClickDB, 0)
-	for _, userclickDB := range *backRepoUserClick.Map_UserClickDBID_UserClickDB {
+	for _, userclickDB := range backRepoUserClick.Map_UserClickDBID_UserClickDB {
 		forBackup = append(forBackup, userclickDB)
 	}
 
@@ -547,7 +515,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) rowVisitorUserClick(row *xlsx.
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoUserClick.Map_UserClickDBID_UserClickDB)[userclickDB.ID] = userclickDB
+		backRepoUserClick.Map_UserClickDBID_UserClickDB[userclickDB.ID] = userclickDB
 		BackRepoUserClickid_atBckpTime_newID[userclickDB_ID_atBackupTime] = userclickDB.ID
 	}
 	return nil
@@ -584,7 +552,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) RestorePhaseOne(dirPath string
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoUserClick.Map_UserClickDBID_UserClickDB)[userclickDB.ID] = userclickDB
+		backRepoUserClick.Map_UserClickDBID_UserClickDB[userclickDB.ID] = userclickDB
 		BackRepoUserClickid_atBckpTime_newID[userclickDB_ID_atBackupTime] = userclickDB.ID
 	}
 
@@ -597,7 +565,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) RestorePhaseOne(dirPath string
 // to compute new index
 func (backRepoUserClick *BackRepoUserClickStruct) RestorePhaseTwo() {
 
-	for _, userclickDB := range *backRepoUserClick.Map_UserClickDBID_UserClickDB {
+	for _, userclickDB := range backRepoUserClick.Map_UserClickDBID_UserClickDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = userclickDB

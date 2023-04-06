@@ -196,13 +196,13 @@ var Message_Fields = []string{
 
 type BackRepoMessageStruct struct {
 	// stores MessageDB according to their gorm ID
-	Map_MessageDBID_MessageDB *map[uint]*MessageDB
+	Map_MessageDBID_MessageDB map[uint]*MessageDB
 
 	// stores MessageDB ID according to Message address
-	Map_MessagePtr_MessageDBID *map[*models.Message]uint
+	Map_MessagePtr_MessageDBID map[*models.Message]uint
 
 	// stores Message according to their gorm ID
-	Map_MessageDBID_MessagePtr *map[uint]*models.Message
+	Map_MessageDBID_MessagePtr map[uint]*models.Message
 
 	db *gorm.DB
 
@@ -220,40 +220,8 @@ func (backRepoMessage *BackRepoMessageStruct) GetDB() *gorm.DB {
 
 // GetMessageDBFromMessagePtr is a handy function to access the back repo instance from the stage instance
 func (backRepoMessage *BackRepoMessageStruct) GetMessageDBFromMessagePtr(message *models.Message) (messageDB *MessageDB) {
-	id := (*backRepoMessage.Map_MessagePtr_MessageDBID)[message]
-	messageDB = (*backRepoMessage.Map_MessageDBID_MessageDB)[id]
-	return
-}
-
-// BackRepoMessage.Init set up the BackRepo of the Message
-func (backRepoMessage *BackRepoMessageStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoMessage.Map_MessageDBID_MessagePtr != nil {
-		err := errors.New("In Init, backRepoMessage.Map_MessageDBID_MessagePtr should be nil")
-		return err
-	}
-
-	if backRepoMessage.Map_MessageDBID_MessageDB != nil {
-		err := errors.New("In Init, backRepoMessage.Map_MessageDBID_MessageDB should be nil")
-		return err
-	}
-
-	if backRepoMessage.Map_MessagePtr_MessageDBID != nil {
-		err := errors.New("In Init, backRepoMessage.Map_MessagePtr_MessageDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.Message, 0)
-	backRepoMessage.Map_MessageDBID_MessagePtr = &tmp
-
-	tmpDB := make(map[uint]*MessageDB, 0)
-	backRepoMessage.Map_MessageDBID_MessageDB = &tmpDB
-
-	tmpID := make(map[*models.Message]uint, 0)
-	backRepoMessage.Map_MessagePtr_MessageDBID = &tmpID
-
-	backRepoMessage.db = db
-	backRepoMessage.stage = stage
+	id := backRepoMessage.Map_MessagePtr_MessageDBID[message]
+	messageDB = backRepoMessage.Map_MessageDBID_MessageDB[id]
 	return
 }
 
@@ -267,7 +235,7 @@ func (backRepoMessage *BackRepoMessageStruct) CommitPhaseOne(stage *models.Stage
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, message := range *backRepoMessage.Map_MessageDBID_MessagePtr {
+	for id, message := range backRepoMessage.Map_MessageDBID_MessagePtr {
 		if _, ok := stage.Messages[message]; !ok {
 			backRepoMessage.CommitDeleteInstance(id)
 		}
@@ -279,19 +247,19 @@ func (backRepoMessage *BackRepoMessageStruct) CommitPhaseOne(stage *models.Stage
 // BackRepoMessage.CommitDeleteInstance commits deletion of Message to the BackRepo
 func (backRepoMessage *BackRepoMessageStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	message := (*backRepoMessage.Map_MessageDBID_MessagePtr)[id]
+	message := backRepoMessage.Map_MessageDBID_MessagePtr[id]
 
 	// message is not staged anymore, remove messageDB
-	messageDB := (*backRepoMessage.Map_MessageDBID_MessageDB)[id]
+	messageDB := backRepoMessage.Map_MessageDBID_MessageDB[id]
 	query := backRepoMessage.db.Unscoped().Delete(&messageDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoMessage.Map_MessagePtr_MessageDBID), message)
-	delete((*backRepoMessage.Map_MessageDBID_MessagePtr), id)
-	delete((*backRepoMessage.Map_MessageDBID_MessageDB), id)
+	delete(backRepoMessage.Map_MessagePtr_MessageDBID, message)
+	delete(backRepoMessage.Map_MessageDBID_MessagePtr, id)
+	delete(backRepoMessage.Map_MessageDBID_MessageDB, id)
 
 	return
 }
@@ -301,7 +269,7 @@ func (backRepoMessage *BackRepoMessageStruct) CommitDeleteInstance(id uint) (Err
 func (backRepoMessage *BackRepoMessageStruct) CommitPhaseOneInstance(message *models.Message) (Error error) {
 
 	// check if the message is not commited yet
-	if _, ok := (*backRepoMessage.Map_MessagePtr_MessageDBID)[message]; ok {
+	if _, ok := backRepoMessage.Map_MessagePtr_MessageDBID[message]; ok {
 		return
 	}
 
@@ -315,9 +283,9 @@ func (backRepoMessage *BackRepoMessageStruct) CommitPhaseOneInstance(message *mo
 	}
 
 	// update stores
-	(*backRepoMessage.Map_MessagePtr_MessageDBID)[message] = messageDB.ID
-	(*backRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID] = message
-	(*backRepoMessage.Map_MessageDBID_MessageDB)[messageDB.ID] = &messageDB
+	backRepoMessage.Map_MessagePtr_MessageDBID[message] = messageDB.ID
+	backRepoMessage.Map_MessageDBID_MessagePtr[messageDB.ID] = message
+	backRepoMessage.Map_MessageDBID_MessageDB[messageDB.ID] = &messageDB
 
 	return
 }
@@ -326,7 +294,7 @@ func (backRepoMessage *BackRepoMessageStruct) CommitPhaseOneInstance(message *mo
 // Phase Two is the update of instance with the field in the database
 func (backRepoMessage *BackRepoMessageStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, message := range *backRepoMessage.Map_MessageDBID_MessagePtr {
+	for idx, message := range backRepoMessage.Map_MessageDBID_MessagePtr {
 		backRepoMessage.CommitPhaseTwoInstance(backRepo, idx, message)
 	}
 
@@ -338,7 +306,7 @@ func (backRepoMessage *BackRepoMessageStruct) CommitPhaseTwo(backRepo *BackRepoS
 func (backRepoMessage *BackRepoMessageStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, message *models.Message) (Error error) {
 
 	// fetch matching messageDB
-	if messageDB, ok := (*backRepoMessage.Map_MessageDBID_MessageDB)[idx]; ok {
+	if messageDB, ok := backRepoMessage.Map_MessageDBID_MessageDB[idx]; ok {
 
 		messageDB.CopyBasicFieldsFromMessage(message)
 
@@ -382,7 +350,7 @@ func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseOne() (Error error) {
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		message, ok := (*backRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
+		message, ok := backRepoMessage.Map_MessageDBID_MessagePtr[messageDB.ID]
 		if ok {
 			delete(messageInstancesToBeRemovedFromTheStage, message)
 		}
@@ -393,10 +361,10 @@ func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseOne() (Error error) {
 		message.Unstage(backRepoMessage.GetStage())
 
 		// remove instance from the back repo 3 maps
-		messageID := (*backRepoMessage.Map_MessagePtr_MessageDBID)[message]
-		delete((*backRepoMessage.Map_MessagePtr_MessageDBID), message)
-		delete((*backRepoMessage.Map_MessageDBID_MessageDB), messageID)
-		delete((*backRepoMessage.Map_MessageDBID_MessagePtr), messageID)
+		messageID := backRepoMessage.Map_MessagePtr_MessageDBID[message]
+		delete(backRepoMessage.Map_MessagePtr_MessageDBID, message)
+		delete(backRepoMessage.Map_MessageDBID_MessageDB, messageID)
+		delete(backRepoMessage.Map_MessageDBID_MessagePtr, messageID)
 	}
 
 	return
@@ -406,12 +374,12 @@ func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseOne() (Error error) {
 // models version of the messageDB
 func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseOneInstance(messageDB *MessageDB) (Error error) {
 
-	message, ok := (*backRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
+	message, ok := backRepoMessage.Map_MessageDBID_MessagePtr[messageDB.ID]
 	if !ok {
 		message = new(models.Message)
 
-		(*backRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID] = message
-		(*backRepoMessage.Map_MessagePtr_MessageDBID)[message] = messageDB.ID
+		backRepoMessage.Map_MessageDBID_MessagePtr[messageDB.ID] = message
+		backRepoMessage.Map_MessagePtr_MessageDBID[message] = messageDB.ID
 
 		// append model store with the new element
 		message.Name = messageDB.Name_Data.String
@@ -426,7 +394,7 @@ func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseOneInstance(messageDB
 	// Map_MessageDBID_MessageDB)[messageDB hold variable pointers
 	messageDB_Data := *messageDB
 	preservedPtrToMessage := &messageDB_Data
-	(*backRepoMessage.Map_MessageDBID_MessageDB)[messageDB.ID] = preservedPtrToMessage
+	backRepoMessage.Map_MessageDBID_MessageDB[messageDB.ID] = preservedPtrToMessage
 
 	return
 }
@@ -436,7 +404,7 @@ func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseOneInstance(messageDB
 func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, messageDB := range *backRepoMessage.Map_MessageDBID_MessageDB {
+	for _, messageDB := range backRepoMessage.Map_MessageDBID_MessageDB {
 		backRepoMessage.CheckoutPhaseTwoInstance(backRepo, messageDB)
 	}
 	return
@@ -446,7 +414,7 @@ func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseTwo(backRepo *BackRep
 // Phase Two is the update of instance with the field in the database
 func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, messageDB *MessageDB) (Error error) {
 
-	message := (*backRepoMessage.Map_MessageDBID_MessagePtr)[messageDB.ID]
+	message := backRepoMessage.Map_MessageDBID_MessagePtr[messageDB.ID]
 	_ = message // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
@@ -456,7 +424,7 @@ func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseTwoInstance(backRepo 
 // CommitMessage allows commit of a single message (if already staged)
 func (backRepo *BackRepoStruct) CommitMessage(message *models.Message) {
 	backRepo.BackRepoMessage.CommitPhaseOneInstance(message)
-	if id, ok := (*backRepo.BackRepoMessage.Map_MessagePtr_MessageDBID)[message]; ok {
+	if id, ok := backRepo.BackRepoMessage.Map_MessagePtr_MessageDBID[message]; ok {
 		backRepo.BackRepoMessage.CommitPhaseTwoInstance(backRepo, id, message)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -465,9 +433,9 @@ func (backRepo *BackRepoStruct) CommitMessage(message *models.Message) {
 // CommitMessage allows checkout of a single message (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutMessage(message *models.Message) {
 	// check if the message is staged
-	if _, ok := (*backRepo.BackRepoMessage.Map_MessagePtr_MessageDBID)[message]; ok {
+	if _, ok := backRepo.BackRepoMessage.Map_MessagePtr_MessageDBID[message]; ok {
 
-		if id, ok := (*backRepo.BackRepoMessage.Map_MessagePtr_MessageDBID)[message]; ok {
+		if id, ok := backRepo.BackRepoMessage.Map_MessagePtr_MessageDBID[message]; ok {
 			var messageDB MessageDB
 			messageDB.ID = id
 
@@ -653,7 +621,7 @@ func (backRepoMessage *BackRepoMessageStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*MessageDB, 0)
-	for _, messageDB := range *backRepoMessage.Map_MessageDBID_MessageDB {
+	for _, messageDB := range backRepoMessage.Map_MessageDBID_MessageDB {
 		forBackup = append(forBackup, messageDB)
 	}
 
@@ -679,7 +647,7 @@ func (backRepoMessage *BackRepoMessageStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*MessageDB, 0)
-	for _, messageDB := range *backRepoMessage.Map_MessageDBID_MessageDB {
+	for _, messageDB := range backRepoMessage.Map_MessageDBID_MessageDB {
 		forBackup = append(forBackup, messageDB)
 	}
 
@@ -744,7 +712,7 @@ func (backRepoMessage *BackRepoMessageStruct) rowVisitorMessage(row *xlsx.Row) e
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoMessage.Map_MessageDBID_MessageDB)[messageDB.ID] = messageDB
+		backRepoMessage.Map_MessageDBID_MessageDB[messageDB.ID] = messageDB
 		BackRepoMessageid_atBckpTime_newID[messageDB_ID_atBackupTime] = messageDB.ID
 	}
 	return nil
@@ -781,7 +749,7 @@ func (backRepoMessage *BackRepoMessageStruct) RestorePhaseOne(dirPath string) {
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoMessage.Map_MessageDBID_MessageDB)[messageDB.ID] = messageDB
+		backRepoMessage.Map_MessageDBID_MessageDB[messageDB.ID] = messageDB
 		BackRepoMessageid_atBckpTime_newID[messageDB_ID_atBackupTime] = messageDB.ID
 	}
 
@@ -794,7 +762,7 @@ func (backRepoMessage *BackRepoMessageStruct) RestorePhaseOne(dirPath string) {
 // to compute new index
 func (backRepoMessage *BackRepoMessageStruct) RestorePhaseTwo() {
 
-	for _, messageDB := range *backRepoMessage.Map_MessageDBID_MessageDB {
+	for _, messageDB := range backRepoMessage.Map_MessageDBID_MessageDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = messageDB

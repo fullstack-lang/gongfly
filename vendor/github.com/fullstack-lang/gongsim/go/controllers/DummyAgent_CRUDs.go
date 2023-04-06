@@ -151,7 +151,7 @@ func (controller *Controller) PostDummyAgent(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoDummyAgent.CheckoutPhaseOneInstance(&dummyagentDB)
-	dummyagent := (*backRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
+	dummyagent := backRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr[dummyagentDB.ID]
 
 	if dummyagent != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), dummyagent)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateDummyAgent(c *gin.Context) {
 	dummyagentDB.CopyBasicFieldsToDummyAgent(dummyagentNew)
 
 	// get stage instance from DB instance, and call callback function
-	dummyagentOld := (*backRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
+	dummyagentOld := backRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr[dummyagentDB.ID]
 	if dummyagentOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), dummyagentOld, dummyagentNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteDummyAgent(c *gin.Context) {
 	dummyagentDB.CopyBasicFieldsToDummyAgent(dummyagentDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	dummyagentStaged := (*backRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr)[dummyagentDB.ID]
+	dummyagentStaged := backRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr[dummyagentDB.ID]
 	if dummyagentStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), dummyagentStaged, dummyagentDeleted)
 	}

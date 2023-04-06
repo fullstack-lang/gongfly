@@ -44,22 +44,26 @@ export class MarkerService {
   }
 
   /** GET markers from the server */
-  getMarkers(GONG__StackPath: string = ""): Observable<MarkerDB[]> {
+  getMarkers(GONG__StackPath: string): Observable<MarkerDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<MarkerDB[]>(this.markersUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched markers')),
+        tap(),
+		// tap(_ => this.log('fetched markers')),
         catchError(this.handleError<MarkerDB[]>('getMarkers', []))
       );
   }
 
   /** GET marker by id. Will 404 if id not found */
-  getMarker(id: number): Observable<MarkerDB> {
+  getMarker(id: number, GONG__StackPath: string): Observable<MarkerDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.markersUrl}/${id}`;
-    return this.http.get<MarkerDB>(url).pipe(
-      tap(_ => this.log(`fetched marker id=${id}`)),
+    return this.http.get<MarkerDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched marker id=${id}`)),
       catchError(this.handleError<MarkerDB>(`getMarker id=${id}`))
     );
   }
@@ -77,10 +81,10 @@ export class MarkerService {
       params: params
     }
 
-	return this.http.post<MarkerDB>(this.markersUrl, markerdb, httpOptions).pipe(
+    return this.http.post<MarkerDB>(this.markersUrl, markerdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted markerdb id=${markerdb.ID}`)
+        // this.log(`posted markerdb id=${markerdb.ID}`)
       }),
       catchError(this.handleError<MarkerDB>('postMarker'))
     );
@@ -133,11 +137,11 @@ export class MarkerService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in MarkerService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("MarkerService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -148,6 +152,6 @@ export class MarkerService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

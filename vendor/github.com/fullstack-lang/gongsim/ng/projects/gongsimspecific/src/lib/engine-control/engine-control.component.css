@@ -1,0 +1,20 @@
+.button {
+    transform: scale(1.4);
+    /* Increase the icon size by 30% */
+}
+
+.example-spacer {
+    flex: 1 1 auto;
+}
+
+.red {
+    color: red;
+}
+
+.grey {
+    color: grey;
+}
+
+.green {
+    color: green;
+}

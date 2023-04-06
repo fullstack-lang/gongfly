@@ -110,44 +110,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	_ = setValueField 
 
 	// insertion initialization of objects to stage
-	map_CheckoutScheduler_Identifiers := make(map[*CheckoutScheduler]string)
-	_ = map_CheckoutScheduler_Identifiers
-
-	checkoutschedulerOrdered := []*CheckoutScheduler{}
-	for checkoutscheduler := range stage.CheckoutSchedulers {
-		checkoutschedulerOrdered = append(checkoutschedulerOrdered, checkoutscheduler)
-	}
-	sort.Slice(checkoutschedulerOrdered[:], func(i, j int) bool {
-		return checkoutschedulerOrdered[i].Name < checkoutschedulerOrdered[j].Name
-	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of CheckoutScheduler"
-	for idx, checkoutscheduler := range checkoutschedulerOrdered {
-
-		id = generatesIdentifier("CheckoutScheduler", idx, checkoutscheduler.Name)
-		map_CheckoutScheduler_Identifiers[checkoutscheduler] = id
-
-		decl = IdentifiersDecls
-		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
-		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "CheckoutScheduler")
-		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", checkoutscheduler.Name)
-		identifiersDecl += decl
-
-		initializerStatements += "\n\n	// CheckoutScheduler values setup"
-		// Initialisation of values
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(checkoutscheduler.Name))
-		initializerStatements += setValueField
-
-		setValueField = NumberInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "NbUpdatesFromFront")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", checkoutscheduler.NbUpdatesFromFront))
-		initializerStatements += setValueField
-
-	}
-
 	map_Circle_Identifiers := make(map[*Circle]string)
 	_ = map_Circle_Identifiers
 
@@ -705,16 +667,6 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	}
 
 	// insertion initialization of objects to stage
-	for idx, checkoutscheduler := range checkoutschedulerOrdered {
-		var setPointerField string
-		_ = setPointerField
-
-		id = generatesIdentifier("CheckoutScheduler", idx, checkoutscheduler.Name)
-		map_CheckoutScheduler_Identifiers[checkoutscheduler] = id
-
-		// Initialisation of values
-	}
-
 	for idx, circle := range circleOrdered {
 		var setPointerField string
 		_ = setPointerField

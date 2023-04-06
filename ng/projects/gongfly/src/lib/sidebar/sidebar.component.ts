@@ -26,6 +26,8 @@ import { getSatelliteUniqueID } from '../front-repo.service'
 import { ScenarioService } from '../scenario.service'
 import { getScenarioUniqueID } from '../front-repo.service'
 
+import { RouteService } from '../route-service';
+
 /**
  * Types of a GongNode / GongFlatNode
  */
@@ -165,7 +167,6 @@ export class SidebarComponent implements OnInit {
   constructor(
     private router: Router,
     private frontRepoService: FrontRepoService,
-    private commitNbFromBackService: CommitNbFromBackService,
     private gongstructSelectionService: GongstructSelectionService,
 
     // insertion point for per struct service declaration
@@ -176,6 +177,8 @@ export class SidebarComponent implements OnInit {
     private radarService: RadarService,
     private satelliteService: SatelliteService,
     private scenarioService: ScenarioService,
+
+    private routeService: RouteService,
   ) { }
 
   ngOnDestroy() {
@@ -186,6 +189,10 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
 
     console.log("Sidebar init: " + this.GONG__StackPath)
+
+    // add the routes that will used by this side panel component and
+    // by the component that are called from this component
+    this.routeService.addDataPanelRoutes(this.GONG__StackPath)
 
     this.subscription = this.gongstructSelectionService.gongtructSelected$.subscribe(
       gongstructName => {
@@ -674,14 +681,7 @@ export class SidebarComponent implements OnInit {
           }
         }
       )
-    });
-
-    // fetch the number of commits
-    this.commitNbFromBackService.getCommitNbFromBack().subscribe(
-      commitNbFromBack => {
-        this.commitNbFromBack = commitNbFromBack
-      }
-    )
+    })
   }
 
   /**
@@ -689,9 +689,11 @@ export class SidebarComponent implements OnInit {
    * @param path for the outlet selection
    */
   setTableRouterOutlet(path: string) {
+    let outletName = this.routeService.getTableOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + path
     this.router.navigate([{
       outlets: {
-        github_com_fullstack_lang_gongfly_go_table: ["github_com_fullstack_lang_gongfly_go-" + path]
+        outletName: [fullPath]
       }
     }]);
   }
@@ -703,34 +705,39 @@ export class SidebarComponent implements OnInit {
   setTableRouterOutletFromTree(path: string, type: GongNodeType, structName: string, id: number) {
 
     if (type == GongNodeType.STRUCT) {
-      this.router.navigate([{
-        outlets: {
-          github_com_fullstack_lang_gongfly_go_table: ["github_com_fullstack_lang_gongfly_go-" + path.toLowerCase(), this.GONG__StackPath]
-        }
-      }]);
+      let outletName = this.routeService.getTableOutlet(this.GONG__StackPath)
+      let fullPath = this.routeService.getPathRoot() + "-" + path.toLowerCase()
+      let outletConf: any = {}
+      outletConf[outletName] = [fullPath, this.GONG__StackPath]
+
+      this.router.navigate([{ outlets: outletConf }])
     }
 
     if (type == GongNodeType.INSTANCE) {
-      this.router.navigate([{
-        outlets: {
-          github_com_fullstack_lang_gongfly_go_editor: ["github_com_fullstack_lang_gongfly_go-" + structName.toLowerCase() + "-detail", id]
-        }
-      }]);
+      let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+      let fullPath = this.routeService.getPathRoot() + "-" + structName.toLowerCase() + "-detail"
+
+      let outletConf: any = {}
+      outletConf[outletName] = [fullPath, id, this.GONG__StackPath]
+
+      this.router.navigate([{ outlets: outletConf }])
     }
   }
 
   setEditorRouterOutlet(path: string) {
-    this.router.navigate([{
-      outlets: {
-        github_com_fullstack_lang_gongfly_go_editor: ["github_com_fullstack_lang_gongfly_go-" + path.toLowerCase(), this.GONG__StackPath]
-      }
-    }]);
+    let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + path.toLowerCase()
+    let outletConf : any = {}
+    outletConf[outletName] = [fullPath, this.GONG__StackPath]
+    this.router.navigate([{ outlets: outletConf }]);
   }
 
   setEditorSpecialRouterOutlet(node: GongFlatNode) {
+    let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + node.associatedStructName.toLowerCase() + "-adder"
     this.router.navigate([{
       outlets: {
-        github_com_fullstack_lang_gongfly_go_editor: ["github_com_fullstack_lang_gongfly_go-" + node.associatedStructName.toLowerCase() + "-adder", node.id, node.structName, node.associationField, this.GONG__StackPath]
+        outletName: [fullPath, node.id, node.structName, node.associationField, this.GONG__StackPath]
       }
     }]);
   }

@@ -42,22 +42,26 @@ export class MapOptionsService {
   }
 
   /** GET mapoptionss from the server */
-  getMapOptionss(GONG__StackPath: string = ""): Observable<MapOptionsDB[]> {
+  getMapOptionss(GONG__StackPath: string): Observable<MapOptionsDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<MapOptionsDB[]>(this.mapoptionssUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched mapoptionss')),
+        tap(),
+		// tap(_ => this.log('fetched mapoptionss')),
         catchError(this.handleError<MapOptionsDB[]>('getMapOptionss', []))
       );
   }
 
   /** GET mapoptions by id. Will 404 if id not found */
-  getMapOptions(id: number): Observable<MapOptionsDB> {
+  getMapOptions(id: number, GONG__StackPath: string): Observable<MapOptionsDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.mapoptionssUrl}/${id}`;
-    return this.http.get<MapOptionsDB>(url).pipe(
-      tap(_ => this.log(`fetched mapoptions id=${id}`)),
+    return this.http.get<MapOptionsDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched mapoptions id=${id}`)),
       catchError(this.handleError<MapOptionsDB>(`getMapOptions id=${id}`))
     );
   }
@@ -74,10 +78,10 @@ export class MapOptionsService {
       params: params
     }
 
-	return this.http.post<MapOptionsDB>(this.mapoptionssUrl, mapoptionsdb, httpOptions).pipe(
+    return this.http.post<MapOptionsDB>(this.mapoptionssUrl, mapoptionsdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted mapoptionsdb id=${mapoptionsdb.ID}`)
+        // this.log(`posted mapoptionsdb id=${mapoptionsdb.ID}`)
       }),
       catchError(this.handleError<MapOptionsDB>('postMapOptions'))
     );
@@ -129,11 +133,11 @@ export class MapOptionsService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in MapOptionsService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("MapOptionsService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -144,6 +148,6 @@ export class MapOptionsService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

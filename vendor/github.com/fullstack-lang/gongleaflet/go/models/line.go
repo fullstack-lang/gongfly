@@ -25,6 +25,9 @@ type VLine struct {
 	// swagger:ignore
 	// access to the models instance that contains the original information
 	LineInterface LineInterface `gorm:"-"`
+
+	// the stage of the visual line
+	stage *StageStruct
 }
 
 // for the moment, the angular front end does not get booleans, therefore, we translate the
@@ -81,7 +84,9 @@ func (visualLine *VLine) UpdateLine() {
 		visualLine.EndLng = visualLine.LineInterface.GetEndLng()
 
 		visualLine.LayerGroup =
-			computeLayerGroupFromLayerGroupName(visualLine.LineInterface.GetLayerGroupName())
+			ComputeLayerGroupFromLayerGroupName(
+				visualLine.stage,
+				visualLine.LineInterface.GetLayerGroupName())
 
 		// transmission status
 		if visualLine.LineInterface.GetIsTransmitting() {
@@ -100,4 +105,18 @@ func (visualLine *VLine) UpdateLine() {
 		visualLine.MessageBackward = visualLine.LineInterface.GetMessageBackward()
 
 	}
+}
+
+// attach visual line to line
+func AttachLine(
+	gongleafletStage *StageStruct,
+	visualLineInterface LineInterface,
+	DashStyleEnum DashStyleEnum) (visualLine *VLine) {
+	visualLine = new(VLine).Stage(gongleafletStage)
+	visualLine.DashStyleEnum = DashStyleEnum
+	visualLine.LineInterface = visualLineInterface
+	visualLine.stage = gongleafletStage
+	visualLine.UpdateLine()
+
+	return
 }

@@ -151,7 +151,7 @@ func (controller *Controller) PostDivIcon(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoDivIcon.CheckoutPhaseOneInstance(&diviconDB)
-	divicon := (*backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr)[diviconDB.ID]
+	divicon := backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[diviconDB.ID]
 
 	if divicon != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), divicon)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateDivIcon(c *gin.Context) {
 	diviconDB.CopyBasicFieldsToDivIcon(diviconNew)
 
 	// get stage instance from DB instance, and call callback function
-	diviconOld := (*backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr)[diviconDB.ID]
+	diviconOld := backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[diviconDB.ID]
 	if diviconOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), diviconOld, diviconNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteDivIcon(c *gin.Context) {
 	diviconDB.CopyBasicFieldsToDivIcon(diviconDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	diviconStaged := (*backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr)[diviconDB.ID]
+	diviconStaged := backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[diviconDB.ID]
 	if diviconStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), diviconStaged, diviconDeleted)
 	}

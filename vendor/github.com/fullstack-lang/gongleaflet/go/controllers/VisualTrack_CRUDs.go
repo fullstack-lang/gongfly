@@ -151,7 +151,7 @@ func (controller *Controller) PostVisualTrack(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoVisualTrack.CheckoutPhaseOneInstance(&visualtrackDB)
-	visualtrack := (*backRepo.BackRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr)[visualtrackDB.ID]
+	visualtrack := backRepo.BackRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr[visualtrackDB.ID]
 
 	if visualtrack != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), visualtrack)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateVisualTrack(c *gin.Context) {
 	visualtrackDB.CopyBasicFieldsToVisualTrack(visualtrackNew)
 
 	// get stage instance from DB instance, and call callback function
-	visualtrackOld := (*backRepo.BackRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr)[visualtrackDB.ID]
+	visualtrackOld := backRepo.BackRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr[visualtrackDB.ID]
 	if visualtrackOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), visualtrackOld, visualtrackNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteVisualTrack(c *gin.Context) {
 	visualtrackDB.CopyBasicFieldsToVisualTrack(visualtrackDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	visualtrackStaged := (*backRepo.BackRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr)[visualtrackDB.ID]
+	visualtrackStaged := backRepo.BackRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr[visualtrackDB.ID]
 	if visualtrackStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), visualtrackStaged, visualtrackDeleted)
 	}

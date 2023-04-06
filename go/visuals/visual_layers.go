@@ -6,22 +6,31 @@ import (
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
 )
 
-var AircraftLayerGroup = (&gongleaflet_models.LayerGroup{
-	Name: string(models.Aircraft_),
-}).Stage(&gongleaflet_models.Stage)
+var AircraftLayerGroup *gongleaflet_models.LayerGroup
+var SatelliteLayerGroup *gongleaflet_models.LayerGroup
+var NetworkLayerGroup *gongleaflet_models.LayerGroup
+var CenterLayerGroup *gongleaflet_models.LayerGroup
+var SystemLayerGroup *gongleaflet_models.LayerGroup
 
-var SatelliteLayerGroup = (&gongleaflet_models.LayerGroup{
-	Name: string(models.Satellite_),
-}).Stage(&gongleaflet_models.Stage)
+func LoadLayerGroups(gongleafletStage *gongleaflet_models.StageStruct) {
+	AircraftLayerGroup = (&gongleaflet_models.LayerGroup{
+		Name: string(models.Aircraft_),
+	}).Stage(gongleafletStage)
 
-var NetworkLayerGroup = (&gongleaflet_models.LayerGroup{
-	Name: string(models.Network_),
-}).Stage(&gongleaflet_models.Stage)
+	SatelliteLayerGroup = (&gongleaflet_models.LayerGroup{
+		Name: string(models.Satellite_),
+	}).Stage(gongleafletStage)
 
-var CenterLayerGroup = (&gongleaflet_models.LayerGroup{
-	Name: string(models.Center_),
-}).Stage(&gongleaflet_models.Stage)
+	NetworkLayerGroup = (&gongleaflet_models.LayerGroup{
+		Name: string(models.Network_),
+	}).Stage(gongleafletStage)
 
-var SystemLayerGroup = (&gongleaflet_models.LayerGroup{
-	Name: string(models.System_),
-}).Stage(&gongleaflet_models.Stage)
+	CenterLayerGroup = (&gongleaflet_models.LayerGroup{
+		Name: string(models.Center_),
+	}).Stage(gongleafletStage)
+
+	SystemLayerGroup = (&gongleaflet_models.LayerGroup{
+		Name: string(models.System_),
+	}).Stage(gongleafletStage)
+
+}

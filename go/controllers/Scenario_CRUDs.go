@@ -151,7 +151,7 @@ func (controller *Controller) PostScenario(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoScenario.CheckoutPhaseOneInstance(&scenarioDB)
-	scenario := (*backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID]
+	scenario := backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr[scenarioDB.ID]
 
 	if scenario != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), scenario)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateScenario(c *gin.Context) {
 	scenarioDB.CopyBasicFieldsToScenario(scenarioNew)
 
 	// get stage instance from DB instance, and call callback function
-	scenarioOld := (*backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID]
+	scenarioOld := backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr[scenarioDB.ID]
 	if scenarioOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), scenarioOld, scenarioNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteScenario(c *gin.Context) {
 	scenarioDB.CopyBasicFieldsToScenario(scenarioDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	scenarioStaged := (*backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID]
+	scenarioStaged := backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr[scenarioDB.ID]
 	if scenarioStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), scenarioStaged, scenarioDeleted)
 	}

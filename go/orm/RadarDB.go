@@ -117,13 +117,13 @@ var Radar_Fields = []string{
 
 type BackRepoRadarStruct struct {
 	// stores RadarDB according to their gorm ID
-	Map_RadarDBID_RadarDB *map[uint]*RadarDB
+	Map_RadarDBID_RadarDB map[uint]*RadarDB
 
 	// stores RadarDB ID according to Radar address
-	Map_RadarPtr_RadarDBID *map[*models.Radar]uint
+	Map_RadarPtr_RadarDBID map[*models.Radar]uint
 
 	// stores Radar according to their gorm ID
-	Map_RadarDBID_RadarPtr *map[uint]*models.Radar
+	Map_RadarDBID_RadarPtr map[uint]*models.Radar
 
 	db *gorm.DB
 
@@ -141,40 +141,8 @@ func (backRepoRadar *BackRepoRadarStruct) GetDB() *gorm.DB {
 
 // GetRadarDBFromRadarPtr is a handy function to access the back repo instance from the stage instance
 func (backRepoRadar *BackRepoRadarStruct) GetRadarDBFromRadarPtr(radar *models.Radar) (radarDB *RadarDB) {
-	id := (*backRepoRadar.Map_RadarPtr_RadarDBID)[radar]
-	radarDB = (*backRepoRadar.Map_RadarDBID_RadarDB)[id]
-	return
-}
-
-// BackRepoRadar.Init set up the BackRepo of the Radar
-func (backRepoRadar *BackRepoRadarStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoRadar.Map_RadarDBID_RadarPtr != nil {
-		err := errors.New("In Init, backRepoRadar.Map_RadarDBID_RadarPtr should be nil")
-		return err
-	}
-
-	if backRepoRadar.Map_RadarDBID_RadarDB != nil {
-		err := errors.New("In Init, backRepoRadar.Map_RadarDBID_RadarDB should be nil")
-		return err
-	}
-
-	if backRepoRadar.Map_RadarPtr_RadarDBID != nil {
-		err := errors.New("In Init, backRepoRadar.Map_RadarPtr_RadarDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.Radar, 0)
-	backRepoRadar.Map_RadarDBID_RadarPtr = &tmp
-
-	tmpDB := make(map[uint]*RadarDB, 0)
-	backRepoRadar.Map_RadarDBID_RadarDB = &tmpDB
-
-	tmpID := make(map[*models.Radar]uint, 0)
-	backRepoRadar.Map_RadarPtr_RadarDBID = &tmpID
-
-	backRepoRadar.db = db
-	backRepoRadar.stage = stage
+	id := backRepoRadar.Map_RadarPtr_RadarDBID[radar]
+	radarDB = backRepoRadar.Map_RadarDBID_RadarDB[id]
 	return
 }
 
@@ -188,7 +156,7 @@ func (backRepoRadar *BackRepoRadarStruct) CommitPhaseOne(stage *models.StageStru
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, radar := range *backRepoRadar.Map_RadarDBID_RadarPtr {
+	for id, radar := range backRepoRadar.Map_RadarDBID_RadarPtr {
 		if _, ok := stage.Radars[radar]; !ok {
 			backRepoRadar.CommitDeleteInstance(id)
 		}
@@ -200,19 +168,19 @@ func (backRepoRadar *BackRepoRadarStruct) CommitPhaseOne(stage *models.StageStru
 // BackRepoRadar.CommitDeleteInstance commits deletion of Radar to the BackRepo
 func (backRepoRadar *BackRepoRadarStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	radar := (*backRepoRadar.Map_RadarDBID_RadarPtr)[id]
+	radar := backRepoRadar.Map_RadarDBID_RadarPtr[id]
 
 	// radar is not staged anymore, remove radarDB
-	radarDB := (*backRepoRadar.Map_RadarDBID_RadarDB)[id]
+	radarDB := backRepoRadar.Map_RadarDBID_RadarDB[id]
 	query := backRepoRadar.db.Unscoped().Delete(&radarDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoRadar.Map_RadarPtr_RadarDBID), radar)
-	delete((*backRepoRadar.Map_RadarDBID_RadarPtr), id)
-	delete((*backRepoRadar.Map_RadarDBID_RadarDB), id)
+	delete(backRepoRadar.Map_RadarPtr_RadarDBID, radar)
+	delete(backRepoRadar.Map_RadarDBID_RadarPtr, id)
+	delete(backRepoRadar.Map_RadarDBID_RadarDB, id)
 
 	return
 }
@@ -222,7 +190,7 @@ func (backRepoRadar *BackRepoRadarStruct) CommitDeleteInstance(id uint) (Error e
 func (backRepoRadar *BackRepoRadarStruct) CommitPhaseOneInstance(radar *models.Radar) (Error error) {
 
 	// check if the radar is not commited yet
-	if _, ok := (*backRepoRadar.Map_RadarPtr_RadarDBID)[radar]; ok {
+	if _, ok := backRepoRadar.Map_RadarPtr_RadarDBID[radar]; ok {
 		return
 	}
 
@@ -236,9 +204,9 @@ func (backRepoRadar *BackRepoRadarStruct) CommitPhaseOneInstance(radar *models.R
 	}
 
 	// update stores
-	(*backRepoRadar.Map_RadarPtr_RadarDBID)[radar] = radarDB.ID
-	(*backRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID] = radar
-	(*backRepoRadar.Map_RadarDBID_RadarDB)[radarDB.ID] = &radarDB
+	backRepoRadar.Map_RadarPtr_RadarDBID[radar] = radarDB.ID
+	backRepoRadar.Map_RadarDBID_RadarPtr[radarDB.ID] = radar
+	backRepoRadar.Map_RadarDBID_RadarDB[radarDB.ID] = &radarDB
 
 	return
 }
@@ -247,7 +215,7 @@ func (backRepoRadar *BackRepoRadarStruct) CommitPhaseOneInstance(radar *models.R
 // Phase Two is the update of instance with the field in the database
 func (backRepoRadar *BackRepoRadarStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, radar := range *backRepoRadar.Map_RadarDBID_RadarPtr {
+	for idx, radar := range backRepoRadar.Map_RadarDBID_RadarPtr {
 		backRepoRadar.CommitPhaseTwoInstance(backRepo, idx, radar)
 	}
 
@@ -259,7 +227,7 @@ func (backRepoRadar *BackRepoRadarStruct) CommitPhaseTwo(backRepo *BackRepoStruc
 func (backRepoRadar *BackRepoRadarStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, radar *models.Radar) (Error error) {
 
 	// fetch matching radarDB
-	if radarDB, ok := (*backRepoRadar.Map_RadarDBID_RadarDB)[idx]; ok {
+	if radarDB, ok := backRepoRadar.Map_RadarDBID_RadarDB[idx]; ok {
 
 		radarDB.CopyBasicFieldsFromRadar(radar)
 
@@ -303,7 +271,7 @@ func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseOne() (Error error) {
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		radar, ok := (*backRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
+		radar, ok := backRepoRadar.Map_RadarDBID_RadarPtr[radarDB.ID]
 		if ok {
 			delete(radarInstancesToBeRemovedFromTheStage, radar)
 		}
@@ -314,10 +282,10 @@ func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseOne() (Error error) {
 		radar.Unstage(backRepoRadar.GetStage())
 
 		// remove instance from the back repo 3 maps
-		radarID := (*backRepoRadar.Map_RadarPtr_RadarDBID)[radar]
-		delete((*backRepoRadar.Map_RadarPtr_RadarDBID), radar)
-		delete((*backRepoRadar.Map_RadarDBID_RadarDB), radarID)
-		delete((*backRepoRadar.Map_RadarDBID_RadarPtr), radarID)
+		radarID := backRepoRadar.Map_RadarPtr_RadarDBID[radar]
+		delete(backRepoRadar.Map_RadarPtr_RadarDBID, radar)
+		delete(backRepoRadar.Map_RadarDBID_RadarDB, radarID)
+		delete(backRepoRadar.Map_RadarDBID_RadarPtr, radarID)
 	}
 
 	return
@@ -327,12 +295,12 @@ func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseOne() (Error error) {
 // models version of the radarDB
 func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseOneInstance(radarDB *RadarDB) (Error error) {
 
-	radar, ok := (*backRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
+	radar, ok := backRepoRadar.Map_RadarDBID_RadarPtr[radarDB.ID]
 	if !ok {
 		radar = new(models.Radar)
 
-		(*backRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID] = radar
-		(*backRepoRadar.Map_RadarPtr_RadarDBID)[radar] = radarDB.ID
+		backRepoRadar.Map_RadarDBID_RadarPtr[radarDB.ID] = radar
+		backRepoRadar.Map_RadarPtr_RadarDBID[radar] = radarDB.ID
 
 		// append model store with the new element
 		radar.Name = radarDB.Name_Data.String
@@ -347,7 +315,7 @@ func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseOneInstance(radarDB *Rada
 	// Map_RadarDBID_RadarDB)[radarDB hold variable pointers
 	radarDB_Data := *radarDB
 	preservedPtrToRadar := &radarDB_Data
-	(*backRepoRadar.Map_RadarDBID_RadarDB)[radarDB.ID] = preservedPtrToRadar
+	backRepoRadar.Map_RadarDBID_RadarDB[radarDB.ID] = preservedPtrToRadar
 
 	return
 }
@@ -357,7 +325,7 @@ func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseOneInstance(radarDB *Rada
 func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, radarDB := range *backRepoRadar.Map_RadarDBID_RadarDB {
+	for _, radarDB := range backRepoRadar.Map_RadarDBID_RadarDB {
 		backRepoRadar.CheckoutPhaseTwoInstance(backRepo, radarDB)
 	}
 	return
@@ -367,7 +335,7 @@ func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseTwo(backRepo *BackRepoStr
 // Phase Two is the update of instance with the field in the database
 func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, radarDB *RadarDB) (Error error) {
 
-	radar := (*backRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
+	radar := backRepoRadar.Map_RadarDBID_RadarPtr[radarDB.ID]
 	_ = radar // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
@@ -377,7 +345,7 @@ func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseTwoInstance(backRepo *Bac
 // CommitRadar allows commit of a single radar (if already staged)
 func (backRepo *BackRepoStruct) CommitRadar(radar *models.Radar) {
 	backRepo.BackRepoRadar.CommitPhaseOneInstance(radar)
-	if id, ok := (*backRepo.BackRepoRadar.Map_RadarPtr_RadarDBID)[radar]; ok {
+	if id, ok := backRepo.BackRepoRadar.Map_RadarPtr_RadarDBID[radar]; ok {
 		backRepo.BackRepoRadar.CommitPhaseTwoInstance(backRepo, id, radar)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -386,9 +354,9 @@ func (backRepo *BackRepoStruct) CommitRadar(radar *models.Radar) {
 // CommitRadar allows checkout of a single radar (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutRadar(radar *models.Radar) {
 	// check if the radar is staged
-	if _, ok := (*backRepo.BackRepoRadar.Map_RadarPtr_RadarDBID)[radar]; ok {
+	if _, ok := backRepo.BackRepoRadar.Map_RadarPtr_RadarDBID[radar]; ok {
 
-		if id, ok := (*backRepo.BackRepoRadar.Map_RadarPtr_RadarDBID)[radar]; ok {
+		if id, ok := backRepo.BackRepoRadar.Map_RadarPtr_RadarDBID[radar]; ok {
 			var radarDB RadarDB
 			radarDB.ID = id
 
@@ -470,7 +438,7 @@ func (backRepoRadar *BackRepoRadarStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*RadarDB, 0)
-	for _, radarDB := range *backRepoRadar.Map_RadarDBID_RadarDB {
+	for _, radarDB := range backRepoRadar.Map_RadarDBID_RadarDB {
 		forBackup = append(forBackup, radarDB)
 	}
 
@@ -496,7 +464,7 @@ func (backRepoRadar *BackRepoRadarStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*RadarDB, 0)
-	for _, radarDB := range *backRepoRadar.Map_RadarDBID_RadarDB {
+	for _, radarDB := range backRepoRadar.Map_RadarDBID_RadarDB {
 		forBackup = append(forBackup, radarDB)
 	}
 
@@ -561,7 +529,7 @@ func (backRepoRadar *BackRepoRadarStruct) rowVisitorRadar(row *xlsx.Row) error {
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoRadar.Map_RadarDBID_RadarDB)[radarDB.ID] = radarDB
+		backRepoRadar.Map_RadarDBID_RadarDB[radarDB.ID] = radarDB
 		BackRepoRadarid_atBckpTime_newID[radarDB_ID_atBackupTime] = radarDB.ID
 	}
 	return nil
@@ -598,7 +566,7 @@ func (backRepoRadar *BackRepoRadarStruct) RestorePhaseOne(dirPath string) {
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoRadar.Map_RadarDBID_RadarDB)[radarDB.ID] = radarDB
+		backRepoRadar.Map_RadarDBID_RadarDB[radarDB.ID] = radarDB
 		BackRepoRadarid_atBckpTime_newID[radarDB_ID_atBackupTime] = radarDB.ID
 	}
 
@@ -611,7 +579,7 @@ func (backRepoRadar *BackRepoRadarStruct) RestorePhaseOne(dirPath string) {
 // to compute new index
 func (backRepoRadar *BackRepoRadarStruct) RestorePhaseTwo() {
 
-	for _, radarDB := range *backRepoRadar.Map_RadarDBID_RadarDB {
+	for _, radarDB := range backRepoRadar.Map_RadarDBID_RadarDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = radarDB

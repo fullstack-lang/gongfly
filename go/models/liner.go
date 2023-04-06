@@ -49,8 +49,8 @@ type Liner struct {
 	ReporingLine *OpsLine
 }
 
-func (Liner *Liner) Register() (res *Liner) {
-	gongsim_models.AppendToSingloton(Liner)
+func (Liner *Liner) Register(engine *gongsim_models.Engine) (res *Liner) {
+	gongsim_models.AppendToSingloton(engine, Liner)
 	res = Liner
 	return
 }

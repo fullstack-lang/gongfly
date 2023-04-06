@@ -4,6 +4,7 @@ package models
 import (
 	"errors"
 	"fmt"
+	"sync"
 )
 
 // errUnkownEnum is returns when a value cannot match enum values
@@ -29,14 +30,6 @@ type GongStructInterface interface {
 // StageStruct enables storage of staged instances
 // swagger:ignore
 type StageStruct struct { // insertion point for definition of arrays registering instances
-	CheckoutSchedulers           map[*CheckoutScheduler]any
-	CheckoutSchedulers_mapString map[string]*CheckoutScheduler
-
-	OnAfterCheckoutSchedulerCreateCallback OnAfterCreateInterface[CheckoutScheduler]
-	OnAfterCheckoutSchedulerUpdateCallback OnAfterUpdateInterface[CheckoutScheduler]
-	OnAfterCheckoutSchedulerDeleteCallback OnAfterDeleteInterface[CheckoutScheduler]
-	OnAfterCheckoutSchedulerReadCallback   OnAfterReadInterface[CheckoutScheduler]
-
 	Circles           map[*Circle]any
 	Circles_mapString map[string]*Circle
 
@@ -126,18 +119,11 @@ type StageStruct struct { // insertion point for definition of arrays registerin
 	// store meta package import
 	MetaPackageImportPath  string
 	MetaPackageImportAlias string
-	Map_DocLink_Renaming   map[string]GONG__Identifier
 
-	// map_Gongstruct_BackPointer is storage of back pointers
-	map_Gongstruct_BackPointer map[any]any
-}
-
-func SetBackPointer[T Gongstruct](stageStruct *StageStruct, instance *T, backPointer any) {
-	stageStruct.map_Gongstruct_BackPointer[instance] = backPointer
-}
-func GetBackPointer[T Gongstruct](stageStruct *StageStruct, instance *T) (backPointer any) {
-	backPointer, _ = stageStruct.map_Gongstruct_BackPointer[instance]
-	return
+	// to be removed after fix of [issue](https://github.com/golang/go/issues/57559)
+	// map to enable docLink renaming when an identifier is renamed
+	Map_DocLink_Renaming map[string]GONG__Identifier
+	// the to be removed stops here
 }
 
 type GONG__Identifier struct {
@@ -180,8 +166,6 @@ type BackRepoInterface interface {
 	BackupXL(stage *StageStruct, dirPath string)
 	RestoreXL(stage *StageStruct, dirPath string)
 	// insertion point for Commit and Checkout signatures
-	CommitCheckoutScheduler(checkoutscheduler *CheckoutScheduler)
-	CheckoutCheckoutScheduler(checkoutscheduler *CheckoutScheduler)
 	CommitCircle(circle *Circle)
 	CheckoutCircle(circle *Circle)
 	CommitDivIcon(divicon *DivIcon)
@@ -204,41 +188,56 @@ type BackRepoInterface interface {
 	GetLastPushFromFrontNb() uint
 }
 
-// swagger:ignore instructs the gong compiler (gongc) to avoid this particular struct
-var Stage StageStruct = StageStruct{ // insertion point for array initiatialisation
-	CheckoutSchedulers:           make(map[*CheckoutScheduler]any),
-	CheckoutSchedulers_mapString: make(map[string]*CheckoutScheduler),
+var _stage *StageStruct
 
-	Circles:           make(map[*Circle]any),
-	Circles_mapString: make(map[string]*Circle),
+var once sync.Once
 
-	DivIcons:           make(map[*DivIcon]any),
-	DivIcons_mapString: make(map[string]*DivIcon),
+func GetDefaultStage() *StageStruct {
+	once.Do(func() {
+		_stage = NewStage()
+	})
+	return _stage
+}
 
-	LayerGroups:           make(map[*LayerGroup]any),
-	LayerGroups_mapString: make(map[string]*LayerGroup),
+func NewStage() (stage *StageStruct) {
 
-	LayerGroupUses:           make(map[*LayerGroupUse]any),
-	LayerGroupUses_mapString: make(map[string]*LayerGroupUse),
+	stage = &StageStruct{ // insertion point for array initiatialisation
+		Circles:           make(map[*Circle]any),
+		Circles_mapString: make(map[string]*Circle),
 
-	MapOptionss:           make(map[*MapOptions]any),
-	MapOptionss_mapString: make(map[string]*MapOptions),
+		DivIcons:           make(map[*DivIcon]any),
+		DivIcons_mapString: make(map[string]*DivIcon),
 
-	Markers:           make(map[*Marker]any),
-	Markers_mapString: make(map[string]*Marker),
+		LayerGroups:           make(map[*LayerGroup]any),
+		LayerGroups_mapString: make(map[string]*LayerGroup),
 
-	UserClicks:           make(map[*UserClick]any),
-	UserClicks_mapString: make(map[string]*UserClick),
+		LayerGroupUses:           make(map[*LayerGroupUse]any),
+		LayerGroupUses_mapString: make(map[string]*LayerGroupUse),
 
-	VLines:           make(map[*VLine]any),
-	VLines_mapString: make(map[string]*VLine),
+		MapOptionss:           make(map[*MapOptions]any),
+		MapOptionss_mapString: make(map[string]*MapOptions),
 
-	VisualTracks:           make(map[*VisualTrack]any),
-	VisualTracks_mapString: make(map[string]*VisualTrack),
+		Markers:           make(map[*Marker]any),
+		Markers_mapString: make(map[string]*Marker),
 
-	// end of insertion point
-	Map_GongStructName_InstancesNb: make(map[string]int),
-	map_Gongstruct_BackPointer:     make(map[any]any),
+		UserClicks:           make(map[*UserClick]any),
+		UserClicks_mapString: make(map[string]*UserClick),
+
+		VLines:           make(map[*VLine]any),
+		VLines_mapString: make(map[string]*VLine),
+
+		VisualTracks:           make(map[*VisualTrack]any),
+		VisualTracks_mapString: make(map[string]*VisualTrack),
+
+		// end of insertion point
+		Map_GongStructName_InstancesNb: make(map[string]int),
+
+		// to be removed after fix of [issue](https://github.com/golang/go/issues/57559)
+		Map_DocLink_Renaming: make(map[string]GONG__Identifier),
+		// the to be removed stops here
+	}
+
+	return
 }
 
 func (stage *StageStruct) Commit() {
@@ -247,7 +246,6 @@ func (stage *StageStruct) Commit() {
 	}
 
 	// insertion point for computing the map of number of instances per gongstruct
-	stage.Map_GongStructName_InstancesNb["CheckoutScheduler"] = len(stage.CheckoutSchedulers)
 	stage.Map_GongStructName_InstancesNb["Circle"] = len(stage.Circles)
 	stage.Map_GongStructName_InstancesNb["DivIcon"] = len(stage.DivIcons)
 	stage.Map_GongStructName_InstancesNb["LayerGroup"] = len(stage.LayerGroups)
@@ -266,7 +264,6 @@ func (stage *StageStruct) Checkout() {
 	}
 
 	// insertion point for computing the map of number of instances per gongstruct
-	stage.Map_GongStructName_InstancesNb["CheckoutScheduler"] = len(stage.CheckoutSchedulers)
 	stage.Map_GongStructName_InstancesNb["Circle"] = len(stage.Circles)
 	stage.Map_GongStructName_InstancesNb["DivIcon"] = len(stage.DivIcons)
 	stage.Map_GongStructName_InstancesNb["LayerGroup"] = len(stage.LayerGroups)
@@ -308,46 +305,6 @@ func (stage *StageStruct) RestoreXL(dirPath string) {
 }
 
 // insertion point for cumulative sub template with model space calls
-// Stage puts checkoutscheduler to the model stage
-func (checkoutscheduler *CheckoutScheduler) Stage(stage *StageStruct) *CheckoutScheduler {
-	stage.CheckoutSchedulers[checkoutscheduler] = __member
-	stage.CheckoutSchedulers_mapString[checkoutscheduler.Name] = checkoutscheduler
-
-	return checkoutscheduler
-}
-
-// Unstage removes checkoutscheduler off the model stage
-func (checkoutscheduler *CheckoutScheduler) Unstage(stage *StageStruct) *CheckoutScheduler {
-	delete(stage.CheckoutSchedulers, checkoutscheduler)
-	delete(stage.CheckoutSchedulers_mapString, checkoutscheduler.Name)
-	return checkoutscheduler
-}
-
-// commit checkoutscheduler to the back repo (if it is already staged)
-func (checkoutscheduler *CheckoutScheduler) Commit(stage *StageStruct) *CheckoutScheduler {
-	if _, ok := stage.CheckoutSchedulers[checkoutscheduler]; ok {
-		if stage.BackRepo != nil {
-			stage.BackRepo.CommitCheckoutScheduler(checkoutscheduler)
-		}
-	}
-	return checkoutscheduler
-}
-
-// Checkout checkoutscheduler to the back repo (if it is already staged)
-func (checkoutscheduler *CheckoutScheduler) Checkout(stage *StageStruct) *CheckoutScheduler {
-	if _, ok := stage.CheckoutSchedulers[checkoutscheduler]; ok {
-		if stage.BackRepo != nil {
-			stage.BackRepo.CheckoutCheckoutScheduler(checkoutscheduler)
-		}
-	}
-	return checkoutscheduler
-}
-
-// for satisfaction of GongStruct interface
-func (checkoutscheduler *CheckoutScheduler) GetName() (res string) {
-	return checkoutscheduler.Name
-}
-
 // Stage puts circle to the model stage
 func (circle *Circle) Stage(stage *StageStruct) *Circle {
 	stage.Circles[circle] = __member
@@ -710,7 +667,6 @@ func (visualtrack *VisualTrack) GetName() (res string) {
 
 // swagger:ignore
 type AllModelsStructCreateInterface interface { // insertion point for Callbacks on creation
-	CreateORMCheckoutScheduler(CheckoutScheduler *CheckoutScheduler)
 	CreateORMCircle(Circle *Circle)
 	CreateORMDivIcon(DivIcon *DivIcon)
 	CreateORMLayerGroup(LayerGroup *LayerGroup)
@@ -723,7 +679,6 @@ type AllModelsStructCreateInterface interface { // insertion point for Callbacks
 }
 
 type AllModelsStructDeleteInterface interface { // insertion point for Callbacks on deletion
-	DeleteORMCheckoutScheduler(CheckoutScheduler *CheckoutScheduler)
 	DeleteORMCircle(Circle *Circle)
 	DeleteORMDivIcon(DivIcon *DivIcon)
 	DeleteORMLayerGroup(LayerGroup *LayerGroup)
@@ -736,9 +691,6 @@ type AllModelsStructDeleteInterface interface { // insertion point for Callbacks
 }
 
 func (stage *StageStruct) Reset() { // insertion point for array reset
-	stage.CheckoutSchedulers = make(map[*CheckoutScheduler]any)
-	stage.CheckoutSchedulers_mapString = make(map[string]*CheckoutScheduler)
-
 	stage.Circles = make(map[*Circle]any)
 	stage.Circles_mapString = make(map[string]*Circle)
 
@@ -769,9 +721,6 @@ func (stage *StageStruct) Reset() { // insertion point for array reset
 }
 
 func (stage *StageStruct) Nil() { // insertion point for array nil
-	stage.CheckoutSchedulers = nil
-	stage.CheckoutSchedulers_mapString = nil
-
 	stage.Circles = nil
 	stage.Circles_mapString = nil
 
@@ -802,10 +751,6 @@ func (stage *StageStruct) Nil() { // insertion point for array nil
 }
 
 func (stage *StageStruct) Unstage() { // insertion point for array nil
-	for checkoutscheduler := range stage.CheckoutSchedulers {
-		checkoutscheduler.Unstage(stage)
-	}
-
 	for circle := range stage.Circles {
 		circle.Unstage(stage)
 	}
@@ -850,7 +795,7 @@ func (stage *StageStruct) Unstage() { // insertion point for array nil
 // - full refactoring of Gongstruct identifiers / fields
 type Gongstruct interface {
 	// insertion point for generic types
-	CheckoutScheduler | Circle | DivIcon | LayerGroup | LayerGroupUse | MapOptions | Marker | UserClick | VLine | VisualTrack
+	Circle | DivIcon | LayerGroup | LayerGroupUse | MapOptions | Marker | UserClick | VLine | VisualTrack
 }
 
 // Gongstruct is the type parameter for generated generic function that allows
@@ -859,14 +804,13 @@ type Gongstruct interface {
 // - full refactoring of Gongstruct identifiers / fields
 type PointerToGongstruct interface {
 	// insertion point for generic types
-	*CheckoutScheduler | *Circle | *DivIcon | *LayerGroup | *LayerGroupUse | *MapOptions | *Marker | *UserClick | *VLine | *VisualTrack
+	*Circle | *DivIcon | *LayerGroup | *LayerGroupUse | *MapOptions | *Marker | *UserClick | *VLine | *VisualTrack
 	GetName() string
 }
 
 type GongstructSet interface {
 	map[any]any |
 		// insertion point for generic types
-		map[*CheckoutScheduler]any |
 		map[*Circle]any |
 		map[*DivIcon]any |
 		map[*LayerGroup]any |
@@ -882,7 +826,6 @@ type GongstructSet interface {
 type GongstructMapString interface {
 	map[any]any |
 		// insertion point for generic types
-		map[string]*CheckoutScheduler |
 		map[string]*Circle |
 		map[string]*DivIcon |
 		map[string]*LayerGroup |
@@ -897,21 +840,11 @@ type GongstructMapString interface {
 
 // GongGetSet returns the set staged GongstructType instances
 // it is usefull because it allows refactoring of gong struct identifier
-func GongGetSet[Type GongstructSet](stages ...*StageStruct) *Type {
+func GongGetSet[Type GongstructSet](stage *StageStruct) *Type {
 	var ret Type
-
-	var stage *StageStruct
-	_ = stage
-	if len(stages) > 0 {
-		stage = stages[0]
-	} else {
-		stage = &Stage
-	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
-	case map[*CheckoutScheduler]any:
-		return any(&stage.CheckoutSchedulers).(*Type)
 	case map[*Circle]any:
 		return any(&stage.Circles).(*Type)
 	case map[*DivIcon]any:
@@ -937,21 +870,11 @@ func GongGetSet[Type GongstructSet](stages ...*StageStruct) *Type {
 
 // GongGetMap returns the map of staged GongstructType instances
 // it is usefull because it allows refactoring of gong struct identifier
-func GongGetMap[Type GongstructMapString](stages ...*StageStruct) *Type {
+func GongGetMap[Type GongstructMapString](stage *StageStruct) *Type {
 	var ret Type
-
-	var stage *StageStruct
-	_ = stage
-	if len(stages) > 0 {
-		stage = stages[0]
-	} else {
-		stage = &Stage
-	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
-	case map[string]*CheckoutScheduler:
-		return any(&stage.CheckoutSchedulers_mapString).(*Type)
 	case map[string]*Circle:
 		return any(&stage.Circles_mapString).(*Type)
 	case map[string]*DivIcon:
@@ -977,21 +900,11 @@ func GongGetMap[Type GongstructMapString](stages ...*StageStruct) *Type {
 
 // GetGongstructInstancesSet returns the set staged GongstructType instances
 // it is usefull because it allows refactoring of gongstruct identifier
-func GetGongstructInstancesSet[Type Gongstruct](stages ...*StageStruct) *map[*Type]any {
+func GetGongstructInstancesSet[Type Gongstruct](stage *StageStruct) *map[*Type]any {
 	var ret Type
-
-	var stage *StageStruct
-	_ = stage
-	if len(stages) > 0 {
-		stage = stages[0]
-	} else {
-		stage = &Stage
-	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
-	case CheckoutScheduler:
-		return any(&stage.CheckoutSchedulers).(*map[*Type]any)
 	case Circle:
 		return any(&stage.Circles).(*map[*Type]any)
 	case DivIcon:
@@ -1017,21 +930,11 @@ func GetGongstructInstancesSet[Type Gongstruct](stages ...*StageStruct) *map[*Ty
 
 // GetGongstructInstancesMap returns the map of staged GongstructType instances
 // it is usefull because it allows refactoring of gong struct identifier
-func GetGongstructInstancesMap[Type Gongstruct](stages ...*StageStruct) *map[string]*Type {
+func GetGongstructInstancesMap[Type Gongstruct](stage *StageStruct) *map[string]*Type {
 	var ret Type
-
-	var stage *StageStruct
-	_ = stage
-	if len(stages) > 0 {
-		stage = stages[0]
-	} else {
-		stage = &Stage
-	}
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
-	case CheckoutScheduler:
-		return any(&stage.CheckoutSchedulers_mapString).(*map[string]*Type)
 	case Circle:
 		return any(&stage.Circles_mapString).(*map[string]*Type)
 	case DivIcon:
@@ -1064,10 +967,6 @@ func GetAssociationName[Type Gongstruct]() *Type {
 
 	switch any(ret).(type) {
 	// insertion point for instance with special fields
-	case CheckoutScheduler:
-		return any(&CheckoutScheduler{
-			// Initialisation of associations
-		}).(*Type)
 	case Circle:
 		return any(&Circle{
 			// Initialisation of associations
@@ -1132,25 +1031,12 @@ func GetAssociationName[Type Gongstruct]() *Type {
 // The function provides a map with keys as instances of End and values to arrays of *Start
 // the map is construed by iterating over all Start instances and populationg keys with End instances
 // and values with slice of Start instances
-func GetPointerReverseMap[Start, End Gongstruct](fieldname string, stages ...*StageStruct) map[*End][]*Start {
-
-	var stage *StageStruct
-	_ = stage
-	if len(stages) > 0 {
-		stage = stages[0]
-	} else {
-		stage = &Stage
-	}
+func GetPointerReverseMap[Start, End Gongstruct](fieldname string, stage *StageStruct) map[*End][]*Start {
 
 	var ret Start
 
 	switch any(ret).(type) {
 	// insertion point of functions that provide maps for reverse associations
-	// reverse maps of direct associations of CheckoutScheduler
-	case CheckoutScheduler:
-		switch fieldname {
-		// insertion point for per direct association field
-		}
 	// reverse maps of direct associations of Circle
 	case Circle:
 		switch fieldname {
@@ -1325,25 +1211,12 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string, stages ...*St
 // The function provides a map with keys as instances of End and values to *Start instances
 // the map is construed by iterating over all Start instances and populating keys with End instances
 // and values with the Start instances
-func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string, stages ...*StageStruct) map[*End]*Start {
-
-	var stage *StageStruct
-	_ = stage
-	if len(stages) > 0 {
-		stage = stages[0]
-	} else {
-		stage = &Stage
-	}
+func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string, stage *StageStruct) map[*End]*Start {
 
 	var ret Start
 
 	switch any(ret).(type) {
 	// insertion point of functions that provide maps for reverse associations
-	// reverse maps of direct associations of CheckoutScheduler
-	case CheckoutScheduler:
-		switch fieldname {
-		// insertion point for per direct association field
-		}
 	// reverse maps of direct associations of Circle
 	case Circle:
 		switch fieldname {
@@ -1409,8 +1282,6 @@ func GetGongstructName[Type Gongstruct]() (res string) {
 
 	switch any(ret).(type) {
 	// insertion point for generic get gongstruct name
-	case CheckoutScheduler:
-		res = "CheckoutScheduler"
 	case Circle:
 		res = "Circle"
 	case DivIcon:
@@ -1440,8 +1311,6 @@ func GetFields[Type Gongstruct]() (res []string) {
 
 	switch any(ret).(type) {
 	// insertion point for generic get gongstruct name
-	case CheckoutScheduler:
-		res = []string{"Name", "NbUpdatesFromFront"}
 	case Circle:
 		res = []string{"Lat", "Lng", "Name", "Radius", "ColorEnum", "DashStyleEnum", "LayerGroup"}
 	case DivIcon:
@@ -1469,14 +1338,6 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 
 	switch any(ret).(type) {
 	// insertion point for generic get gongstruct field value
-	case CheckoutScheduler:
-		switch fieldName {
-		// string value of fields
-		case "Name":
-			res = any(instance).(CheckoutScheduler).Name
-		case "NbUpdatesFromFront":
-			res = fmt.Sprintf("%d", any(instance).(CheckoutScheduler).NbUpdatesFromFront)
-		}
 	case Circle:
 		switch fieldName {
 		// string value of fields

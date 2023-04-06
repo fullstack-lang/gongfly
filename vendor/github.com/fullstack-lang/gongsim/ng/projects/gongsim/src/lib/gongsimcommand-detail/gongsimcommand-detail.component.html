@@ -81,6 +81,16 @@
         <textarea name="" [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="gongsimcommand.DateSpeedCommand"></textarea>
     </mat-form-field>
 
+    <mat-form-field class="detail-full-width">
+        <mat-label>Engine</mat-label>
+        <mat-select [compareWith]="compareObjects" [(value)]="gongsimcommand.Engine" (selectionChange)="fillUpNameIfEmpty($event)">
+            <mat-option>None</mat-option>
+            <mat-option *ngFor="let engine of frontRepo.Engines_array" [value]="engine">
+                {{engine.Name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
     <div class="details__save">
         <button mat-raised-button color="primary" (click)="save()">
             Save gongsimcommand

@@ -151,7 +151,7 @@ func (controller *Controller) PostRadar(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoRadar.CheckoutPhaseOneInstance(&radarDB)
-	radar := (*backRepo.BackRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
+	radar := backRepo.BackRepoRadar.Map_RadarDBID_RadarPtr[radarDB.ID]
 
 	if radar != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), radar)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateRadar(c *gin.Context) {
 	radarDB.CopyBasicFieldsToRadar(radarNew)
 
 	// get stage instance from DB instance, and call callback function
-	radarOld := (*backRepo.BackRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
+	radarOld := backRepo.BackRepoRadar.Map_RadarDBID_RadarPtr[radarDB.ID]
 	if radarOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), radarOld, radarNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteRadar(c *gin.Context) {
 	radarDB.CopyBasicFieldsToRadar(radarDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	radarStaged := (*backRepo.BackRepoRadar.Map_RadarDBID_RadarPtr)[radarDB.ID]
+	radarStaged := backRepo.BackRepoRadar.Map_RadarDBID_RadarPtr[radarDB.ID]
 	if radarStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), radarStaged, radarDeleted)
 	}

@@ -117,13 +117,13 @@ var Scenario_Fields = []string{
 
 type BackRepoScenarioStruct struct {
 	// stores ScenarioDB according to their gorm ID
-	Map_ScenarioDBID_ScenarioDB *map[uint]*ScenarioDB
+	Map_ScenarioDBID_ScenarioDB map[uint]*ScenarioDB
 
 	// stores ScenarioDB ID according to Scenario address
-	Map_ScenarioPtr_ScenarioDBID *map[*models.Scenario]uint
+	Map_ScenarioPtr_ScenarioDBID map[*models.Scenario]uint
 
 	// stores Scenario according to their gorm ID
-	Map_ScenarioDBID_ScenarioPtr *map[uint]*models.Scenario
+	Map_ScenarioDBID_ScenarioPtr map[uint]*models.Scenario
 
 	db *gorm.DB
 
@@ -141,40 +141,8 @@ func (backRepoScenario *BackRepoScenarioStruct) GetDB() *gorm.DB {
 
 // GetScenarioDBFromScenarioPtr is a handy function to access the back repo instance from the stage instance
 func (backRepoScenario *BackRepoScenarioStruct) GetScenarioDBFromScenarioPtr(scenario *models.Scenario) (scenarioDB *ScenarioDB) {
-	id := (*backRepoScenario.Map_ScenarioPtr_ScenarioDBID)[scenario]
-	scenarioDB = (*backRepoScenario.Map_ScenarioDBID_ScenarioDB)[id]
-	return
-}
-
-// BackRepoScenario.Init set up the BackRepo of the Scenario
-func (backRepoScenario *BackRepoScenarioStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoScenario.Map_ScenarioDBID_ScenarioPtr != nil {
-		err := errors.New("In Init, backRepoScenario.Map_ScenarioDBID_ScenarioPtr should be nil")
-		return err
-	}
-
-	if backRepoScenario.Map_ScenarioDBID_ScenarioDB != nil {
-		err := errors.New("In Init, backRepoScenario.Map_ScenarioDBID_ScenarioDB should be nil")
-		return err
-	}
-
-	if backRepoScenario.Map_ScenarioPtr_ScenarioDBID != nil {
-		err := errors.New("In Init, backRepoScenario.Map_ScenarioPtr_ScenarioDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.Scenario, 0)
-	backRepoScenario.Map_ScenarioDBID_ScenarioPtr = &tmp
-
-	tmpDB := make(map[uint]*ScenarioDB, 0)
-	backRepoScenario.Map_ScenarioDBID_ScenarioDB = &tmpDB
-
-	tmpID := make(map[*models.Scenario]uint, 0)
-	backRepoScenario.Map_ScenarioPtr_ScenarioDBID = &tmpID
-
-	backRepoScenario.db = db
-	backRepoScenario.stage = stage
+	id := backRepoScenario.Map_ScenarioPtr_ScenarioDBID[scenario]
+	scenarioDB = backRepoScenario.Map_ScenarioDBID_ScenarioDB[id]
 	return
 }
 
@@ -188,7 +156,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseOne(stage *models.Sta
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, scenario := range *backRepoScenario.Map_ScenarioDBID_ScenarioPtr {
+	for id, scenario := range backRepoScenario.Map_ScenarioDBID_ScenarioPtr {
 		if _, ok := stage.Scenarios[scenario]; !ok {
 			backRepoScenario.CommitDeleteInstance(id)
 		}
@@ -200,19 +168,19 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseOne(stage *models.Sta
 // BackRepoScenario.CommitDeleteInstance commits deletion of Scenario to the BackRepo
 func (backRepoScenario *BackRepoScenarioStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	scenario := (*backRepoScenario.Map_ScenarioDBID_ScenarioPtr)[id]
+	scenario := backRepoScenario.Map_ScenarioDBID_ScenarioPtr[id]
 
 	// scenario is not staged anymore, remove scenarioDB
-	scenarioDB := (*backRepoScenario.Map_ScenarioDBID_ScenarioDB)[id]
+	scenarioDB := backRepoScenario.Map_ScenarioDBID_ScenarioDB[id]
 	query := backRepoScenario.db.Unscoped().Delete(&scenarioDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoScenario.Map_ScenarioPtr_ScenarioDBID), scenario)
-	delete((*backRepoScenario.Map_ScenarioDBID_ScenarioPtr), id)
-	delete((*backRepoScenario.Map_ScenarioDBID_ScenarioDB), id)
+	delete(backRepoScenario.Map_ScenarioPtr_ScenarioDBID, scenario)
+	delete(backRepoScenario.Map_ScenarioDBID_ScenarioPtr, id)
+	delete(backRepoScenario.Map_ScenarioDBID_ScenarioDB, id)
 
 	return
 }
@@ -222,7 +190,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitDeleteInstance(id uint) (E
 func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseOneInstance(scenario *models.Scenario) (Error error) {
 
 	// check if the scenario is not commited yet
-	if _, ok := (*backRepoScenario.Map_ScenarioPtr_ScenarioDBID)[scenario]; ok {
+	if _, ok := backRepoScenario.Map_ScenarioPtr_ScenarioDBID[scenario]; ok {
 		return
 	}
 
@@ -236,9 +204,9 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseOneInstance(scenario 
 	}
 
 	// update stores
-	(*backRepoScenario.Map_ScenarioPtr_ScenarioDBID)[scenario] = scenarioDB.ID
-	(*backRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID] = scenario
-	(*backRepoScenario.Map_ScenarioDBID_ScenarioDB)[scenarioDB.ID] = &scenarioDB
+	backRepoScenario.Map_ScenarioPtr_ScenarioDBID[scenario] = scenarioDB.ID
+	backRepoScenario.Map_ScenarioDBID_ScenarioPtr[scenarioDB.ID] = scenario
+	backRepoScenario.Map_ScenarioDBID_ScenarioDB[scenarioDB.ID] = &scenarioDB
 
 	return
 }
@@ -247,7 +215,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseOneInstance(scenario 
 // Phase Two is the update of instance with the field in the database
 func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, scenario := range *backRepoScenario.Map_ScenarioDBID_ScenarioPtr {
+	for idx, scenario := range backRepoScenario.Map_ScenarioDBID_ScenarioPtr {
 		backRepoScenario.CommitPhaseTwoInstance(backRepo, idx, scenario)
 	}
 
@@ -259,7 +227,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseTwo(backRepo *BackRep
 func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, scenario *models.Scenario) (Error error) {
 
 	// fetch matching scenarioDB
-	if scenarioDB, ok := (*backRepoScenario.Map_ScenarioDBID_ScenarioDB)[idx]; ok {
+	if scenarioDB, ok := backRepoScenario.Map_ScenarioDBID_ScenarioDB[idx]; ok {
 
 		scenarioDB.CopyBasicFieldsFromScenario(scenario)
 
@@ -303,7 +271,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseOne() (Error error)
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		scenario, ok := (*backRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID]
+		scenario, ok := backRepoScenario.Map_ScenarioDBID_ScenarioPtr[scenarioDB.ID]
 		if ok {
 			delete(scenarioInstancesToBeRemovedFromTheStage, scenario)
 		}
@@ -314,10 +282,10 @@ func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseOne() (Error error)
 		scenario.Unstage(backRepoScenario.GetStage())
 
 		// remove instance from the back repo 3 maps
-		scenarioID := (*backRepoScenario.Map_ScenarioPtr_ScenarioDBID)[scenario]
-		delete((*backRepoScenario.Map_ScenarioPtr_ScenarioDBID), scenario)
-		delete((*backRepoScenario.Map_ScenarioDBID_ScenarioDB), scenarioID)
-		delete((*backRepoScenario.Map_ScenarioDBID_ScenarioPtr), scenarioID)
+		scenarioID := backRepoScenario.Map_ScenarioPtr_ScenarioDBID[scenario]
+		delete(backRepoScenario.Map_ScenarioPtr_ScenarioDBID, scenario)
+		delete(backRepoScenario.Map_ScenarioDBID_ScenarioDB, scenarioID)
+		delete(backRepoScenario.Map_ScenarioDBID_ScenarioPtr, scenarioID)
 	}
 
 	return
@@ -327,12 +295,12 @@ func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseOne() (Error error)
 // models version of the scenarioDB
 func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseOneInstance(scenarioDB *ScenarioDB) (Error error) {
 
-	scenario, ok := (*backRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID]
+	scenario, ok := backRepoScenario.Map_ScenarioDBID_ScenarioPtr[scenarioDB.ID]
 	if !ok {
 		scenario = new(models.Scenario)
 
-		(*backRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID] = scenario
-		(*backRepoScenario.Map_ScenarioPtr_ScenarioDBID)[scenario] = scenarioDB.ID
+		backRepoScenario.Map_ScenarioDBID_ScenarioPtr[scenarioDB.ID] = scenario
+		backRepoScenario.Map_ScenarioPtr_ScenarioDBID[scenario] = scenarioDB.ID
 
 		// append model store with the new element
 		scenario.Name = scenarioDB.Name_Data.String
@@ -347,7 +315,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseOneInstance(scenari
 	// Map_ScenarioDBID_ScenarioDB)[scenarioDB hold variable pointers
 	scenarioDB_Data := *scenarioDB
 	preservedPtrToScenario := &scenarioDB_Data
-	(*backRepoScenario.Map_ScenarioDBID_ScenarioDB)[scenarioDB.ID] = preservedPtrToScenario
+	backRepoScenario.Map_ScenarioDBID_ScenarioDB[scenarioDB.ID] = preservedPtrToScenario
 
 	return
 }
@@ -357,7 +325,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseOneInstance(scenari
 func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, scenarioDB := range *backRepoScenario.Map_ScenarioDBID_ScenarioDB {
+	for _, scenarioDB := range backRepoScenario.Map_ScenarioDBID_ScenarioDB {
 		backRepoScenario.CheckoutPhaseTwoInstance(backRepo, scenarioDB)
 	}
 	return
@@ -367,7 +335,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseTwo(backRepo *BackR
 // Phase Two is the update of instance with the field in the database
 func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, scenarioDB *ScenarioDB) (Error error) {
 
-	scenario := (*backRepoScenario.Map_ScenarioDBID_ScenarioPtr)[scenarioDB.ID]
+	scenario := backRepoScenario.Map_ScenarioDBID_ScenarioPtr[scenarioDB.ID]
 	_ = scenario // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
@@ -377,7 +345,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseTwoInstance(backRep
 // CommitScenario allows commit of a single scenario (if already staged)
 func (backRepo *BackRepoStruct) CommitScenario(scenario *models.Scenario) {
 	backRepo.BackRepoScenario.CommitPhaseOneInstance(scenario)
-	if id, ok := (*backRepo.BackRepoScenario.Map_ScenarioPtr_ScenarioDBID)[scenario]; ok {
+	if id, ok := backRepo.BackRepoScenario.Map_ScenarioPtr_ScenarioDBID[scenario]; ok {
 		backRepo.BackRepoScenario.CommitPhaseTwoInstance(backRepo, id, scenario)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -386,9 +354,9 @@ func (backRepo *BackRepoStruct) CommitScenario(scenario *models.Scenario) {
 // CommitScenario allows checkout of a single scenario (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutScenario(scenario *models.Scenario) {
 	// check if the scenario is staged
-	if _, ok := (*backRepo.BackRepoScenario.Map_ScenarioPtr_ScenarioDBID)[scenario]; ok {
+	if _, ok := backRepo.BackRepoScenario.Map_ScenarioPtr_ScenarioDBID[scenario]; ok {
 
-		if id, ok := (*backRepo.BackRepoScenario.Map_ScenarioPtr_ScenarioDBID)[scenario]; ok {
+		if id, ok := backRepo.BackRepoScenario.Map_ScenarioPtr_ScenarioDBID[scenario]; ok {
 			var scenarioDB ScenarioDB
 			scenarioDB.ID = id
 
@@ -470,7 +438,7 @@ func (backRepoScenario *BackRepoScenarioStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*ScenarioDB, 0)
-	for _, scenarioDB := range *backRepoScenario.Map_ScenarioDBID_ScenarioDB {
+	for _, scenarioDB := range backRepoScenario.Map_ScenarioDBID_ScenarioDB {
 		forBackup = append(forBackup, scenarioDB)
 	}
 
@@ -496,7 +464,7 @@ func (backRepoScenario *BackRepoScenarioStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*ScenarioDB, 0)
-	for _, scenarioDB := range *backRepoScenario.Map_ScenarioDBID_ScenarioDB {
+	for _, scenarioDB := range backRepoScenario.Map_ScenarioDBID_ScenarioDB {
 		forBackup = append(forBackup, scenarioDB)
 	}
 
@@ -561,7 +529,7 @@ func (backRepoScenario *BackRepoScenarioStruct) rowVisitorScenario(row *xlsx.Row
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoScenario.Map_ScenarioDBID_ScenarioDB)[scenarioDB.ID] = scenarioDB
+		backRepoScenario.Map_ScenarioDBID_ScenarioDB[scenarioDB.ID] = scenarioDB
 		BackRepoScenarioid_atBckpTime_newID[scenarioDB_ID_atBackupTime] = scenarioDB.ID
 	}
 	return nil
@@ -598,7 +566,7 @@ func (backRepoScenario *BackRepoScenarioStruct) RestorePhaseOne(dirPath string) 
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoScenario.Map_ScenarioDBID_ScenarioDB)[scenarioDB.ID] = scenarioDB
+		backRepoScenario.Map_ScenarioDBID_ScenarioDB[scenarioDB.ID] = scenarioDB
 		BackRepoScenarioid_atBckpTime_newID[scenarioDB_ID_atBackupTime] = scenarioDB.ID
 	}
 
@@ -611,7 +579,7 @@ func (backRepoScenario *BackRepoScenarioStruct) RestorePhaseOne(dirPath string) 
 // to compute new index
 func (backRepoScenario *BackRepoScenarioStruct) RestorePhaseTwo() {
 
-	for _, scenarioDB := range *backRepoScenario.Map_ScenarioDBID_ScenarioDB {
+	for _, scenarioDB := range backRepoScenario.Map_ScenarioDBID_ScenarioDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = scenarioDB

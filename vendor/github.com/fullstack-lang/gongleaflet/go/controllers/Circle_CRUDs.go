@@ -151,7 +151,7 @@ func (controller *Controller) PostCircle(c *gin.Context) {
 
 	// get an instance (not staged) from DB instance, and call callback function
 	backRepo.BackRepoCircle.CheckoutPhaseOneInstance(&circleDB)
-	circle := (*backRepo.BackRepoCircle.Map_CircleDBID_CirclePtr)[circleDB.ID]
+	circle := backRepo.BackRepoCircle.Map_CircleDBID_CirclePtr[circleDB.ID]
 
 	if circle != nil {
 		models.AfterCreateFromFront(backRepo.GetStage(), circle)
@@ -273,7 +273,7 @@ func (controller *Controller) UpdateCircle(c *gin.Context) {
 	circleDB.CopyBasicFieldsToCircle(circleNew)
 
 	// get stage instance from DB instance, and call callback function
-	circleOld := (*backRepo.BackRepoCircle.Map_CircleDBID_CirclePtr)[circleDB.ID]
+	circleOld := backRepo.BackRepoCircle.Map_CircleDBID_CirclePtr[circleDB.ID]
 	if circleOld != nil {
 		models.AfterUpdateFromFront(backRepo.GetStage(), circleOld, circleNew)
 	}
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteCircle(c *gin.Context) {
 	circleDB.CopyBasicFieldsToCircle(circleDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	circleStaged := (*backRepo.BackRepoCircle.Map_CircleDBID_CirclePtr)[circleDB.ID]
+	circleStaged := backRepo.BackRepoCircle.Map_CircleDBID_CirclePtr[circleDB.ID]
 	if circleStaged != nil {
 		models.AfterDeleteFromFront(backRepo.GetStage(), circleStaged, circleDeleted)
 	}

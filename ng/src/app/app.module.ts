@@ -4,8 +4,6 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { GongflyModule } from 'gongfly'
-import { HttpClientModule } from '@angular/common/http';
 
 // for angular material
 import { MatSliderModule } from '@angular/material/slider';
@@ -29,38 +27,34 @@ import { FormsModule } from '@angular/forms';
 // to split the screen
 import { AngularSplitModule } from 'angular-split';
 
-
-// reusable simulation library from gong
-import { GongsimcontrolModule } from 'gongsimcontrol'
-import { GongsimModule } from 'gongsim'
-
 import { GongdocModule } from 'gongdoc'
 import { GongdocdiagramsModule } from 'gongdocdiagrams'
 
 import { GongModule } from 'gong'
 
-// Leaflet
+import { GongflyModule } from 'gongfly'
+import { GongflyspecificModule } from 'gongflyspecific'
+import { GongstructSelectionService } from 'gongfly'
+
+// // Leaflet
 import { GongleafletModule } from 'gongleaflet'
 import { GongleafletspecificModule } from 'gongleafletspecific'
+// import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
-import { AppRoutingModule } from './app-routing.module';
+// reusable simulation library from gong
+import { GongsimspecificModule } from 'gongsimspecific'
+import { GongsimModule } from 'gongsim'
 
-import { MarkdownModule } from 'ngx-markdown'
-import { GongmarkdownModule } from 'gongmarkdown'
-import { GongmarkdownspecificModule } from 'gongmarkdownspecific'
-
-import { Gongng2chartsModule } from 'gongng2charts'
-import { Gongng2chartsspecificModule } from 'gongng2chartsspecific'
+// mandatory
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-
-    AppRoutingModule,
 
     HttpClientModule,
 
@@ -82,34 +76,29 @@ import { Gongng2chartsspecificModule } from 'gongng2chartsspecific'
 
     AngularSplitModule,
 
-    // gongsim stack
-    GongsimcontrolModule,
-    GongsimModule,
+    // gong stack (for analysis of gong code in the current stack)
+    GongModule,
 
-    // gongdoc stack
+    // gongdoc stack (for displaying UML diagrams of the gong code in the current stack)
     GongdocModule,
     GongdocdiagramsModule,
 
-    // gongleaflet stack
+    GongflyModule,
+    GongflyspecificModule,
+
+    // gongsim stack
+    GongsimspecificModule,
+    GongsimModule,
+
+    // // gongleaflet stack
     GongleafletModule,
     GongleafletspecificModule,
+    // LeafletModule
 
-    //
-    GongModule,
-
-    MarkdownModule.forRoot(),
-
-    // gongmarkdown stack
-    GongmarkdownModule,
-    GongmarkdownspecificModule,
-
-    // gongng2charts stack
-    Gongng2chartsModule,
-    Gongng2chartsspecificModule,
-
-    GongflyModule
   ],
-  providers: [],
+  providers: [
+    GongstructSelectionService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

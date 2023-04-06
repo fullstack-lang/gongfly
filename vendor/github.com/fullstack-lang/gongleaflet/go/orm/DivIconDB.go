@@ -99,13 +99,13 @@ var DivIcon_Fields = []string{
 
 type BackRepoDivIconStruct struct {
 	// stores DivIconDB according to their gorm ID
-	Map_DivIconDBID_DivIconDB *map[uint]*DivIconDB
+	Map_DivIconDBID_DivIconDB map[uint]*DivIconDB
 
 	// stores DivIconDB ID according to DivIcon address
-	Map_DivIconPtr_DivIconDBID *map[*models.DivIcon]uint
+	Map_DivIconPtr_DivIconDBID map[*models.DivIcon]uint
 
 	// stores DivIcon according to their gorm ID
-	Map_DivIconDBID_DivIconPtr *map[uint]*models.DivIcon
+	Map_DivIconDBID_DivIconPtr map[uint]*models.DivIcon
 
 	db *gorm.DB
 
@@ -123,40 +123,8 @@ func (backRepoDivIcon *BackRepoDivIconStruct) GetDB() *gorm.DB {
 
 // GetDivIconDBFromDivIconPtr is a handy function to access the back repo instance from the stage instance
 func (backRepoDivIcon *BackRepoDivIconStruct) GetDivIconDBFromDivIconPtr(divicon *models.DivIcon) (diviconDB *DivIconDB) {
-	id := (*backRepoDivIcon.Map_DivIconPtr_DivIconDBID)[divicon]
-	diviconDB = (*backRepoDivIcon.Map_DivIconDBID_DivIconDB)[id]
-	return
-}
-
-// BackRepoDivIcon.Init set up the BackRepo of the DivIcon
-func (backRepoDivIcon *BackRepoDivIconStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoDivIcon.Map_DivIconDBID_DivIconPtr != nil {
-		err := errors.New("In Init, backRepoDivIcon.Map_DivIconDBID_DivIconPtr should be nil")
-		return err
-	}
-
-	if backRepoDivIcon.Map_DivIconDBID_DivIconDB != nil {
-		err := errors.New("In Init, backRepoDivIcon.Map_DivIconDBID_DivIconDB should be nil")
-		return err
-	}
-
-	if backRepoDivIcon.Map_DivIconPtr_DivIconDBID != nil {
-		err := errors.New("In Init, backRepoDivIcon.Map_DivIconPtr_DivIconDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.DivIcon, 0)
-	backRepoDivIcon.Map_DivIconDBID_DivIconPtr = &tmp
-
-	tmpDB := make(map[uint]*DivIconDB, 0)
-	backRepoDivIcon.Map_DivIconDBID_DivIconDB = &tmpDB
-
-	tmpID := make(map[*models.DivIcon]uint, 0)
-	backRepoDivIcon.Map_DivIconPtr_DivIconDBID = &tmpID
-
-	backRepoDivIcon.db = db
-	backRepoDivIcon.stage = stage
+	id := backRepoDivIcon.Map_DivIconPtr_DivIconDBID[divicon]
+	diviconDB = backRepoDivIcon.Map_DivIconDBID_DivIconDB[id]
 	return
 }
 
@@ -170,7 +138,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseOne(stage *models.Stage
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, divicon := range *backRepoDivIcon.Map_DivIconDBID_DivIconPtr {
+	for id, divicon := range backRepoDivIcon.Map_DivIconDBID_DivIconPtr {
 		if _, ok := stage.DivIcons[divicon]; !ok {
 			backRepoDivIcon.CommitDeleteInstance(id)
 		}
@@ -182,19 +150,19 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseOne(stage *models.Stage
 // BackRepoDivIcon.CommitDeleteInstance commits deletion of DivIcon to the BackRepo
 func (backRepoDivIcon *BackRepoDivIconStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	divicon := (*backRepoDivIcon.Map_DivIconDBID_DivIconPtr)[id]
+	divicon := backRepoDivIcon.Map_DivIconDBID_DivIconPtr[id]
 
 	// divicon is not staged anymore, remove diviconDB
-	diviconDB := (*backRepoDivIcon.Map_DivIconDBID_DivIconDB)[id]
+	diviconDB := backRepoDivIcon.Map_DivIconDBID_DivIconDB[id]
 	query := backRepoDivIcon.db.Unscoped().Delete(&diviconDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoDivIcon.Map_DivIconPtr_DivIconDBID), divicon)
-	delete((*backRepoDivIcon.Map_DivIconDBID_DivIconPtr), id)
-	delete((*backRepoDivIcon.Map_DivIconDBID_DivIconDB), id)
+	delete(backRepoDivIcon.Map_DivIconPtr_DivIconDBID, divicon)
+	delete(backRepoDivIcon.Map_DivIconDBID_DivIconPtr, id)
+	delete(backRepoDivIcon.Map_DivIconDBID_DivIconDB, id)
 
 	return
 }
@@ -204,7 +172,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitDeleteInstance(id uint) (Err
 func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseOneInstance(divicon *models.DivIcon) (Error error) {
 
 	// check if the divicon is not commited yet
-	if _, ok := (*backRepoDivIcon.Map_DivIconPtr_DivIconDBID)[divicon]; ok {
+	if _, ok := backRepoDivIcon.Map_DivIconPtr_DivIconDBID[divicon]; ok {
 		return
 	}
 
@@ -218,9 +186,9 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseOneInstance(divicon *mo
 	}
 
 	// update stores
-	(*backRepoDivIcon.Map_DivIconPtr_DivIconDBID)[divicon] = diviconDB.ID
-	(*backRepoDivIcon.Map_DivIconDBID_DivIconPtr)[diviconDB.ID] = divicon
-	(*backRepoDivIcon.Map_DivIconDBID_DivIconDB)[diviconDB.ID] = &diviconDB
+	backRepoDivIcon.Map_DivIconPtr_DivIconDBID[divicon] = diviconDB.ID
+	backRepoDivIcon.Map_DivIconDBID_DivIconPtr[diviconDB.ID] = divicon
+	backRepoDivIcon.Map_DivIconDBID_DivIconDB[diviconDB.ID] = &diviconDB
 
 	return
 }
@@ -229,7 +197,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseOneInstance(divicon *mo
 // Phase Two is the update of instance with the field in the database
 func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, divicon := range *backRepoDivIcon.Map_DivIconDBID_DivIconPtr {
+	for idx, divicon := range backRepoDivIcon.Map_DivIconDBID_DivIconPtr {
 		backRepoDivIcon.CommitPhaseTwoInstance(backRepo, idx, divicon)
 	}
 
@@ -241,7 +209,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseTwo(backRepo *BackRepoS
 func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, divicon *models.DivIcon) (Error error) {
 
 	// fetch matching diviconDB
-	if diviconDB, ok := (*backRepoDivIcon.Map_DivIconDBID_DivIconDB)[idx]; ok {
+	if diviconDB, ok := backRepoDivIcon.Map_DivIconDBID_DivIconDB[idx]; ok {
 
 		diviconDB.CopyBasicFieldsFromDivIcon(divicon)
 
@@ -285,7 +253,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseOne() (Error error) {
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		divicon, ok := (*backRepoDivIcon.Map_DivIconDBID_DivIconPtr)[diviconDB.ID]
+		divicon, ok := backRepoDivIcon.Map_DivIconDBID_DivIconPtr[diviconDB.ID]
 		if ok {
 			delete(diviconInstancesToBeRemovedFromTheStage, divicon)
 		}
@@ -296,10 +264,10 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseOne() (Error error) {
 		divicon.Unstage(backRepoDivIcon.GetStage())
 
 		// remove instance from the back repo 3 maps
-		diviconID := (*backRepoDivIcon.Map_DivIconPtr_DivIconDBID)[divicon]
-		delete((*backRepoDivIcon.Map_DivIconPtr_DivIconDBID), divicon)
-		delete((*backRepoDivIcon.Map_DivIconDBID_DivIconDB), diviconID)
-		delete((*backRepoDivIcon.Map_DivIconDBID_DivIconPtr), diviconID)
+		diviconID := backRepoDivIcon.Map_DivIconPtr_DivIconDBID[divicon]
+		delete(backRepoDivIcon.Map_DivIconPtr_DivIconDBID, divicon)
+		delete(backRepoDivIcon.Map_DivIconDBID_DivIconDB, diviconID)
+		delete(backRepoDivIcon.Map_DivIconDBID_DivIconPtr, diviconID)
 	}
 
 	return
@@ -309,12 +277,12 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseOne() (Error error) {
 // models version of the diviconDB
 func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseOneInstance(diviconDB *DivIconDB) (Error error) {
 
-	divicon, ok := (*backRepoDivIcon.Map_DivIconDBID_DivIconPtr)[diviconDB.ID]
+	divicon, ok := backRepoDivIcon.Map_DivIconDBID_DivIconPtr[diviconDB.ID]
 	if !ok {
 		divicon = new(models.DivIcon)
 
-		(*backRepoDivIcon.Map_DivIconDBID_DivIconPtr)[diviconDB.ID] = divicon
-		(*backRepoDivIcon.Map_DivIconPtr_DivIconDBID)[divicon] = diviconDB.ID
+		backRepoDivIcon.Map_DivIconDBID_DivIconPtr[diviconDB.ID] = divicon
+		backRepoDivIcon.Map_DivIconPtr_DivIconDBID[divicon] = diviconDB.ID
 
 		// append model store with the new element
 		divicon.Name = diviconDB.Name_Data.String
@@ -329,7 +297,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseOneInstance(diviconDB
 	// Map_DivIconDBID_DivIconDB)[diviconDB hold variable pointers
 	diviconDB_Data := *diviconDB
 	preservedPtrToDivIcon := &diviconDB_Data
-	(*backRepoDivIcon.Map_DivIconDBID_DivIconDB)[diviconDB.ID] = preservedPtrToDivIcon
+	backRepoDivIcon.Map_DivIconDBID_DivIconDB[diviconDB.ID] = preservedPtrToDivIcon
 
 	return
 }
@@ -339,7 +307,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseOneInstance(diviconDB
 func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, diviconDB := range *backRepoDivIcon.Map_DivIconDBID_DivIconDB {
+	for _, diviconDB := range backRepoDivIcon.Map_DivIconDBID_DivIconDB {
 		backRepoDivIcon.CheckoutPhaseTwoInstance(backRepo, diviconDB)
 	}
 	return
@@ -349,7 +317,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseTwo(backRepo *BackRep
 // Phase Two is the update of instance with the field in the database
 func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, diviconDB *DivIconDB) (Error error) {
 
-	divicon := (*backRepoDivIcon.Map_DivIconDBID_DivIconPtr)[diviconDB.ID]
+	divicon := backRepoDivIcon.Map_DivIconDBID_DivIconPtr[diviconDB.ID]
 	_ = divicon // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
@@ -359,7 +327,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseTwoInstance(backRepo 
 // CommitDivIcon allows commit of a single divicon (if already staged)
 func (backRepo *BackRepoStruct) CommitDivIcon(divicon *models.DivIcon) {
 	backRepo.BackRepoDivIcon.CommitPhaseOneInstance(divicon)
-	if id, ok := (*backRepo.BackRepoDivIcon.Map_DivIconPtr_DivIconDBID)[divicon]; ok {
+	if id, ok := backRepo.BackRepoDivIcon.Map_DivIconPtr_DivIconDBID[divicon]; ok {
 		backRepo.BackRepoDivIcon.CommitPhaseTwoInstance(backRepo, id, divicon)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -368,9 +336,9 @@ func (backRepo *BackRepoStruct) CommitDivIcon(divicon *models.DivIcon) {
 // CommitDivIcon allows checkout of a single divicon (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutDivIcon(divicon *models.DivIcon) {
 	// check if the divicon is staged
-	if _, ok := (*backRepo.BackRepoDivIcon.Map_DivIconPtr_DivIconDBID)[divicon]; ok {
+	if _, ok := backRepo.BackRepoDivIcon.Map_DivIconPtr_DivIconDBID[divicon]; ok {
 
-		if id, ok := (*backRepo.BackRepoDivIcon.Map_DivIconPtr_DivIconDBID)[divicon]; ok {
+		if id, ok := backRepo.BackRepoDivIcon.Map_DivIconPtr_DivIconDBID[divicon]; ok {
 			var diviconDB DivIconDB
 			diviconDB.ID = id
 
@@ -428,7 +396,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*DivIconDB, 0)
-	for _, diviconDB := range *backRepoDivIcon.Map_DivIconDBID_DivIconDB {
+	for _, diviconDB := range backRepoDivIcon.Map_DivIconDBID_DivIconDB {
 		forBackup = append(forBackup, diviconDB)
 	}
 
@@ -454,7 +422,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*DivIconDB, 0)
-	for _, diviconDB := range *backRepoDivIcon.Map_DivIconDBID_DivIconDB {
+	for _, diviconDB := range backRepoDivIcon.Map_DivIconDBID_DivIconDB {
 		forBackup = append(forBackup, diviconDB)
 	}
 
@@ -519,7 +487,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) rowVisitorDivIcon(row *xlsx.Row) e
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoDivIcon.Map_DivIconDBID_DivIconDB)[diviconDB.ID] = diviconDB
+		backRepoDivIcon.Map_DivIconDBID_DivIconDB[diviconDB.ID] = diviconDB
 		BackRepoDivIconid_atBckpTime_newID[diviconDB_ID_atBackupTime] = diviconDB.ID
 	}
 	return nil
@@ -556,7 +524,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) RestorePhaseOne(dirPath string) {
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoDivIcon.Map_DivIconDBID_DivIconDB)[diviconDB.ID] = diviconDB
+		backRepoDivIcon.Map_DivIconDBID_DivIconDB[diviconDB.ID] = diviconDB
 		BackRepoDivIconid_atBckpTime_newID[diviconDB_ID_atBackupTime] = diviconDB.ID
 	}
 
@@ -569,7 +537,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) RestorePhaseOne(dirPath string) {
 // to compute new index
 func (backRepoDivIcon *BackRepoDivIconStruct) RestorePhaseTwo() {
 
-	for _, diviconDB := range *backRepoDivIcon.Map_DivIconDBID_DivIconDB {
+	for _, diviconDB := range backRepoDivIcon.Map_DivIconDBID_DivIconDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = diviconDB

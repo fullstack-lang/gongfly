@@ -11,8 +11,6 @@ import { CommitNbFromBackService } from '../commitnbfromback.service'
 import { GongstructSelectionService } from '../gongstruct-selection.service'
 
 // insertion point for per struct import code
-import { CheckoutSchedulerService } from '../checkoutscheduler.service'
-import { getCheckoutSchedulerUniqueID } from '../front-repo.service'
 import { CircleService } from '../circle.service'
 import { getCircleUniqueID } from '../front-repo.service'
 import { DivIconService } from '../divicon.service'
@@ -31,6 +29,8 @@ import { VLineService } from '../vline.service'
 import { getVLineUniqueID } from '../front-repo.service'
 import { VisualTrackService } from '../visualtrack.service'
 import { getVisualTrackUniqueID } from '../front-repo.service'
+
+import { RouteService } from '../route-service';
 
 /**
  * Types of a GongNode / GongFlatNode
@@ -171,11 +171,9 @@ export class SidebarComponent implements OnInit {
   constructor(
     private router: Router,
     private frontRepoService: FrontRepoService,
-    private commitNbFromBackService: CommitNbFromBackService,
     private gongstructSelectionService: GongstructSelectionService,
 
     // insertion point for per struct service declaration
-    private checkoutschedulerService: CheckoutSchedulerService,
     private circleService: CircleService,
     private diviconService: DivIconService,
     private layergroupService: LayerGroupService,
@@ -185,6 +183,8 @@ export class SidebarComponent implements OnInit {
     private userclickService: UserClickService,
     private vlineService: VLineService,
     private visualtrackService: VisualTrackService,
+
+    private routeService: RouteService,
   ) { }
 
   ngOnDestroy() {
@@ -195,6 +195,10 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
 
     console.log("Sidebar init: " + this.GONG__StackPath)
+
+    // add the routes that will used by this side panel component and
+    // by the component that are called from this component
+    this.routeService.addDataPanelRoutes(this.GONG__StackPath)
 
     this.subscription = this.gongstructSelectionService.gongtructSelected$.subscribe(
       gongstructName => {
@@ -214,14 +218,6 @@ export class SidebarComponent implements OnInit {
     )
 
     // insertion point for per struct observable for refresh trigger
-    // observable for changes in structs
-    this.checkoutschedulerService.CheckoutSchedulerServiceChanged.subscribe(
-      message => {
-        if (message == "post" || message == "update" || message == "delete") {
-          this.refresh()
-        }
-      }
-    )
     // observable for changes in structs
     this.circleService.CircleServiceChanged.subscribe(
       message => {
@@ -318,50 +314,6 @@ export class SidebarComponent implements OnInit {
       this.gongNodeTree = new Array<GongNode>();
 
       // insertion point for per struct tree construction
-      /**
-      * fill up the CheckoutScheduler part of the mat tree
-      */
-      let checkoutschedulerGongNodeStruct: GongNode = {
-        name: "CheckoutScheduler",
-        type: GongNodeType.STRUCT,
-        id: 0,
-        uniqueIdPerStack: 13 * nonInstanceNodeId,
-        structName: "CheckoutScheduler",
-        associationField: "",
-        associatedStructName: "",
-        children: new Array<GongNode>()
-      }
-      nonInstanceNodeId = nonInstanceNodeId + 1
-      this.gongNodeTree.push(checkoutschedulerGongNodeStruct)
-
-      this.frontRepo.CheckoutSchedulers_array.sort((t1, t2) => {
-        if (t1.Name > t2.Name) {
-          return 1;
-        }
-        if (t1.Name < t2.Name) {
-          return -1;
-        }
-        return 0;
-      });
-
-      this.frontRepo.CheckoutSchedulers_array.forEach(
-        checkoutschedulerDB => {
-          let checkoutschedulerGongNodeInstance: GongNode = {
-            name: checkoutschedulerDB.Name,
-            type: GongNodeType.INSTANCE,
-            id: checkoutschedulerDB.ID,
-            uniqueIdPerStack: getCheckoutSchedulerUniqueID(checkoutschedulerDB.ID),
-            structName: "CheckoutScheduler",
-            associationField: "",
-            associatedStructName: "",
-            children: new Array<GongNode>()
-          }
-          checkoutschedulerGongNodeStruct.children!.push(checkoutschedulerGongNodeInstance)
-
-          // insertion point for per field code
-        }
-      )
-
       /**
       * fill up the Circle part of the mat tree
       */
@@ -1046,14 +998,7 @@ export class SidebarComponent implements OnInit {
           }
         }
       )
-    });
-
-    // fetch the number of commits
-    this.commitNbFromBackService.getCommitNbFromBack().subscribe(
-      commitNbFromBack => {
-        this.commitNbFromBack = commitNbFromBack
-      }
-    )
+    })
   }
 
   /**
@@ -1061,9 +1006,11 @@ export class SidebarComponent implements OnInit {
    * @param path for the outlet selection
    */
   setTableRouterOutlet(path: string) {
+    let outletName = this.routeService.getTableOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + path
     this.router.navigate([{
       outlets: {
-        github_com_fullstack_lang_gongleaflet_go_table: ["github_com_fullstack_lang_gongleaflet_go-" + path]
+        outletName: [fullPath]
       }
     }]);
   }
@@ -1075,34 +1022,39 @@ export class SidebarComponent implements OnInit {
   setTableRouterOutletFromTree(path: string, type: GongNodeType, structName: string, id: number) {
 
     if (type == GongNodeType.STRUCT) {
-      this.router.navigate([{
-        outlets: {
-          github_com_fullstack_lang_gongleaflet_go_table: ["github_com_fullstack_lang_gongleaflet_go-" + path.toLowerCase(), this.GONG__StackPath]
-        }
-      }]);
+      let outletName = this.routeService.getTableOutlet(this.GONG__StackPath)
+      let fullPath = this.routeService.getPathRoot() + "-" + path.toLowerCase()
+      let outletConf: any = {}
+      outletConf[outletName] = [fullPath, this.GONG__StackPath]
+
+      this.router.navigate([{ outlets: outletConf }])
     }
 
     if (type == GongNodeType.INSTANCE) {
-      this.router.navigate([{
-        outlets: {
-          github_com_fullstack_lang_gongleaflet_go_editor: ["github_com_fullstack_lang_gongleaflet_go-" + structName.toLowerCase() + "-detail", id]
-        }
-      }]);
+      let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+      let fullPath = this.routeService.getPathRoot() + "-" + structName.toLowerCase() + "-detail"
+
+      let outletConf: any = {}
+      outletConf[outletName] = [fullPath, id, this.GONG__StackPath]
+
+      this.router.navigate([{ outlets: outletConf }])
     }
   }
 
   setEditorRouterOutlet(path: string) {
-    this.router.navigate([{
-      outlets: {
-        github_com_fullstack_lang_gongleaflet_go_editor: ["github_com_fullstack_lang_gongleaflet_go-" + path.toLowerCase(), this.GONG__StackPath]
-      }
-    }]);
+    let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + path.toLowerCase()
+    let outletConf : any = {}
+    outletConf[outletName] = [fullPath, this.GONG__StackPath]
+    this.router.navigate([{ outlets: outletConf }]);
   }
 
   setEditorSpecialRouterOutlet(node: GongFlatNode) {
+    let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + node.associatedStructName.toLowerCase() + "-adder"
     this.router.navigate([{
       outlets: {
-        github_com_fullstack_lang_gongleaflet_go_editor: ["github_com_fullstack_lang_gongleaflet_go-" + node.associatedStructName.toLowerCase() + "-adder", node.id, node.structName, node.associationField, this.GONG__StackPath]
+        outletName: [fullPath, node.id, node.structName, node.associationField, this.GONG__StackPath]
       }
     }]);
   }

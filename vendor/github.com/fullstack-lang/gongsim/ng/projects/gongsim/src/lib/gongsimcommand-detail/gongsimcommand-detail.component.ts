@@ -151,6 +151,16 @@ export class GongsimCommandDetailComponent implements OnInit {
 		// pointers fields, after the translation, are nulled in order to perform serialization
 
 		// insertion point for translation/nullation of each field
+		if (this.gongsimcommand.EngineID == undefined) {
+			this.gongsimcommand.EngineID = new NullInt64
+		}
+		if (this.gongsimcommand.Engine != undefined) {
+			this.gongsimcommand.EngineID.Int64 = this.gongsimcommand.Engine.ID
+			this.gongsimcommand.EngineID.Valid = true
+		} else {
+			this.gongsimcommand.EngineID.Int64 = 0
+			this.gongsimcommand.EngineID.Valid = true
+		}
 
 		// save from the front pointer space to the non pointer space for serialization
 

@@ -26,10 +26,12 @@ func (LayerGroup *LayerGroup) UpdateLayerGroup() {
 	}
 }
 
-// little simple algo for the visual layer computation
-func computeLayerGroupFromLayerGroupName(layerGroupName string) (layerGroup *LayerGroup) {
+var DefaultLayerGroup *LayerGroup
 
-	for _layerGroup := range Stage.LayerGroups {
+// little simple algo for the visual layer computation
+func ComputeLayerGroupFromLayerGroupName(gongleafletStage *StageStruct, layerGroupName string) (layerGroup *LayerGroup) {
+
+	for _layerGroup := range gongleafletStage.LayerGroups {
 		if _layerGroup.Name == layerGroupName {
 			layerGroup = _layerGroup
 			continue
@@ -40,5 +42,3 @@ func computeLayerGroupFromLayerGroupName(layerGroupName string) (layerGroup *Lay
 	}
 	return
 }
-
-var DefaultLayerGroup *LayerGroup

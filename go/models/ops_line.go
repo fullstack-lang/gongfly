@@ -3,7 +3,6 @@ package models
 import (
 	"fmt"
 	"log"
-	"time"
 
 	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
 )
@@ -36,8 +35,8 @@ type OpsLine struct {
 	Subordonate LatLngAgentInterface `gorm:"-"`
 }
 
-func (OpsLine *OpsLine) Register() (res *OpsLine) {
-	gongsim_models.AppendToSingloton(OpsLine)
+func (OpsLine *OpsLine) Register(engine *gongsim_models.Engine) (res *OpsLine) {
+	gongsim_models.AppendToSingloton(engine, OpsLine)
 	res = OpsLine
 	return
 }
@@ -102,8 +101,8 @@ func (opsLine *OpsLine) FireNextEvent() {
 		}
 
 		// Does not work yet
-		message.Stage(&Stage).Register().QueueUpdateEvent(1 * time.Second)
-		_ = message
+		// message.Stage(&Stage).Register(engine).QueueUpdateEvent(1 * time.Second)
+		// _ = message
 
 		// display the message
 		opsLine.NetworkCallbackInterface = opsLine
@@ -150,8 +149,8 @@ func (opsLine *OpsLine) FireNextEvent() {
 			message.Speed = opsLine.Scenario.MessageVisualSpeed
 		}
 		// Does not work yet
-		message.Stage(&Stage).Register().QueueUpdateEvent(1 * time.Second)
-		_ = message
+		// message.Stage(&Stage).Register(engine).QueueUpdateEvent(1 * time.Second)
+		// _ = message
 
 		// display message
 		opsLine.NetworkCallbackInterface = opsLine

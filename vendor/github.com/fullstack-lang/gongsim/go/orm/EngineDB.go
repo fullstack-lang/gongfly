@@ -135,13 +135,13 @@ var Engine_Fields = []string{
 
 type BackRepoEngineStruct struct {
 	// stores EngineDB according to their gorm ID
-	Map_EngineDBID_EngineDB *map[uint]*EngineDB
+	Map_EngineDBID_EngineDB map[uint]*EngineDB
 
 	// stores EngineDB ID according to Engine address
-	Map_EnginePtr_EngineDBID *map[*models.Engine]uint
+	Map_EnginePtr_EngineDBID map[*models.Engine]uint
 
 	// stores Engine according to their gorm ID
-	Map_EngineDBID_EnginePtr *map[uint]*models.Engine
+	Map_EngineDBID_EnginePtr map[uint]*models.Engine
 
 	db *gorm.DB
 
@@ -159,40 +159,8 @@ func (backRepoEngine *BackRepoEngineStruct) GetDB() *gorm.DB {
 
 // GetEngineDBFromEnginePtr is a handy function to access the back repo instance from the stage instance
 func (backRepoEngine *BackRepoEngineStruct) GetEngineDBFromEnginePtr(engine *models.Engine) (engineDB *EngineDB) {
-	id := (*backRepoEngine.Map_EnginePtr_EngineDBID)[engine]
-	engineDB = (*backRepoEngine.Map_EngineDBID_EngineDB)[id]
-	return
-}
-
-// BackRepoEngine.Init set up the BackRepo of the Engine
-func (backRepoEngine *BackRepoEngineStruct) Init(stage *models.StageStruct, db *gorm.DB) (Error error) {
-
-	if backRepoEngine.Map_EngineDBID_EnginePtr != nil {
-		err := errors.New("In Init, backRepoEngine.Map_EngineDBID_EnginePtr should be nil")
-		return err
-	}
-
-	if backRepoEngine.Map_EngineDBID_EngineDB != nil {
-		err := errors.New("In Init, backRepoEngine.Map_EngineDBID_EngineDB should be nil")
-		return err
-	}
-
-	if backRepoEngine.Map_EnginePtr_EngineDBID != nil {
-		err := errors.New("In Init, backRepoEngine.Map_EnginePtr_EngineDBID should be nil")
-		return err
-	}
-
-	tmp := make(map[uint]*models.Engine, 0)
-	backRepoEngine.Map_EngineDBID_EnginePtr = &tmp
-
-	tmpDB := make(map[uint]*EngineDB, 0)
-	backRepoEngine.Map_EngineDBID_EngineDB = &tmpDB
-
-	tmpID := make(map[*models.Engine]uint, 0)
-	backRepoEngine.Map_EnginePtr_EngineDBID = &tmpID
-
-	backRepoEngine.db = db
-	backRepoEngine.stage = stage
+	id := backRepoEngine.Map_EnginePtr_EngineDBID[engine]
+	engineDB = backRepoEngine.Map_EngineDBID_EngineDB[id]
 	return
 }
 
@@ -206,7 +174,7 @@ func (backRepoEngine *BackRepoEngineStruct) CommitPhaseOne(stage *models.StageSt
 
 	// parse all backRepo instance and checks wether some instance have been unstaged
 	// in this case, remove them from the back repo
-	for id, engine := range *backRepoEngine.Map_EngineDBID_EnginePtr {
+	for id, engine := range backRepoEngine.Map_EngineDBID_EnginePtr {
 		if _, ok := stage.Engines[engine]; !ok {
 			backRepoEngine.CommitDeleteInstance(id)
 		}
@@ -218,19 +186,19 @@ func (backRepoEngine *BackRepoEngineStruct) CommitPhaseOne(stage *models.StageSt
 // BackRepoEngine.CommitDeleteInstance commits deletion of Engine to the BackRepo
 func (backRepoEngine *BackRepoEngineStruct) CommitDeleteInstance(id uint) (Error error) {
 
-	engine := (*backRepoEngine.Map_EngineDBID_EnginePtr)[id]
+	engine := backRepoEngine.Map_EngineDBID_EnginePtr[id]
 
 	// engine is not staged anymore, remove engineDB
-	engineDB := (*backRepoEngine.Map_EngineDBID_EngineDB)[id]
+	engineDB := backRepoEngine.Map_EngineDBID_EngineDB[id]
 	query := backRepoEngine.db.Unscoped().Delete(&engineDB)
 	if query.Error != nil {
 		return query.Error
 	}
 
 	// update stores
-	delete((*backRepoEngine.Map_EnginePtr_EngineDBID), engine)
-	delete((*backRepoEngine.Map_EngineDBID_EnginePtr), id)
-	delete((*backRepoEngine.Map_EngineDBID_EngineDB), id)
+	delete(backRepoEngine.Map_EnginePtr_EngineDBID, engine)
+	delete(backRepoEngine.Map_EngineDBID_EnginePtr, id)
+	delete(backRepoEngine.Map_EngineDBID_EngineDB, id)
 
 	return
 }
@@ -240,7 +208,7 @@ func (backRepoEngine *BackRepoEngineStruct) CommitDeleteInstance(id uint) (Error
 func (backRepoEngine *BackRepoEngineStruct) CommitPhaseOneInstance(engine *models.Engine) (Error error) {
 
 	// check if the engine is not commited yet
-	if _, ok := (*backRepoEngine.Map_EnginePtr_EngineDBID)[engine]; ok {
+	if _, ok := backRepoEngine.Map_EnginePtr_EngineDBID[engine]; ok {
 		return
 	}
 
@@ -254,9 +222,9 @@ func (backRepoEngine *BackRepoEngineStruct) CommitPhaseOneInstance(engine *model
 	}
 
 	// update stores
-	(*backRepoEngine.Map_EnginePtr_EngineDBID)[engine] = engineDB.ID
-	(*backRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID] = engine
-	(*backRepoEngine.Map_EngineDBID_EngineDB)[engineDB.ID] = &engineDB
+	backRepoEngine.Map_EnginePtr_EngineDBID[engine] = engineDB.ID
+	backRepoEngine.Map_EngineDBID_EnginePtr[engineDB.ID] = engine
+	backRepoEngine.Map_EngineDBID_EngineDB[engineDB.ID] = &engineDB
 
 	return
 }
@@ -265,7 +233,7 @@ func (backRepoEngine *BackRepoEngineStruct) CommitPhaseOneInstance(engine *model
 // Phase Two is the update of instance with the field in the database
 func (backRepoEngine *BackRepoEngineStruct) CommitPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
-	for idx, engine := range *backRepoEngine.Map_EngineDBID_EnginePtr {
+	for idx, engine := range backRepoEngine.Map_EngineDBID_EnginePtr {
 		backRepoEngine.CommitPhaseTwoInstance(backRepo, idx, engine)
 	}
 
@@ -277,7 +245,7 @@ func (backRepoEngine *BackRepoEngineStruct) CommitPhaseTwo(backRepo *BackRepoStr
 func (backRepoEngine *BackRepoEngineStruct) CommitPhaseTwoInstance(backRepo *BackRepoStruct, idx uint, engine *models.Engine) (Error error) {
 
 	// fetch matching engineDB
-	if engineDB, ok := (*backRepoEngine.Map_EngineDBID_EngineDB)[idx]; ok {
+	if engineDB, ok := backRepoEngine.Map_EngineDBID_EngineDB[idx]; ok {
 
 		engineDB.CopyBasicFieldsFromEngine(engine)
 
@@ -321,7 +289,7 @@ func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseOne() (Error error) {
 
 		// do not remove this instance from the stage, therefore
 		// remove instance from the list of instances to be be removed from the stage
-		engine, ok := (*backRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID]
+		engine, ok := backRepoEngine.Map_EngineDBID_EnginePtr[engineDB.ID]
 		if ok {
 			delete(engineInstancesToBeRemovedFromTheStage, engine)
 		}
@@ -332,10 +300,10 @@ func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseOne() (Error error) {
 		engine.Unstage(backRepoEngine.GetStage())
 
 		// remove instance from the back repo 3 maps
-		engineID := (*backRepoEngine.Map_EnginePtr_EngineDBID)[engine]
-		delete((*backRepoEngine.Map_EnginePtr_EngineDBID), engine)
-		delete((*backRepoEngine.Map_EngineDBID_EngineDB), engineID)
-		delete((*backRepoEngine.Map_EngineDBID_EnginePtr), engineID)
+		engineID := backRepoEngine.Map_EnginePtr_EngineDBID[engine]
+		delete(backRepoEngine.Map_EnginePtr_EngineDBID, engine)
+		delete(backRepoEngine.Map_EngineDBID_EngineDB, engineID)
+		delete(backRepoEngine.Map_EngineDBID_EnginePtr, engineID)
 	}
 
 	return
@@ -345,12 +313,12 @@ func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseOne() (Error error) {
 // models version of the engineDB
 func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseOneInstance(engineDB *EngineDB) (Error error) {
 
-	engine, ok := (*backRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID]
+	engine, ok := backRepoEngine.Map_EngineDBID_EnginePtr[engineDB.ID]
 	if !ok {
 		engine = new(models.Engine)
 
-		(*backRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID] = engine
-		(*backRepoEngine.Map_EnginePtr_EngineDBID)[engine] = engineDB.ID
+		backRepoEngine.Map_EngineDBID_EnginePtr[engineDB.ID] = engine
+		backRepoEngine.Map_EnginePtr_EngineDBID[engine] = engineDB.ID
 
 		// append model store with the new element
 		engine.Name = engineDB.Name_Data.String
@@ -365,7 +333,7 @@ func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseOneInstance(engineDB *E
 	// Map_EngineDBID_EngineDB)[engineDB hold variable pointers
 	engineDB_Data := *engineDB
 	preservedPtrToEngine := &engineDB_Data
-	(*backRepoEngine.Map_EngineDBID_EngineDB)[engineDB.ID] = preservedPtrToEngine
+	backRepoEngine.Map_EngineDBID_EngineDB[engineDB.ID] = preservedPtrToEngine
 
 	return
 }
@@ -375,7 +343,7 @@ func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseOneInstance(engineDB *E
 func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseTwo(backRepo *BackRepoStruct) (Error error) {
 
 	// parse all DB instance and update all pointer fields of the translated models instance
-	for _, engineDB := range *backRepoEngine.Map_EngineDBID_EngineDB {
+	for _, engineDB := range backRepoEngine.Map_EngineDBID_EngineDB {
 		backRepoEngine.CheckoutPhaseTwoInstance(backRepo, engineDB)
 	}
 	return
@@ -385,7 +353,7 @@ func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseTwo(backRepo *BackRepoS
 // Phase Two is the update of instance with the field in the database
 func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, engineDB *EngineDB) (Error error) {
 
-	engine := (*backRepoEngine.Map_EngineDBID_EnginePtr)[engineDB.ID]
+	engine := backRepoEngine.Map_EngineDBID_EnginePtr[engineDB.ID]
 	_ = engine // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
 
 	// insertion point for checkout of pointer encoding
@@ -395,7 +363,7 @@ func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseTwoInstance(backRepo *B
 // CommitEngine allows commit of a single engine (if already staged)
 func (backRepo *BackRepoStruct) CommitEngine(engine *models.Engine) {
 	backRepo.BackRepoEngine.CommitPhaseOneInstance(engine)
-	if id, ok := (*backRepo.BackRepoEngine.Map_EnginePtr_EngineDBID)[engine]; ok {
+	if id, ok := backRepo.BackRepoEngine.Map_EnginePtr_EngineDBID[engine]; ok {
 		backRepo.BackRepoEngine.CommitPhaseTwoInstance(backRepo, id, engine)
 	}
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
@@ -404,9 +372,9 @@ func (backRepo *BackRepoStruct) CommitEngine(engine *models.Engine) {
 // CommitEngine allows checkout of a single engine (if already staged and with a BackRepo id)
 func (backRepo *BackRepoStruct) CheckoutEngine(engine *models.Engine) {
 	// check if the engine is staged
-	if _, ok := (*backRepo.BackRepoEngine.Map_EnginePtr_EngineDBID)[engine]; ok {
+	if _, ok := backRepo.BackRepoEngine.Map_EnginePtr_EngineDBID[engine]; ok {
 
-		if id, ok := (*backRepo.BackRepoEngine.Map_EnginePtr_EngineDBID)[engine]; ok {
+		if id, ok := backRepo.BackRepoEngine.Map_EnginePtr_EngineDBID[engine]; ok {
 			var engineDB EngineDB
 			engineDB.ID = id
 
@@ -512,7 +480,7 @@ func (backRepoEngine *BackRepoEngineStruct) Backup(dirPath string) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*EngineDB, 0)
-	for _, engineDB := range *backRepoEngine.Map_EngineDBID_EngineDB {
+	for _, engineDB := range backRepoEngine.Map_EngineDBID_EngineDB {
 		forBackup = append(forBackup, engineDB)
 	}
 
@@ -538,7 +506,7 @@ func (backRepoEngine *BackRepoEngineStruct) BackupXL(file *xlsx.File) {
 	// organize the map into an array with increasing IDs, in order to have repoductible
 	// backup file
 	forBackup := make([]*EngineDB, 0)
-	for _, engineDB := range *backRepoEngine.Map_EngineDBID_EngineDB {
+	for _, engineDB := range backRepoEngine.Map_EngineDBID_EngineDB {
 		forBackup = append(forBackup, engineDB)
 	}
 
@@ -603,7 +571,7 @@ func (backRepoEngine *BackRepoEngineStruct) rowVisitorEngine(row *xlsx.Row) erro
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoEngine.Map_EngineDBID_EngineDB)[engineDB.ID] = engineDB
+		backRepoEngine.Map_EngineDBID_EngineDB[engineDB.ID] = engineDB
 		BackRepoEngineid_atBckpTime_newID[engineDB_ID_atBackupTime] = engineDB.ID
 	}
 	return nil
@@ -640,7 +608,7 @@ func (backRepoEngine *BackRepoEngineStruct) RestorePhaseOne(dirPath string) {
 		if query.Error != nil {
 			log.Panic(query.Error)
 		}
-		(*backRepoEngine.Map_EngineDBID_EngineDB)[engineDB.ID] = engineDB
+		backRepoEngine.Map_EngineDBID_EngineDB[engineDB.ID] = engineDB
 		BackRepoEngineid_atBckpTime_newID[engineDB_ID_atBackupTime] = engineDB.ID
 	}
 
@@ -653,7 +621,7 @@ func (backRepoEngine *BackRepoEngineStruct) RestorePhaseOne(dirPath string) {
 // to compute new index
 func (backRepoEngine *BackRepoEngineStruct) RestorePhaseTwo() {
 
-	for _, engineDB := range *backRepoEngine.Map_EngineDBID_EngineDB {
+	for _, engineDB := range backRepoEngine.Map_EngineDBID_EngineDB {
 
 		// next line of code is to avert unused variable compilation error
 		_ = engineDB

@@ -19,6 +19,8 @@ import { GongsimCommandService } from '../gongsimcommand.service'
 
 // insertion point for additional imports
 
+import { RouteService } from '../route-service';
+
 // TableComponent is initilizaed from different routes
 // TableComponentMode detail different cases 
 enum TableComponentMode {
@@ -85,6 +87,9 @@ export class GongsimCommandsTableComponent implements OnInit {
         case 'DateSpeedCommand':
           return gongsimcommandDB.DateSpeedCommand;
 
+        case 'Engine':
+          return (gongsimcommandDB.Engine ? gongsimcommandDB.Engine.Name : '');
+
         default:
           console.assert(false, "Unknown field")
           return "";
@@ -104,6 +109,9 @@ export class GongsimCommandsTableComponent implements OnInit {
       mergedContent += gongsimcommandDB.CommandDate.toLowerCase()
       mergedContent += gongsimcommandDB.SpeedCommandType.toLowerCase()
       mergedContent += gongsimcommandDB.DateSpeedCommand.toLowerCase()
+      if (gongsimcommandDB.Engine) {
+        mergedContent += gongsimcommandDB.Engine.Name.toLowerCase()
+      }
 
       let isSelected = mergedContent.includes(filter.toLowerCase())
       return isSelected
@@ -128,6 +136,8 @@ export class GongsimCommandsTableComponent implements OnInit {
 
     private router: Router,
     private activatedRoute: ActivatedRoute,
+
+    private routeService: RouteService,
   ) {
 
     // compute mode
@@ -161,6 +171,7 @@ export class GongsimCommandsTableComponent implements OnInit {
         "CommandDate",
         "SpeedCommandType",
         "DateSpeedCommand",
+        "Engine",
       ]
     } else {
       this.displayedColumns = ['select', 'ID', // insertion point for columns to display
@@ -169,6 +180,7 @@ export class GongsimCommandsTableComponent implements OnInit {
         "CommandDate",
         "SpeedCommandType",
         "DateSpeedCommand",
+        "Engine",
       ]
       this.selection = new SelectionModel<GongsimCommandDB>(allowMultiSelect, this.initialSelection);
     }
@@ -252,18 +264,15 @@ export class GongsimCommandsTableComponent implements OnInit {
 
   }
 
-  // display gongsimcommand in router
-  displayGongsimCommandInRouter(gongsimcommandID: number) {
-    this.router.navigate(["github_com_fullstack_lang_gongsim_go-" + "gongsimcommand-display", gongsimcommandID])
-  }
-
   // set editor outlet
   setEditorRouterOutlet(gongsimcommandID: number) {
-    this.router.navigate([{
-      outlets: {
-        github_com_fullstack_lang_gongsim_go_editor: ["github_com_fullstack_lang_gongsim_go-" + "gongsimcommand-detail", gongsimcommandID, this.GONG__StackPath]
-      }
-    }]);
+    let outletName = this.routeService.getEditorOutlet(this.GONG__StackPath)
+    let fullPath = this.routeService.getPathRoot() + "-" + "gongsimcommand" + "-detail"
+
+    let outletConf: any = {}
+    outletConf[outletName] = [fullPath, gongsimcommandID, this.GONG__StackPath]
+
+    this.router.navigate([{ outlets: outletConf }])
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

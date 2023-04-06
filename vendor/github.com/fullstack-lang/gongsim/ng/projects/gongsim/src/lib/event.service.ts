@@ -42,22 +42,26 @@ export class EventService {
   }
 
   /** GET events from the server */
-  getEvents(GONG__StackPath: string = ""): Observable<EventDB[]> {
+  getEvents(GONG__StackPath: string): Observable<EventDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<EventDB[]>(this.eventsUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched events')),
+        tap(),
+		// tap(_ => this.log('fetched events')),
         catchError(this.handleError<EventDB[]>('getEvents', []))
       );
   }
 
   /** GET event by id. Will 404 if id not found */
-  getEvent(id: number): Observable<EventDB> {
+  getEvent(id: number, GONG__StackPath: string): Observable<EventDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.eventsUrl}/${id}`;
-    return this.http.get<EventDB>(url).pipe(
-      tap(_ => this.log(`fetched event id=${id}`)),
+    return this.http.get<EventDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched event id=${id}`)),
       catchError(this.handleError<EventDB>(`getEvent id=${id}`))
     );
   }
@@ -73,10 +77,10 @@ export class EventService {
       params: params
     }
 
-	return this.http.post<EventDB>(this.eventsUrl, eventdb, httpOptions).pipe(
+    return this.http.post<EventDB>(this.eventsUrl, eventdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted eventdb id=${eventdb.ID}`)
+        // this.log(`posted eventdb id=${eventdb.ID}`)
       }),
       catchError(this.handleError<EventDB>('postEvent'))
     );
@@ -127,11 +131,11 @@ export class EventService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in EventService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("EventService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -142,6 +146,6 @@ export class EventService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

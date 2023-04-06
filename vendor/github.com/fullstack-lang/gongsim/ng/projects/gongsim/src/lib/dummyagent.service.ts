@@ -42,22 +42,26 @@ export class DummyAgentService {
   }
 
   /** GET dummyagents from the server */
-  getDummyAgents(GONG__StackPath: string = ""): Observable<DummyAgentDB[]> {
+  getDummyAgents(GONG__StackPath: string): Observable<DummyAgentDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<DummyAgentDB[]>(this.dummyagentsUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched dummyagents')),
+        tap(),
+		// tap(_ => this.log('fetched dummyagents')),
         catchError(this.handleError<DummyAgentDB[]>('getDummyAgents', []))
       );
   }
 
   /** GET dummyagent by id. Will 404 if id not found */
-  getDummyAgent(id: number): Observable<DummyAgentDB> {
+  getDummyAgent(id: number, GONG__StackPath: string): Observable<DummyAgentDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.dummyagentsUrl}/${id}`;
-    return this.http.get<DummyAgentDB>(url).pipe(
-      tap(_ => this.log(`fetched dummyagent id=${id}`)),
+    return this.http.get<DummyAgentDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched dummyagent id=${id}`)),
       catchError(this.handleError<DummyAgentDB>(`getDummyAgent id=${id}`))
     );
   }
@@ -73,10 +77,10 @@ export class DummyAgentService {
       params: params
     }
 
-	return this.http.post<DummyAgentDB>(this.dummyagentsUrl, dummyagentdb, httpOptions).pipe(
+    return this.http.post<DummyAgentDB>(this.dummyagentsUrl, dummyagentdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted dummyagentdb id=${dummyagentdb.ID}`)
+        // this.log(`posted dummyagentdb id=${dummyagentdb.ID}`)
       }),
       catchError(this.handleError<DummyAgentDB>('postDummyAgent'))
     );
@@ -127,11 +131,11 @@ export class DummyAgentService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in DummyAgentService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("DummyAgentService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -142,6 +146,6 @@ export class DummyAgentService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }

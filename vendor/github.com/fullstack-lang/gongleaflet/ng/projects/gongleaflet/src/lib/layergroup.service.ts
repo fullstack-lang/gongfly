@@ -42,22 +42,26 @@ export class LayerGroupService {
   }
 
   /** GET layergroups from the server */
-  getLayerGroups(GONG__StackPath: string = ""): Observable<LayerGroupDB[]> {
+  getLayerGroups(GONG__StackPath: string): Observable<LayerGroupDB[]> {
 
-	let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<LayerGroupDB[]>(this.layergroupsUrl, { params: params })
       .pipe(
-        tap(_ => this.log('fetched layergroups')),
+        tap(),
+		// tap(_ => this.log('fetched layergroups')),
         catchError(this.handleError<LayerGroupDB[]>('getLayerGroups', []))
       );
   }
 
   /** GET layergroup by id. Will 404 if id not found */
-  getLayerGroup(id: number): Observable<LayerGroupDB> {
+  getLayerGroup(id: number, GONG__StackPath: string): Observable<LayerGroupDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.layergroupsUrl}/${id}`;
-    return this.http.get<LayerGroupDB>(url).pipe(
-      tap(_ => this.log(`fetched layergroup id=${id}`)),
+    return this.http.get<LayerGroupDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched layergroup id=${id}`)),
       catchError(this.handleError<LayerGroupDB>(`getLayerGroup id=${id}`))
     );
   }
@@ -73,10 +77,10 @@ export class LayerGroupService {
       params: params
     }
 
-	return this.http.post<LayerGroupDB>(this.layergroupsUrl, layergroupdb, httpOptions).pipe(
+    return this.http.post<LayerGroupDB>(this.layergroupsUrl, layergroupdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted layergroupdb id=${layergroupdb.ID}`)
+        // this.log(`posted layergroupdb id=${layergroupdb.ID}`)
       }),
       catchError(this.handleError<LayerGroupDB>('postLayerGroup'))
     );
@@ -127,11 +131,11 @@ export class LayerGroupService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation in LayerGroupService', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error("LayerGroupService" + error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -142,6 +146,6 @@ export class LayerGroupService {
   }
 
   private log(message: string) {
-
+      console.log(message)
   }
 }
