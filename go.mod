@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/fullstack-lang/gongdoc v0.0.0-20230331094839-7d3ab2a504ec
 	github.com/fullstack-lang/gongleaflet v0.0.0-20230404163500-844766f5d8ca
-	github.com/fullstack-lang/gongsim v0.0.0-20230406113533-91cbe379092d
+	github.com/fullstack-lang/gongsim v0.0.0-20230406143633-a3349b74af1b
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.9.0

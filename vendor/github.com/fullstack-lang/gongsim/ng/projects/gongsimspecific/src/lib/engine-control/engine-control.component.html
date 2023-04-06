@@ -8,33 +8,32 @@
             {
                 'color': engine.State === 'PAUSED' ? 
                 'grey' : ( engine.State === 'RUNNING' ? 'green': 'red')}">{{ engine.State }}</span>
-        <button (click)='fireEventTillStateChange()' matTooltip="fire events till at least one state changes"
-            mat-button>
+        <button mat-button class="button" (click)='fireEventTillStateChange()' matTooltip="fire events till at least one state changes">
             <mat-icon>
                 skip_next
             </mat-icon>
         </button>
-        <button (click)='fireEvent()' matTooltip="fire one event" mat-button>
+        <button mat-button class="button" (click)='fireEvent()' matTooltip="fire one event">
             <mat-icon>
                 chevron_right
             </mat-icon>
         </button>
-        <button mat-button matTooltip="not yet implemented">
+        <button mat-button class="button" matTooltip="not yet implemented">
             <mat-icon>
                 fast_forward
             </mat-icon>
         </button>
-        <button (click)='reset()' matTooltip="reset simulation" mat-button>
+        <button (click)='reset()' class="button" matTooltip="reset simulation" mat-button>
             <mat-icon>
                 first_page
             </mat-icon>
         </button>
-        <button (click)='play()' matTooltip="run simulation" mat-button>
+        <button (click)='play()' class="button" matTooltip="run simulation" mat-button>
             <mat-icon>
                 play_arrow
             </mat-icon>
         </button>
-        <button (click)='pause()' matTooltip="pause simulation" mat-button>
+        <button (click)='pause()' class="button" matTooltip="pause simulation" mat-button>
             <mat-icon>
                 pause
             </mat-icon>
@@ -46,17 +45,17 @@
         <mat-icon>
             speed
         </mat-icon> &nbsp; &nbsp; {{ engine.Speed }}&nbsp;x&nbsp;&nbsp;
-        <button (click)='increaseSpeed100percent()' matTooltip="increase Speed 100 percent" mat-button>
+        <button class="button" (click)='increaseSpeed100percent()' matTooltip="increase Speed 100 percent" mat-button>
             <mat-icon>
                 add_circle_outline
             </mat-icon>
         </button>
-        <button (click)='decreaseSpeed50percent()' matTooltip="decrease Speed 50 percent" mat-button>
+        <button class="button" (click)='decreaseSpeed50percent()' matTooltip="decrease Speed 50 percent" mat-button>
             <mat-icon>
                 remove_circle_outline
             </mat-icon>
         </button>
-        <button (click)='publishAdvance10Minutes()' matTooltip="advance 10 minutes" mat-button>
+        <button class="button" (click)='publishAdvance10Minutes()' matTooltip="advance 10 minutes" mat-button>
             <mat-icon>
                 forward_10
             </mat-icon>
