@@ -23,6 +23,8 @@ github.com/fullstack-lang/gongleaflet v0.0.0-20230404163500-844766f5d8ca h1:eKQC
 github.com/fullstack-lang/gongleaflet v0.0.0-20230404163500-844766f5d8ca/go.mod h1:k/us9TFDuF+zPrktRUDn7S+PEJNypPZOLE0/I79dKjU=
 github.com/fullstack-lang/gongsim v0.0.0-20230402080527-f5bb63b62bcc h1:0/RWV1W++Hsh7NPTcHJPsW8GkXN2j5/gspPIQUG7ZNY=
 github.com/fullstack-lang/gongsim v0.0.0-20230402080527-f5bb63b62bcc/go.mod h1:SKzgHQdvrJqSuf/F/fIbRHMJcNrdcaVSZ7hSYw3YVnY=
+github.com/fullstack-lang/gongsim v0.0.0-20230406112650-11751ee1febf h1:eHCZbsWjrXmTM1wZts2WUfLgLwXL5FAhQpatVS3nb3o=
+github.com/fullstack-lang/gongsim v0.0.0-20230406112650-11751ee1febf/go.mod h1:SKzgHQdvrJqSuf/F/fIbRHMJcNrdcaVSZ7hSYw3YVnY=
 github.com/gin-contrib/cors v1.4.0 h1:oJ6gwtUl3lqV0WEIwM/LxPF1QZ5qe2lGWdY2+bz7y0g=
 github.com/gin-contrib/cors v1.4.0/go.mod h1:bs9pNM0x/UsmHPBWT2xZz9ROh8xYjYkiURUfmBoMlcs=
 github.com/gin-contrib/sse v0.1.0 h1:Y/yl/+YNO8GZSjAhjMsSuLt29uWRFHdHYUb5lYOV9qE=
