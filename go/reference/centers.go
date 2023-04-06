@@ -14,6 +14,7 @@ var TLN_LFTH_ref = models.CivilianAirport{
 		Lng: 6 + 8.0/60.0,
 	},
 }
+var TLN_LFTH *models.CivilianAirport
 
 var CDG_LFPG_ref = &models.CivilianAirport{
 	Name: "CDG",
@@ -26,4 +27,6 @@ var CDG_LFPG *models.CivilianAirport
 
 func LoadCenters(stage *models.StageStruct, engine *gongsim_models.Engine) {
 	CDG_LFPG = CDG_LFPG_ref.Stage(stage).Register(engine)
+	TLN_LFTH = TLN_LFTH_ref.Stage(stage).Register(engine)
+
 }
