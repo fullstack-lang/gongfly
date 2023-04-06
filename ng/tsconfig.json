@@ -51,7 +51,6 @@
       ],
       "gongflyspecific": [
         "projects/gongflyspecific/src/public-api.ts",
-        "dist/gongflyspecific"
       ],
       "@angular-material-components/datetime-picker": [
         "./node_modules/@angular-material-components/datetime-picker"
@@ -71,10 +70,20 @@
       "gongdocdiagrams": [
       "../vendor/github.com/fullstack-lang/gongdoc/ng/projects/gongdocdiagrams/src/public-api.ts"
       ],
-
       "gongfly": [
         "projects/gongfly/src/public-api.ts",
-        "dist/gongfly"
+      ],
+      "gongsim": [
+        "../vendor/github.com/fullstack-lang/gongsim/ng/projects/gongsim/src/public-api.ts"
+      ],
+      "gongsimspecific": [
+        "../vendor/github.com/fullstack-lang/gongsim/ng/projects/gongsimspecific/src/public-api.ts"
+      ],
+      "gongleaflet": [
+        "../vendor/github.com/fullstack-lang/gongleaflet/ng/projects/gongleaflet/src/public-api.ts"
+      ],
+      "gongleafletspecific": [
+        "../vendor/github.com/fullstack-lang/gongleaflet/ng/projects/gongleafletspecific/src/public-api.ts"
       ]
     },
     "noPropertyAccessFromIndexSignature": true,

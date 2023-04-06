@@ -7,6 +7,16 @@
     </mat-radio-group>
 </ng-template>
 
+<as-split unit="pixel" *ngIf="view==dashboard" direction="vertical">
+    <as-split-area [size]=40>
+        <ng-container *ngTemplateOutlet="radioToolbar"></ng-container>
+    </as-split-area>
+    <as-split-area [size]="$any('*')">
+        <lib-gongfly-dashboard [GONG__StackPath]="GONG__SIM__StackPath">
+        </lib-gongfly-dashboard>
+    </as-split-area>
+</as-split>
+
 <as-split unit="pixel" *ngIf="view==default" direction="vertical">
     <as-split-area [size]=40>
         <ng-container *ngTemplateOutlet="radioToolbar"></ng-container>

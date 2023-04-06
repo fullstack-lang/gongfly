@@ -12,11 +12,23 @@ import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AngularSplitModule } from 'angular-split';
+import { GongflyDashboardComponent } from './gongfly-dashboard/gongfly-dashboard.component';
+
+// reusable simulation library from gong
+import { GongsimspecificModule } from 'gongsimspecific'
+import { GongsimModule } from 'gongsim'
+
+// Leaflet
+// import { GongleafletModule } from 'gongleaflet'
+// import { GongleafletspecificModule } from 'gongleafletspecific'
+// import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+
 
 @NgModule({
   declarations: [
     GongflyspecificComponent,
-    DataModelPanelComponent
+    DataModelPanelComponent,
+    GongflyDashboardComponent
   ],
   imports: [
     GongdocModule,
@@ -29,10 +41,22 @@ import { AngularSplitModule } from 'angular-split';
     AngularSplitModule,
 
     GongflyModule,
+
+    // gongsim stack
+    GongsimspecificModule,
+    GongsimModule,
+
+    // // gongleaflet stack
+    // GongleafletModule,
+    // GongleafletspecificModule,
+    // LeafletModule
+    
+
   ],
   exports: [
     GongflyspecificComponent,
-    DataModelPanelComponent
+    DataModelPanelComponent,
+    GongflyDashboardComponent
   ]
 })
 export class GongflyspecificModule { }

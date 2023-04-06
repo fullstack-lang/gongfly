@@ -12,11 +12,14 @@ import * as gongfly from 'gongfly'
 export class AppComponent implements OnInit {
 
   default = 'Gongfly Data/Model'
-  view = this.default
+  dashboard = "Dashboard"
+  view = this.dashboard
 
-  views: string[] = [this.default];
+  views: string[] = [this.dashboard, this.default];
 
   GONG__StackPath = "github.com/fullstack-lang/gongfly/go/models"
+
+  GONG__SIM__StackPath = "github.com/fullstack-lang/gongsim/go/models"
 
   constructor(
   ) {
