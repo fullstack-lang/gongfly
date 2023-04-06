@@ -3,7 +3,14 @@
 @import '@fontsource/roboto';
 @import '@fontsource/open-sans';
 @import 'material-icons/iconfont/material-icons.css';
+@import './assets/style/mixins';
+@import './assets/style/global/leaflet';
+html,
+body {
+    height: 100%;
+}
 
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}

@@ -10,6 +10,7 @@ import (
 	gongfly_fullstack "github.com/fullstack-lang/gongfly/go/fullstack"
 	gongfly_models "github.com/fullstack-lang/gongfly/go/models"
 	gongfly_static "github.com/fullstack-lang/gongfly/go/static"
+	"github.com/fullstack-lang/gongfly/go/visuals"
 
 	gongfly_icons "github.com/fullstack-lang/gongfly/go/icons"
 	"github.com/fullstack-lang/gongfly/go/reference"
@@ -89,6 +90,8 @@ func main() {
 	// reference.LoadSatellites(gongflyStage, simulation.GetEngine())
 	reference.LoadCenters(gongflyStage, simulation.GetEngine())
 	reference.LoadLiners(gongflyStage, simulation.GetEngine())
+	visuals.LoadLayerGroupsUse(gongleafletStage)
+	visuals.LoadMapOptions(gongleafletStage)
 
 	defaultLayer := new(gongleaflet_models.LayerGroup).Stage(gongleafletStage)
 	defaultLayer.Name = "default"

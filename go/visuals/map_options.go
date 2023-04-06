@@ -43,9 +43,14 @@ var CenterLayerGroupUse = (&gongleaflet_models.LayerGroupUse{
 	Display:    true,
 })
 
-func LoadLayerGroupsUse(stage *gongleaflet_models.StageStruct) {
+func LoadMapOptions(stage *gongleaflet_models.StageStruct) {
 
 	MapOptions.Stage(stage)
+
+}
+
+func LoadLayerGroupsUse(stage *gongleaflet_models.StageStruct) {
+
 	AircraftLayerGroupUse.Stage(stage)
 	SatelitteLayerGroupUse.Stage(stage)
 	CenterLayerGroupUse.Stage(stage)
