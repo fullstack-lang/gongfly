@@ -90,12 +90,13 @@ func main() {
 	// reference.LoadSatellites(gongflyStage, simulation.GetEngine())
 	reference.LoadCenters(gongflyStage, simulation.GetEngine())
 	reference.LoadLiners(gongflyStage, simulation.GetEngine())
-	visuals.LoadLayerGroupsUse(gongleafletStage)
-	visuals.LoadMapOptions(gongleafletStage)
 
 	defaultLayer := new(gongleaflet_models.LayerGroup).Stage(gongleafletStage)
 	defaultLayer.Name = "default"
 	defaultLayer.DisplayName = "default"
+	visuals.LoadLayerGroups(gongleafletStage)
+	visuals.LoadLayerGroupsUse(gongleafletStage)
+	visuals.LoadMapOptions(gongleafletStage)
 
 	gongfly_visuals.AttachVisualElementsToModelElements(
 		gongflyStage,
