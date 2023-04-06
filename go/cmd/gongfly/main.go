@@ -20,9 +20,10 @@ import (
 	gongleaflet_fullstack "github.com/fullstack-lang/gongleaflet/go/fullstack"
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
 
-	gongsim_fullstack "github.com/fullstack-lang/gongsim/go/fullstack"
-
 	gongdoc_load "github.com/fullstack-lang/gongdoc/go/load"
+
+	gongsim_go "github.com/fullstack-lang/gongsim/go"
+	gongsim_fullstack "github.com/fullstack-lang/gongsim/go/fullstack"
 )
 
 var (
@@ -97,6 +98,15 @@ func main() {
 		gongfly_go.GoDiagramsDir,
 		r,
 		*embeddedDiagrams,
+		&gongflyStage.Map_GongStructName_InstancesNb)
+
+	gongdoc_load.Load(
+		"gongsim",
+		"github.com/fullstack-lang/gongsim/go/models",
+		gongsim_go.GoModelsDir,
+		gongsim_go.GoDiagramsDir,
+		r,
+		true,
 		&gongflyStage.Map_GongStructName_InstancesNb)
 
 	// commits stages

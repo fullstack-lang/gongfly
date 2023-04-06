@@ -13,9 +13,10 @@ export class AppComponent implements OnInit {
 
   default = 'Gongfly Data/Model'
   dashboard = "Dashboard"
+  simulation = 'Simulation Data/Model'
   view = this.dashboard
 
-  views: string[] = [this.dashboard, this.default];
+  views: string[] = [this.dashboard, this.default, this.simulation];
 
   GONG__StackPath = "github.com/fullstack-lang/gongfly/go/models"
 
