@@ -37,8 +37,8 @@ import { GongflyspecificModule } from 'gongflyspecific'
 import { GongstructSelectionService } from 'gongfly'
 
 // // Leaflet
-// import { GongleafletModule } from 'gongleaflet'
-// import { GongleafletspecificModule } from 'gongleafletspecific'
+import { GongleafletModule } from 'gongleaflet'
+import { GongleafletspecificModule } from 'gongleafletspecific'
 // import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
 // reusable simulation library from gong
@@ -91,8 +91,8 @@ import { HttpClientModule } from '@angular/common/http';
     GongsimModule,
 
     // // gongleaflet stack
-    // GongleafletModule,
-    // GongleafletspecificModule,
+    GongleafletModule,
+    GongleafletspecificModule,
     // LeafletModule
 
   ],

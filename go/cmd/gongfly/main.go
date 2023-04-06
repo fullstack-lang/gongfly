@@ -17,6 +17,7 @@ import (
 
 	gongfly_visuals "github.com/fullstack-lang/gongfly/go/visuals"
 
+	gongleaflet_go "github.com/fullstack-lang/gongleaflet/go"
 	gongleaflet_fullstack "github.com/fullstack-lang/gongleaflet/go/fullstack"
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
 
@@ -73,7 +74,6 @@ func main() {
 	gongflyStage := gongfly_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongfly/go/models")
 	gongleafletStage := gongleaflet_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongleaflet/go/models")
 	gongsimStage := gongsim_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongsim/go/models")
-	_ = gongsimStage
 
 	simulation := simulation.NewSimulation(gongflyStage, gongsimStage, gongleafletStage)
 
@@ -112,6 +112,15 @@ func main() {
 		"github.com/fullstack-lang/gongsim/go/models",
 		gongsim_go.GoModelsDir,
 		gongsim_go.GoDiagramsDir,
+		r,
+		true,
+		&gongflyStage.Map_GongStructName_InstancesNb)
+
+	gongdoc_load.Load(
+		"gongleaflet",
+		"github.com/fullstack-lang/gongleaflet/go/models",
+		gongleaflet_go.GoModelsDir,
+		gongleaflet_go.GoDiagramsDir,
 		r,
 		true,
 		&gongflyStage.Map_GongStructName_InstancesNb)

@@ -19,8 +19,8 @@ import { GongsimspecificModule } from 'gongsimspecific'
 import { GongsimModule } from 'gongsim'
 
 // Leaflet
-// import { GongleafletModule } from 'gongleaflet'
-// import { GongleafletspecificModule } from 'gongleafletspecific'
+import { GongleafletModule } from 'gongleaflet'
+import { GongleafletspecificModule } from 'gongleafletspecific'
 // import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
 
@@ -47,10 +47,10 @@ import { GongsimModule } from 'gongsim'
     GongsimModule,
 
     // // gongleaflet stack
-    // GongleafletModule,
-    // GongleafletspecificModule,
+    GongleafletModule,
+    GongleafletspecificModule,
     // LeafletModule
-    
+
 
   ],
   exports: [
