@@ -15,7 +15,8 @@ type GongsimCommand struct {
 	DateSpeedCommand string
 	Engine           *Engine
 
-	stage *StageStruct
+	stage         *StageStruct
+	gongsimStatus *GongsimStatus
 }
 
 func NewGongSimCommand(stage *StageStruct, engine *Engine) (gongsimCommand *GongsimCommand) {
@@ -26,6 +27,14 @@ func NewGongSimCommand(stage *StageStruct, engine *Engine) (gongsimCommand *Gong
 		Engine:      engine,
 		stage:       stage,
 	})
+
+	gongsimCommand.gongsimStatus = (&GongsimStatus{
+		Name:                       "Gongsim Status Singloton",
+		CurrentCommand:             COMMAND_PAUSE,
+		CurrentSpeedCommand:        COMMAND_SPEED_STEADY,
+		CompletionDate:             "",
+		SpeedCommandCompletionDate: "",
+	}).Stage(stage)
 
 	gongsimCommand.Stage(stage).SetupGongsimThreads()
 	return

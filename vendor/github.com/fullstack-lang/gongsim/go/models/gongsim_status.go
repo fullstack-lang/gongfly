@@ -9,11 +9,3 @@ type GongsimStatus struct {
 	CurrentSpeedCommand        SpeedCommandType
 	SpeedCommandCompletionDate string
 }
-
-var GongsimStatusSingloton = (&GongsimStatus{
-	Name:                       "Gongsim Status Singloton",
-	CurrentCommand:             COMMAND_PAUSE,
-	CurrentSpeedCommand:        COMMAND_SPEED_STEADY,
-	CompletionDate:             "",
-	SpeedCommandCompletionDate: "",
-}).Stage(GetDefaultStage())

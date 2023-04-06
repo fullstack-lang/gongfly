@@ -21,14 +21,14 @@ func (gongsimCommand *GongsimCommand) commandPooler() {
 		case t := <-CommandPoolerPeriod.C:
 
 			gongsimCommand.Checkout(gongsimCommand.stage)
-			if GongsimStatusSingloton.CompletionDate != gongsimCommand.CommandDate {
+			if gongsimCommand.gongsimStatus.CompletionDate != gongsimCommand.CommandDate {
 				log.Println("commandPooler reads new command ", gongsimCommand.Command, "  timestamp ", gongsimCommand.CommandDate, " at ", t)
 
-				GongsimStatusSingloton.CurrentCommand = gongsimCommand.Command
-				GongsimStatusSingloton.CompletionDate = gongsimCommand.CommandDate
-				GongsimStatusSingloton.Commit(gongsimCommand.stage)
+				gongsimCommand.gongsimStatus.CurrentCommand = gongsimCommand.Command
+				gongsimCommand.gongsimStatus.CompletionDate = gongsimCommand.CommandDate
+				gongsimCommand.gongsimStatus.Commit(gongsimCommand.stage)
 			}
-			if GongsimStatusSingloton.SpeedCommandCompletionDate != gongsimCommand.DateSpeedCommand {
+			if gongsimCommand.gongsimStatus.SpeedCommandCompletionDate != gongsimCommand.DateSpeedCommand {
 				log.Println("commandPooler reads new speed command ", gongsimCommand.SpeedCommandType, "  timestamp ", gongsimCommand.CommandDate, " at ", t)
 
 				switch gongsimCommand.SpeedCommandType {
@@ -40,9 +40,9 @@ func (gongsimCommand *GongsimCommand) commandPooler() {
 					gongsimCommand.Engine.Commit(gongsimCommand.stage)
 				}
 
-				GongsimStatusSingloton.CurrentSpeedCommand = gongsimCommand.SpeedCommandType
-				GongsimStatusSingloton.SpeedCommandCompletionDate = gongsimCommand.DateSpeedCommand
-				GongsimStatusSingloton.Commit(gongsimCommand.stage)
+				gongsimCommand.gongsimStatus.CurrentSpeedCommand = gongsimCommand.SpeedCommandType
+				gongsimCommand.gongsimStatus.SpeedCommandCompletionDate = gongsimCommand.DateSpeedCommand
+				gongsimCommand.gongsimStatus.Commit(gongsimCommand.stage)
 			}
 		}
 	}

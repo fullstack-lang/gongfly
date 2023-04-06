@@ -24,6 +24,7 @@ import (
 
 	gongsim_go "github.com/fullstack-lang/gongsim/go"
 	gongsim_fullstack "github.com/fullstack-lang/gongsim/go/fullstack"
+	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
 )
 
 var (
@@ -75,6 +76,12 @@ func main() {
 	_ = gongsimStage
 
 	simulation := simulation.NewSimulation(gongflyStage, gongsimStage, gongleafletStage)
+
+	// the gongsim command orchestrates the simulation engine regarding to the
+	// the rest of the stack. It manages when the stage has to be commited to the
+	// back repo or when the back repo has to be checked out to the stage
+	gongsimCommand := gongsim_models.NewGongSimCommand(gongsimStage, simulation.GetEngine())
+	_ = gongsimCommand
 
 	// load all elments
 	gongfly_icons.LoadIcons(gongleafletStage)
