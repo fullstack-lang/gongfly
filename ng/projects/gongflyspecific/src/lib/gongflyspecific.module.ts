@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 
 import { GongflyspecificComponent } from './gongflyspecific.component';
-import { DataModelPanelComponent } from './data-model-panel/data-model-panel.component';
 
 import { GongdocModule } from 'gongdoc'
 import { GongdocdiagramsModule } from 'gongdocdiagrams'
@@ -27,7 +26,6 @@ import { GongleafletspecificModule } from 'gongleafletspecific'
 @NgModule({
   declarations: [
     GongflyspecificComponent,
-    DataModelPanelComponent,
     GongflyDashboardComponent
   ],
   imports: [
@@ -55,7 +53,6 @@ import { GongleafletspecificModule } from 'gongleafletspecific'
   ],
   exports: [
     GongflyspecificComponent,
-    DataModelPanelComponent,
     GongflyDashboardComponent
   ]
 })

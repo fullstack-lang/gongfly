@@ -16,33 +16,3 @@
         </lib-gongfly-dashboard>
     </as-split-area>
 </as-split>
-
-<as-split unit="pixel" *ngIf="view==default" direction="vertical">
-    <as-split-area [size]=40>
-        <ng-container *ngTemplateOutlet="radioToolbar"></ng-container>
-    </as-split-area>
-    <as-split-area [size]="$any('*')">
-        <lib-github_com_fullstack_lang_gongfly_go-data-model-panel [GONG__StackPath]="GONG__StackPath">
-        </lib-github_com_fullstack_lang_gongfly_go-data-model-panel>
-    </as-split-area>
-</as-split>
-
-<as-split unit="pixel" *ngIf="view==simulation" direction="vertical">
-    <as-split-area [size]=40>
-        <ng-container *ngTemplateOutlet="radioToolbar"></ng-container>
-    </as-split-area>
-    <as-split-area [size]="$any('*')">
-        <lib-github_com_fullstack_lang_gongsim_go-data-model-panel [GONG__StackPath]="GONG__SIM__StackPath">
-        </lib-github_com_fullstack_lang_gongsim_go-data-model-panel>
-    </as-split-area>
-</as-split>
-
-<as-split unit="pixel" *ngIf="view==leaflet" direction="vertical">
-    <as-split-area [size]=40>
-        <ng-container *ngTemplateOutlet="radioToolbar"></ng-container>
-    </as-split-area>
-    <as-split-area [size]="$any('*')">
-        <lib-github_com_fullstack_lang_gongleaflet_go-data-model-panel [GONG__StackPath]="GONG__LEAFLET__StackPath">
-        </lib-github_com_fullstack_lang_gongleaflet_go-data-model-panel>
-    </as-split-area>
-</as-split>
