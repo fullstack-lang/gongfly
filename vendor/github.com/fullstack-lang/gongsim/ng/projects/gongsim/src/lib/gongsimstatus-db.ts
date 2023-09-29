@@ -4,6 +4,9 @@
 import { NullInt64 } from './null-int64'
 
 export class GongsimStatusDB {
+
+	static GONGSTRUCT_NAME = "GongsimStatus"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

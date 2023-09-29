@@ -4,6 +4,9 @@
 import { NullInt64 } from './null-int64'
 
 export class MessageDB {
+
+	static GONGSTRUCT_NAME = "Message"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

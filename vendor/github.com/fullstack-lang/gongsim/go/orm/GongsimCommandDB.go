@@ -243,6 +243,9 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) CommitPhaseTwoInstan
 				gongsimcommandDB.EngineID.Int64 = int64(EngineId)
 				gongsimcommandDB.EngineID.Valid = true
 			}
+		} else {
+			gongsimcommandDB.EngineID.Int64 = 0
+			gongsimcommandDB.EngineID.Valid = true
 		}
 
 		query := backRepoGongsimCommand.db.Save(&gongsimcommandDB)
@@ -353,6 +356,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) CheckoutPhaseTwoInst
 
 	// insertion point for checkout of pointer encoding
 	// Engine field
+	gongsimcommand.Engine = nil
 	if gongsimcommandDB.EngineID.Int64 != 0 {
 		gongsimcommand.Engine = backRepo.BackRepoEngine.Map_EngineDBID_EnginePtr[uint(gongsimcommandDB.EngineID.Int64)]
 	}
@@ -615,6 +619,30 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) RestorePhaseTwo() {
 		}
 	}
 
+}
+
+// BackRepoGongsimCommand.ResetReversePointers commits all staged instances of GongsimCommand to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, gongsimcommand := range backRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandPtr {
+		backRepoGongsimCommand.ResetReversePointersInstance(backRepo, idx, gongsimcommand)
+	}
+
+	return
+}
+
+func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.GongsimCommand) (Error error) {
+
+	// fetch matching gongsimcommandDB
+	if gongsimcommandDB, ok := backRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandDB[idx]; ok {
+		_ = gongsimcommandDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
 }
 
 // this field is used during the restauration process.

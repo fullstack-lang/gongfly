@@ -42,6 +42,10 @@ export class UserClickService {
   }
 
   /** GET userclicks from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<UserClickDB[]> {
+    return this.getUserClicks(GONG__StackPath)
+  }
   getUserClicks(GONG__StackPath: string): Observable<UserClickDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -55,6 +59,10 @@ export class UserClickService {
   }
 
   /** GET userclick by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<UserClickDB> {
+	return this.getUserClick(id, GONG__StackPath)
+  }
   getUserClick(id: number, GONG__StackPath: string): Observable<UserClickDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -67,6 +75,9 @@ export class UserClickService {
   }
 
   /** POST: add a new userclick to the server */
+  post(userclickdb: UserClickDB, GONG__StackPath: string): Observable<UserClickDB> {
+    return this.postUserClick(userclickdb, GONG__StackPath)	
+  }
   postUserClick(userclickdb: UserClickDB, GONG__StackPath: string): Observable<UserClickDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
@@ -87,6 +98,9 @@ export class UserClickService {
   }
 
   /** DELETE: delete the userclickdb from the server */
+  delete(userclickdb: UserClickDB | number, GONG__StackPath: string): Observable<UserClickDB> {
+    return this.deleteUserClick(userclickdb, GONG__StackPath)
+  }
   deleteUserClick(userclickdb: UserClickDB | number, GONG__StackPath: string): Observable<UserClickDB> {
     const id = typeof userclickdb === 'number' ? userclickdb : userclickdb.ID;
     const url = `${this.userclicksUrl}/${id}`;
@@ -104,6 +118,9 @@ export class UserClickService {
   }
 
   /** PUT: update the userclickdb on the server */
+  update(userclickdb: UserClickDB, GONG__StackPath: string): Observable<UserClickDB> {
+    return this.updateUserClick(userclickdb, GONG__StackPath)
+  }
   updateUserClick(userclickdb: UserClickDB, GONG__StackPath: string): Observable<UserClickDB> {
     const id = typeof userclickdb === 'number' ? userclickdb : userclickdb.ID;
     const url = `${this.userclicksUrl}/${id}`;
@@ -119,7 +136,7 @@ export class UserClickService {
     return this.http.put<UserClickDB>(url, userclickdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated userclickdb id=${userclickdb.ID}`)
+        // this.log(`updated userclickdb id=${userclickdb.ID}`)
       }),
       catchError(this.handleError<UserClickDB>('updateUserClick'))
     );

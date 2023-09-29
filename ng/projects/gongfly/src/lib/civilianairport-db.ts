@@ -4,6 +4,9 @@
 import { NullInt64 } from './null-int64'
 
 export class CivilianAirportDB {
+
+	static GONGSTRUCT_NAME = "CivilianAirport"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

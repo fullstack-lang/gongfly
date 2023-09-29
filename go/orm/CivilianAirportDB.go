@@ -566,6 +566,30 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) RestorePhaseTwo() 
 
 }
 
+// BackRepoCivilianAirport.ResetReversePointers commits all staged instances of CivilianAirport to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, civilianairport := range backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr {
+		backRepoCivilianAirport.ResetReversePointersInstance(backRepo, idx, civilianairport)
+	}
+
+	return
+}
+
+func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.CivilianAirport) (Error error) {
+
+	// fetch matching civilianairportDB
+	if civilianairportDB, ok := backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[idx]; ok {
+		_ = civilianairportDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
+}
+
 // this field is used during the restauration process.
 // it stores the ID at the backup time and is used for renumbering
 var BackRepoCivilianAirportid_atBckpTime_newID map[uint]uint

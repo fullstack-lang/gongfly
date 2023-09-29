@@ -6,6 +6,9 @@ import { MapOptionsDB } from './mapoptions-db'
 import { NullInt64 } from './null-int64'
 
 export class LayerGroupUseDB {
+
+	static GONGSTRUCT_NAME = "LayerGroupUse"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

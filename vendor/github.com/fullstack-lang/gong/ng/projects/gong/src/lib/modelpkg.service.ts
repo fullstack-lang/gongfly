@@ -42,7 +42,11 @@ export class ModelPkgService {
   }
 
   /** GET modelpkgs from the server */
-  getModelPkgs(GONG__StackPath: string = ""): Observable<ModelPkgDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<ModelPkgDB[]> {
+    return this.getModelPkgs(GONG__StackPath)
+  }
+  getModelPkgs(GONG__StackPath: string): Observable<ModelPkgDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -55,15 +59,25 @@ export class ModelPkgService {
   }
 
   /** GET modelpkg by id. Will 404 if id not found */
-  getModelPkg(id: number): Observable<ModelPkgDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<ModelPkgDB> {
+	return this.getModelPkg(id, GONG__StackPath)
+  }
+  getModelPkg(id: number, GONG__StackPath: string): Observable<ModelPkgDB> {
+
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+
     const url = `${this.modelpkgsUrl}/${id}`;
-    return this.http.get<ModelPkgDB>(url).pipe(
-      tap(_ => this.log(`fetched modelpkg id=${id}`)),
+    return this.http.get<ModelPkgDB>(url, { params: params }).pipe(
+      // tap(_ => this.log(`fetched modelpkg id=${id}`)),
       catchError(this.handleError<ModelPkgDB>(`getModelPkg id=${id}`))
     );
   }
 
   /** POST: add a new modelpkg to the server */
+  post(modelpkgdb: ModelPkgDB, GONG__StackPath: string): Observable<ModelPkgDB> {
+    return this.postModelPkg(modelpkgdb, GONG__StackPath)	
+  }
   postModelPkg(modelpkgdb: ModelPkgDB, GONG__StackPath: string): Observable<ModelPkgDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
@@ -77,13 +91,16 @@ export class ModelPkgService {
     return this.http.post<ModelPkgDB>(this.modelpkgsUrl, modelpkgdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`posted modelpkgdb id=${modelpkgdb.ID}`)
+        // this.log(`posted modelpkgdb id=${modelpkgdb.ID}`)
       }),
       catchError(this.handleError<ModelPkgDB>('postModelPkg'))
     );
   }
 
   /** DELETE: delete the modelpkgdb from the server */
+  delete(modelpkgdb: ModelPkgDB | number, GONG__StackPath: string): Observable<ModelPkgDB> {
+    return this.deleteModelPkg(modelpkgdb, GONG__StackPath)
+  }
   deleteModelPkg(modelpkgdb: ModelPkgDB | number, GONG__StackPath: string): Observable<ModelPkgDB> {
     const id = typeof modelpkgdb === 'number' ? modelpkgdb : modelpkgdb.ID;
     const url = `${this.modelpkgsUrl}/${id}`;
@@ -101,6 +118,9 @@ export class ModelPkgService {
   }
 
   /** PUT: update the modelpkgdb on the server */
+  update(modelpkgdb: ModelPkgDB, GONG__StackPath: string): Observable<ModelPkgDB> {
+    return this.updateModelPkg(modelpkgdb, GONG__StackPath)
+  }
   updateModelPkg(modelpkgdb: ModelPkgDB, GONG__StackPath: string): Observable<ModelPkgDB> {
     const id = typeof modelpkgdb === 'number' ? modelpkgdb : modelpkgdb.ID;
     const url = `${this.modelpkgsUrl}/${id}`;
@@ -116,7 +136,7 @@ export class ModelPkgService {
     return this.http.put<ModelPkgDB>(url, modelpkgdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated modelpkgdb id=${modelpkgdb.ID}`)
+        // this.log(`updated modelpkgdb id=${modelpkgdb.ID}`)
       }),
       catchError(this.handleError<ModelPkgDB>('updateModelPkg'))
     );

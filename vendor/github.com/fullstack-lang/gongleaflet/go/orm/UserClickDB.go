@@ -580,6 +580,30 @@ func (backRepoUserClick *BackRepoUserClickStruct) RestorePhaseTwo() {
 
 }
 
+// BackRepoUserClick.ResetReversePointers commits all staged instances of UserClick to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoUserClick *BackRepoUserClickStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, userclick := range backRepoUserClick.Map_UserClickDBID_UserClickPtr {
+		backRepoUserClick.ResetReversePointersInstance(backRepo, idx, userclick)
+	}
+
+	return
+}
+
+func (backRepoUserClick *BackRepoUserClickStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.UserClick) (Error error) {
+
+	// fetch matching userclickDB
+	if userclickDB, ok := backRepoUserClick.Map_UserClickDBID_UserClickDB[idx]; ok {
+		_ = userclickDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
+}
+
 // this field is used during the restauration process.
 // it stores the ID at the backup time and is used for renumbering
 var BackRepoUserClickid_atBckpTime_newID map[uint]uint

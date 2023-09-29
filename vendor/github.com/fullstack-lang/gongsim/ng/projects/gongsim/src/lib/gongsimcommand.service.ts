@@ -43,6 +43,10 @@ export class GongsimCommandService {
   }
 
   /** GET gongsimcommands from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<GongsimCommandDB[]> {
+    return this.getGongsimCommands(GONG__StackPath)
+  }
   getGongsimCommands(GONG__StackPath: string): Observable<GongsimCommandDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -56,6 +60,10 @@ export class GongsimCommandService {
   }
 
   /** GET gongsimcommand by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<GongsimCommandDB> {
+	return this.getGongsimCommand(id, GONG__StackPath)
+  }
   getGongsimCommand(id: number, GONG__StackPath: string): Observable<GongsimCommandDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -68,9 +76,13 @@ export class GongsimCommandService {
   }
 
   /** POST: add a new gongsimcommand to the server */
+  post(gongsimcommanddb: GongsimCommandDB, GONG__StackPath: string): Observable<GongsimCommandDB> {
+    return this.postGongsimCommand(gongsimcommanddb, GONG__StackPath)	
+  }
   postGongsimCommand(gongsimcommanddb: GongsimCommandDB, GONG__StackPath: string): Observable<GongsimCommandDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let Engine = gongsimcommanddb.Engine
     gongsimcommanddb.Engine = new EngineDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -89,6 +101,9 @@ export class GongsimCommandService {
   }
 
   /** DELETE: delete the gongsimcommanddb from the server */
+  delete(gongsimcommanddb: GongsimCommandDB | number, GONG__StackPath: string): Observable<GongsimCommandDB> {
+    return this.deleteGongsimCommand(gongsimcommanddb, GONG__StackPath)
+  }
   deleteGongsimCommand(gongsimcommanddb: GongsimCommandDB | number, GONG__StackPath: string): Observable<GongsimCommandDB> {
     const id = typeof gongsimcommanddb === 'number' ? gongsimcommanddb : gongsimcommanddb.ID;
     const url = `${this.gongsimcommandsUrl}/${id}`;
@@ -106,11 +121,15 @@ export class GongsimCommandService {
   }
 
   /** PUT: update the gongsimcommanddb on the server */
+  update(gongsimcommanddb: GongsimCommandDB, GONG__StackPath: string): Observable<GongsimCommandDB> {
+    return this.updateGongsimCommand(gongsimcommanddb, GONG__StackPath)
+  }
   updateGongsimCommand(gongsimcommanddb: GongsimCommandDB, GONG__StackPath: string): Observable<GongsimCommandDB> {
     const id = typeof gongsimcommanddb === 'number' ? gongsimcommanddb : gongsimcommanddb.ID;
     const url = `${this.gongsimcommandsUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let Engine = gongsimcommanddb.Engine
     gongsimcommanddb.Engine = new EngineDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -122,7 +141,7 @@ export class GongsimCommandService {
     return this.http.put<GongsimCommandDB>(url, gongsimcommanddb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated gongsimcommanddb id=${gongsimcommanddb.ID}`)
+        // this.log(`updated gongsimcommanddb id=${gongsimcommanddb.ID}`)
       }),
       catchError(this.handleError<GongsimCommandDB>('updateGongsimCommand'))
     );

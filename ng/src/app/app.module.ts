@@ -27,23 +27,19 @@ import { FormsModule } from '@angular/forms';
 // to split the screen
 import { AngularSplitModule } from 'angular-split';
 
-import { GongdocModule } from 'gongdoc'
-import { GongdocdiagramsModule } from 'gongdocdiagrams'
-
 import { GongModule } from 'gong'
+
+import { GongdocModule } from 'gongdoc'
+import { GongdocspecificModule } from 'gongdocspecific'
+
+import { GongtreeModule } from 'gongtree'
+import { GongtreespecificModule } from 'gongtreespecific'
+
+import { GongtableModule } from 'gongtable'
+import { GongtablespecificModule } from 'gongtablespecific'
 
 import { GongflyModule } from 'gongfly'
 import { GongflyspecificModule } from 'gongflyspecific'
-import { GongstructSelectionService } from 'gongfly'
-
-// // Leaflet
-import { GongleafletModule } from 'gongleaflet'
-import { GongleafletspecificModule } from 'gongleafletspecific'
-// import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-
-// reusable simulation library from gong
-import { GongsimspecificModule } from 'gongsimspecific'
-import { GongsimModule } from 'gongsim'
 
 // mandatory
 import { HttpClientModule } from '@angular/common/http';
@@ -81,23 +77,18 @@ import { HttpClientModule } from '@angular/common/http';
 
     // gongdoc stack (for displaying UML diagrams of the gong code in the current stack)
     GongdocModule,
-    GongdocdiagramsModule,
+    GongdocspecificModule,
+
+    GongtreeModule,
+    GongtreespecificModule,
+
+    GongtableModule,
+    GongtablespecificModule,
 
     GongflyModule,
     GongflyspecificModule,
-
-    // gongsim stack
-    GongsimspecificModule,
-    GongsimModule,
-
-    // // gongleaflet stack
-    GongleafletModule,
-    GongleafletspecificModule,
-    // LeafletModule
-
   ],
   providers: [
-    GongstructSelectionService
   ],
   bootstrap: [AppComponent]
 })

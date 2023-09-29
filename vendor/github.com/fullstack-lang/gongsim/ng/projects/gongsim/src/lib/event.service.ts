@@ -42,6 +42,10 @@ export class EventService {
   }
 
   /** GET events from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<EventDB[]> {
+    return this.getEvents(GONG__StackPath)
+  }
   getEvents(GONG__StackPath: string): Observable<EventDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -55,6 +59,10 @@ export class EventService {
   }
 
   /** GET event by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<EventDB> {
+	return this.getEvent(id, GONG__StackPath)
+  }
   getEvent(id: number, GONG__StackPath: string): Observable<EventDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -67,6 +75,9 @@ export class EventService {
   }
 
   /** POST: add a new event to the server */
+  post(eventdb: EventDB, GONG__StackPath: string): Observable<EventDB> {
+    return this.postEvent(eventdb, GONG__StackPath)	
+  }
   postEvent(eventdb: EventDB, GONG__StackPath: string): Observable<EventDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
@@ -87,6 +98,9 @@ export class EventService {
   }
 
   /** DELETE: delete the eventdb from the server */
+  delete(eventdb: EventDB | number, GONG__StackPath: string): Observable<EventDB> {
+    return this.deleteEvent(eventdb, GONG__StackPath)
+  }
   deleteEvent(eventdb: EventDB | number, GONG__StackPath: string): Observable<EventDB> {
     const id = typeof eventdb === 'number' ? eventdb : eventdb.ID;
     const url = `${this.eventsUrl}/${id}`;
@@ -104,6 +118,9 @@ export class EventService {
   }
 
   /** PUT: update the eventdb on the server */
+  update(eventdb: EventDB, GONG__StackPath: string): Observable<EventDB> {
+    return this.updateEvent(eventdb, GONG__StackPath)
+  }
   updateEvent(eventdb: EventDB, GONG__StackPath: string): Observable<EventDB> {
     const id = typeof eventdb === 'number' ? eventdb : eventdb.ID;
     const url = `${this.eventsUrl}/${id}`;
@@ -119,7 +136,7 @@ export class EventService {
     return this.http.put<EventDB>(url, eventdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated eventdb id=${eventdb.ID}`)
+        // this.log(`updated eventdb id=${eventdb.ID}`)
       }),
       catchError(this.handleError<EventDB>('updateEvent'))
     );

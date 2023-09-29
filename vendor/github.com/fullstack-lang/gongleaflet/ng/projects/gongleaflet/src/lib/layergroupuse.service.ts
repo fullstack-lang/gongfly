@@ -44,6 +44,10 @@ export class LayerGroupUseService {
   }
 
   /** GET layergroupuses from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<LayerGroupUseDB[]> {
+    return this.getLayerGroupUses(GONG__StackPath)
+  }
   getLayerGroupUses(GONG__StackPath: string): Observable<LayerGroupUseDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -57,6 +61,10 @@ export class LayerGroupUseService {
   }
 
   /** GET layergroupuse by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<LayerGroupUseDB> {
+	return this.getLayerGroupUse(id, GONG__StackPath)
+  }
   getLayerGroupUse(id: number, GONG__StackPath: string): Observable<LayerGroupUseDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -69,9 +77,13 @@ export class LayerGroupUseService {
   }
 
   /** POST: add a new layergroupuse to the server */
+  post(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string): Observable<LayerGroupUseDB> {
+    return this.postLayerGroupUse(layergroupusedb, GONG__StackPath)	
+  }
   postLayerGroupUse(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string): Observable<LayerGroupUseDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let LayerGroup = layergroupusedb.LayerGroup
     layergroupusedb.LayerGroup = new LayerGroupDB
     let _MapOptions_LayerGroupUses_reverse = layergroupusedb.MapOptions_LayerGroupUses_reverse
     layergroupusedb.MapOptions_LayerGroupUses_reverse = new MapOptionsDB
@@ -93,6 +105,9 @@ export class LayerGroupUseService {
   }
 
   /** DELETE: delete the layergroupusedb from the server */
+  delete(layergroupusedb: LayerGroupUseDB | number, GONG__StackPath: string): Observable<LayerGroupUseDB> {
+    return this.deleteLayerGroupUse(layergroupusedb, GONG__StackPath)
+  }
   deleteLayerGroupUse(layergroupusedb: LayerGroupUseDB | number, GONG__StackPath: string): Observable<LayerGroupUseDB> {
     const id = typeof layergroupusedb === 'number' ? layergroupusedb : layergroupusedb.ID;
     const url = `${this.layergroupusesUrl}/${id}`;
@@ -110,11 +125,15 @@ export class LayerGroupUseService {
   }
 
   /** PUT: update the layergroupusedb on the server */
+  update(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string): Observable<LayerGroupUseDB> {
+    return this.updateLayerGroupUse(layergroupusedb, GONG__StackPath)
+  }
   updateLayerGroupUse(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string): Observable<LayerGroupUseDB> {
     const id = typeof layergroupusedb === 'number' ? layergroupusedb : layergroupusedb.ID;
     const url = `${this.layergroupusesUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let LayerGroup = layergroupusedb.LayerGroup
     layergroupusedb.LayerGroup = new LayerGroupDB
     let _MapOptions_LayerGroupUses_reverse = layergroupusedb.MapOptions_LayerGroupUses_reverse
     layergroupusedb.MapOptions_LayerGroupUses_reverse = new MapOptionsDB
@@ -129,7 +148,7 @@ export class LayerGroupUseService {
       tap(_ => {
         // insertion point for restoration of reverse pointers
         layergroupusedb.MapOptions_LayerGroupUses_reverse = _MapOptions_LayerGroupUses_reverse
-        this.log(`updated layergroupusedb id=${layergroupusedb.ID}`)
+        // this.log(`updated layergroupusedb id=${layergroupusedb.ID}`)
       }),
       catchError(this.handleError<LayerGroupUseDB>('updateLayerGroupUse'))
     );

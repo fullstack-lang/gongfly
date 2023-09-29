@@ -5,6 +5,9 @@ import { EngineDB } from './engine-db'
 import { NullInt64 } from './null-int64'
 
 export class GongsimCommandDB {
+
+	static GONGSTRUCT_NAME = "GongsimCommand"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

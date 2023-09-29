@@ -552,6 +552,30 @@ func (backRepoEvent *BackRepoEventStruct) RestorePhaseTwo() {
 
 }
 
+// BackRepoEvent.ResetReversePointers commits all staged instances of Event to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoEvent *BackRepoEventStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, event := range backRepoEvent.Map_EventDBID_EventPtr {
+		backRepoEvent.ResetReversePointersInstance(backRepo, idx, event)
+	}
+
+	return
+}
+
+func (backRepoEvent *BackRepoEventStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Event) (Error error) {
+
+	// fetch matching eventDB
+	if eventDB, ok := backRepoEvent.Map_EventDBID_EventDB[idx]; ok {
+		_ = eventDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
+}
+
 // this field is used during the restauration process.
 // it stores the ID at the backup time and is used for renumbering
 var BackRepoEventid_atBckpTime_newID map[uint]uint

@@ -297,6 +297,9 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseTwoInstance(backRepo *BackR
 				linerDB.ReporingLineID.Int64 = int64(ReporingLineId)
 				linerDB.ReporingLineID.Valid = true
 			}
+		} else {
+			linerDB.ReporingLineID.Int64 = 0
+			linerDB.ReporingLineID.Valid = true
 		}
 
 		query := backRepoLiner.db.Save(&linerDB)
@@ -407,6 +410,7 @@ func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseTwoInstance(backRepo *Bac
 
 	// insertion point for checkout of pointer encoding
 	// ReporingLine field
+	liner.ReporingLine = nil
 	if linerDB.ReporingLineID.Int64 != 0 {
 		liner.ReporingLine = backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[uint(linerDB.ReporingLineID.Int64)]
 	}
@@ -741,6 +745,30 @@ func (backRepoLiner *BackRepoLinerStruct) RestorePhaseTwo() {
 		}
 	}
 
+}
+
+// BackRepoLiner.ResetReversePointers commits all staged instances of Liner to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoLiner *BackRepoLinerStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, liner := range backRepoLiner.Map_LinerDBID_LinerPtr {
+		backRepoLiner.ResetReversePointersInstance(backRepo, idx, liner)
+	}
+
+	return
+}
+
+func (backRepoLiner *BackRepoLinerStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Liner) (Error error) {
+
+	// fetch matching linerDB
+	if linerDB, ok := backRepoLiner.Map_LinerDBID_LinerDB[idx]; ok {
+		_ = linerDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
 }
 
 // this field is used during the restauration process.

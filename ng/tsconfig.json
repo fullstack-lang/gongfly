@@ -27,21 +27,6 @@
       "rxjs": [
         "./node_modules/rxjs"
       ],
-      "@types/leaflet": [
-        "./node_modules/@types/leaflet"
-      ],
-      "@types/node": [
-        "./node_modules/@types/node"
-      ],
-      "@asymmetrik/ngx-leaflet": [
-        "./node_modules/@asymmetrik/ngx-leaflet"
-      ],
-      "leaflet": [
-        "./node_modules/leaflet"
-      ],
-      "leaflet-rotatedmarker": [
-        "./node_modules/leaflet-rotatedmarker"
-      ],
       "lodash": [
         "./node_modules/lodash"
       ],
@@ -50,9 +35,6 @@
       ],
       "jointjs": [
         "./node_modules/jointjs"
-      ],
-      "gongflyspecific": [
-        "projects/gongflyspecific/src/public-api.ts",
       ],
       "@angular-material-components/datetime-picker": [
         "./node_modules/@angular-material-components/datetime-picker"
@@ -64,16 +46,46 @@
         "./node_modules/tslib"
       ],
       "gong": [
-        "../vendor/github.com/fullstack-lang/gong/ng/projects/gong/src/public-api.ts"
+        "projects/gong/src/public-api.ts",
+        "../../ng/projects/gong/src/public-api.ts",
+        "../vendor/github.com/fullstack-lang/gong/ng/projects/gong/src/public-api.ts",
+        "../../vendor/github.com/fullstack-lang/gong/ng/projects/gong/src/public-api.ts"
+      ],
+      "gongflyspecific": [
+        "projects/gongflyspecific/src/public-api.ts",
+        "dist/gongflyspecific"
       ],
       "gongdoc": [
-        "../vendor/github.com/fullstack-lang/gongdoc/ng/projects/gongdoc/src/public-api.ts"
+        "../vendor/github.com/fullstack-lang/gongdoc/ng/projects/gongdoc/src/public-api.ts",
+        "../../vendor/github.com/fullstack-lang/gongdoc/ng/projects/gongdoc/src/public-api.ts"
       ],
-      "gongdocdiagrams": [
-        "../vendor/github.com/fullstack-lang/gongdoc/ng/projects/gongdocdiagrams/src/public-api.ts"
+      "gongdocspecific": [
+        "../vendor/github.com/fullstack-lang/gongdoc/ng/projects/gongdocspecific/src/public-api.ts",
+        "../../vendor/github.com/fullstack-lang/gongdoc/ng/projects/gongdocspecific/src/public-api.ts"
       ],
-      "gongfly": [
-        "projects/gongfly/src/public-api.ts",
+      "gongsvg": [
+        "../vendor/github.com/fullstack-lang/gongsvg/ng/projects/gongsvg/src/public-api.ts",
+        "../../vendor/github.com/fullstack-lang/gongsvg/ng/projects/gongsvg/src/public-api.ts"
+      ],
+      "gongsvgspecific": [
+        "../vendor/github.com/fullstack-lang/gongsvg/ng/projects/gongsvgspecific/src/public-api.ts",
+        "../../vendor/github.com/fullstack-lang/gongsvg/ng/projects/gongsvgspecific/src/public-api.ts"
+      ],
+      "gongtree": [
+        "../vendor/github.com/fullstack-lang/gongtree/ng/projects/gongtree/src/public-api.ts",
+        "../../vendor/github.com/fullstack-lang/gongtree/ng/projects/gongtree/src/public-api.ts"
+      ],
+      "gongtreespecific": [
+        "../vendor/github.com/fullstack-lang/gongtree/ng/projects/gongtreespecific/src/public-api.ts",
+        "../../vendor/github.com/fullstack-lang/gongtree/ng/projects/gongtreespecific/src/public-api.ts"
+      ],
+      "gongtable": [
+        "../vendor/github.com/fullstack-lang/gongtable/ng/projects/gongtable/src/public-api.ts",
+        "../../vendor/github.com/fullstack-lang/gongtable/ng/projects/gongtable/src/public-api.ts"
+      ],
+      "gongtablespecific": [
+        "../vendor/github.com/fullstack-lang/gongtable/ng/projects/gongtablespecific/src/public-api.ts",
+        "../../vendor/github.com/fullstack-lang/gongtable/ng/projects/gongtablespecific/src/public-api.ts"
       ],
       "gongsim": [
         "../vendor/github.com/fullstack-lang/gongsim/ng/projects/gongsim/src/public-api.ts"
@@ -86,6 +98,10 @@
       ],
       "gongleafletspecific": [
         "../vendor/github.com/fullstack-lang/gongleaflet/ng/projects/gongleafletspecific/src/public-api.ts"
+      ],
+      "gongfly": [
+        "projects/gongfly/src/public-api.ts",
+        "dist/gongfly"
       ]
     },
     "noPropertyAccessFromIndexSignature": true,
@@ -103,8 +119,7 @@
     "lib": [
       "ES2022",
       "dom"
-    ],
-    "skipLibCheck": true
+    ]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

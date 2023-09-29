@@ -5,6 +5,9 @@ import { ScenarioDB } from './scenario-db'
 import { NullInt64 } from './null-int64'
 
 export class OpsLineDB {
+
+	static GONGSTRUCT_NAME = "OpsLine"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

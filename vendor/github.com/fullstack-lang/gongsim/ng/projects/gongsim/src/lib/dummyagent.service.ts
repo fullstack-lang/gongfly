@@ -42,6 +42,10 @@ export class DummyAgentService {
   }
 
   /** GET dummyagents from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<DummyAgentDB[]> {
+    return this.getDummyAgents(GONG__StackPath)
+  }
   getDummyAgents(GONG__StackPath: string): Observable<DummyAgentDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -55,6 +59,10 @@ export class DummyAgentService {
   }
 
   /** GET dummyagent by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<DummyAgentDB> {
+	return this.getDummyAgent(id, GONG__StackPath)
+  }
   getDummyAgent(id: number, GONG__StackPath: string): Observable<DummyAgentDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -67,6 +75,9 @@ export class DummyAgentService {
   }
 
   /** POST: add a new dummyagent to the server */
+  post(dummyagentdb: DummyAgentDB, GONG__StackPath: string): Observable<DummyAgentDB> {
+    return this.postDummyAgent(dummyagentdb, GONG__StackPath)	
+  }
   postDummyAgent(dummyagentdb: DummyAgentDB, GONG__StackPath: string): Observable<DummyAgentDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
@@ -87,6 +98,9 @@ export class DummyAgentService {
   }
 
   /** DELETE: delete the dummyagentdb from the server */
+  delete(dummyagentdb: DummyAgentDB | number, GONG__StackPath: string): Observable<DummyAgentDB> {
+    return this.deleteDummyAgent(dummyagentdb, GONG__StackPath)
+  }
   deleteDummyAgent(dummyagentdb: DummyAgentDB | number, GONG__StackPath: string): Observable<DummyAgentDB> {
     const id = typeof dummyagentdb === 'number' ? dummyagentdb : dummyagentdb.ID;
     const url = `${this.dummyagentsUrl}/${id}`;
@@ -104,6 +118,9 @@ export class DummyAgentService {
   }
 
   /** PUT: update the dummyagentdb on the server */
+  update(dummyagentdb: DummyAgentDB, GONG__StackPath: string): Observable<DummyAgentDB> {
+    return this.updateDummyAgent(dummyagentdb, GONG__StackPath)
+  }
   updateDummyAgent(dummyagentdb: DummyAgentDB, GONG__StackPath: string): Observable<DummyAgentDB> {
     const id = typeof dummyagentdb === 'number' ? dummyagentdb : dummyagentdb.ID;
     const url = `${this.dummyagentsUrl}/${id}`;
@@ -119,7 +136,7 @@ export class DummyAgentService {
     return this.http.put<DummyAgentDB>(url, dummyagentdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated dummyagentdb id=${dummyagentdb.ID}`)
+        // this.log(`updated dummyagentdb id=${dummyagentdb.ID}`)
       }),
       catchError(this.handleError<DummyAgentDB>('updateDummyAgent'))
     );

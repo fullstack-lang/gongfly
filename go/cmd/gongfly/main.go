@@ -2,14 +2,16 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
-	"os"
+	"strconv"
 
 	gongfly_go "github.com/fullstack-lang/gongfly/go"
 	gongfly_fullstack "github.com/fullstack-lang/gongfly/go/fullstack"
 	gongfly_models "github.com/fullstack-lang/gongfly/go/models"
+	gongfly_orm "github.com/fullstack-lang/gongfly/go/orm"
+	gongfly_probe "github.com/fullstack-lang/gongfly/go/probe"
 	gongfly_static "github.com/fullstack-lang/gongfly/go/static"
+
 	"github.com/fullstack-lang/gongfly/go/visuals"
 
 	gongfly_icons "github.com/fullstack-lang/gongfly/go/icons"
@@ -18,47 +20,21 @@ import (
 
 	gongfly_visuals "github.com/fullstack-lang/gongfly/go/visuals"
 
-	gongleaflet_go "github.com/fullstack-lang/gongleaflet/go"
 	gongleaflet_fullstack "github.com/fullstack-lang/gongleaflet/go/fullstack"
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
 
-	gongdoc_load "github.com/fullstack-lang/gongdoc/go/load"
-
-	gongsim_go "github.com/fullstack-lang/gongsim/go"
 	gongsim_fullstack "github.com/fullstack-lang/gongsim/go/fullstack"
 	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
 )
 
 var (
-	logDBFlag  = flag.Bool("logDB", false, "log mode for db")
 	logGINFlag = flag.Bool("logGIN", false, "log mode for gin")
-
-	unmarshallFromCode = flag.String("unmarshallFromCode", "", "unmarshall data from go file and '.go' (must be lowercased without spaces), If unmarshallFromCode arg is '', no unmarshalling")
-	marshallOnCommit   = flag.String("marshallOnCommit", "", "on all commits, marshall staged data to a go file with the marshall name and '.go' (must be lowercased without spaces). If marshall arg is '', no marshalling")
 
 	diagrams         = flag.Bool("diagrams", true, "parse/analysis go/models and go/diagrams")
 	embeddedDiagrams = flag.Bool("embeddedDiagrams", false, "parse/analysis go/models and go/embeddedDiagrams")
+
+	port = flag.Int("port", 8080, "port server")
 )
-
-// InjectionGateway is the singloton that stores all functions
-// that can set the objects the stage
-// InjectionGateway stores function as a map of names
-var InjectionGateway = make(map[string](func()))
-
-// hook marhalling to stage
-type BeforeCommitImplementation struct {
-}
-
-func (impl *BeforeCommitImplementation) BeforeCommit(stage *gongfly_models.StageStruct) {
-	file, err := os.Create(fmt.Sprintf("./%s.go", *marshallOnCommit))
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	defer file.Close()
-
-	stage.Checkout()
-	stage.Marshall(file, "github.com/fullstack-lang/gongfly/go/models", "main")
-}
 
 func main() {
 
@@ -72,11 +48,16 @@ func main() {
 	r := gongfly_static.ServeStaticFiles(*logGINFlag)
 
 	// setup stack
-	gongflyStage := gongfly_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongfly/go/models")
-	gongleafletStage := gongleaflet_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongleaflet/go/models")
-	gongsimStage := gongsim_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongsim/go/models")
+	var stage *gongfly_models.StageStruct
+	var backRepo *gongfly_orm.BackRepoStruct
 
-	simulation := simulation.NewSimulation(gongflyStage, gongsimStage, gongleafletStage)
+	// persistence in a SQLite file on disk in memory
+	stage, backRepo = gongfly_fullstack.NewStackInstance(r, "gongfly")
+
+	gongleafletStage, _ := gongleaflet_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongleaflet/go/models")
+	gongsimStage, _ := gongsim_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongsim/go/models")
+
+	simulation := simulation.NewSimulation(stage, gongsimStage, gongleafletStage)
 
 	// the gongsim command orchestrates the simulation engine regarding to the
 	// the rest of the stack. It manages when the stage has to be commited to the
@@ -87,9 +68,9 @@ func main() {
 	// load all elments
 	gongfly_icons.LoadIcons(gongleafletStage)
 
-	// reference.LoadSatellites(gongflyStage, simulation.GetEngine())
-	reference.LoadCenters(gongflyStage, simulation.GetEngine())
-	reference.LoadLiners(gongflyStage, simulation.GetEngine())
+	// reference.LoadSatellites(stage, simulation.GetEngine())
+	reference.LoadCenters(stage, simulation.GetEngine())
+	reference.LoadLiners(stage, simulation.GetEngine())
 
 	defaultLayer := new(gongleaflet_models.LayerGroup).Stage(gongleafletStage)
 	defaultLayer.Name = "default"
@@ -99,41 +80,20 @@ func main() {
 	visuals.LoadMapOptions(gongleafletStage)
 
 	gongfly_visuals.AttachVisualElementsToModelElements(
-		gongflyStage,
+		stage,
 		gongleafletStage, defaultLayer)
 
-	gongdoc_load.Load(
-		"gongfly",
-		"github.com/fullstack-lang/gongfly/go/models",
-		gongfly_go.GoModelsDir,
-		gongfly_go.GoDiagramsDir,
-		r,
-		*embeddedDiagrams,
-		&gongflyStage.Map_GongStructName_InstancesNb)
-
-	gongdoc_load.Load(
-		"gongsim",
-		"github.com/fullstack-lang/gongsim/go/models",
-		gongsim_go.GoModelsDir,
-		gongsim_go.GoDiagramsDir,
-		r,
-		true,
-		&gongflyStage.Map_GongStructName_InstancesNb)
-
-	gongdoc_load.Load(
-		"gongleaflet",
-		"github.com/fullstack-lang/gongleaflet/go/models",
-		gongleaflet_go.GoModelsDir,
-		gongleaflet_go.GoDiagramsDir,
-		r,
-		true,
-		&gongflyStage.Map_GongStructName_InstancesNb)
-
 	// commits stages
-	gongflyStage.Commit()
+	stage.Commit()
 	gongsimStage.Commit()
 	gongleafletStage.Commit()
 
-	log.Printf("Server ready serve on localhost:8080")
-	r.Run()
+	gongfly_probe.NewProbe(r, gongfly_go.GoModelsDir, gongfly_go.GoDiagramsDir,
+		*embeddedDiagrams, "gongfly", stage, backRepo)
+
+	log.Printf("Server ready serve on localhost:" + strconv.Itoa(*port))
+	err := r.Run(":" + strconv.Itoa(*port))
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
 }

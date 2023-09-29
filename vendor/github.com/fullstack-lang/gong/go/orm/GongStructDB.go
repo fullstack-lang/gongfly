@@ -60,6 +60,14 @@ type GongStructDB struct {
 
 	// Declation for basic field gongstructDB.Name
 	Name_Data sql.NullString
+
+	// Declation for basic field gongstructDB.HasOnAfterUpdateSignature
+	// provide the sql storage for the boolan
+	HasOnAfterUpdateSignature_Data sql.NullBool
+
+	// Declation for basic field gongstructDB.IsIgnoredForFront
+	// provide the sql storage for the boolan
+	IsIgnoredForFront_Data sql.NullBool
 	// encoding of pointers
 	GongStructPointersEnconding
 }
@@ -82,6 +90,10 @@ type GongStructWOP struct {
 	// insertion for WOP basic fields
 
 	Name string `xlsx:"1"`
+
+	HasOnAfterUpdateSignature bool `xlsx:"2"`
+
+	IsIgnoredForFront bool `xlsx:"3"`
 	// insertion for WOP pointer fields
 }
 
@@ -89,6 +101,8 @@ var GongStruct_Fields = []string{
 	// insertion for WOP basic fields
 	"ID",
 	"Name",
+	"HasOnAfterUpdateSignature",
+	"IsIgnoredForFront",
 }
 
 type BackRepoGongStructStruct struct {
@@ -535,6 +549,12 @@ func (gongstructDB *GongStructDB) CopyBasicFieldsFromGongStruct(gongstruct *mode
 
 	gongstructDB.Name_Data.String = gongstruct.Name
 	gongstructDB.Name_Data.Valid = true
+
+	gongstructDB.HasOnAfterUpdateSignature_Data.Bool = gongstruct.HasOnAfterUpdateSignature
+	gongstructDB.HasOnAfterUpdateSignature_Data.Valid = true
+
+	gongstructDB.IsIgnoredForFront_Data.Bool = gongstruct.IsIgnoredForFront
+	gongstructDB.IsIgnoredForFront_Data.Valid = true
 }
 
 // CopyBasicFieldsFromGongStructWOP
@@ -543,12 +563,20 @@ func (gongstructDB *GongStructDB) CopyBasicFieldsFromGongStructWOP(gongstruct *G
 
 	gongstructDB.Name_Data.String = gongstruct.Name
 	gongstructDB.Name_Data.Valid = true
+
+	gongstructDB.HasOnAfterUpdateSignature_Data.Bool = gongstruct.HasOnAfterUpdateSignature
+	gongstructDB.HasOnAfterUpdateSignature_Data.Valid = true
+
+	gongstructDB.IsIgnoredForFront_Data.Bool = gongstruct.IsIgnoredForFront
+	gongstructDB.IsIgnoredForFront_Data.Valid = true
 }
 
 // CopyBasicFieldsToGongStruct
 func (gongstructDB *GongStructDB) CopyBasicFieldsToGongStruct(gongstruct *models.GongStruct) {
 	// insertion point for checkout of basic fields (back repo to stage)
 	gongstruct.Name = gongstructDB.Name_Data.String
+	gongstruct.HasOnAfterUpdateSignature = gongstructDB.HasOnAfterUpdateSignature_Data.Bool
+	gongstruct.IsIgnoredForFront = gongstructDB.IsIgnoredForFront_Data.Bool
 }
 
 // CopyBasicFieldsToGongStructWOP
@@ -556,6 +584,8 @@ func (gongstructDB *GongStructDB) CopyBasicFieldsToGongStructWOP(gongstruct *Gon
 	gongstruct.ID = int(gongstructDB.ID)
 	// insertion point for checkout of basic fields (back repo to stage)
 	gongstruct.Name = gongstructDB.Name_Data.String
+	gongstruct.HasOnAfterUpdateSignature = gongstructDB.HasOnAfterUpdateSignature_Data.Bool
+	gongstruct.IsIgnoredForFront = gongstructDB.IsIgnoredForFront_Data.Bool
 }
 
 // Backup generates a json file from a slice of all GongStructDB instances in the backrepo
@@ -720,6 +750,30 @@ func (backRepoGongStruct *BackRepoGongStructStruct) RestorePhaseTwo() {
 		}
 	}
 
+}
+
+// BackRepoGongStruct.ResetReversePointers commits all staged instances of GongStruct to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoGongStruct *BackRepoGongStructStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, gongstruct := range backRepoGongStruct.Map_GongStructDBID_GongStructPtr {
+		backRepoGongStruct.ResetReversePointersInstance(backRepo, idx, gongstruct)
+	}
+
+	return
+}
+
+func (backRepoGongStruct *BackRepoGongStructStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.GongStruct) (Error error) {
+
+	// fetch matching gongstructDB
+	if gongstructDB, ok := backRepoGongStruct.Map_GongStructDBID_GongStructDB[idx]; ok {
+		_ = gongstructDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
 }
 
 // this field is used during the restauration process.

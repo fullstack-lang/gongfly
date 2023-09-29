@@ -1,3 +1,4 @@
+// generated code - do not edit
 package models
 
 import (
@@ -645,9 +646,22 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					}
 				}
 			}
-		case *ast.BasicLit:
-			// assignment to string field
-			basicLit := expr
+		case *ast.BasicLit, *ast.UnaryExpr:
+
+			var basicLit *ast.BasicLit
+			var exprSign = 1.0
+			_ = exprSign // in case this is not used
+
+			if bl, ok := expr.(*ast.BasicLit); ok {
+				// expression is  for instance ... = 18.000
+				basicLit = bl
+			} else if ue, ok := expr.(*ast.UnaryExpr); ok {
+				// expression is  for instance ... = -18.000
+				// we want to extract a *ast.BasicLit from the *ast.UnaryExpr
+				basicLit = ue.X.(*ast.BasicLit)
+				exprSign = -1
+			}
+
 			// astCoordinate := astCoordinate + "\tBasicLit" + "." + basicLit.Value
 			// log.Println(astCoordinate)
 			var ok bool
@@ -672,14 +686,14 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_CivilianAirport[identifier].Lat = fielValue
+					__gong__map_CivilianAirport[identifier].Lat = exprSign * fielValue
 				case "Lng":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_CivilianAirport[identifier].Lng = fielValue
+					__gong__map_CivilianAirport[identifier].Lng = exprSign * fielValue
 				case "Name":
 					// remove first and last char
 					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
@@ -698,77 +712,77 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Liner[identifier].Lat = fielValue
+					__gong__map_Liner[identifier].Lat = exprSign * fielValue
 				case "Lng":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Liner[identifier].Lng = fielValue
+					__gong__map_Liner[identifier].Lng = exprSign * fielValue
 				case "Heading":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Liner[identifier].Heading = fielValue
+					__gong__map_Liner[identifier].Heading = exprSign * fielValue
 				case "Level":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Liner[identifier].Level = fielValue
+					__gong__map_Liner[identifier].Level = exprSign * fielValue
 				case "Speed":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Liner[identifier].Speed = fielValue
+					__gong__map_Liner[identifier].Speed = exprSign * fielValue
 				case "TargetHeading":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Liner[identifier].TargetHeading = fielValue
+					__gong__map_Liner[identifier].TargetHeading = exprSign * fielValue
 				case "TargetLocationLat":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Liner[identifier].TargetLocationLat = fielValue
+					__gong__map_Liner[identifier].TargetLocationLat = exprSign * fielValue
 				case "TargetLocationLng":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Liner[identifier].TargetLocationLng = fielValue
+					__gong__map_Liner[identifier].TargetLocationLng = exprSign * fielValue
 				case "DistanceToTarget":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Liner[identifier].DistanceToTarget = fielValue
+					__gong__map_Liner[identifier].DistanceToTarget = exprSign * fielValue
 				case "MaxRotationalSpeed":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Liner[identifier].MaxRotationalSpeed = fielValue
+					__gong__map_Liner[identifier].MaxRotationalSpeed = exprSign * fielValue
 				case "VerticalSpeed":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Liner[identifier].VerticalSpeed = fielValue
+					__gong__map_Liner[identifier].VerticalSpeed = exprSign * fielValue
 				case "Timestampstring":
 					// remove first and last char
 					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
@@ -783,35 +797,35 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Message[identifier].Lat = fielValue
+					__gong__map_Message[identifier].Lat = exprSign * fielValue
 				case "Lng":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Message[identifier].Lng = fielValue
+					__gong__map_Message[identifier].Lng = exprSign * fielValue
 				case "Heading":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Message[identifier].Heading = fielValue
+					__gong__map_Message[identifier].Heading = exprSign * fielValue
 				case "Level":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Message[identifier].Level = fielValue
+					__gong__map_Message[identifier].Level = exprSign * fielValue
 				case "Speed":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Message[identifier].Speed = fielValue
+					__gong__map_Message[identifier].Speed = exprSign * fielValue
 				case "Name":
 					// remove first and last char
 					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
@@ -822,21 +836,21 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Message[identifier].TargetLocationLat = fielValue
+					__gong__map_Message[identifier].TargetLocationLat = exprSign * fielValue
 				case "TargetLocationLng":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Message[identifier].TargetLocationLng = fielValue
+					__gong__map_Message[identifier].TargetLocationLng = exprSign * fielValue
 				case "DistanceToTarget":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Message[identifier].DistanceToTarget = fielValue
+					__gong__map_Message[identifier].DistanceToTarget = exprSign * fielValue
 				case "Timestampstring":
 					// remove first and last char
 					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
@@ -898,21 +912,21 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Radar[identifier].Lat = fielValue
+					__gong__map_Radar[identifier].Lat = exprSign * fielValue
 				case "Lng":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Radar[identifier].Lng = fielValue
+					__gong__map_Radar[identifier].Lng = exprSign * fielValue
 				case "Range":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Radar[identifier].Range = fielValue
+					__gong__map_Radar[identifier].Range = exprSign * fielValue
 				}
 			case "Satellite":
 				switch fieldName {
@@ -935,42 +949,42 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Satellite[identifier].Lat = fielValue
+					__gong__map_Satellite[identifier].Lat = exprSign * fielValue
 				case "Lng":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Satellite[identifier].Lng = fielValue
+					__gong__map_Satellite[identifier].Lng = exprSign * fielValue
 				case "Heading":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Satellite[identifier].Heading = fielValue
+					__gong__map_Satellite[identifier].Heading = exprSign * fielValue
 				case "Level":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Satellite[identifier].Level = fielValue
+					__gong__map_Satellite[identifier].Level = exprSign * fielValue
 				case "Speed":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Satellite[identifier].Speed = fielValue
+					__gong__map_Satellite[identifier].Speed = exprSign * fielValue
 				case "VerticalSpeed":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Satellite[identifier].VerticalSpeed = fielValue
+					__gong__map_Satellite[identifier].VerticalSpeed = exprSign * fielValue
 				case "Timestampstring":
 					// remove first and last char
 					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
@@ -989,28 +1003,28 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Scenario[identifier].Lat = fielValue
+					__gong__map_Scenario[identifier].Lat = exprSign * fielValue
 				case "Lng":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Scenario[identifier].Lng = fielValue
+					__gong__map_Scenario[identifier].Lng = exprSign * fielValue
 				case "ZoomLevel":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Scenario[identifier].ZoomLevel = fielValue
+					__gong__map_Scenario[identifier].ZoomLevel = exprSign * fielValue
 				case "MessageVisualSpeed":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Scenario[identifier].MessageVisualSpeed = fielValue
+					__gong__map_Scenario[identifier].MessageVisualSpeed = exprSign * fielValue
 				}
 			}
 		case *ast.Ident:

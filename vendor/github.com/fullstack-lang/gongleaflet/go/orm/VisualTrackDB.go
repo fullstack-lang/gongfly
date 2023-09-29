@@ -279,6 +279,9 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseTwoInstance(bac
 				visualtrackDB.LayerGroupID.Int64 = int64(LayerGroupId)
 				visualtrackDB.LayerGroupID.Valid = true
 			}
+		} else {
+			visualtrackDB.LayerGroupID.Int64 = 0
+			visualtrackDB.LayerGroupID.Valid = true
 		}
 
 		// commit pointer value visualtrack.DivIcon translates to updating the visualtrack.DivIconID
@@ -288,6 +291,9 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseTwoInstance(bac
 				visualtrackDB.DivIconID.Int64 = int64(DivIconId)
 				visualtrackDB.DivIconID.Valid = true
 			}
+		} else {
+			visualtrackDB.DivIconID.Int64 = 0
+			visualtrackDB.DivIconID.Valid = true
 		}
 
 		query := backRepoVisualTrack.db.Save(&visualtrackDB)
@@ -398,10 +404,12 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseTwoInstance(b
 
 	// insertion point for checkout of pointer encoding
 	// LayerGroup field
+	visualtrack.LayerGroup = nil
 	if visualtrackDB.LayerGroupID.Int64 != 0 {
 		visualtrack.LayerGroup = backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(visualtrackDB.LayerGroupID.Int64)]
 	}
 	// DivIcon field
+	visualtrack.DivIcon = nil
 	if visualtrackDB.DivIconID.Int64 != 0 {
 		visualtrack.DivIcon = backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[uint(visualtrackDB.DivIconID.Int64)]
 	}
@@ -710,6 +718,30 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) RestorePhaseTwo() {
 		}
 	}
 
+}
+
+// BackRepoVisualTrack.ResetReversePointers commits all staged instances of VisualTrack to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoVisualTrack *BackRepoVisualTrackStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, visualtrack := range backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr {
+		backRepoVisualTrack.ResetReversePointersInstance(backRepo, idx, visualtrack)
+	}
+
+	return
+}
+
+func (backRepoVisualTrack *BackRepoVisualTrackStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.VisualTrack) (Error error) {
+
+	// fetch matching visualtrackDB
+	if visualtrackDB, ok := backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[idx]; ok {
+		_ = visualtrackDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
 }
 
 // this field is used during the restauration process.

@@ -251,6 +251,9 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseTwoInstance(backRepo *B
 				opslineDB.ScenarioID.Int64 = int64(ScenarioId)
 				opslineDB.ScenarioID.Valid = true
 			}
+		} else {
+			opslineDB.ScenarioID.Int64 = 0
+			opslineDB.ScenarioID.Valid = true
 		}
 
 		query := backRepoOpsLine.db.Save(&opslineDB)
@@ -361,6 +364,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseTwoInstance(backRepo 
 
 	// insertion point for checkout of pointer encoding
 	// Scenario field
+	opsline.Scenario = nil
 	if opslineDB.ScenarioID.Int64 != 0 {
 		opsline.Scenario = backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr[uint(opslineDB.ScenarioID.Int64)]
 	}
@@ -631,6 +635,30 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) RestorePhaseTwo() {
 		}
 	}
 
+}
+
+// BackRepoOpsLine.ResetReversePointers commits all staged instances of OpsLine to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoOpsLine *BackRepoOpsLineStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, opsline := range backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr {
+		backRepoOpsLine.ResetReversePointersInstance(backRepo, idx, opsline)
+	}
+
+	return
+}
+
+func (backRepoOpsLine *BackRepoOpsLineStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.OpsLine) (Error error) {
+
+	// fetch matching opslineDB
+	if opslineDB, ok := backRepoOpsLine.Map_OpsLineDBID_OpsLineDB[idx]; ok {
+		_ = opslineDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
 }
 
 // this field is used during the restauration process.

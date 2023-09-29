@@ -5,6 +5,9 @@ import { OpsLineDB } from './opsline-db'
 import { NullInt64 } from './null-int64'
 
 export class LinerDB {
+
+	static GONGSTRUCT_NAME = "Liner"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

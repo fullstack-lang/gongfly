@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
+import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs';
 
 // insertion point sub template for services imports 
 import { GongBasicFieldDB } from './gongbasicfield-db'
@@ -182,7 +182,9 @@ export class FrontRepoService {
   }
 
   // typing of observable can be messy in typescript. Therefore, one force the type
-  observableFrontRepo: [ // insertion point sub template 
+  observableFrontRepo: [ 
+    Observable<null>, // see below for the of(null) observable
+    // insertion point sub template 
     Observable<GongBasicFieldDB[]>,
     Observable<GongEnumDB[]>,
     Observable<GongEnumValueDB[]>,
@@ -195,7 +197,16 @@ export class FrontRepoService {
     Observable<ModelPkgDB[]>,
     Observable<PointerToGongStructFieldDB[]>,
     Observable<SliceOfPointerToGongStructFieldDB[]>,
-  ] = [ // insertion point sub template
+  ] = [ 
+    // Using "combineLatest" with a placeholder observable.
+    //
+    // This allows the typescript compiler to pass when no GongStruct is present in the front API
+    //
+    // The "of(null)" is a "meaningless" observable that emits a single value (null) and completes.
+    // This is used as a workaround to satisfy TypeScript requirements and the "combineLatest" 
+    // expectation for a non-empty array of observables.
+    of(null), // 
+    // insertion point sub template
       this.gongbasicfieldService.getGongBasicFields(this.GONG__StackPath),
       this.gongenumService.getGongEnums(this.GONG__StackPath),
       this.gongenumvalueService.getGongEnumValues(this.GONG__StackPath),
@@ -220,7 +231,9 @@ export class FrontRepoService {
 
     this.GONG__StackPath = GONG__StackPath
 
-    this.observableFrontRepo = [ // insertion point sub template
+    this.observableFrontRepo = [ 
+      of(null), // see above for justification
+      // insertion point sub template
       this.gongbasicfieldService.getGongBasicFields(this.GONG__StackPath),
       this.gongenumService.getGongEnums(this.GONG__StackPath),
       this.gongenumvalueService.getGongEnumValues(this.GONG__StackPath),
@@ -240,7 +253,9 @@ export class FrontRepoService {
         combineLatest(
           this.observableFrontRepo
         ).subscribe(
-          ([ // insertion point sub template for declarations 
+          ([ 
+            ___of_null, // see above for the explanation about of
+            // insertion point sub template for declarations 
             gongbasicfields_,
             gongenums_,
             gongenumvalues_,
@@ -881,6 +896,140 @@ export class FrontRepoService {
               }
             )
 
+            // 
+            // Third Step: sort arrays (slices in go) according to their index
+            // insertion point sub template for redeem 
+            gongbasicfields.forEach(
+              gongbasicfield => {
+                // insertion point for sorting
+              }
+            )
+            gongenums.forEach(
+              gongenum => {
+                // insertion point for sorting
+                gongenum.GongEnumValues?.sort((t1, t2) => {
+                  if (t1.GongEnum_GongEnumValuesDBID_Index.Int64 > t2.GongEnum_GongEnumValuesDBID_Index.Int64) {
+                    return 1;
+                  }
+                  if (t1.GongEnum_GongEnumValuesDBID_Index.Int64 < t2.GongEnum_GongEnumValuesDBID_Index.Int64) {
+                    return -1;
+                  }
+                  return 0;
+                })
+
+              }
+            )
+            gongenumvalues.forEach(
+              gongenumvalue => {
+                // insertion point for sorting
+              }
+            )
+            gonglinks.forEach(
+              gonglink => {
+                // insertion point for sorting
+              }
+            )
+            gongnotes.forEach(
+              gongnote => {
+                // insertion point for sorting
+                gongnote.Links?.sort((t1, t2) => {
+                  if (t1.GongNote_LinksDBID_Index.Int64 > t2.GongNote_LinksDBID_Index.Int64) {
+                    return 1;
+                  }
+                  if (t1.GongNote_LinksDBID_Index.Int64 < t2.GongNote_LinksDBID_Index.Int64) {
+                    return -1;
+                  }
+                  return 0;
+                })
+
+              }
+            )
+            gongstructs.forEach(
+              gongstruct => {
+                // insertion point for sorting
+                gongstruct.GongBasicFields?.sort((t1, t2) => {
+                  if (t1.GongStruct_GongBasicFieldsDBID_Index.Int64 > t2.GongStruct_GongBasicFieldsDBID_Index.Int64) {
+                    return 1;
+                  }
+                  if (t1.GongStruct_GongBasicFieldsDBID_Index.Int64 < t2.GongStruct_GongBasicFieldsDBID_Index.Int64) {
+                    return -1;
+                  }
+                  return 0;
+                })
+
+                gongstruct.GongTimeFields?.sort((t1, t2) => {
+                  if (t1.GongStruct_GongTimeFieldsDBID_Index.Int64 > t2.GongStruct_GongTimeFieldsDBID_Index.Int64) {
+                    return 1;
+                  }
+                  if (t1.GongStruct_GongTimeFieldsDBID_Index.Int64 < t2.GongStruct_GongTimeFieldsDBID_Index.Int64) {
+                    return -1;
+                  }
+                  return 0;
+                })
+
+                gongstruct.PointerToGongStructFields?.sort((t1, t2) => {
+                  if (t1.GongStruct_PointerToGongStructFieldsDBID_Index.Int64 > t2.GongStruct_PointerToGongStructFieldsDBID_Index.Int64) {
+                    return 1;
+                  }
+                  if (t1.GongStruct_PointerToGongStructFieldsDBID_Index.Int64 < t2.GongStruct_PointerToGongStructFieldsDBID_Index.Int64) {
+                    return -1;
+                  }
+                  return 0;
+                })
+
+                gongstruct.SliceOfPointerToGongStructFields?.sort((t1, t2) => {
+                  if (t1.GongStruct_SliceOfPointerToGongStructFieldsDBID_Index.Int64 > t2.GongStruct_SliceOfPointerToGongStructFieldsDBID_Index.Int64) {
+                    return 1;
+                  }
+                  if (t1.GongStruct_SliceOfPointerToGongStructFieldsDBID_Index.Int64 < t2.GongStruct_SliceOfPointerToGongStructFieldsDBID_Index.Int64) {
+                    return -1;
+                  }
+                  return 0;
+                })
+
+              }
+            )
+            gongtimefields.forEach(
+              gongtimefield => {
+                // insertion point for sorting
+              }
+            )
+            metas.forEach(
+              meta => {
+                // insertion point for sorting
+                meta.MetaReferences?.sort((t1, t2) => {
+                  if (t1.Meta_MetaReferencesDBID_Index.Int64 > t2.Meta_MetaReferencesDBID_Index.Int64) {
+                    return 1;
+                  }
+                  if (t1.Meta_MetaReferencesDBID_Index.Int64 < t2.Meta_MetaReferencesDBID_Index.Int64) {
+                    return -1;
+                  }
+                  return 0;
+                })
+
+              }
+            )
+            metareferences.forEach(
+              metareference => {
+                // insertion point for sorting
+              }
+            )
+            modelpkgs.forEach(
+              modelpkg => {
+                // insertion point for sorting
+              }
+            )
+            pointertogongstructfields.forEach(
+              pointertogongstructfield => {
+                // insertion point for sorting
+              }
+            )
+            sliceofpointertogongstructfields.forEach(
+              sliceofpointertogongstructfield => {
+                // insertion point for sorting
+              }
+            )
+
             // hand over control flow to observer
             observer.next(this.frontRepo)
           }
@@ -896,7 +1045,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongbasicfieldService.getGongBasicFields()
+          this.gongbasicfieldService.getGongBasicFields(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             gongbasicfields,
@@ -967,7 +1116,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongenumService.getGongEnums()
+          this.gongenumService.getGongEnums(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             gongenums,
@@ -1018,7 +1167,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongenumvalueService.getGongEnumValues()
+          this.gongenumvalueService.getGongEnumValues(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             gongenumvalues,
@@ -1082,7 +1231,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gonglinkService.getGongLinks()
+          this.gonglinkService.getGongLinks(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             gonglinks,
@@ -1146,7 +1295,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongnoteService.getGongNotes()
+          this.gongnoteService.getGongNotes(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             gongnotes,
@@ -1197,7 +1346,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongstructService.getGongStructs()
+          this.gongstructService.getGongStructs(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             gongstructs,
@@ -1248,7 +1397,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongtimefieldService.getGongTimeFields()
+          this.gongtimefieldService.getGongTimeFields(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             gongtimefields,
@@ -1312,7 +1461,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.metaService.getMetas()
+          this.metaService.getMetas(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             metas,
@@ -1363,7 +1512,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.metareferenceService.getMetaReferences()
+          this.metareferenceService.getMetaReferences(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             metareferences,
@@ -1427,7 +1576,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.modelpkgService.getModelPkgs()
+          this.modelpkgService.getModelPkgs(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             modelpkgs,
@@ -1478,7 +1627,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.pointertogongstructfieldService.getPointerToGongStructFields()
+          this.pointertogongstructfieldService.getPointerToGongStructFields(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             pointertogongstructfields,
@@ -1549,7 +1698,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.sliceofpointertogongstructfieldService.getSliceOfPointerToGongStructFields()
+          this.sliceofpointertogongstructfieldService.getSliceOfPointerToGongStructFields(this.GONG__StackPath)
         ]).subscribe(
           ([ // insertion point sub template 
             sliceofpointertogongstructfields,

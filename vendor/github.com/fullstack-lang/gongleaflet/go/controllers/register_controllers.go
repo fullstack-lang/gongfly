@@ -1,3 +1,4 @@
+// generated code - do not edit
 package controllers
 
 import (
@@ -118,10 +119,13 @@ func (controller *Controller) GetLastCommitFromBackNb(c *gin.Context) {
 		value := values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
-			log.Println("GetLastCommitFromBackNb", "GONG__StackPath", stackPath)
+			// log.Println("GetLastCommitFromBackNb", "GONG__StackPath", stackPath)
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongleaflet/go/models, Unkown stack", stackPath)
+	}
 	res := backRepo.GetLastCommitFromBackNb()
 
 	c.JSON(http.StatusOK, res)
@@ -135,10 +139,13 @@ func (controller *Controller) GetLastPushFromFrontNb(c *gin.Context) {
 		value := values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
-			log.Println("GetLastPushFromFrontNb", "GONG__StackPath", stackPath)
+			// log.Println("GetLastPushFromFrontNb", "GONG__StackPath", stackPath)
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongleaflet/go/models, Unkown stack", stackPath)
+	}
 	res := backRepo.GetLastPushFromFrontNb()
 
 	c.JSON(http.StatusOK, res)

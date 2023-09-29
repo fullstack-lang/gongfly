@@ -1,3 +1,4 @@
+// do not modify, generated file
 package orm
 
 import (
@@ -7,7 +8,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"sync"
 
 	"github.com/fullstack-lang/gongleaflet/go/models"
 
@@ -221,6 +221,17 @@ func (backRepo *BackRepoStruct) Commit(stage *models.StageStruct) {
 	backRepo.BackRepoVLine.CommitPhaseOne(stage)
 	backRepo.BackRepoVisualTrack.CommitPhaseOne(stage)
 
+	// insertion point for per struct back repo for reseting the reverse pointers
+	backRepo.BackRepoCircle.ResetReversePointers(backRepo)
+	backRepo.BackRepoDivIcon.ResetReversePointers(backRepo)
+	backRepo.BackRepoLayerGroup.ResetReversePointers(backRepo)
+	backRepo.BackRepoLayerGroupUse.ResetReversePointers(backRepo)
+	backRepo.BackRepoMapOptions.ResetReversePointers(backRepo)
+	backRepo.BackRepoMarker.ResetReversePointers(backRepo)
+	backRepo.BackRepoUserClick.ResetReversePointers(backRepo)
+	backRepo.BackRepoVLine.ResetReversePointers(backRepo)
+	backRepo.BackRepoVisualTrack.ResetReversePointers(backRepo)
+
 	// insertion point for per struct back repo phase two commit
 	backRepo.BackRepoCircle.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoDivIcon.CommitPhaseTwo(backRepo)
@@ -258,25 +269,6 @@ func (backRepo *BackRepoStruct) Checkout(stage *models.StageStruct) {
 	backRepo.BackRepoUserClick.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoVLine.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoVisualTrack.CheckoutPhaseTwo(backRepo)
-}
-
-var _backRepo *BackRepoStruct
-
-var once sync.Once
-
-func GetDefaultBackRepo() *BackRepoStruct {
-	once.Do(func() {
-		_backRepo = NewBackRepo(models.GetDefaultStage(), "")
-	})
-	return _backRepo
-}
-
-func GetLastCommitFromBackNb() uint {
-	return GetDefaultBackRepo().GetLastCommitFromBackNb()
-}
-
-func GetLastPushFromFrontNb() uint {
-	return GetDefaultBackRepo().GetLastPushFromFrontNb()
 }
 
 // Backup the BackRepoStruct

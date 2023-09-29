@@ -42,6 +42,10 @@ export class EngineService {
   }
 
   /** GET engines from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<EngineDB[]> {
+    return this.getEngines(GONG__StackPath)
+  }
   getEngines(GONG__StackPath: string): Observable<EngineDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -55,6 +59,10 @@ export class EngineService {
   }
 
   /** GET engine by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<EngineDB> {
+	return this.getEngine(id, GONG__StackPath)
+  }
   getEngine(id: number, GONG__StackPath: string): Observable<EngineDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -67,6 +75,9 @@ export class EngineService {
   }
 
   /** POST: add a new engine to the server */
+  post(enginedb: EngineDB, GONG__StackPath: string): Observable<EngineDB> {
+    return this.postEngine(enginedb, GONG__StackPath)	
+  }
   postEngine(enginedb: EngineDB, GONG__StackPath: string): Observable<EngineDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
@@ -87,6 +98,9 @@ export class EngineService {
   }
 
   /** DELETE: delete the enginedb from the server */
+  delete(enginedb: EngineDB | number, GONG__StackPath: string): Observable<EngineDB> {
+    return this.deleteEngine(enginedb, GONG__StackPath)
+  }
   deleteEngine(enginedb: EngineDB | number, GONG__StackPath: string): Observable<EngineDB> {
     const id = typeof enginedb === 'number' ? enginedb : enginedb.ID;
     const url = `${this.enginesUrl}/${id}`;
@@ -104,6 +118,9 @@ export class EngineService {
   }
 
   /** PUT: update the enginedb on the server */
+  update(enginedb: EngineDB, GONG__StackPath: string): Observable<EngineDB> {
+    return this.updateEngine(enginedb, GONG__StackPath)
+  }
   updateEngine(enginedb: EngineDB, GONG__StackPath: string): Observable<EngineDB> {
     const id = typeof enginedb === 'number' ? enginedb : enginedb.ID;
     const url = `${this.enginesUrl}/${id}`;
@@ -119,7 +136,7 @@ export class EngineService {
     return this.http.put<EngineDB>(url, enginedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated enginedb id=${enginedb.ID}`)
+        // this.log(`updated enginedb id=${enginedb.ID}`)
       }),
       catchError(this.handleError<EngineDB>('updateEngine'))
     );

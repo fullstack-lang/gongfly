@@ -594,6 +594,30 @@ func (backRepoRadar *BackRepoRadarStruct) RestorePhaseTwo() {
 
 }
 
+// BackRepoRadar.ResetReversePointers commits all staged instances of Radar to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoRadar *BackRepoRadarStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, radar := range backRepoRadar.Map_RadarDBID_RadarPtr {
+		backRepoRadar.ResetReversePointersInstance(backRepo, idx, radar)
+	}
+
+	return
+}
+
+func (backRepoRadar *BackRepoRadarStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Radar) (Error error) {
+
+	// fetch matching radarDB
+	if radarDB, ok := backRepoRadar.Map_RadarDBID_RadarDB[idx]; ok {
+		_ = radarDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
+}
+
 // this field is used during the restauration process.
 // it stores the ID at the backup time and is used for renumbering
 var BackRepoRadarid_atBckpTime_newID map[uint]uint

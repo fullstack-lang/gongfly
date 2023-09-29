@@ -42,6 +42,10 @@ export class GongsimStatusService {
   }
 
   /** GET gongsimstatuss from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<GongsimStatusDB[]> {
+    return this.getGongsimStatuss(GONG__StackPath)
+  }
   getGongsimStatuss(GONG__StackPath: string): Observable<GongsimStatusDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -55,6 +59,10 @@ export class GongsimStatusService {
   }
 
   /** GET gongsimstatus by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<GongsimStatusDB> {
+	return this.getGongsimStatus(id, GONG__StackPath)
+  }
   getGongsimStatus(id: number, GONG__StackPath: string): Observable<GongsimStatusDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -67,6 +75,9 @@ export class GongsimStatusService {
   }
 
   /** POST: add a new gongsimstatus to the server */
+  post(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string): Observable<GongsimStatusDB> {
+    return this.postGongsimStatus(gongsimstatusdb, GONG__StackPath)	
+  }
   postGongsimStatus(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string): Observable<GongsimStatusDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
@@ -87,6 +98,9 @@ export class GongsimStatusService {
   }
 
   /** DELETE: delete the gongsimstatusdb from the server */
+  delete(gongsimstatusdb: GongsimStatusDB | number, GONG__StackPath: string): Observable<GongsimStatusDB> {
+    return this.deleteGongsimStatus(gongsimstatusdb, GONG__StackPath)
+  }
   deleteGongsimStatus(gongsimstatusdb: GongsimStatusDB | number, GONG__StackPath: string): Observable<GongsimStatusDB> {
     const id = typeof gongsimstatusdb === 'number' ? gongsimstatusdb : gongsimstatusdb.ID;
     const url = `${this.gongsimstatussUrl}/${id}`;
@@ -104,6 +118,9 @@ export class GongsimStatusService {
   }
 
   /** PUT: update the gongsimstatusdb on the server */
+  update(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string): Observable<GongsimStatusDB> {
+    return this.updateGongsimStatus(gongsimstatusdb, GONG__StackPath)
+  }
   updateGongsimStatus(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string): Observable<GongsimStatusDB> {
     const id = typeof gongsimstatusdb === 'number' ? gongsimstatusdb : gongsimstatusdb.ID;
     const url = `${this.gongsimstatussUrl}/${id}`;
@@ -119,7 +136,7 @@ export class GongsimStatusService {
     return this.http.put<GongsimStatusDB>(url, gongsimstatusdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated gongsimstatusdb id=${gongsimstatusdb.ID}`)
+        // this.log(`updated gongsimstatusdb id=${gongsimstatusdb.ID}`)
       }),
       catchError(this.handleError<GongsimStatusDB>('updateGongsimStatus'))
     );

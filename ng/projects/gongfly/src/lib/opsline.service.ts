@@ -43,6 +43,10 @@ export class OpsLineService {
   }
 
   /** GET opslines from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<OpsLineDB[]> {
+    return this.getOpsLines(GONG__StackPath)
+  }
   getOpsLines(GONG__StackPath: string): Observable<OpsLineDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -56,6 +60,10 @@ export class OpsLineService {
   }
 
   /** GET opsline by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<OpsLineDB> {
+	return this.getOpsLine(id, GONG__StackPath)
+  }
   getOpsLine(id: number, GONG__StackPath: string): Observable<OpsLineDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -68,9 +76,13 @@ export class OpsLineService {
   }
 
   /** POST: add a new opsline to the server */
+  post(opslinedb: OpsLineDB, GONG__StackPath: string): Observable<OpsLineDB> {
+    return this.postOpsLine(opslinedb, GONG__StackPath)	
+  }
   postOpsLine(opslinedb: OpsLineDB, GONG__StackPath: string): Observable<OpsLineDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let Scenario = opslinedb.Scenario
     opslinedb.Scenario = new ScenarioDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -89,6 +101,9 @@ export class OpsLineService {
   }
 
   /** DELETE: delete the opslinedb from the server */
+  delete(opslinedb: OpsLineDB | number, GONG__StackPath: string): Observable<OpsLineDB> {
+    return this.deleteOpsLine(opslinedb, GONG__StackPath)
+  }
   deleteOpsLine(opslinedb: OpsLineDB | number, GONG__StackPath: string): Observable<OpsLineDB> {
     const id = typeof opslinedb === 'number' ? opslinedb : opslinedb.ID;
     const url = `${this.opslinesUrl}/${id}`;
@@ -106,11 +121,15 @@ export class OpsLineService {
   }
 
   /** PUT: update the opslinedb on the server */
+  update(opslinedb: OpsLineDB, GONG__StackPath: string): Observable<OpsLineDB> {
+    return this.updateOpsLine(opslinedb, GONG__StackPath)
+  }
   updateOpsLine(opslinedb: OpsLineDB, GONG__StackPath: string): Observable<OpsLineDB> {
     const id = typeof opslinedb === 'number' ? opslinedb : opslinedb.ID;
     const url = `${this.opslinesUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let Scenario = opslinedb.Scenario
     opslinedb.Scenario = new ScenarioDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -122,7 +141,7 @@ export class OpsLineService {
     return this.http.put<OpsLineDB>(url, opslinedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated opslinedb id=${opslinedb.ID}`)
+        // this.log(`updated opslinedb id=${opslinedb.ID}`)
       }),
       catchError(this.handleError<OpsLineDB>('updateOpsLine'))
     );

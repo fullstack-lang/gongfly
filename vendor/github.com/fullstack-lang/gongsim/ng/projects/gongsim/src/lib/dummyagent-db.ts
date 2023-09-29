@@ -4,6 +4,9 @@
 import { NullInt64 } from './null-int64'
 
 export class DummyAgentDB {
+
+	static GONGSTRUCT_NAME = "DummyAgent"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

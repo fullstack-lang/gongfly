@@ -4,6 +4,9 @@
 import { NullInt64 } from './null-int64'
 
 export class EventDB {
+
+	static GONGSTRUCT_NAME = "Event"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

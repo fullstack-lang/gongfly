@@ -4,6 +4,9 @@
 import { NullInt64 } from './null-int64'
 
 export class SatelliteDB {
+
+	static GONGSTRUCT_NAME = "Satellite"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

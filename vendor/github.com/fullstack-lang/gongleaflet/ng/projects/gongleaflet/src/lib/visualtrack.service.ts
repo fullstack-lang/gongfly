@@ -44,6 +44,10 @@ export class VisualTrackService {
   }
 
   /** GET visualtracks from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<VisualTrackDB[]> {
+    return this.getVisualTracks(GONG__StackPath)
+  }
   getVisualTracks(GONG__StackPath: string): Observable<VisualTrackDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -57,6 +61,10 @@ export class VisualTrackService {
   }
 
   /** GET visualtrack by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<VisualTrackDB> {
+	return this.getVisualTrack(id, GONG__StackPath)
+  }
   getVisualTrack(id: number, GONG__StackPath: string): Observable<VisualTrackDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -69,10 +77,15 @@ export class VisualTrackService {
   }
 
   /** POST: add a new visualtrack to the server */
+  post(visualtrackdb: VisualTrackDB, GONG__StackPath: string): Observable<VisualTrackDB> {
+    return this.postVisualTrack(visualtrackdb, GONG__StackPath)	
+  }
   postVisualTrack(visualtrackdb: VisualTrackDB, GONG__StackPath: string): Observable<VisualTrackDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let LayerGroup = visualtrackdb.LayerGroup
     visualtrackdb.LayerGroup = new LayerGroupDB
+    let DivIcon = visualtrackdb.DivIcon
     visualtrackdb.DivIcon = new DivIconDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -91,6 +104,9 @@ export class VisualTrackService {
   }
 
   /** DELETE: delete the visualtrackdb from the server */
+  delete(visualtrackdb: VisualTrackDB | number, GONG__StackPath: string): Observable<VisualTrackDB> {
+    return this.deleteVisualTrack(visualtrackdb, GONG__StackPath)
+  }
   deleteVisualTrack(visualtrackdb: VisualTrackDB | number, GONG__StackPath: string): Observable<VisualTrackDB> {
     const id = typeof visualtrackdb === 'number' ? visualtrackdb : visualtrackdb.ID;
     const url = `${this.visualtracksUrl}/${id}`;
@@ -108,12 +124,17 @@ export class VisualTrackService {
   }
 
   /** PUT: update the visualtrackdb on the server */
+  update(visualtrackdb: VisualTrackDB, GONG__StackPath: string): Observable<VisualTrackDB> {
+    return this.updateVisualTrack(visualtrackdb, GONG__StackPath)
+  }
   updateVisualTrack(visualtrackdb: VisualTrackDB, GONG__StackPath: string): Observable<VisualTrackDB> {
     const id = typeof visualtrackdb === 'number' ? visualtrackdb : visualtrackdb.ID;
     const url = `${this.visualtracksUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let LayerGroup = visualtrackdb.LayerGroup
     visualtrackdb.LayerGroup = new LayerGroupDB
+    let DivIcon = visualtrackdb.DivIcon
     visualtrackdb.DivIcon = new DivIconDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -125,7 +146,7 @@ export class VisualTrackService {
     return this.http.put<VisualTrackDB>(url, visualtrackdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated visualtrackdb id=${visualtrackdb.ID}`)
+        // this.log(`updated visualtrackdb id=${visualtrackdb.ID}`)
       }),
       catchError(this.handleError<VisualTrackDB>('updateVisualTrack'))
     );

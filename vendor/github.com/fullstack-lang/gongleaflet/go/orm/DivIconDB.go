@@ -552,6 +552,30 @@ func (backRepoDivIcon *BackRepoDivIconStruct) RestorePhaseTwo() {
 
 }
 
+// BackRepoDivIcon.ResetReversePointers commits all staged instances of DivIcon to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoDivIcon *BackRepoDivIconStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, divicon := range backRepoDivIcon.Map_DivIconDBID_DivIconPtr {
+		backRepoDivIcon.ResetReversePointersInstance(backRepo, idx, divicon)
+	}
+
+	return
+}
+
+func (backRepoDivIcon *BackRepoDivIconStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.DivIcon) (Error error) {
+
+	// fetch matching diviconDB
+	if diviconDB, ok := backRepoDivIcon.Map_DivIconDBID_DivIconDB[idx]; ok {
+		_ = diviconDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
+}
+
 // this field is used during the restauration process.
 // it stores the ID at the backup time and is used for renumbering
 var BackRepoDivIconid_atBckpTime_newID map[uint]uint

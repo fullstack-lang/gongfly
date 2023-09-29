@@ -594,6 +594,30 @@ func (backRepoScenario *BackRepoScenarioStruct) RestorePhaseTwo() {
 
 }
 
+// BackRepoScenario.ResetReversePointers commits all staged instances of Scenario to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoScenario *BackRepoScenarioStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, scenario := range backRepoScenario.Map_ScenarioDBID_ScenarioPtr {
+		backRepoScenario.ResetReversePointersInstance(backRepo, idx, scenario)
+	}
+
+	return
+}
+
+func (backRepoScenario *BackRepoScenarioStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Scenario) (Error error) {
+
+	// fetch matching scenarioDB
+	if scenarioDB, ok := backRepoScenario.Map_ScenarioDBID_ScenarioDB[idx]; ok {
+		_ = scenarioDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
+}
+
 // this field is used during the restauration process.
 // it stores the ID at the backup time and is used for renumbering
 var BackRepoScenarioid_atBckpTime_newID map[uint]uint

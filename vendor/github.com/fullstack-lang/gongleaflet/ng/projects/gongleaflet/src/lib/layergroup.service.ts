@@ -42,6 +42,10 @@ export class LayerGroupService {
   }
 
   /** GET layergroups from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<LayerGroupDB[]> {
+    return this.getLayerGroups(GONG__StackPath)
+  }
   getLayerGroups(GONG__StackPath: string): Observable<LayerGroupDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -55,6 +59,10 @@ export class LayerGroupService {
   }
 
   /** GET layergroup by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<LayerGroupDB> {
+	return this.getLayerGroup(id, GONG__StackPath)
+  }
   getLayerGroup(id: number, GONG__StackPath: string): Observable<LayerGroupDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -67,6 +75,9 @@ export class LayerGroupService {
   }
 
   /** POST: add a new layergroup to the server */
+  post(layergroupdb: LayerGroupDB, GONG__StackPath: string): Observable<LayerGroupDB> {
+    return this.postLayerGroup(layergroupdb, GONG__StackPath)	
+  }
   postLayerGroup(layergroupdb: LayerGroupDB, GONG__StackPath: string): Observable<LayerGroupDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
@@ -87,6 +98,9 @@ export class LayerGroupService {
   }
 
   /** DELETE: delete the layergroupdb from the server */
+  delete(layergroupdb: LayerGroupDB | number, GONG__StackPath: string): Observable<LayerGroupDB> {
+    return this.deleteLayerGroup(layergroupdb, GONG__StackPath)
+  }
   deleteLayerGroup(layergroupdb: LayerGroupDB | number, GONG__StackPath: string): Observable<LayerGroupDB> {
     const id = typeof layergroupdb === 'number' ? layergroupdb : layergroupdb.ID;
     const url = `${this.layergroupsUrl}/${id}`;
@@ -104,6 +118,9 @@ export class LayerGroupService {
   }
 
   /** PUT: update the layergroupdb on the server */
+  update(layergroupdb: LayerGroupDB, GONG__StackPath: string): Observable<LayerGroupDB> {
+    return this.updateLayerGroup(layergroupdb, GONG__StackPath)
+  }
   updateLayerGroup(layergroupdb: LayerGroupDB, GONG__StackPath: string): Observable<LayerGroupDB> {
     const id = typeof layergroupdb === 'number' ? layergroupdb : layergroupdb.ID;
     const url = `${this.layergroupsUrl}/${id}`;
@@ -119,7 +136,7 @@ export class LayerGroupService {
     return this.http.put<LayerGroupDB>(url, layergroupdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated layergroupdb id=${layergroupdb.ID}`)
+        // this.log(`updated layergroupdb id=${layergroupdb.ID}`)
       }),
       catchError(this.handleError<LayerGroupDB>('updateLayerGroup'))
     );

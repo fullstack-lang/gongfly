@@ -1,3 +1,4 @@
+// do not modify, generated file
 package orm
 
 import (
@@ -7,7 +8,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"sync"
 
 	"github.com/fullstack-lang/gongsim/go/models"
 
@@ -173,6 +173,13 @@ func (backRepo *BackRepoStruct) Commit(stage *models.StageStruct) {
 	backRepo.BackRepoGongsimCommand.CommitPhaseOne(stage)
 	backRepo.BackRepoGongsimStatus.CommitPhaseOne(stage)
 
+	// insertion point for per struct back repo for reseting the reverse pointers
+	backRepo.BackRepoDummyAgent.ResetReversePointers(backRepo)
+	backRepo.BackRepoEngine.ResetReversePointers(backRepo)
+	backRepo.BackRepoEvent.ResetReversePointers(backRepo)
+	backRepo.BackRepoGongsimCommand.ResetReversePointers(backRepo)
+	backRepo.BackRepoGongsimStatus.ResetReversePointers(backRepo)
+
 	// insertion point for per struct back repo phase two commit
 	backRepo.BackRepoDummyAgent.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoEngine.CommitPhaseTwo(backRepo)
@@ -198,25 +205,6 @@ func (backRepo *BackRepoStruct) Checkout(stage *models.StageStruct) {
 	backRepo.BackRepoEvent.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoGongsimCommand.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoGongsimStatus.CheckoutPhaseTwo(backRepo)
-}
-
-var _backRepo *BackRepoStruct
-
-var once sync.Once
-
-func GetDefaultBackRepo() *BackRepoStruct {
-	once.Do(func() {
-		_backRepo = NewBackRepo(models.GetDefaultStage(), "")
-	})
-	return _backRepo
-}
-
-func GetLastCommitFromBackNb() uint {
-	return GetDefaultBackRepo().GetLastCommitFromBackNb()
-}
-
-func GetLastPushFromFrontNb() uint {
-	return GetDefaultBackRepo().GetLastPushFromFrontNb()
 }
 
 // Backup the BackRepoStruct

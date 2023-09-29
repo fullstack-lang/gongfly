@@ -279,6 +279,9 @@ func (backRepoVLine *BackRepoVLineStruct) CommitPhaseTwoInstance(backRepo *BackR
 				vlineDB.LayerGroupID.Int64 = int64(LayerGroupId)
 				vlineDB.LayerGroupID.Valid = true
 			}
+		} else {
+			vlineDB.LayerGroupID.Int64 = 0
+			vlineDB.LayerGroupID.Valid = true
 		}
 
 		query := backRepoVLine.db.Save(&vlineDB)
@@ -389,6 +392,7 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseTwoInstance(backRepo *Bac
 
 	// insertion point for checkout of pointer encoding
 	// LayerGroup field
+	vline.LayerGroup = nil
 	if vlineDB.LayerGroupID.Int64 != 0 {
 		vline.LayerGroup = backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(vlineDB.LayerGroupID.Int64)]
 	}
@@ -699,6 +703,30 @@ func (backRepoVLine *BackRepoVLineStruct) RestorePhaseTwo() {
 		}
 	}
 
+}
+
+// BackRepoVLine.ResetReversePointers commits all staged instances of VLine to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoVLine *BackRepoVLineStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, vline := range backRepoVLine.Map_VLineDBID_VLinePtr {
+		backRepoVLine.ResetReversePointersInstance(backRepo, idx, vline)
+	}
+
+	return
+}
+
+func (backRepoVLine *BackRepoVLineStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.VLine) (Error error) {
+
+	// fetch matching vlineDB
+	if vlineDB, ok := backRepoVLine.Map_VLineDBID_VLineDB[idx]; ok {
+		_ = vlineDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
 }
 
 // this field is used during the restauration process.

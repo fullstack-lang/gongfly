@@ -42,6 +42,10 @@ export class CivilianAirportService {
   }
 
   /** GET civilianairports from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<CivilianAirportDB[]> {
+    return this.getCivilianAirports(GONG__StackPath)
+  }
   getCivilianAirports(GONG__StackPath: string): Observable<CivilianAirportDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -55,6 +59,10 @@ export class CivilianAirportService {
   }
 
   /** GET civilianairport by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<CivilianAirportDB> {
+	return this.getCivilianAirport(id, GONG__StackPath)
+  }
   getCivilianAirport(id: number, GONG__StackPath: string): Observable<CivilianAirportDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -67,6 +75,9 @@ export class CivilianAirportService {
   }
 
   /** POST: add a new civilianairport to the server */
+  post(civilianairportdb: CivilianAirportDB, GONG__StackPath: string): Observable<CivilianAirportDB> {
+    return this.postCivilianAirport(civilianairportdb, GONG__StackPath)	
+  }
   postCivilianAirport(civilianairportdb: CivilianAirportDB, GONG__StackPath: string): Observable<CivilianAirportDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
@@ -87,6 +98,9 @@ export class CivilianAirportService {
   }
 
   /** DELETE: delete the civilianairportdb from the server */
+  delete(civilianairportdb: CivilianAirportDB | number, GONG__StackPath: string): Observable<CivilianAirportDB> {
+    return this.deleteCivilianAirport(civilianairportdb, GONG__StackPath)
+  }
   deleteCivilianAirport(civilianairportdb: CivilianAirportDB | number, GONG__StackPath: string): Observable<CivilianAirportDB> {
     const id = typeof civilianairportdb === 'number' ? civilianairportdb : civilianairportdb.ID;
     const url = `${this.civilianairportsUrl}/${id}`;
@@ -104,6 +118,9 @@ export class CivilianAirportService {
   }
 
   /** PUT: update the civilianairportdb on the server */
+  update(civilianairportdb: CivilianAirportDB, GONG__StackPath: string): Observable<CivilianAirportDB> {
+    return this.updateCivilianAirport(civilianairportdb, GONG__StackPath)
+  }
   updateCivilianAirport(civilianairportdb: CivilianAirportDB, GONG__StackPath: string): Observable<CivilianAirportDB> {
     const id = typeof civilianairportdb === 'number' ? civilianairportdb : civilianairportdb.ID;
     const url = `${this.civilianairportsUrl}/${id}`;
@@ -119,7 +136,7 @@ export class CivilianAirportService {
     return this.http.put<CivilianAirportDB>(url, civilianairportdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated civilianairportdb id=${civilianairportdb.ID}`)
+        // this.log(`updated civilianairportdb id=${civilianairportdb.ID}`)
       }),
       catchError(this.handleError<CivilianAirportDB>('updateCivilianAirport'))
     );

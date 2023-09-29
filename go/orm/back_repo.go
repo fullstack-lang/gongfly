@@ -1,3 +1,4 @@
+// do not modify, generated file
 package orm
 
 import (
@@ -7,7 +8,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"sync"
 
 	"github.com/fullstack-lang/gongfly/go/models"
 
@@ -197,6 +197,15 @@ func (backRepo *BackRepoStruct) Commit(stage *models.StageStruct) {
 	backRepo.BackRepoSatellite.CommitPhaseOne(stage)
 	backRepo.BackRepoScenario.CommitPhaseOne(stage)
 
+	// insertion point for per struct back repo for reseting the reverse pointers
+	backRepo.BackRepoCivilianAirport.ResetReversePointers(backRepo)
+	backRepo.BackRepoLiner.ResetReversePointers(backRepo)
+	backRepo.BackRepoMessage.ResetReversePointers(backRepo)
+	backRepo.BackRepoOpsLine.ResetReversePointers(backRepo)
+	backRepo.BackRepoRadar.ResetReversePointers(backRepo)
+	backRepo.BackRepoSatellite.ResetReversePointers(backRepo)
+	backRepo.BackRepoScenario.ResetReversePointers(backRepo)
+
 	// insertion point for per struct back repo phase two commit
 	backRepo.BackRepoCivilianAirport.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoLiner.CommitPhaseTwo(backRepo)
@@ -228,25 +237,6 @@ func (backRepo *BackRepoStruct) Checkout(stage *models.StageStruct) {
 	backRepo.BackRepoRadar.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoSatellite.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoScenario.CheckoutPhaseTwo(backRepo)
-}
-
-var _backRepo *BackRepoStruct
-
-var once sync.Once
-
-func GetDefaultBackRepo() *BackRepoStruct {
-	once.Do(func() {
-		_backRepo = NewBackRepo(models.GetDefaultStage(), "")
-	})
-	return _backRepo
-}
-
-func GetLastCommitFromBackNb() uint {
-	return GetDefaultBackRepo().GetLastCommitFromBackNb()
-}
-
-func GetLastPushFromFrontNb() uint {
-	return GetDefaultBackRepo().GetLastPushFromFrontNb()
 }
 
 // Backup the BackRepoStruct

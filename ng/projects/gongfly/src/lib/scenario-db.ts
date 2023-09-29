@@ -4,6 +4,9 @@
 import { NullInt64 } from './null-int64'
 
 export class ScenarioDB {
+
+	static GONGSTRUCT_NAME = "Scenario"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

@@ -42,6 +42,10 @@ export class SatelliteService {
   }
 
   /** GET satellites from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<SatelliteDB[]> {
+    return this.getSatellites(GONG__StackPath)
+  }
   getSatellites(GONG__StackPath: string): Observable<SatelliteDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -55,6 +59,10 @@ export class SatelliteService {
   }
 
   /** GET satellite by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<SatelliteDB> {
+	return this.getSatellite(id, GONG__StackPath)
+  }
   getSatellite(id: number, GONG__StackPath: string): Observable<SatelliteDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -67,6 +75,9 @@ export class SatelliteService {
   }
 
   /** POST: add a new satellite to the server */
+  post(satellitedb: SatelliteDB, GONG__StackPath: string): Observable<SatelliteDB> {
+    return this.postSatellite(satellitedb, GONG__StackPath)	
+  }
   postSatellite(satellitedb: SatelliteDB, GONG__StackPath: string): Observable<SatelliteDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
@@ -87,6 +98,9 @@ export class SatelliteService {
   }
 
   /** DELETE: delete the satellitedb from the server */
+  delete(satellitedb: SatelliteDB | number, GONG__StackPath: string): Observable<SatelliteDB> {
+    return this.deleteSatellite(satellitedb, GONG__StackPath)
+  }
   deleteSatellite(satellitedb: SatelliteDB | number, GONG__StackPath: string): Observable<SatelliteDB> {
     const id = typeof satellitedb === 'number' ? satellitedb : satellitedb.ID;
     const url = `${this.satellitesUrl}/${id}`;
@@ -104,6 +118,9 @@ export class SatelliteService {
   }
 
   /** PUT: update the satellitedb on the server */
+  update(satellitedb: SatelliteDB, GONG__StackPath: string): Observable<SatelliteDB> {
+    return this.updateSatellite(satellitedb, GONG__StackPath)
+  }
   updateSatellite(satellitedb: SatelliteDB, GONG__StackPath: string): Observable<SatelliteDB> {
     const id = typeof satellitedb === 'number' ? satellitedb : satellitedb.ID;
     const url = `${this.satellitesUrl}/${id}`;
@@ -119,7 +136,7 @@ export class SatelliteService {
     return this.http.put<SatelliteDB>(url, satellitedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated satellitedb id=${satellitedb.ID}`)
+        // this.log(`updated satellitedb id=${satellitedb.ID}`)
       }),
       catchError(this.handleError<SatelliteDB>('updateSatellite'))
     );

@@ -712,6 +712,30 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) RestorePhaseTwo() {
 
 }
 
+// BackRepoMapOptions.ResetReversePointers commits all staged instances of MapOptions to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoMapOptions *BackRepoMapOptionsStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, mapoptions := range backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr {
+		backRepoMapOptions.ResetReversePointersInstance(backRepo, idx, mapoptions)
+	}
+
+	return
+}
+
+func (backRepoMapOptions *BackRepoMapOptionsStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.MapOptions) (Error error) {
+
+	// fetch matching mapoptionsDB
+	if mapoptionsDB, ok := backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB[idx]; ok {
+		_ = mapoptionsDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
+}
+
 // this field is used during the restauration process.
 // it stores the ID at the backup time and is used for renumbering
 var BackRepoMapOptionsid_atBckpTime_newID map[uint]uint

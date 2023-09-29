@@ -636,6 +636,30 @@ func (backRepoEngine *BackRepoEngineStruct) RestorePhaseTwo() {
 
 }
 
+// BackRepoEngine.ResetReversePointers commits all staged instances of Engine to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoEngine *BackRepoEngineStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, engine := range backRepoEngine.Map_EngineDBID_EnginePtr {
+		backRepoEngine.ResetReversePointersInstance(backRepo, idx, engine)
+	}
+
+	return
+}
+
+func (backRepoEngine *BackRepoEngineStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Engine) (Error error) {
+
+	// fetch matching engineDB
+	if engineDB, ok := backRepoEngine.Map_EngineDBID_EngineDB[idx]; ok {
+		_ = engineDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
+}
+
 // this field is used during the restauration process.
 // it stores the ID at the backup time and is used for renumbering
 var BackRepoEngineid_atBckpTime_newID map[uint]uint

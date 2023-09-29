@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
+import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs';
 
 // insertion point sub template for services imports 
 import { CircleDB } from './circle-db'
@@ -161,7 +161,9 @@ export class FrontRepoService {
   }
 
   // typing of observable can be messy in typescript. Therefore, one force the type
-  observableFrontRepo: [ // insertion point sub template 
+  observableFrontRepo: [ 
+    Observable<null>, // see below for the of(null) observable
+    // insertion point sub template 
     Observable<CircleDB[]>,
     Observable<DivIconDB[]>,
     Observable<LayerGroupDB[]>,
@@ -171,7 +173,16 @@ export class FrontRepoService {
     Observable<UserClickDB[]>,
     Observable<VLineDB[]>,
     Observable<VisualTrackDB[]>,
-  ] = [ // insertion point sub template
+  ] = [ 
+    // Using "combineLatest" with a placeholder observable.
+    //
+    // This allows the typescript compiler to pass when no GongStruct is present in the front API
+    //
+    // The "of(null)" is a "meaningless" observable that emits a single value (null) and completes.
+    // This is used as a workaround to satisfy TypeScript requirements and the "combineLatest" 
+    // expectation for a non-empty array of observables.
+    of(null), // 
+    // insertion point sub template
       this.circleService.getCircles(this.GONG__StackPath),
       this.diviconService.getDivIcons(this.GONG__StackPath),
       this.layergroupService.getLayerGroups(this.GONG__StackPath),
@@ -193,7 +204,9 @@ export class FrontRepoService {
 
     this.GONG__StackPath = GONG__StackPath
 
-    this.observableFrontRepo = [ // insertion point sub template
+    this.observableFrontRepo = [ 
+      of(null), // see above for justification
+      // insertion point sub template
       this.circleService.getCircles(this.GONG__StackPath),
       this.diviconService.getDivIcons(this.GONG__StackPath),
       this.layergroupService.getLayerGroups(this.GONG__StackPath),
@@ -210,7 +223,9 @@ export class FrontRepoService {
         combineLatest(
           this.observableFrontRepo
         ).subscribe(
-          ([ // insertion point sub template for declarations 
+          ([ 
+            ___of_null, // see above for the explanation about of
+            // insertion point sub template for declarations 
             circles_,
             divicons_,
             layergroups_,
@@ -669,6 +684,65 @@ export class FrontRepoService {
                 }
 
                 // insertion point for redeeming ONE-MANY associations
+              }
+            )
+
+            // 
+            // Third Step: sort arrays (slices in go) according to their index
+            // insertion point sub template for redeem 
+            circles.forEach(
+              circle => {
+                // insertion point for sorting
+              }
+            )
+            divicons.forEach(
+              divicon => {
+                // insertion point for sorting
+              }
+            )
+            layergroups.forEach(
+              layergroup => {
+                // insertion point for sorting
+              }
+            )
+            layergroupuses.forEach(
+              layergroupuse => {
+                // insertion point for sorting
+              }
+            )
+            mapoptionss.forEach(
+              mapoptions => {
+                // insertion point for sorting
+                mapoptions.LayerGroupUses?.sort((t1, t2) => {
+                  if (t1.MapOptions_LayerGroupUsesDBID_Index.Int64 > t2.MapOptions_LayerGroupUsesDBID_Index.Int64) {
+                    return 1;
+                  }
+                  if (t1.MapOptions_LayerGroupUsesDBID_Index.Int64 < t2.MapOptions_LayerGroupUsesDBID_Index.Int64) {
+                    return -1;
+                  }
+                  return 0;
+                })
+
+              }
+            )
+            markers.forEach(
+              marker => {
+                // insertion point for sorting
+              }
+            )
+            userclicks.forEach(
+              userclick => {
+                // insertion point for sorting
+              }
+            )
+            vlines.forEach(
+              vline => {
+                // insertion point for sorting
+              }
+            )
+            visualtracks.forEach(
+              visualtrack => {
+                // insertion point for sorting
               }
             )
 

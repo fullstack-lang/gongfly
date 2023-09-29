@@ -42,6 +42,10 @@ export class ScenarioService {
   }
 
   /** GET scenarios from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<ScenarioDB[]> {
+    return this.getScenarios(GONG__StackPath)
+  }
   getScenarios(GONG__StackPath: string): Observable<ScenarioDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -55,6 +59,10 @@ export class ScenarioService {
   }
 
   /** GET scenario by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<ScenarioDB> {
+	return this.getScenario(id, GONG__StackPath)
+  }
   getScenario(id: number, GONG__StackPath: string): Observable<ScenarioDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -67,6 +75,9 @@ export class ScenarioService {
   }
 
   /** POST: add a new scenario to the server */
+  post(scenariodb: ScenarioDB, GONG__StackPath: string): Observable<ScenarioDB> {
+    return this.postScenario(scenariodb, GONG__StackPath)	
+  }
   postScenario(scenariodb: ScenarioDB, GONG__StackPath: string): Observable<ScenarioDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
@@ -87,6 +98,9 @@ export class ScenarioService {
   }
 
   /** DELETE: delete the scenariodb from the server */
+  delete(scenariodb: ScenarioDB | number, GONG__StackPath: string): Observable<ScenarioDB> {
+    return this.deleteScenario(scenariodb, GONG__StackPath)
+  }
   deleteScenario(scenariodb: ScenarioDB | number, GONG__StackPath: string): Observable<ScenarioDB> {
     const id = typeof scenariodb === 'number' ? scenariodb : scenariodb.ID;
     const url = `${this.scenariosUrl}/${id}`;
@@ -104,6 +118,9 @@ export class ScenarioService {
   }
 
   /** PUT: update the scenariodb on the server */
+  update(scenariodb: ScenarioDB, GONG__StackPath: string): Observable<ScenarioDB> {
+    return this.updateScenario(scenariodb, GONG__StackPath)
+  }
   updateScenario(scenariodb: ScenarioDB, GONG__StackPath: string): Observable<ScenarioDB> {
     const id = typeof scenariodb === 'number' ? scenariodb : scenariodb.ID;
     const url = `${this.scenariosUrl}/${id}`;
@@ -119,7 +136,7 @@ export class ScenarioService {
     return this.http.put<ScenarioDB>(url, scenariodb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated scenariodb id=${scenariodb.ID}`)
+        // this.log(`updated scenariodb id=${scenariodb.ID}`)
       }),
       catchError(this.handleError<ScenarioDB>('updateScenario'))
     );

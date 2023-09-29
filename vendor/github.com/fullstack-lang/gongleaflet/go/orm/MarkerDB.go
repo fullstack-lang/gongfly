@@ -241,6 +241,9 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseTwoInstance(backRepo *Bac
 				markerDB.LayerGroupID.Int64 = int64(LayerGroupId)
 				markerDB.LayerGroupID.Valid = true
 			}
+		} else {
+			markerDB.LayerGroupID.Int64 = 0
+			markerDB.LayerGroupID.Valid = true
 		}
 
 		// commit pointer value marker.DivIcon translates to updating the marker.DivIconID
@@ -250,6 +253,9 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseTwoInstance(backRepo *Bac
 				markerDB.DivIconID.Int64 = int64(DivIconId)
 				markerDB.DivIconID.Valid = true
 			}
+		} else {
+			markerDB.DivIconID.Int64 = 0
+			markerDB.DivIconID.Valid = true
 		}
 
 		query := backRepoMarker.db.Save(&markerDB)
@@ -360,10 +366,12 @@ func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseTwoInstance(backRepo *B
 
 	// insertion point for checkout of pointer encoding
 	// LayerGroup field
+	marker.LayerGroup = nil
 	if markerDB.LayerGroupID.Int64 != 0 {
 		marker.LayerGroup = backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(markerDB.LayerGroupID.Int64)]
 	}
 	// DivIcon field
+	marker.DivIcon = nil
 	if markerDB.DivIconID.Int64 != 0 {
 		marker.DivIcon = backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[uint(markerDB.DivIconID.Int64)]
 	}
@@ -624,6 +632,30 @@ func (backRepoMarker *BackRepoMarkerStruct) RestorePhaseTwo() {
 		}
 	}
 
+}
+
+// BackRepoMarker.ResetReversePointers commits all staged instances of Marker to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoMarker *BackRepoMarkerStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, marker := range backRepoMarker.Map_MarkerDBID_MarkerPtr {
+		backRepoMarker.ResetReversePointersInstance(backRepo, idx, marker)
+	}
+
+	return
+}
+
+func (backRepoMarker *BackRepoMarkerStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Marker) (Error error) {
+
+	// fetch matching markerDB
+	if markerDB, ok := backRepoMarker.Map_MarkerDBID_MarkerDB[idx]; ok {
+		_ = markerDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
 }
 
 // this field is used during the restauration process.

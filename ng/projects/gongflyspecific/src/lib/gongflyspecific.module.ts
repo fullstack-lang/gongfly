@@ -2,9 +2,6 @@ import { NgModule } from '@angular/core';
 
 import { GongflyspecificComponent } from './gongflyspecific.component';
 
-import { GongdocModule } from 'gongdoc'
-import { GongdocdiagramsModule } from 'gongdocdiagrams'
-
 import { GongflyModule } from 'gongfly'
 
 import { MatRadioModule } from '@angular/material/radio';
@@ -29,8 +26,6 @@ import { GongleafletspecificModule } from 'gongleafletspecific'
     GongflyDashboardComponent
   ],
   imports: [
-    GongdocModule,
-    GongdocdiagramsModule,
 
     MatRadioModule,
     FormsModule,

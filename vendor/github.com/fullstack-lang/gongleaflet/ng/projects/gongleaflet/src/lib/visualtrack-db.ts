@@ -6,6 +6,9 @@ import { DivIconDB } from './divicon-db'
 import { NullInt64 } from './null-int64'
 
 export class VisualTrackDB {
+
+	static GONGSTRUCT_NAME = "VisualTrack"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

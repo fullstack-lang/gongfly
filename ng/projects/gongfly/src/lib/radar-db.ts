@@ -4,6 +4,9 @@
 import { NullInt64 } from './null-int64'
 
 export class RadarDB {
+
+	static GONGSTRUCT_NAME = "Radar"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

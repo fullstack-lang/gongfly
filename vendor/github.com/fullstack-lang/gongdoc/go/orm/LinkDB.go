@@ -77,11 +77,44 @@ type LinkDB struct {
 	// Declation for basic field linkDB.Fieldtypename
 	Fieldtypename_Data sql.NullString
 
+	// Declation for basic field linkDB.FieldOffsetX
+	FieldOffsetX_Data sql.NullFloat64
+
+	// Declation for basic field linkDB.FieldOffsetY
+	FieldOffsetY_Data sql.NullFloat64
+
 	// Declation for basic field linkDB.TargetMultiplicity
 	TargetMultiplicity_Data sql.NullString
 
+	// Declation for basic field linkDB.TargetMultiplicityOffsetX
+	TargetMultiplicityOffsetX_Data sql.NullFloat64
+
+	// Declation for basic field linkDB.TargetMultiplicityOffsetY
+	TargetMultiplicityOffsetY_Data sql.NullFloat64
+
 	// Declation for basic field linkDB.SourceMultiplicity
 	SourceMultiplicity_Data sql.NullString
+
+	// Declation for basic field linkDB.SourceMultiplicityOffsetX
+	SourceMultiplicityOffsetX_Data sql.NullFloat64
+
+	// Declation for basic field linkDB.SourceMultiplicityOffsetY
+	SourceMultiplicityOffsetY_Data sql.NullFloat64
+
+	// Declation for basic field linkDB.StartOrientation
+	StartOrientation_Data sql.NullString
+
+	// Declation for basic field linkDB.StartRatio
+	StartRatio_Data sql.NullFloat64
+
+	// Declation for basic field linkDB.EndOrientation
+	EndOrientation_Data sql.NullString
+
+	// Declation for basic field linkDB.EndRatio
+	EndRatio_Data sql.NullFloat64
+
+	// Declation for basic field linkDB.CornerOffsetRatio
+	CornerOffsetRatio_Data sql.NullFloat64
 	// encoding of pointers
 	LinkPointersEnconding
 }
@@ -109,9 +142,31 @@ type LinkWOP struct {
 
 	Fieldtypename string `xlsx:"3"`
 
-	TargetMultiplicity models.MultiplicityType `xlsx:"4"`
+	FieldOffsetX float64 `xlsx:"4"`
 
-	SourceMultiplicity models.MultiplicityType `xlsx:"5"`
+	FieldOffsetY float64 `xlsx:"5"`
+
+	TargetMultiplicity models.MultiplicityType `xlsx:"6"`
+
+	TargetMultiplicityOffsetX float64 `xlsx:"7"`
+
+	TargetMultiplicityOffsetY float64 `xlsx:"8"`
+
+	SourceMultiplicity models.MultiplicityType `xlsx:"9"`
+
+	SourceMultiplicityOffsetX float64 `xlsx:"10"`
+
+	SourceMultiplicityOffsetY float64 `xlsx:"11"`
+
+	StartOrientation models.OrientationType `xlsx:"12"`
+
+	StartRatio float64 `xlsx:"13"`
+
+	EndOrientation models.OrientationType `xlsx:"14"`
+
+	EndRatio float64 `xlsx:"15"`
+
+	CornerOffsetRatio float64 `xlsx:"16"`
 	// insertion for WOP pointer fields
 }
 
@@ -121,8 +176,19 @@ var Link_Fields = []string{
 	"Name",
 	"Identifier",
 	"Fieldtypename",
+	"FieldOffsetX",
+	"FieldOffsetY",
 	"TargetMultiplicity",
+	"TargetMultiplicityOffsetX",
+	"TargetMultiplicityOffsetY",
 	"SourceMultiplicity",
+	"SourceMultiplicityOffsetX",
+	"SourceMultiplicityOffsetY",
+	"StartOrientation",
+	"StartRatio",
+	"EndOrientation",
+	"EndRatio",
+	"CornerOffsetRatio",
 }
 
 type BackRepoLinkStruct struct {
@@ -249,6 +315,9 @@ func (backRepoLink *BackRepoLinkStruct) CommitPhaseTwoInstance(backRepo *BackRep
 				linkDB.MiddleverticeID.Int64 = int64(MiddleverticeId)
 				linkDB.MiddleverticeID.Valid = true
 			}
+		} else {
+			linkDB.MiddleverticeID.Int64 = 0
+			linkDB.MiddleverticeID.Valid = true
 		}
 
 		query := backRepoLink.db.Save(&linkDB)
@@ -359,6 +428,7 @@ func (backRepoLink *BackRepoLinkStruct) CheckoutPhaseTwoInstance(backRepo *BackR
 
 	// insertion point for checkout of pointer encoding
 	// Middlevertice field
+	link.Middlevertice = nil
 	if linkDB.MiddleverticeID.Int64 != 0 {
 		link.Middlevertice = backRepo.BackRepoVertice.Map_VerticeDBID_VerticePtr[uint(linkDB.MiddleverticeID.Int64)]
 	}
@@ -405,11 +475,44 @@ func (linkDB *LinkDB) CopyBasicFieldsFromLink(link *models.Link) {
 	linkDB.Fieldtypename_Data.String = link.Fieldtypename
 	linkDB.Fieldtypename_Data.Valid = true
 
+	linkDB.FieldOffsetX_Data.Float64 = link.FieldOffsetX
+	linkDB.FieldOffsetX_Data.Valid = true
+
+	linkDB.FieldOffsetY_Data.Float64 = link.FieldOffsetY
+	linkDB.FieldOffsetY_Data.Valid = true
+
 	linkDB.TargetMultiplicity_Data.String = link.TargetMultiplicity.ToString()
 	linkDB.TargetMultiplicity_Data.Valid = true
 
+	linkDB.TargetMultiplicityOffsetX_Data.Float64 = link.TargetMultiplicityOffsetX
+	linkDB.TargetMultiplicityOffsetX_Data.Valid = true
+
+	linkDB.TargetMultiplicityOffsetY_Data.Float64 = link.TargetMultiplicityOffsetY
+	linkDB.TargetMultiplicityOffsetY_Data.Valid = true
+
 	linkDB.SourceMultiplicity_Data.String = link.SourceMultiplicity.ToString()
 	linkDB.SourceMultiplicity_Data.Valid = true
+
+	linkDB.SourceMultiplicityOffsetX_Data.Float64 = link.SourceMultiplicityOffsetX
+	linkDB.SourceMultiplicityOffsetX_Data.Valid = true
+
+	linkDB.SourceMultiplicityOffsetY_Data.Float64 = link.SourceMultiplicityOffsetY
+	linkDB.SourceMultiplicityOffsetY_Data.Valid = true
+
+	linkDB.StartOrientation_Data.String = link.StartOrientation.ToString()
+	linkDB.StartOrientation_Data.Valid = true
+
+	linkDB.StartRatio_Data.Float64 = link.StartRatio
+	linkDB.StartRatio_Data.Valid = true
+
+	linkDB.EndOrientation_Data.String = link.EndOrientation.ToString()
+	linkDB.EndOrientation_Data.Valid = true
+
+	linkDB.EndRatio_Data.Float64 = link.EndRatio
+	linkDB.EndRatio_Data.Valid = true
+
+	linkDB.CornerOffsetRatio_Data.Float64 = link.CornerOffsetRatio
+	linkDB.CornerOffsetRatio_Data.Valid = true
 }
 
 // CopyBasicFieldsFromLinkWOP
@@ -425,11 +528,44 @@ func (linkDB *LinkDB) CopyBasicFieldsFromLinkWOP(link *LinkWOP) {
 	linkDB.Fieldtypename_Data.String = link.Fieldtypename
 	linkDB.Fieldtypename_Data.Valid = true
 
+	linkDB.FieldOffsetX_Data.Float64 = link.FieldOffsetX
+	linkDB.FieldOffsetX_Data.Valid = true
+
+	linkDB.FieldOffsetY_Data.Float64 = link.FieldOffsetY
+	linkDB.FieldOffsetY_Data.Valid = true
+
 	linkDB.TargetMultiplicity_Data.String = link.TargetMultiplicity.ToString()
 	linkDB.TargetMultiplicity_Data.Valid = true
 
+	linkDB.TargetMultiplicityOffsetX_Data.Float64 = link.TargetMultiplicityOffsetX
+	linkDB.TargetMultiplicityOffsetX_Data.Valid = true
+
+	linkDB.TargetMultiplicityOffsetY_Data.Float64 = link.TargetMultiplicityOffsetY
+	linkDB.TargetMultiplicityOffsetY_Data.Valid = true
+
 	linkDB.SourceMultiplicity_Data.String = link.SourceMultiplicity.ToString()
 	linkDB.SourceMultiplicity_Data.Valid = true
+
+	linkDB.SourceMultiplicityOffsetX_Data.Float64 = link.SourceMultiplicityOffsetX
+	linkDB.SourceMultiplicityOffsetX_Data.Valid = true
+
+	linkDB.SourceMultiplicityOffsetY_Data.Float64 = link.SourceMultiplicityOffsetY
+	linkDB.SourceMultiplicityOffsetY_Data.Valid = true
+
+	linkDB.StartOrientation_Data.String = link.StartOrientation.ToString()
+	linkDB.StartOrientation_Data.Valid = true
+
+	linkDB.StartRatio_Data.Float64 = link.StartRatio
+	linkDB.StartRatio_Data.Valid = true
+
+	linkDB.EndOrientation_Data.String = link.EndOrientation.ToString()
+	linkDB.EndOrientation_Data.Valid = true
+
+	linkDB.EndRatio_Data.Float64 = link.EndRatio
+	linkDB.EndRatio_Data.Valid = true
+
+	linkDB.CornerOffsetRatio_Data.Float64 = link.CornerOffsetRatio
+	linkDB.CornerOffsetRatio_Data.Valid = true
 }
 
 // CopyBasicFieldsToLink
@@ -438,8 +574,19 @@ func (linkDB *LinkDB) CopyBasicFieldsToLink(link *models.Link) {
 	link.Name = linkDB.Name_Data.String
 	link.Identifier = linkDB.Identifier_Data.String
 	link.Fieldtypename = linkDB.Fieldtypename_Data.String
+	link.FieldOffsetX = linkDB.FieldOffsetX_Data.Float64
+	link.FieldOffsetY = linkDB.FieldOffsetY_Data.Float64
 	link.TargetMultiplicity.FromString(linkDB.TargetMultiplicity_Data.String)
+	link.TargetMultiplicityOffsetX = linkDB.TargetMultiplicityOffsetX_Data.Float64
+	link.TargetMultiplicityOffsetY = linkDB.TargetMultiplicityOffsetY_Data.Float64
 	link.SourceMultiplicity.FromString(linkDB.SourceMultiplicity_Data.String)
+	link.SourceMultiplicityOffsetX = linkDB.SourceMultiplicityOffsetX_Data.Float64
+	link.SourceMultiplicityOffsetY = linkDB.SourceMultiplicityOffsetY_Data.Float64
+	link.StartOrientation.FromString(linkDB.StartOrientation_Data.String)
+	link.StartRatio = linkDB.StartRatio_Data.Float64
+	link.EndOrientation.FromString(linkDB.EndOrientation_Data.String)
+	link.EndRatio = linkDB.EndRatio_Data.Float64
+	link.CornerOffsetRatio = linkDB.CornerOffsetRatio_Data.Float64
 }
 
 // CopyBasicFieldsToLinkWOP
@@ -449,8 +596,19 @@ func (linkDB *LinkDB) CopyBasicFieldsToLinkWOP(link *LinkWOP) {
 	link.Name = linkDB.Name_Data.String
 	link.Identifier = linkDB.Identifier_Data.String
 	link.Fieldtypename = linkDB.Fieldtypename_Data.String
+	link.FieldOffsetX = linkDB.FieldOffsetX_Data.Float64
+	link.FieldOffsetY = linkDB.FieldOffsetY_Data.Float64
 	link.TargetMultiplicity.FromString(linkDB.TargetMultiplicity_Data.String)
+	link.TargetMultiplicityOffsetX = linkDB.TargetMultiplicityOffsetX_Data.Float64
+	link.TargetMultiplicityOffsetY = linkDB.TargetMultiplicityOffsetY_Data.Float64
 	link.SourceMultiplicity.FromString(linkDB.SourceMultiplicity_Data.String)
+	link.SourceMultiplicityOffsetX = linkDB.SourceMultiplicityOffsetX_Data.Float64
+	link.SourceMultiplicityOffsetY = linkDB.SourceMultiplicityOffsetY_Data.Float64
+	link.StartOrientation.FromString(linkDB.StartOrientation_Data.String)
+	link.StartRatio = linkDB.StartRatio_Data.Float64
+	link.EndOrientation.FromString(linkDB.EndOrientation_Data.String)
+	link.EndRatio = linkDB.EndRatio_Data.Float64
+	link.CornerOffsetRatio = linkDB.CornerOffsetRatio_Data.Float64
 }
 
 // Backup generates a json file from a slice of all LinkDB instances in the backrepo
@@ -627,6 +785,39 @@ func (backRepoLink *BackRepoLinkStruct) RestorePhaseTwo() {
 		}
 	}
 
+}
+
+// BackRepoLink.ResetReversePointers commits all staged instances of Link to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoLink *BackRepoLinkStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, link := range backRepoLink.Map_LinkDBID_LinkPtr {
+		backRepoLink.ResetReversePointersInstance(backRepo, idx, link)
+	}
+
+	return
+}
+
+func (backRepoLink *BackRepoLinkStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Link) (Error error) {
+
+	// fetch matching linkDB
+	if linkDB, ok := backRepoLink.Map_LinkDBID_LinkDB[idx]; ok {
+		_ = linkDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		if linkDB.GongStructShape_LinksDBID.Int64 != 0 {
+			linkDB.GongStructShape_LinksDBID.Int64 = 0
+			linkDB.GongStructShape_LinksDBID.Valid = true
+
+			// save the reset
+			if q := backRepoLink.db.Save(linkDB); q.Error != nil {
+				return q.Error
+			}
+		}
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
 }
 
 // this field is used during the restauration process.

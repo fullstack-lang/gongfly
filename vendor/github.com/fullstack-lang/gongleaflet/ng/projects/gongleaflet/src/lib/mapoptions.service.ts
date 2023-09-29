@@ -42,6 +42,10 @@ export class MapOptionsService {
   }
 
   /** GET mapoptionss from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<MapOptionsDB[]> {
+    return this.getMapOptionss(GONG__StackPath)
+  }
   getMapOptionss(GONG__StackPath: string): Observable<MapOptionsDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -55,6 +59,10 @@ export class MapOptionsService {
   }
 
   /** GET mapoptions by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<MapOptionsDB> {
+	return this.getMapOptions(id, GONG__StackPath)
+  }
   getMapOptions(id: number, GONG__StackPath: string): Observable<MapOptionsDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -67,9 +75,13 @@ export class MapOptionsService {
   }
 
   /** POST: add a new mapoptions to the server */
+  post(mapoptionsdb: MapOptionsDB, GONG__StackPath: string): Observable<MapOptionsDB> {
+    return this.postMapOptions(mapoptionsdb, GONG__StackPath)	
+  }
   postMapOptions(mapoptionsdb: MapOptionsDB, GONG__StackPath: string): Observable<MapOptionsDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let LayerGroupUses = mapoptionsdb.LayerGroupUses
     mapoptionsdb.LayerGroupUses = []
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -81,6 +93,7 @@ export class MapOptionsService {
     return this.http.post<MapOptionsDB>(this.mapoptionssUrl, mapoptionsdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
+	      mapoptionsdb.LayerGroupUses = LayerGroupUses
         // this.log(`posted mapoptionsdb id=${mapoptionsdb.ID}`)
       }),
       catchError(this.handleError<MapOptionsDB>('postMapOptions'))
@@ -88,6 +101,9 @@ export class MapOptionsService {
   }
 
   /** DELETE: delete the mapoptionsdb from the server */
+  delete(mapoptionsdb: MapOptionsDB | number, GONG__StackPath: string): Observable<MapOptionsDB> {
+    return this.deleteMapOptions(mapoptionsdb, GONG__StackPath)
+  }
   deleteMapOptions(mapoptionsdb: MapOptionsDB | number, GONG__StackPath: string): Observable<MapOptionsDB> {
     const id = typeof mapoptionsdb === 'number' ? mapoptionsdb : mapoptionsdb.ID;
     const url = `${this.mapoptionssUrl}/${id}`;
@@ -105,11 +121,15 @@ export class MapOptionsService {
   }
 
   /** PUT: update the mapoptionsdb on the server */
+  update(mapoptionsdb: MapOptionsDB, GONG__StackPath: string): Observable<MapOptionsDB> {
+    return this.updateMapOptions(mapoptionsdb, GONG__StackPath)
+  }
   updateMapOptions(mapoptionsdb: MapOptionsDB, GONG__StackPath: string): Observable<MapOptionsDB> {
     const id = typeof mapoptionsdb === 'number' ? mapoptionsdb : mapoptionsdb.ID;
     const url = `${this.mapoptionssUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let LayerGroupUses = mapoptionsdb.LayerGroupUses
     mapoptionsdb.LayerGroupUses = []
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -121,7 +141,8 @@ export class MapOptionsService {
     return this.http.put<MapOptionsDB>(url, mapoptionsdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated mapoptionsdb id=${mapoptionsdb.ID}`)
+	      mapoptionsdb.LayerGroupUses = LayerGroupUses
+        // this.log(`updated mapoptionsdb id=${mapoptionsdb.ID}`)
       }),
       catchError(this.handleError<MapOptionsDB>('updateMapOptions'))
     );

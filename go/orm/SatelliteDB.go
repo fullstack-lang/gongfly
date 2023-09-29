@@ -664,6 +664,30 @@ func (backRepoSatellite *BackRepoSatelliteStruct) RestorePhaseTwo() {
 
 }
 
+// BackRepoSatellite.ResetReversePointers commits all staged instances of Satellite to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoSatellite *BackRepoSatelliteStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, satellite := range backRepoSatellite.Map_SatelliteDBID_SatellitePtr {
+		backRepoSatellite.ResetReversePointersInstance(backRepo, idx, satellite)
+	}
+
+	return
+}
+
+func (backRepoSatellite *BackRepoSatelliteStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Satellite) (Error error) {
+
+	// fetch matching satelliteDB
+	if satelliteDB, ok := backRepoSatellite.Map_SatelliteDBID_SatelliteDB[idx]; ok {
+		_ = satelliteDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
+}
+
 // this field is used during the restauration process.
 // it stores the ID at the backup time and is used for renumbering
 var BackRepoSatelliteid_atBckpTime_newID map[uint]uint

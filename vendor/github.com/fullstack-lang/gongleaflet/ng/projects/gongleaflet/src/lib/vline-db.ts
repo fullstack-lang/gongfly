@@ -5,6 +5,9 @@ import { LayerGroupDB } from './layergroup-db'
 import { NullInt64 } from './null-int64'
 
 export class VLineDB {
+
+	static GONGSTRUCT_NAME = "VLine"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 
 import { GongsimspecificComponent } from './gongsimspecific.component';
-import { DataModelPanelComponent } from './data-model-panel/data-model-panel.component';
 
 import { GongdocModule } from 'gongdoc'
-import { GongdocdiagramsModule } from 'gongdocdiagrams'
+import { GongdocspecificModule } from 'gongdocspecific'
 
 import { GongsimModule } from 'gongsim'
 
@@ -20,12 +19,11 @@ import { EngineControlComponent } from './engine-control/engine-control.componen
 @NgModule({
   declarations: [
     GongsimspecificComponent,
-    DataModelPanelComponent,
     EngineControlComponent
   ],
   imports: [
     GongdocModule,
-    GongdocdiagramsModule,
+    GongdocspecificModule,
 
     MatToolbarModule,
     MatIconModule,
@@ -40,7 +38,6 @@ import { EngineControlComponent } from './engine-control/engine-control.componen
   ],
   exports: [
     GongsimspecificComponent,
-    DataModelPanelComponent,
     EngineControlComponent
   ]
 })

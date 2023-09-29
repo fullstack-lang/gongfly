@@ -249,6 +249,9 @@ func (backRepoCircle *BackRepoCircleStruct) CommitPhaseTwoInstance(backRepo *Bac
 				circleDB.LayerGroupID.Int64 = int64(LayerGroupId)
 				circleDB.LayerGroupID.Valid = true
 			}
+		} else {
+			circleDB.LayerGroupID.Int64 = 0
+			circleDB.LayerGroupID.Valid = true
 		}
 
 		query := backRepoCircle.db.Save(&circleDB)
@@ -359,6 +362,7 @@ func (backRepoCircle *BackRepoCircleStruct) CheckoutPhaseTwoInstance(backRepo *B
 
 	// insertion point for checkout of pointer encoding
 	// LayerGroup field
+	circle.LayerGroup = nil
 	if circleDB.LayerGroupID.Int64 != 0 {
 		circle.LayerGroup = backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(circleDB.LayerGroupID.Int64)]
 	}
@@ -629,6 +633,30 @@ func (backRepoCircle *BackRepoCircleStruct) RestorePhaseTwo() {
 		}
 	}
 
+}
+
+// BackRepoCircle.ResetReversePointers commits all staged instances of Circle to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoCircle *BackRepoCircleStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, circle := range backRepoCircle.Map_CircleDBID_CirclePtr {
+		backRepoCircle.ResetReversePointersInstance(backRepo, idx, circle)
+	}
+
+	return
+}
+
+func (backRepoCircle *BackRepoCircleStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Circle) (Error error) {
+
+	// fetch matching circleDB
+	if circleDB, ok := backRepoCircle.Map_CircleDBID_CircleDB[idx]; ok {
+		_ = circleDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
 }
 
 // this field is used during the restauration process.

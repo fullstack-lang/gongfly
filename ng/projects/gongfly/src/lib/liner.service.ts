@@ -43,6 +43,10 @@ export class LinerService {
   }
 
   /** GET liners from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<LinerDB[]> {
+    return this.getLiners(GONG__StackPath)
+  }
   getLiners(GONG__StackPath: string): Observable<LinerDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -56,6 +60,10 @@ export class LinerService {
   }
 
   /** GET liner by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<LinerDB> {
+	return this.getLiner(id, GONG__StackPath)
+  }
   getLiner(id: number, GONG__StackPath: string): Observable<LinerDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -68,9 +76,13 @@ export class LinerService {
   }
 
   /** POST: add a new liner to the server */
+  post(linerdb: LinerDB, GONG__StackPath: string): Observable<LinerDB> {
+    return this.postLiner(linerdb, GONG__StackPath)	
+  }
   postLiner(linerdb: LinerDB, GONG__StackPath: string): Observable<LinerDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let ReporingLine = linerdb.ReporingLine
     linerdb.ReporingLine = new OpsLineDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -89,6 +101,9 @@ export class LinerService {
   }
 
   /** DELETE: delete the linerdb from the server */
+  delete(linerdb: LinerDB | number, GONG__StackPath: string): Observable<LinerDB> {
+    return this.deleteLiner(linerdb, GONG__StackPath)
+  }
   deleteLiner(linerdb: LinerDB | number, GONG__StackPath: string): Observable<LinerDB> {
     const id = typeof linerdb === 'number' ? linerdb : linerdb.ID;
     const url = `${this.linersUrl}/${id}`;
@@ -106,11 +121,15 @@ export class LinerService {
   }
 
   /** PUT: update the linerdb on the server */
+  update(linerdb: LinerDB, GONG__StackPath: string): Observable<LinerDB> {
+    return this.updateLiner(linerdb, GONG__StackPath)
+  }
   updateLiner(linerdb: LinerDB, GONG__StackPath: string): Observable<LinerDB> {
     const id = typeof linerdb === 'number' ? linerdb : linerdb.ID;
     const url = `${this.linersUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let ReporingLine = linerdb.ReporingLine
     linerdb.ReporingLine = new OpsLineDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -122,7 +141,7 @@ export class LinerService {
     return this.http.put<LinerDB>(url, linerdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated linerdb id=${linerdb.ID}`)
+        // this.log(`updated linerdb id=${linerdb.ID}`)
       }),
       catchError(this.handleError<LinerDB>('updateLiner'))
     );

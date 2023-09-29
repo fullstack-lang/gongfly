@@ -42,6 +42,10 @@ export class MessageService {
   }
 
   /** GET messages from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<MessageDB[]> {
+    return this.getMessages(GONG__StackPath)
+  }
   getMessages(GONG__StackPath: string): Observable<MessageDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -55,6 +59,10 @@ export class MessageService {
   }
 
   /** GET message by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<MessageDB> {
+	return this.getMessage(id, GONG__StackPath)
+  }
   getMessage(id: number, GONG__StackPath: string): Observable<MessageDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -67,6 +75,9 @@ export class MessageService {
   }
 
   /** POST: add a new message to the server */
+  post(messagedb: MessageDB, GONG__StackPath: string): Observable<MessageDB> {
+    return this.postMessage(messagedb, GONG__StackPath)	
+  }
   postMessage(messagedb: MessageDB, GONG__StackPath: string): Observable<MessageDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
@@ -87,6 +98,9 @@ export class MessageService {
   }
 
   /** DELETE: delete the messagedb from the server */
+  delete(messagedb: MessageDB | number, GONG__StackPath: string): Observable<MessageDB> {
+    return this.deleteMessage(messagedb, GONG__StackPath)
+  }
   deleteMessage(messagedb: MessageDB | number, GONG__StackPath: string): Observable<MessageDB> {
     const id = typeof messagedb === 'number' ? messagedb : messagedb.ID;
     const url = `${this.messagesUrl}/${id}`;
@@ -104,6 +118,9 @@ export class MessageService {
   }
 
   /** PUT: update the messagedb on the server */
+  update(messagedb: MessageDB, GONG__StackPath: string): Observable<MessageDB> {
+    return this.updateMessage(messagedb, GONG__StackPath)
+  }
   updateMessage(messagedb: MessageDB, GONG__StackPath: string): Observable<MessageDB> {
     const id = typeof messagedb === 'number' ? messagedb : messagedb.ID;
     const url = `${this.messagesUrl}/${id}`;
@@ -119,7 +136,7 @@ export class MessageService {
     return this.http.put<MessageDB>(url, messagedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated messagedb id=${messagedb.ID}`)
+        // this.log(`updated messagedb id=${messagedb.ID}`)
       }),
       catchError(this.handleError<MessageDB>('updateMessage'))
     );

@@ -232,6 +232,9 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CommitPhaseTwoInstance
 				layergroupuseDB.LayerGroupID.Int64 = int64(LayerGroupId)
 				layergroupuseDB.LayerGroupID.Valid = true
 			}
+		} else {
+			layergroupuseDB.LayerGroupID.Int64 = 0
+			layergroupuseDB.LayerGroupID.Valid = true
 		}
 
 		query := backRepoLayerGroupUse.db.Save(&layergroupuseDB)
@@ -342,6 +345,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CheckoutPhaseTwoInstan
 
 	// insertion point for checkout of pointer encoding
 	// LayerGroup field
+	layergroupuse.LayerGroup = nil
 	if layergroupuseDB.LayerGroupID.Int64 != 0 {
 		layergroupuse.LayerGroup = backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(layergroupuseDB.LayerGroupID.Int64)]
 	}
@@ -586,6 +590,39 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) RestorePhaseTwo() {
 		}
 	}
 
+}
+
+// BackRepoLayerGroupUse.ResetReversePointers commits all staged instances of LayerGroupUse to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, layergroupuse := range backRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr {
+		backRepoLayerGroupUse.ResetReversePointersInstance(backRepo, idx, layergroupuse)
+	}
+
+	return
+}
+
+func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.LayerGroupUse) (Error error) {
+
+	// fetch matching layergroupuseDB
+	if layergroupuseDB, ok := backRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUseDB[idx]; ok {
+		_ = layergroupuseDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		if layergroupuseDB.MapOptions_LayerGroupUsesDBID.Int64 != 0 {
+			layergroupuseDB.MapOptions_LayerGroupUsesDBID.Int64 = 0
+			layergroupuseDB.MapOptions_LayerGroupUsesDBID.Valid = true
+
+			// save the reset
+			if q := backRepoLayerGroupUse.db.Save(layergroupuseDB); q.Error != nil {
+				return q.Error
+			}
+		}
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
 }
 
 // this field is used during the restauration process.

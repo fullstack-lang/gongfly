@@ -26,82 +26,10 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { AngularSplitModule, SplitComponent } from 'angular-split';
 
-import {
-	NgxMatDatetimePickerModule,
-	NgxMatNativeDateModule,
-	NgxMatTimepickerModule
-} from '@angular-material-components/datetime-picker';
-
 import { AppRoutingModule } from './app-routing.module';
-
-import { SplitterComponent } from './splitter/splitter.component'
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { GongstructSelectionService } from './gongstruct-selection.service'
-
-// insertion point for imports 
-import { CivilianAirportsTableComponent } from './civilianairports-table/civilianairports-table.component'
-import { CivilianAirportSortingComponent } from './civilianairport-sorting/civilianairport-sorting.component'
-import { CivilianAirportDetailComponent } from './civilianairport-detail/civilianairport-detail.component'
-
-import { LinersTableComponent } from './liners-table/liners-table.component'
-import { LinerSortingComponent } from './liner-sorting/liner-sorting.component'
-import { LinerDetailComponent } from './liner-detail/liner-detail.component'
-
-import { MessagesTableComponent } from './messages-table/messages-table.component'
-import { MessageSortingComponent } from './message-sorting/message-sorting.component'
-import { MessageDetailComponent } from './message-detail/message-detail.component'
-
-import { OpsLinesTableComponent } from './opslines-table/opslines-table.component'
-import { OpsLineSortingComponent } from './opsline-sorting/opsline-sorting.component'
-import { OpsLineDetailComponent } from './opsline-detail/opsline-detail.component'
-
-import { RadarsTableComponent } from './radars-table/radars-table.component'
-import { RadarSortingComponent } from './radar-sorting/radar-sorting.component'
-import { RadarDetailComponent } from './radar-detail/radar-detail.component'
-
-import { SatellitesTableComponent } from './satellites-table/satellites-table.component'
-import { SatelliteSortingComponent } from './satellite-sorting/satellite-sorting.component'
-import { SatelliteDetailComponent } from './satellite-detail/satellite-detail.component'
-
-import { ScenariosTableComponent } from './scenarios-table/scenarios-table.component'
-import { ScenarioSortingComponent } from './scenario-sorting/scenario-sorting.component'
-import { ScenarioDetailComponent } from './scenario-detail/scenario-detail.component'
-
 
 @NgModule({
 	declarations: [
-		// insertion point for declarations 
-		CivilianAirportsTableComponent,
-		CivilianAirportSortingComponent,
-		CivilianAirportDetailComponent,
-
-		LinersTableComponent,
-		LinerSortingComponent,
-		LinerDetailComponent,
-
-		MessagesTableComponent,
-		MessageSortingComponent,
-		MessageDetailComponent,
-
-		OpsLinesTableComponent,
-		OpsLineSortingComponent,
-		OpsLineDetailComponent,
-
-		RadarsTableComponent,
-		RadarSortingComponent,
-		RadarDetailComponent,
-
-		SatellitesTableComponent,
-		SatelliteSortingComponent,
-		SatelliteDetailComponent,
-
-		ScenariosTableComponent,
-		ScenarioSortingComponent,
-		ScenarioDetailComponent,
-
-
-		SplitterComponent,
-		SidebarComponent
 	],
 	imports: [
 		FormsModule,
@@ -130,53 +58,12 @@ import { ScenarioDetailComponent } from './scenario-detail/scenario-detail.compo
 		MatTreeModule,
 		DragDropModule,
 
-		NgxMatDatetimePickerModule,
-		NgxMatNativeDateModule,
-		NgxMatTimepickerModule,
-
 		AngularSplitModule,
 	],
 	exports: [
-		// insertion point for declarations 
-		CivilianAirportsTableComponent,
-		CivilianAirportSortingComponent,
-		CivilianAirportDetailComponent,
-
-		LinersTableComponent,
-		LinerSortingComponent,
-		LinerDetailComponent,
-
-		MessagesTableComponent,
-		MessageSortingComponent,
-		MessageDetailComponent,
-
-		OpsLinesTableComponent,
-		OpsLineSortingComponent,
-		OpsLineDetailComponent,
-
-		RadarsTableComponent,
-		RadarSortingComponent,
-		RadarDetailComponent,
-
-		SatellitesTableComponent,
-		SatelliteSortingComponent,
-		SatelliteDetailComponent,
-
-		ScenariosTableComponent,
-		ScenarioSortingComponent,
-		ScenarioDetailComponent,
-
-
-		SplitterComponent,
-		SidebarComponent,
-
 	],
 	providers: [
-		GongstructSelectionService,
-		{
-			provide: MatDialogRef,
-			useValue: {}
-		},
+		{ provide: MatDialogRef, useValue: { close: () => { } } }
 	],
 })
 export class GongflyModule { }

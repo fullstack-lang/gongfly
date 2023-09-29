@@ -43,6 +43,10 @@ export class VLineService {
   }
 
   /** GET vlines from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<VLineDB[]> {
+    return this.getVLines(GONG__StackPath)
+  }
   getVLines(GONG__StackPath: string): Observable<VLineDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -56,6 +60,10 @@ export class VLineService {
   }
 
   /** GET vline by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<VLineDB> {
+	return this.getVLine(id, GONG__StackPath)
+  }
   getVLine(id: number, GONG__StackPath: string): Observable<VLineDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -68,9 +76,13 @@ export class VLineService {
   }
 
   /** POST: add a new vline to the server */
+  post(vlinedb: VLineDB, GONG__StackPath: string): Observable<VLineDB> {
+    return this.postVLine(vlinedb, GONG__StackPath)	
+  }
   postVLine(vlinedb: VLineDB, GONG__StackPath: string): Observable<VLineDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let LayerGroup = vlinedb.LayerGroup
     vlinedb.LayerGroup = new LayerGroupDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -89,6 +101,9 @@ export class VLineService {
   }
 
   /** DELETE: delete the vlinedb from the server */
+  delete(vlinedb: VLineDB | number, GONG__StackPath: string): Observable<VLineDB> {
+    return this.deleteVLine(vlinedb, GONG__StackPath)
+  }
   deleteVLine(vlinedb: VLineDB | number, GONG__StackPath: string): Observable<VLineDB> {
     const id = typeof vlinedb === 'number' ? vlinedb : vlinedb.ID;
     const url = `${this.vlinesUrl}/${id}`;
@@ -106,11 +121,15 @@ export class VLineService {
   }
 
   /** PUT: update the vlinedb on the server */
+  update(vlinedb: VLineDB, GONG__StackPath: string): Observable<VLineDB> {
+    return this.updateVLine(vlinedb, GONG__StackPath)
+  }
   updateVLine(vlinedb: VLineDB, GONG__StackPath: string): Observable<VLineDB> {
     const id = typeof vlinedb === 'number' ? vlinedb : vlinedb.ID;
     const url = `${this.vlinesUrl}/${id}`;
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    let LayerGroup = vlinedb.LayerGroup
     vlinedb.LayerGroup = new LayerGroupDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -122,7 +141,7 @@ export class VLineService {
     return this.http.put<VLineDB>(url, vlinedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated vlinedb id=${vlinedb.ID}`)
+        // this.log(`updated vlinedb id=${vlinedb.ID}`)
       }),
       catchError(this.handleError<VLineDB>('updateVLine'))
     );

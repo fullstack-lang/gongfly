@@ -26,66 +26,10 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { AngularSplitModule, SplitComponent } from 'angular-split';
 
-import {
-	NgxMatDatetimePickerModule,
-	NgxMatNativeDateModule,
-	NgxMatTimepickerModule
-} from '@angular-material-components/datetime-picker';
-
 import { AppRoutingModule } from './app-routing.module';
-
-import { SplitterComponent } from './splitter/splitter.component'
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { GongstructSelectionService } from './gongstruct-selection.service'
-
-// insertion point for imports 
-import { DummyAgentsTableComponent } from './dummyagents-table/dummyagents-table.component'
-import { DummyAgentSortingComponent } from './dummyagent-sorting/dummyagent-sorting.component'
-import { DummyAgentDetailComponent } from './dummyagent-detail/dummyagent-detail.component'
-
-import { EnginesTableComponent } from './engines-table/engines-table.component'
-import { EngineSortingComponent } from './engine-sorting/engine-sorting.component'
-import { EngineDetailComponent } from './engine-detail/engine-detail.component'
-
-import { EventsTableComponent } from './events-table/events-table.component'
-import { EventSortingComponent } from './event-sorting/event-sorting.component'
-import { EventDetailComponent } from './event-detail/event-detail.component'
-
-import { GongsimCommandsTableComponent } from './gongsimcommands-table/gongsimcommands-table.component'
-import { GongsimCommandSortingComponent } from './gongsimcommand-sorting/gongsimcommand-sorting.component'
-import { GongsimCommandDetailComponent } from './gongsimcommand-detail/gongsimcommand-detail.component'
-
-import { GongsimStatussTableComponent } from './gongsimstatuss-table/gongsimstatuss-table.component'
-import { GongsimStatusSortingComponent } from './gongsimstatus-sorting/gongsimstatus-sorting.component'
-import { GongsimStatusDetailComponent } from './gongsimstatus-detail/gongsimstatus-detail.component'
-
 
 @NgModule({
 	declarations: [
-		// insertion point for declarations 
-		DummyAgentsTableComponent,
-		DummyAgentSortingComponent,
-		DummyAgentDetailComponent,
-
-		EnginesTableComponent,
-		EngineSortingComponent,
-		EngineDetailComponent,
-
-		EventsTableComponent,
-		EventSortingComponent,
-		EventDetailComponent,
-
-		GongsimCommandsTableComponent,
-		GongsimCommandSortingComponent,
-		GongsimCommandDetailComponent,
-
-		GongsimStatussTableComponent,
-		GongsimStatusSortingComponent,
-		GongsimStatusDetailComponent,
-
-
-		SplitterComponent,
-		SidebarComponent
 	],
 	imports: [
 		FormsModule,
@@ -114,45 +58,12 @@ import { GongsimStatusDetailComponent } from './gongsimstatus-detail/gongsimstat
 		MatTreeModule,
 		DragDropModule,
 
-		NgxMatDatetimePickerModule,
-		NgxMatNativeDateModule,
-		NgxMatTimepickerModule,
-
 		AngularSplitModule,
 	],
 	exports: [
-		// insertion point for declarations 
-		DummyAgentsTableComponent,
-		DummyAgentSortingComponent,
-		DummyAgentDetailComponent,
-
-		EnginesTableComponent,
-		EngineSortingComponent,
-		EngineDetailComponent,
-
-		EventsTableComponent,
-		EventSortingComponent,
-		EventDetailComponent,
-
-		GongsimCommandsTableComponent,
-		GongsimCommandSortingComponent,
-		GongsimCommandDetailComponent,
-
-		GongsimStatussTableComponent,
-		GongsimStatusSortingComponent,
-		GongsimStatusDetailComponent,
-
-
-		SplitterComponent,
-		SidebarComponent,
-
 	],
 	providers: [
-		GongstructSelectionService,
-		{
-			provide: MatDialogRef,
-			useValue: {}
-		},
+		{ provide: MatDialogRef, useValue: { close: () => { } } }
 	],
 })
 export class GongsimModule { }

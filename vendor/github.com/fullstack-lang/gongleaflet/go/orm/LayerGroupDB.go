@@ -552,6 +552,30 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) RestorePhaseTwo() {
 
 }
 
+// BackRepoLayerGroup.ResetReversePointers commits all staged instances of LayerGroup to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoLayerGroup *BackRepoLayerGroupStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, layergroup := range backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr {
+		backRepoLayerGroup.ResetReversePointersInstance(backRepo, idx, layergroup)
+	}
+
+	return
+}
+
+func (backRepoLayerGroup *BackRepoLayerGroupStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.LayerGroup) (Error error) {
+
+	// fetch matching layergroupDB
+	if layergroupDB, ok := backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[idx]; ok {
+		_ = layergroupDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
+}
+
 // this field is used during the restauration process.
 // it stores the ID at the backup time and is used for renumbering
 var BackRepoLayerGroupid_atBckpTime_newID map[uint]uint

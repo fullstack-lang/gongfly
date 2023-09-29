@@ -777,6 +777,30 @@ func (backRepoMessage *BackRepoMessageStruct) RestorePhaseTwo() {
 
 }
 
+// BackRepoMessage.ResetReversePointers commits all staged instances of Message to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoMessage *BackRepoMessageStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, message := range backRepoMessage.Map_MessageDBID_MessagePtr {
+		backRepoMessage.ResetReversePointersInstance(backRepo, idx, message)
+	}
+
+	return
+}
+
+func (backRepoMessage *BackRepoMessageStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Message) (Error error) {
+
+	// fetch matching messageDB
+	if messageDB, ok := backRepoMessage.Map_MessageDBID_MessageDB[idx]; ok {
+		_ = messageDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
+}
+
 // this field is used during the restauration process.
 // it stores the ID at the backup time and is used for renumbering
 var BackRepoMessageid_atBckpTime_newID map[uint]uint

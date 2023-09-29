@@ -552,6 +552,30 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) RestorePhaseTwo() {
 
 }
 
+// BackRepoDummyAgent.ResetReversePointers commits all staged instances of DummyAgent to the BackRepo
+// Phase Two is the update of instance with the field in the database
+func (backRepoDummyAgent *BackRepoDummyAgentStruct) ResetReversePointers(backRepo *BackRepoStruct) (Error error) {
+
+	for idx, dummyagent := range backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr {
+		backRepoDummyAgent.ResetReversePointersInstance(backRepo, idx, dummyagent)
+	}
+
+	return
+}
+
+func (backRepoDummyAgent *BackRepoDummyAgentStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.DummyAgent) (Error error) {
+
+	// fetch matching dummyagentDB
+	if dummyagentDB, ok := backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[idx]; ok {
+		_ = dummyagentDB // to avoid unused variable error if there are no reverse to reset
+
+		// insertion point for reverse pointers reset
+		// end of insertion point for reverse pointers reset
+	}
+
+	return
+}
+
 // this field is used during the restauration process.
 // it stores the ID at the backup time and is used for renumbering
 var BackRepoDummyAgentid_atBckpTime_newID map[uint]uint

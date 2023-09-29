@@ -4,6 +4,9 @@
 import { NullInt64 } from './null-int64'
 
 export class DivIconDB {
+
+	static GONGSTRUCT_NAME = "DivIcon"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

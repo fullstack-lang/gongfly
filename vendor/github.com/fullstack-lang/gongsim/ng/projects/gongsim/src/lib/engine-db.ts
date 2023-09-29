@@ -4,6 +4,9 @@
 import { NullInt64 } from './null-int64'
 
 export class EngineDB {
+
+	static GONGSTRUCT_NAME = "Engine"
+
 	CreatedAt?: string
 	DeletedAt?: string
 	ID: number = 0

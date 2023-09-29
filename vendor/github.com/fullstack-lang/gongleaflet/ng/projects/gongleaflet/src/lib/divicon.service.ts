@@ -42,6 +42,10 @@ export class DivIconService {
   }
 
   /** GET divicons from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<DivIconDB[]> {
+    return this.getDivIcons(GONG__StackPath)
+  }
   getDivIcons(GONG__StackPath: string): Observable<DivIconDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -55,6 +59,10 @@ export class DivIconService {
   }
 
   /** GET divicon by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<DivIconDB> {
+	return this.getDivIcon(id, GONG__StackPath)
+  }
   getDivIcon(id: number, GONG__StackPath: string): Observable<DivIconDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -67,6 +75,9 @@ export class DivIconService {
   }
 
   /** POST: add a new divicon to the server */
+  post(divicondb: DivIconDB, GONG__StackPath: string): Observable<DivIconDB> {
+    return this.postDivIcon(divicondb, GONG__StackPath)	
+  }
   postDivIcon(divicondb: DivIconDB, GONG__StackPath: string): Observable<DivIconDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
@@ -87,6 +98,9 @@ export class DivIconService {
   }
 
   /** DELETE: delete the divicondb from the server */
+  delete(divicondb: DivIconDB | number, GONG__StackPath: string): Observable<DivIconDB> {
+    return this.deleteDivIcon(divicondb, GONG__StackPath)
+  }
   deleteDivIcon(divicondb: DivIconDB | number, GONG__StackPath: string): Observable<DivIconDB> {
     const id = typeof divicondb === 'number' ? divicondb : divicondb.ID;
     const url = `${this.diviconsUrl}/${id}`;
@@ -104,6 +118,9 @@ export class DivIconService {
   }
 
   /** PUT: update the divicondb on the server */
+  update(divicondb: DivIconDB, GONG__StackPath: string): Observable<DivIconDB> {
+    return this.updateDivIcon(divicondb, GONG__StackPath)
+  }
   updateDivIcon(divicondb: DivIconDB, GONG__StackPath: string): Observable<DivIconDB> {
     const id = typeof divicondb === 'number' ? divicondb : divicondb.ID;
     const url = `${this.diviconsUrl}/${id}`;
@@ -119,7 +136,7 @@ export class DivIconService {
     return this.http.put<DivIconDB>(url, divicondb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated divicondb id=${divicondb.ID}`)
+        // this.log(`updated divicondb id=${divicondb.ID}`)
       }),
       catchError(this.handleError<DivIconDB>('updateDivIcon'))
     );

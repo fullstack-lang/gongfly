@@ -26,98 +26,10 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { AngularSplitModule, SplitComponent } from 'angular-split';
 
-import {
-	NgxMatDatetimePickerModule,
-	NgxMatNativeDateModule,
-	NgxMatTimepickerModule
-} from '@angular-material-components/datetime-picker';
-
 import { AppRoutingModule } from './app-routing.module';
-
-import { SplitterComponent } from './splitter/splitter.component'
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { GongstructSelectionService } from './gongstruct-selection.service'
-
-// insertion point for imports 
-import { CirclesTableComponent } from './circles-table/circles-table.component'
-import { CircleSortingComponent } from './circle-sorting/circle-sorting.component'
-import { CircleDetailComponent } from './circle-detail/circle-detail.component'
-
-import { DivIconsTableComponent } from './divicons-table/divicons-table.component'
-import { DivIconSortingComponent } from './divicon-sorting/divicon-sorting.component'
-import { DivIconDetailComponent } from './divicon-detail/divicon-detail.component'
-
-import { LayerGroupsTableComponent } from './layergroups-table/layergroups-table.component'
-import { LayerGroupSortingComponent } from './layergroup-sorting/layergroup-sorting.component'
-import { LayerGroupDetailComponent } from './layergroup-detail/layergroup-detail.component'
-
-import { LayerGroupUsesTableComponent } from './layergroupuses-table/layergroupuses-table.component'
-import { LayerGroupUseSortingComponent } from './layergroupuse-sorting/layergroupuse-sorting.component'
-import { LayerGroupUseDetailComponent } from './layergroupuse-detail/layergroupuse-detail.component'
-
-import { MapOptionssTableComponent } from './mapoptionss-table/mapoptionss-table.component'
-import { MapOptionsSortingComponent } from './mapoptions-sorting/mapoptions-sorting.component'
-import { MapOptionsDetailComponent } from './mapoptions-detail/mapoptions-detail.component'
-
-import { MarkersTableComponent } from './markers-table/markers-table.component'
-import { MarkerSortingComponent } from './marker-sorting/marker-sorting.component'
-import { MarkerDetailComponent } from './marker-detail/marker-detail.component'
-
-import { UserClicksTableComponent } from './userclicks-table/userclicks-table.component'
-import { UserClickSortingComponent } from './userclick-sorting/userclick-sorting.component'
-import { UserClickDetailComponent } from './userclick-detail/userclick-detail.component'
-
-import { VLinesTableComponent } from './vlines-table/vlines-table.component'
-import { VLineSortingComponent } from './vline-sorting/vline-sorting.component'
-import { VLineDetailComponent } from './vline-detail/vline-detail.component'
-
-import { VisualTracksTableComponent } from './visualtracks-table/visualtracks-table.component'
-import { VisualTrackSortingComponent } from './visualtrack-sorting/visualtrack-sorting.component'
-import { VisualTrackDetailComponent } from './visualtrack-detail/visualtrack-detail.component'
-
 
 @NgModule({
 	declarations: [
-		// insertion point for declarations 
-		CirclesTableComponent,
-		CircleSortingComponent,
-		CircleDetailComponent,
-
-		DivIconsTableComponent,
-		DivIconSortingComponent,
-		DivIconDetailComponent,
-
-		LayerGroupsTableComponent,
-		LayerGroupSortingComponent,
-		LayerGroupDetailComponent,
-
-		LayerGroupUsesTableComponent,
-		LayerGroupUseSortingComponent,
-		LayerGroupUseDetailComponent,
-
-		MapOptionssTableComponent,
-		MapOptionsSortingComponent,
-		MapOptionsDetailComponent,
-
-		MarkersTableComponent,
-		MarkerSortingComponent,
-		MarkerDetailComponent,
-
-		UserClicksTableComponent,
-		UserClickSortingComponent,
-		UserClickDetailComponent,
-
-		VLinesTableComponent,
-		VLineSortingComponent,
-		VLineDetailComponent,
-
-		VisualTracksTableComponent,
-		VisualTrackSortingComponent,
-		VisualTrackDetailComponent,
-
-
-		SplitterComponent,
-		SidebarComponent
 	],
 	imports: [
 		FormsModule,
@@ -146,61 +58,12 @@ import { VisualTrackDetailComponent } from './visualtrack-detail/visualtrack-det
 		MatTreeModule,
 		DragDropModule,
 
-		NgxMatDatetimePickerModule,
-		NgxMatNativeDateModule,
-		NgxMatTimepickerModule,
-
 		AngularSplitModule,
 	],
 	exports: [
-		// insertion point for declarations 
-		CirclesTableComponent,
-		CircleSortingComponent,
-		CircleDetailComponent,
-
-		DivIconsTableComponent,
-		DivIconSortingComponent,
-		DivIconDetailComponent,
-
-		LayerGroupsTableComponent,
-		LayerGroupSortingComponent,
-		LayerGroupDetailComponent,
-
-		LayerGroupUsesTableComponent,
-		LayerGroupUseSortingComponent,
-		LayerGroupUseDetailComponent,
-
-		MapOptionssTableComponent,
-		MapOptionsSortingComponent,
-		MapOptionsDetailComponent,
-
-		MarkersTableComponent,
-		MarkerSortingComponent,
-		MarkerDetailComponent,
-
-		UserClicksTableComponent,
-		UserClickSortingComponent,
-		UserClickDetailComponent,
-
-		VLinesTableComponent,
-		VLineSortingComponent,
-		VLineDetailComponent,
-
-		VisualTracksTableComponent,
-		VisualTrackSortingComponent,
-		VisualTrackDetailComponent,
-
-
-		SplitterComponent,
-		SidebarComponent,
-
 	],
 	providers: [
-		GongstructSelectionService,
-		{
-			provide: MatDialogRef,
-			useValue: {}
-		},
+		{ provide: MatDialogRef, useValue: { close: () => { } } }
 	],
 })
 export class GongleafletModule { }

@@ -42,6 +42,10 @@ export class RadarService {
   }
 
   /** GET radars from the server */
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string): Observable<RadarDB[]> {
+    return this.getRadars(GONG__StackPath)
+  }
   getRadars(GONG__StackPath: string): Observable<RadarDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -55,6 +59,10 @@ export class RadarService {
   }
 
   /** GET radar by id. Will 404 if id not found */
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string): Observable<RadarDB> {
+	return this.getRadar(id, GONG__StackPath)
+  }
   getRadar(id: number, GONG__StackPath: string): Observable<RadarDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -67,6 +75,9 @@ export class RadarService {
   }
 
   /** POST: add a new radar to the server */
+  post(radardb: RadarDB, GONG__StackPath: string): Observable<RadarDB> {
+    return this.postRadar(radardb, GONG__StackPath)	
+  }
   postRadar(radardb: RadarDB, GONG__StackPath: string): Observable<RadarDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
@@ -87,6 +98,9 @@ export class RadarService {
   }
 
   /** DELETE: delete the radardb from the server */
+  delete(radardb: RadarDB | number, GONG__StackPath: string): Observable<RadarDB> {
+    return this.deleteRadar(radardb, GONG__StackPath)
+  }
   deleteRadar(radardb: RadarDB | number, GONG__StackPath: string): Observable<RadarDB> {
     const id = typeof radardb === 'number' ? radardb : radardb.ID;
     const url = `${this.radarsUrl}/${id}`;
@@ -104,6 +118,9 @@ export class RadarService {
   }
 
   /** PUT: update the radardb on the server */
+  update(radardb: RadarDB, GONG__StackPath: string): Observable<RadarDB> {
+    return this.updateRadar(radardb, GONG__StackPath)
+  }
   updateRadar(radardb: RadarDB, GONG__StackPath: string): Observable<RadarDB> {
     const id = typeof radardb === 'number' ? radardb : radardb.ID;
     const url = `${this.radarsUrl}/${id}`;
@@ -119,7 +136,7 @@ export class RadarService {
     return this.http.put<RadarDB>(url, radardb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        this.log(`updated radardb id=${radardb.ID}`)
+        // this.log(`updated radardb id=${radardb.ID}`)
       }),
       catchError(this.handleError<RadarDB>('updateRadar'))
     );
