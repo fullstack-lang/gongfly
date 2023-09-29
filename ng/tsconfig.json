@@ -5,7 +5,13 @@
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
+    //     "strict": true, does not allows for leaflet compilation
+    // so it is not enforced
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    // "strictPropertyInitialization": true, does not allow promises initialisations
+    // so it is not enforced
+    "strictNullChecks": true,
     "noImplicitOverride": true,
     "paths": {
       // when the dependant angular component present in "<project>/vendor" directory, it
