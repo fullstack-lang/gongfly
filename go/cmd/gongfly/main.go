@@ -54,8 +54,8 @@ func main() {
 	// persistence in a SQLite file on disk in memory
 	stage, backRepo = gongfly_fullstack.NewStackInstance(r, "gongfly")
 
-	gongleafletStage, _ := gongleaflet_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongleaflet/go/models")
-	gongsimStage, _ := gongsim_fullstack.NewStackInstance(r, "github.com/fullstack-lang/gongsim/go/models")
+	gongleafletStage, _ := gongleaflet_fullstack.NewStackInstance(r, "gongfly")
+	gongsimStage, _ := gongsim_fullstack.NewStackInstance(r, "gongfly")
 
 	simulation := simulation.NewSimulation(stage, gongsimStage, gongleafletStage)
 

@@ -8,10 +8,10 @@
     //     "strict": true, does not allows for leaflet compilation
     // so it is not enforced
     "strictBindCallApply": true,
-    "strictFunctionTypes": true,
-    // "strictPropertyInitialization": true, does not allow promises initialisations
-    // so it is not enforced
-    "strictNullChecks": true,
+    // the following settings do not allow promises initialisations, so it is not enforced
+    // "strictFunctionTypes": true, 
+    // "strictPropertyInitialization": true,
+    // "strictNullChecks": true,
     "noImplicitOverride": true,
     "paths": {
       // when the dependant angular component present in "<project>/vendor" directory, it
