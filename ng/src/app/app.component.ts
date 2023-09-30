@@ -20,13 +20,14 @@ import { GongtablespecificModule } from 'gongtablespecific'
 })
 export class AppComponent implements OnInit {
 
-  default = 'Gongfly Data/Model'
+
   dashboard = "Dashboard"
-  simulation = 'Simulation Data/Model'
-  leaflet = 'Leaflet Data/Model'
+  gongflyProbe = 'Gongfly Probe'
+  gongsimProbe = 'Simulation Probe'
+  gongleafletProbe = 'Leaflet Probe'
   view = this.dashboard
 
-  views: string[] = [this.dashboard, this.default, this.simulation, this.leaflet];
+  views: string[] = [this.dashboard, this.gongflyProbe, this.gongsimProbe, this.gongleafletProbe];
 
 
   scrollStyle = {
@@ -35,7 +36,9 @@ export class AppComponent implements OnInit {
   }
 
   StackName = "gongfly"
-  StackType = "github.com/fullstack-lang/gongfly/go/models"
+  GongflyStackType = "github.com/fullstack-lang/gongfly/go/models"
+  GongsimStackType = "github.com/fullstack-lang/gongsim/go/models"
+  GongleafletStackType = "github.com/fullstack-lang/gongleaflet/go/models"
 
   constructor(
   ) {

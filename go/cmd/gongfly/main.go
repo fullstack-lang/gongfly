@@ -20,11 +20,15 @@ import (
 
 	gongfly_visuals "github.com/fullstack-lang/gongfly/go/visuals"
 
+	gongleaflet_go "github.com/fullstack-lang/gongleaflet/go"
 	gongleaflet_fullstack "github.com/fullstack-lang/gongleaflet/go/fullstack"
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
+	gongleaflet_probe "github.com/fullstack-lang/gongleaflet/go/probe"
 
+	gongsim_go "github.com/fullstack-lang/gongsim/go"
 	gongsim_fullstack "github.com/fullstack-lang/gongsim/go/fullstack"
 	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
+	gongsim_probe "github.com/fullstack-lang/gongsim/go/probe"
 )
 
 var (
@@ -54,8 +58,8 @@ func main() {
 	// persistence in a SQLite file on disk in memory
 	stage, backRepo = gongfly_fullstack.NewStackInstance(r, "gongfly")
 
-	gongleafletStage, _ := gongleaflet_fullstack.NewStackInstance(r, "gongfly")
-	gongsimStage, _ := gongsim_fullstack.NewStackInstance(r, "gongfly")
+	gongleafletStage, gongleafletBackrepo := gongleaflet_fullstack.NewStackInstance(r, "gongfly")
+	gongsimStage, gongsimBackrepo := gongsim_fullstack.NewStackInstance(r, "gongfly")
 
 	simulation := simulation.NewSimulation(stage, gongsimStage, gongleafletStage)
 
@@ -90,6 +94,12 @@ func main() {
 
 	gongfly_probe.NewProbe(r, gongfly_go.GoModelsDir, gongfly_go.GoDiagramsDir,
 		*embeddedDiagrams, "gongfly", stage, backRepo)
+
+	gongleaflet_probe.NewProbe(r, gongleaflet_go.GoModelsDir, gongleaflet_go.GoDiagramsDir,
+		*embeddedDiagrams, "gongleaflet", gongleafletStage, gongleafletBackrepo)
+
+	gongsim_probe.NewProbe(r, gongsim_go.GoModelsDir, gongsim_go.GoDiagramsDir,
+		*embeddedDiagrams, "gongsim", gongsimStage, gongsimBackrepo)
 
 	log.Printf("Server ready serve on localhost:" + strconv.Itoa(*port))
 	err := r.Run(":" + strconv.Itoa(*port))

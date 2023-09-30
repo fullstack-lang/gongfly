@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 
-import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs';
+import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs'
 
-// insertion point sub template for services imports 
+// insertion point sub template for services imports
 import { CivilianAirportDB } from './civilianairport-db'
 import { CivilianAirportService } from './civilianairport.service'
 
@@ -27,28 +27,83 @@ import { ScenarioService } from './scenario.service'
 
 
 // FrontRepo stores all instances in a front repository (design pattern repository)
-export class FrontRepo { // insertion point sub template 
-  CivilianAirports_array = new Array<CivilianAirportDB>(); // array of repo instances
-  CivilianAirports = new Map<number, CivilianAirportDB>(); // map of repo instances
-  CivilianAirports_batch = new Map<number, CivilianAirportDB>(); // same but only in last GET (for finding repo instances to delete)
-  Liners_array = new Array<LinerDB>(); // array of repo instances
-  Liners = new Map<number, LinerDB>(); // map of repo instances
-  Liners_batch = new Map<number, LinerDB>(); // same but only in last GET (for finding repo instances to delete)
-  Messages_array = new Array<MessageDB>(); // array of repo instances
-  Messages = new Map<number, MessageDB>(); // map of repo instances
-  Messages_batch = new Map<number, MessageDB>(); // same but only in last GET (for finding repo instances to delete)
-  OpsLines_array = new Array<OpsLineDB>(); // array of repo instances
-  OpsLines = new Map<number, OpsLineDB>(); // map of repo instances
-  OpsLines_batch = new Map<number, OpsLineDB>(); // same but only in last GET (for finding repo instances to delete)
-  Radars_array = new Array<RadarDB>(); // array of repo instances
-  Radars = new Map<number, RadarDB>(); // map of repo instances
-  Radars_batch = new Map<number, RadarDB>(); // same but only in last GET (for finding repo instances to delete)
-  Satellites_array = new Array<SatelliteDB>(); // array of repo instances
-  Satellites = new Map<number, SatelliteDB>(); // map of repo instances
-  Satellites_batch = new Map<number, SatelliteDB>(); // same but only in last GET (for finding repo instances to delete)
-  Scenarios_array = new Array<ScenarioDB>(); // array of repo instances
-  Scenarios = new Map<number, ScenarioDB>(); // map of repo instances
-  Scenarios_batch = new Map<number, ScenarioDB>(); // same but only in last GET (for finding repo instances to delete)
+export class FrontRepo { // insertion point sub template
+  CivilianAirports_array = new Array<CivilianAirportDB>() // array of repo instances
+  CivilianAirports = new Map<number, CivilianAirportDB>() // map of repo instances
+  CivilianAirports_batch = new Map<number, CivilianAirportDB>() // same but only in last GET (for finding repo instances to delete)
+
+  Liners_array = new Array<LinerDB>() // array of repo instances
+  Liners = new Map<number, LinerDB>() // map of repo instances
+  Liners_batch = new Map<number, LinerDB>() // same but only in last GET (for finding repo instances to delete)
+
+  Messages_array = new Array<MessageDB>() // array of repo instances
+  Messages = new Map<number, MessageDB>() // map of repo instances
+  Messages_batch = new Map<number, MessageDB>() // same but only in last GET (for finding repo instances to delete)
+
+  OpsLines_array = new Array<OpsLineDB>() // array of repo instances
+  OpsLines = new Map<number, OpsLineDB>() // map of repo instances
+  OpsLines_batch = new Map<number, OpsLineDB>() // same but only in last GET (for finding repo instances to delete)
+
+  Radars_array = new Array<RadarDB>() // array of repo instances
+  Radars = new Map<number, RadarDB>() // map of repo instances
+  Radars_batch = new Map<number, RadarDB>() // same but only in last GET (for finding repo instances to delete)
+
+  Satellites_array = new Array<SatelliteDB>() // array of repo instances
+  Satellites = new Map<number, SatelliteDB>() // map of repo instances
+  Satellites_batch = new Map<number, SatelliteDB>() // same but only in last GET (for finding repo instances to delete)
+
+  Scenarios_array = new Array<ScenarioDB>() // array of repo instances
+  Scenarios = new Map<number, ScenarioDB>() // map of repo instances
+  Scenarios_batch = new Map<number, ScenarioDB>() // same but only in last GET (for finding repo instances to delete)
+
+
+  // getArray allows for a get function that is robust to refactoring of the named struct name
+  // for instance frontRepo.getArray<Astruct>( Astruct.GONGSTRUCT_NAME), is robust to a refactoring of Astruct identifier
+  // contrary to frontRepo.Astructs_array which is not refactored when Astruct identifier is modified
+  getArray<Type>(gongStructName: string): Array<Type> {
+    switch (gongStructName) {
+      // insertion point
+      case 'CivilianAirport':
+        return this.CivilianAirports_array as unknown as Array<Type>
+      case 'Liner':
+        return this.Liners_array as unknown as Array<Type>
+      case 'Message':
+        return this.Messages_array as unknown as Array<Type>
+      case 'OpsLine':
+        return this.OpsLines_array as unknown as Array<Type>
+      case 'Radar':
+        return this.Radars_array as unknown as Array<Type>
+      case 'Satellite':
+        return this.Satellites_array as unknown as Array<Type>
+      case 'Scenario':
+        return this.Scenarios_array as unknown as Array<Type>
+      default:
+        throw new Error("Type not recognized");
+    }
+  }
+
+  // getMap allows for a get function that is robust to refactoring of the named struct name
+  getMap<Type>(gongStructName: string): Map<number, Type> {
+    switch (gongStructName) {
+      // insertion point
+      case 'CivilianAirport':
+        return this.CivilianAirports_array as unknown as Map<number, Type>
+      case 'Liner':
+        return this.Liners_array as unknown as Map<number, Type>
+      case 'Message':
+        return this.Messages_array as unknown as Map<number, Type>
+      case 'OpsLine':
+        return this.OpsLines_array as unknown as Map<number, Type>
+      case 'Radar':
+        return this.Radars_array as unknown as Map<number, Type>
+      case 'Satellite':
+        return this.Satellites_array as unknown as Map<number, Type>
+      case 'Scenario':
+        return this.Scenarios_array as unknown as Map<number, Type>
+      default:
+        throw new Error("Type not recognized");
+    }
+  }
 }
 
 // the table component is called in different ways
@@ -147,7 +202,7 @@ export class FrontRepoService {
   }
 
   // typing of observable can be messy in typescript. Therefore, one force the type
-  observableFrontRepo: [ 
+  observableFrontRepo: [
     Observable<null>, // see below for the of(null) observable
     // insertion point sub template 
     Observable<CivilianAirportDB[]>,
@@ -157,16 +212,16 @@ export class FrontRepoService {
     Observable<RadarDB[]>,
     Observable<SatelliteDB[]>,
     Observable<ScenarioDB[]>,
-  ] = [ 
-    // Using "combineLatest" with a placeholder observable.
-    //
-    // This allows the typescript compiler to pass when no GongStruct is present in the front API
-    //
-    // The "of(null)" is a "meaningless" observable that emits a single value (null) and completes.
-    // This is used as a workaround to satisfy TypeScript requirements and the "combineLatest" 
-    // expectation for a non-empty array of observables.
-    of(null), // 
-    // insertion point sub template
+  ] = [
+      // Using "combineLatest" with a placeholder observable.
+      //
+      // This allows the typescript compiler to pass when no GongStruct is present in the front API
+      //
+      // The "of(null)" is a "meaningless" observable that emits a single value (null) and completes.
+      // This is used as a workaround to satisfy TypeScript requirements and the "combineLatest" 
+      // expectation for a non-empty array of observables.
+      of(null), // 
+      // insertion point sub template
       this.civilianairportService.getCivilianAirports(this.GONG__StackPath),
       this.linerService.getLiners(this.GONG__StackPath),
       this.messageService.getMessages(this.GONG__StackPath),
@@ -186,7 +241,7 @@ export class FrontRepoService {
 
     this.GONG__StackPath = GONG__StackPath
 
-    this.observableFrontRepo = [ 
+    this.observableFrontRepo = [
       of(null), // see above for justification
       // insertion point sub template
       this.civilianairportService.getCivilianAirports(this.GONG__StackPath),
@@ -203,7 +258,7 @@ export class FrontRepoService {
         combineLatest(
           this.observableFrontRepo
         ).subscribe(
-          ([ 
+          ([
             ___of_null, // see above for the explanation about of
             // insertion point sub template for declarations 
             civilianairports_,
