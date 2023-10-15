@@ -91,8 +91,8 @@ func (controller *Controller) GetRadars(c *gin.Context) {
 
 		// insertion point for updating fields
 		radarAPI.ID = radarDB.ID
-		radarDB.CopyBasicFieldsToRadar(&radarAPI.Radar)
-		radarAPI.RadarPointersEnconding = radarDB.RadarPointersEnconding
+		radarDB.CopyBasicFieldsToRadar_WOP(&radarAPI.Radar_WOP)
+		radarAPI.RadarPointersEncoding = radarDB.RadarPointersEncoding
 		radarAPIs = append(radarAPIs, radarAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostRadar(c *gin.Context) {
 
 	// Create radar
 	radarDB := orm.RadarDB{}
-	radarDB.RadarPointersEnconding = input.RadarPointersEnconding
-	radarDB.CopyBasicFieldsFromRadar(&input.Radar)
+	radarDB.RadarPointersEncoding = input.RadarPointersEncoding
+	radarDB.CopyBasicFieldsFromRadar_WOP(&input.Radar_WOP)
 
 	query := db.Create(&radarDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetRadar(c *gin.Context) {
 
 	var radarAPI orm.RadarAPI
 	radarAPI.ID = radarDB.ID
-	radarAPI.RadarPointersEnconding = radarDB.RadarPointersEnconding
-	radarDB.CopyBasicFieldsToRadar(&radarAPI.Radar)
+	radarAPI.RadarPointersEncoding = radarDB.RadarPointersEncoding
+	radarDB.CopyBasicFieldsToRadar_WOP(&radarAPI.Radar_WOP)
 
 	c.JSON(http.StatusOK, radarAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateRadar(c *gin.Context) {
 	}
 
 	// update
-	radarDB.CopyBasicFieldsFromRadar(&input.Radar)
-	radarDB.RadarPointersEnconding = input.RadarPointersEnconding
+	radarDB.CopyBasicFieldsFromRadar_WOP(&input.Radar_WOP)
+	radarDB.RadarPointersEncoding = input.RadarPointersEncoding
 
 	query = db.Model(&radarDB).Updates(radarDB)
 	if query.Error != nil {

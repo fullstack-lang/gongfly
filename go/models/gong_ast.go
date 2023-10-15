@@ -861,7 +861,7 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Message[identifier].DurationSinceSimulationStart = time.Duration(fielValue)
+					__gong__map_Message[identifier].DurationSinceSimulationStart = time.Duration(int(exprSign) * int(fielValue))
 				case "Timestampstartstring":
 					// remove first and last char
 					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]

@@ -35,15 +35,15 @@ var dummy_Liner_sort sort.Float64Slice
 type LinerAPI struct {
 	gorm.Model
 
-	models.Liner
+	models.Liner_WOP
 
 	// encoding of pointers
-	LinerPointersEnconding
+	LinerPointersEncoding
 }
 
-// LinerPointersEnconding encodes pointers to Struct and
+// LinerPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type LinerPointersEnconding struct {
+type LinerPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 
 	// field ReporingLine is a pointer to another Struct (optional or 0..1)
@@ -104,7 +104,7 @@ type LinerDB struct {
 	// Declation for basic field linerDB.Timestampstring
 	Timestampstring_Data sql.NullString
 	// encoding of pointers
-	LinerPointersEnconding
+	LinerPointersEncoding
 }
 
 // LinerDBs arrays linerDBs
@@ -232,7 +232,7 @@ func (backRepoLiner *BackRepoLinerStruct) CommitDeleteInstance(id uint) (Error e
 	linerDB := backRepoLiner.Map_LinerDBID_LinerDB[id]
 	query := backRepoLiner.db.Unscoped().Delete(&linerDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -258,7 +258,7 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseOneInstance(liner *models.L
 
 	query := backRepoLiner.db.Create(&linerDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -304,7 +304,7 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseTwoInstance(backRepo *BackR
 
 		query := backRepoLiner.db.Save(&linerDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -436,7 +436,7 @@ func (backRepo *BackRepoStruct) CheckoutLiner(liner *models.Liner) {
 			linerDB.ID = id
 
 			if err := backRepo.BackRepoLiner.db.First(&linerDB, id).Error; err != nil {
-				log.Panicln("CheckoutLiner : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutLiner : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoLiner.CheckoutPhaseOneInstance(&linerDB)
 			backRepo.BackRepoLiner.CheckoutPhaseTwoInstance(backRepo, &linerDB)
@@ -446,6 +446,53 @@ func (backRepo *BackRepoStruct) CheckoutLiner(liner *models.Liner) {
 
 // CopyBasicFieldsFromLiner
 func (linerDB *LinerDB) CopyBasicFieldsFromLiner(liner *models.Liner) {
+	// insertion point for fields commit
+
+	linerDB.Name_Data.String = liner.Name
+	linerDB.Name_Data.Valid = true
+
+	linerDB.Lat_Data.Float64 = liner.Lat
+	linerDB.Lat_Data.Valid = true
+
+	linerDB.Lng_Data.Float64 = liner.Lng
+	linerDB.Lng_Data.Valid = true
+
+	linerDB.Heading_Data.Float64 = liner.Heading
+	linerDB.Heading_Data.Valid = true
+
+	linerDB.Level_Data.Float64 = liner.Level
+	linerDB.Level_Data.Valid = true
+
+	linerDB.Speed_Data.Float64 = liner.Speed
+	linerDB.Speed_Data.Valid = true
+
+	linerDB.State_Data.String = liner.State.ToString()
+	linerDB.State_Data.Valid = true
+
+	linerDB.TargetHeading_Data.Float64 = liner.TargetHeading
+	linerDB.TargetHeading_Data.Valid = true
+
+	linerDB.TargetLocationLat_Data.Float64 = liner.TargetLocationLat
+	linerDB.TargetLocationLat_Data.Valid = true
+
+	linerDB.TargetLocationLng_Data.Float64 = liner.TargetLocationLng
+	linerDB.TargetLocationLng_Data.Valid = true
+
+	linerDB.DistanceToTarget_Data.Float64 = liner.DistanceToTarget
+	linerDB.DistanceToTarget_Data.Valid = true
+
+	linerDB.MaxRotationalSpeed_Data.Float64 = liner.MaxRotationalSpeed
+	linerDB.MaxRotationalSpeed_Data.Valid = true
+
+	linerDB.VerticalSpeed_Data.Float64 = liner.VerticalSpeed
+	linerDB.VerticalSpeed_Data.Valid = true
+
+	linerDB.Timestampstring_Data.String = liner.Timestampstring
+	linerDB.Timestampstring_Data.Valid = true
+}
+
+// CopyBasicFieldsFromLiner_WOP
+func (linerDB *LinerDB) CopyBasicFieldsFromLiner_WOP(liner *models.Liner_WOP) {
 	// insertion point for fields commit
 
 	linerDB.Name_Data.String = liner.Name
@@ -557,6 +604,25 @@ func (linerDB *LinerDB) CopyBasicFieldsToLiner(liner *models.Liner) {
 	liner.Timestampstring = linerDB.Timestampstring_Data.String
 }
 
+// CopyBasicFieldsToLiner_WOP
+func (linerDB *LinerDB) CopyBasicFieldsToLiner_WOP(liner *models.Liner_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	liner.Name = linerDB.Name_Data.String
+	liner.Lat = linerDB.Lat_Data.Float64
+	liner.Lng = linerDB.Lng_Data.Float64
+	liner.Heading = linerDB.Heading_Data.Float64
+	liner.Level = linerDB.Level_Data.Float64
+	liner.Speed = linerDB.Speed_Data.Float64
+	liner.State.FromString(linerDB.State_Data.String)
+	liner.TargetHeading = linerDB.TargetHeading_Data.Float64
+	liner.TargetLocationLat = linerDB.TargetLocationLat_Data.Float64
+	liner.TargetLocationLng = linerDB.TargetLocationLng_Data.Float64
+	liner.DistanceToTarget = linerDB.DistanceToTarget_Data.Float64
+	liner.MaxRotationalSpeed = linerDB.MaxRotationalSpeed_Data.Float64
+	liner.VerticalSpeed = linerDB.VerticalSpeed_Data.Float64
+	liner.Timestampstring = linerDB.Timestampstring_Data.String
+}
+
 // CopyBasicFieldsToLinerWOP
 func (linerDB *LinerDB) CopyBasicFieldsToLinerWOP(liner *LinerWOP) {
 	liner.ID = int(linerDB.ID)
@@ -596,12 +662,12 @@ func (backRepoLiner *BackRepoLinerStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json Liner ", filename, " ", err.Error())
+		log.Fatal("Cannot json Liner ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json Liner file", err.Error())
+		log.Fatal("Cannot write the json Liner file", err.Error())
 	}
 }
 
@@ -621,7 +687,7 @@ func (backRepoLiner *BackRepoLinerStruct) BackupXL(file *xlsx.File) {
 
 	sh, err := file.AddSheet("Liner")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -646,13 +712,13 @@ func (backRepoLiner *BackRepoLinerStruct) RestoreXLPhaseOne(file *xlsx.File) {
 	sh, ok := file.Sheet["Liner"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoLiner.rowVisitorLiner)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -674,7 +740,7 @@ func (backRepoLiner *BackRepoLinerStruct) rowVisitorLiner(row *xlsx.Row) error {
 		linerDB.ID = 0
 		query := backRepoLiner.db.Create(linerDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoLiner.Map_LinerDBID_LinerDB[linerDB.ID] = linerDB
 		BackRepoLinerid_atBckpTime_newID[linerDB_ID_atBackupTime] = linerDB.ID
@@ -694,7 +760,7 @@ func (backRepoLiner *BackRepoLinerStruct) RestorePhaseOne(dirPath string) {
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json Liner file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json Liner file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -711,14 +777,14 @@ func (backRepoLiner *BackRepoLinerStruct) RestorePhaseOne(dirPath string) {
 		linerDB.ID = 0
 		query := backRepoLiner.db.Create(linerDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoLiner.Map_LinerDBID_LinerDB[linerDB.ID] = linerDB
 		BackRepoLinerid_atBckpTime_newID[linerDB_ID_atBackupTime] = linerDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json Liner file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json Liner file", err.Error())
 	}
 }
 
@@ -741,7 +807,7 @@ func (backRepoLiner *BackRepoLinerStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoLiner.db.Model(linerDB).Updates(*linerDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

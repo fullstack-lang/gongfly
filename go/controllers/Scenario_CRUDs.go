@@ -91,8 +91,8 @@ func (controller *Controller) GetScenarios(c *gin.Context) {
 
 		// insertion point for updating fields
 		scenarioAPI.ID = scenarioDB.ID
-		scenarioDB.CopyBasicFieldsToScenario(&scenarioAPI.Scenario)
-		scenarioAPI.ScenarioPointersEnconding = scenarioDB.ScenarioPointersEnconding
+		scenarioDB.CopyBasicFieldsToScenario_WOP(&scenarioAPI.Scenario_WOP)
+		scenarioAPI.ScenarioPointersEncoding = scenarioDB.ScenarioPointersEncoding
 		scenarioAPIs = append(scenarioAPIs, scenarioAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostScenario(c *gin.Context) {
 
 	// Create scenario
 	scenarioDB := orm.ScenarioDB{}
-	scenarioDB.ScenarioPointersEnconding = input.ScenarioPointersEnconding
-	scenarioDB.CopyBasicFieldsFromScenario(&input.Scenario)
+	scenarioDB.ScenarioPointersEncoding = input.ScenarioPointersEncoding
+	scenarioDB.CopyBasicFieldsFromScenario_WOP(&input.Scenario_WOP)
 
 	query := db.Create(&scenarioDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetScenario(c *gin.Context) {
 
 	var scenarioAPI orm.ScenarioAPI
 	scenarioAPI.ID = scenarioDB.ID
-	scenarioAPI.ScenarioPointersEnconding = scenarioDB.ScenarioPointersEnconding
-	scenarioDB.CopyBasicFieldsToScenario(&scenarioAPI.Scenario)
+	scenarioAPI.ScenarioPointersEncoding = scenarioDB.ScenarioPointersEncoding
+	scenarioDB.CopyBasicFieldsToScenario_WOP(&scenarioAPI.Scenario_WOP)
 
 	c.JSON(http.StatusOK, scenarioAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateScenario(c *gin.Context) {
 	}
 
 	// update
-	scenarioDB.CopyBasicFieldsFromScenario(&input.Scenario)
-	scenarioDB.ScenarioPointersEnconding = input.ScenarioPointersEnconding
+	scenarioDB.CopyBasicFieldsFromScenario_WOP(&input.Scenario_WOP)
+	scenarioDB.ScenarioPointersEncoding = input.ScenarioPointersEncoding
 
 	query = db.Model(&scenarioDB).Updates(scenarioDB)
 	if query.Error != nil {

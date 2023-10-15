@@ -91,8 +91,8 @@ func (controller *Controller) GetCivilianAirports(c *gin.Context) {
 
 		// insertion point for updating fields
 		civilianairportAPI.ID = civilianairportDB.ID
-		civilianairportDB.CopyBasicFieldsToCivilianAirport(&civilianairportAPI.CivilianAirport)
-		civilianairportAPI.CivilianAirportPointersEnconding = civilianairportDB.CivilianAirportPointersEnconding
+		civilianairportDB.CopyBasicFieldsToCivilianAirport_WOP(&civilianairportAPI.CivilianAirport_WOP)
+		civilianairportAPI.CivilianAirportPointersEncoding = civilianairportDB.CivilianAirportPointersEncoding
 		civilianairportAPIs = append(civilianairportAPIs, civilianairportAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostCivilianAirport(c *gin.Context) {
 
 	// Create civilianairport
 	civilianairportDB := orm.CivilianAirportDB{}
-	civilianairportDB.CivilianAirportPointersEnconding = input.CivilianAirportPointersEnconding
-	civilianairportDB.CopyBasicFieldsFromCivilianAirport(&input.CivilianAirport)
+	civilianairportDB.CivilianAirportPointersEncoding = input.CivilianAirportPointersEncoding
+	civilianairportDB.CopyBasicFieldsFromCivilianAirport_WOP(&input.CivilianAirport_WOP)
 
 	query := db.Create(&civilianairportDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetCivilianAirport(c *gin.Context) {
 
 	var civilianairportAPI orm.CivilianAirportAPI
 	civilianairportAPI.ID = civilianairportDB.ID
-	civilianairportAPI.CivilianAirportPointersEnconding = civilianairportDB.CivilianAirportPointersEnconding
-	civilianairportDB.CopyBasicFieldsToCivilianAirport(&civilianairportAPI.CivilianAirport)
+	civilianairportAPI.CivilianAirportPointersEncoding = civilianairportDB.CivilianAirportPointersEncoding
+	civilianairportDB.CopyBasicFieldsToCivilianAirport_WOP(&civilianairportAPI.CivilianAirport_WOP)
 
 	c.JSON(http.StatusOK, civilianairportAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateCivilianAirport(c *gin.Context) {
 	}
 
 	// update
-	civilianairportDB.CopyBasicFieldsFromCivilianAirport(&input.CivilianAirport)
-	civilianairportDB.CivilianAirportPointersEnconding = input.CivilianAirportPointersEnconding
+	civilianairportDB.CopyBasicFieldsFromCivilianAirport_WOP(&input.CivilianAirport_WOP)
+	civilianairportDB.CivilianAirportPointersEncoding = input.CivilianAirportPointersEncoding
 
 	query = db.Model(&civilianairportDB).Updates(civilianairportDB)
 	if query.Error != nil {

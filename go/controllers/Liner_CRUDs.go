@@ -91,8 +91,8 @@ func (controller *Controller) GetLiners(c *gin.Context) {
 
 		// insertion point for updating fields
 		linerAPI.ID = linerDB.ID
-		linerDB.CopyBasicFieldsToLiner(&linerAPI.Liner)
-		linerAPI.LinerPointersEnconding = linerDB.LinerPointersEnconding
+		linerDB.CopyBasicFieldsToLiner_WOP(&linerAPI.Liner_WOP)
+		linerAPI.LinerPointersEncoding = linerDB.LinerPointersEncoding
 		linerAPIs = append(linerAPIs, linerAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostLiner(c *gin.Context) {
 
 	// Create liner
 	linerDB := orm.LinerDB{}
-	linerDB.LinerPointersEnconding = input.LinerPointersEnconding
-	linerDB.CopyBasicFieldsFromLiner(&input.Liner)
+	linerDB.LinerPointersEncoding = input.LinerPointersEncoding
+	linerDB.CopyBasicFieldsFromLiner_WOP(&input.Liner_WOP)
 
 	query := db.Create(&linerDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetLiner(c *gin.Context) {
 
 	var linerAPI orm.LinerAPI
 	linerAPI.ID = linerDB.ID
-	linerAPI.LinerPointersEnconding = linerDB.LinerPointersEnconding
-	linerDB.CopyBasicFieldsToLiner(&linerAPI.Liner)
+	linerAPI.LinerPointersEncoding = linerDB.LinerPointersEncoding
+	linerDB.CopyBasicFieldsToLiner_WOP(&linerAPI.Liner_WOP)
 
 	c.JSON(http.StatusOK, linerAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateLiner(c *gin.Context) {
 	}
 
 	// update
-	linerDB.CopyBasicFieldsFromLiner(&input.Liner)
-	linerDB.LinerPointersEnconding = input.LinerPointersEnconding
+	linerDB.CopyBasicFieldsFromLiner_WOP(&input.Liner_WOP)
+	linerDB.LinerPointersEncoding = input.LinerPointersEncoding
 
 	query = db.Model(&linerDB).Updates(linerDB)
 	if query.Error != nil {

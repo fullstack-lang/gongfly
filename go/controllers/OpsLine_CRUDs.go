@@ -91,8 +91,8 @@ func (controller *Controller) GetOpsLines(c *gin.Context) {
 
 		// insertion point for updating fields
 		opslineAPI.ID = opslineDB.ID
-		opslineDB.CopyBasicFieldsToOpsLine(&opslineAPI.OpsLine)
-		opslineAPI.OpsLinePointersEnconding = opslineDB.OpsLinePointersEnconding
+		opslineDB.CopyBasicFieldsToOpsLine_WOP(&opslineAPI.OpsLine_WOP)
+		opslineAPI.OpsLinePointersEncoding = opslineDB.OpsLinePointersEncoding
 		opslineAPIs = append(opslineAPIs, opslineAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostOpsLine(c *gin.Context) {
 
 	// Create opsline
 	opslineDB := orm.OpsLineDB{}
-	opslineDB.OpsLinePointersEnconding = input.OpsLinePointersEnconding
-	opslineDB.CopyBasicFieldsFromOpsLine(&input.OpsLine)
+	opslineDB.OpsLinePointersEncoding = input.OpsLinePointersEncoding
+	opslineDB.CopyBasicFieldsFromOpsLine_WOP(&input.OpsLine_WOP)
 
 	query := db.Create(&opslineDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetOpsLine(c *gin.Context) {
 
 	var opslineAPI orm.OpsLineAPI
 	opslineAPI.ID = opslineDB.ID
-	opslineAPI.OpsLinePointersEnconding = opslineDB.OpsLinePointersEnconding
-	opslineDB.CopyBasicFieldsToOpsLine(&opslineAPI.OpsLine)
+	opslineAPI.OpsLinePointersEncoding = opslineDB.OpsLinePointersEncoding
+	opslineDB.CopyBasicFieldsToOpsLine_WOP(&opslineAPI.OpsLine_WOP)
 
 	c.JSON(http.StatusOK, opslineAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateOpsLine(c *gin.Context) {
 	}
 
 	// update
-	opslineDB.CopyBasicFieldsFromOpsLine(&input.OpsLine)
-	opslineDB.OpsLinePointersEnconding = input.OpsLinePointersEnconding
+	opslineDB.CopyBasicFieldsFromOpsLine_WOP(&input.OpsLine_WOP)
+	opslineDB.OpsLinePointersEncoding = input.OpsLinePointersEncoding
 
 	query = db.Model(&opslineDB).Updates(opslineDB)
 	if query.Error != nil {

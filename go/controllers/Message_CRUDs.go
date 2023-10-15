@@ -91,8 +91,8 @@ func (controller *Controller) GetMessages(c *gin.Context) {
 
 		// insertion point for updating fields
 		messageAPI.ID = messageDB.ID
-		messageDB.CopyBasicFieldsToMessage(&messageAPI.Message)
-		messageAPI.MessagePointersEnconding = messageDB.MessagePointersEnconding
+		messageDB.CopyBasicFieldsToMessage_WOP(&messageAPI.Message_WOP)
+		messageAPI.MessagePointersEncoding = messageDB.MessagePointersEncoding
 		messageAPIs = append(messageAPIs, messageAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostMessage(c *gin.Context) {
 
 	// Create message
 	messageDB := orm.MessageDB{}
-	messageDB.MessagePointersEnconding = input.MessagePointersEnconding
-	messageDB.CopyBasicFieldsFromMessage(&input.Message)
+	messageDB.MessagePointersEncoding = input.MessagePointersEncoding
+	messageDB.CopyBasicFieldsFromMessage_WOP(&input.Message_WOP)
 
 	query := db.Create(&messageDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetMessage(c *gin.Context) {
 
 	var messageAPI orm.MessageAPI
 	messageAPI.ID = messageDB.ID
-	messageAPI.MessagePointersEnconding = messageDB.MessagePointersEnconding
-	messageDB.CopyBasicFieldsToMessage(&messageAPI.Message)
+	messageAPI.MessagePointersEncoding = messageDB.MessagePointersEncoding
+	messageDB.CopyBasicFieldsToMessage_WOP(&messageAPI.Message_WOP)
 
 	c.JSON(http.StatusOK, messageAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateMessage(c *gin.Context) {
 	}
 
 	// update
-	messageDB.CopyBasicFieldsFromMessage(&input.Message)
-	messageDB.MessagePointersEnconding = input.MessagePointersEnconding
+	messageDB.CopyBasicFieldsFromMessage_WOP(&input.Message_WOP)
+	messageDB.MessagePointersEncoding = input.MessagePointersEncoding
 
 	query = db.Model(&messageDB).Updates(messageDB)
 	if query.Error != nil {

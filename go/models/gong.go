@@ -4,14 +4,25 @@ package models
 import (
 	"errors"
 	"fmt"
+	"math"
 	"time"
 )
+
+func __Gong__Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
 
 // errUnkownEnum is returns when a value cannot match enum values
 var errUnkownEnum = errors.New("unkown enum")
 
 // needed to avoid when fmt package is not needed by generated code
 var __dummy__fmt_variable fmt.Scanner
+
+// idem for math package when not need by generated code
+var __dummy_math_variable = math.E
 
 // swagger:ignore
 type __void any
@@ -1315,7 +1326,46 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 		case "Timestampstring":
 			res = inferedInstance.Timestampstring
 		case "DurationSinceSimulationStart":
-			res = fmt.Sprintf("%d", inferedInstance.DurationSinceSimulationStart)
+			if math.Abs(inferedInstance.DurationSinceSimulationStart.Hours()) >= 24 {
+				days := __Gong__Abs(int(int(inferedInstance.DurationSinceSimulationStart.Hours()) / 24))
+				months := int(days / 31)
+				days = days - months*31
+
+				remainingHours := int(inferedInstance.DurationSinceSimulationStart.Hours()) % 24
+				remainingMinutes := int(inferedInstance.DurationSinceSimulationStart.Minutes()) % 60
+				remainingSeconds := int(inferedInstance.DurationSinceSimulationStart.Seconds()) % 60
+
+				if inferedInstance.DurationSinceSimulationStart.Hours() < 0 {
+					res = "- "
+				}
+
+				if months > 0 {
+					if months > 1 {
+						res = res + fmt.Sprintf("%d months", months)
+					} else {
+						res = res + fmt.Sprintf("%d month", months)
+					}
+				}
+				if days > 0 {
+					if months != 0 {
+						res = res + ", "
+					}
+					if days > 1 {
+						res = res + fmt.Sprintf("%d days", days)
+					} else {
+						res = res + fmt.Sprintf("%d day", days)
+					}
+
+				}
+				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
+					if days != 0 || (days == 0 && months != 0) {
+						res = res + ", "
+					}
+					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+				}
+			} else {
+				res = fmt.Sprintf("%s\n", inferedInstance.DurationSinceSimulationStart.String())
+			}
 		case "Timestampstartstring":
 			res = inferedInstance.Timestampstartstring
 		case "Source":
@@ -1487,7 +1537,46 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 		case "Timestampstring":
 			res = inferedInstance.Timestampstring
 		case "DurationSinceSimulationStart":
-			res = fmt.Sprintf("%d", inferedInstance.DurationSinceSimulationStart)
+			if math.Abs(inferedInstance.DurationSinceSimulationStart.Hours()) >= 24 {
+				days := __Gong__Abs(int(int(inferedInstance.DurationSinceSimulationStart.Hours()) / 24))
+				months := int(days / 31)
+				days = days - months*31
+
+				remainingHours := int(inferedInstance.DurationSinceSimulationStart.Hours()) % 24
+				remainingMinutes := int(inferedInstance.DurationSinceSimulationStart.Minutes()) % 60
+				remainingSeconds := int(inferedInstance.DurationSinceSimulationStart.Seconds()) % 60
+
+				if inferedInstance.DurationSinceSimulationStart.Hours() < 0 {
+					res = "- "
+				}
+
+				if months > 0 {
+					if months > 1 {
+						res = res + fmt.Sprintf("%d months", months)
+					} else {
+						res = res + fmt.Sprintf("%d month", months)
+					}
+				}
+				if days > 0 {
+					if months != 0 {
+						res = res + ", "
+					}
+					if days > 1 {
+						res = res + fmt.Sprintf("%d days", days)
+					} else {
+						res = res + fmt.Sprintf("%d day", days)
+					}
+
+				}
+				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
+					if days != 0 || (days == 0 && months != 0) {
+						res = res + ", "
+					}
+					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+				}
+			} else {
+				res = fmt.Sprintf("%s\n", inferedInstance.DurationSinceSimulationStart.String())
+			}
 		case "Timestampstartstring":
 			res = inferedInstance.Timestampstartstring
 		case "Source":

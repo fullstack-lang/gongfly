@@ -35,15 +35,15 @@ var dummy_Scenario_sort sort.Float64Slice
 type ScenarioAPI struct {
 	gorm.Model
 
-	models.Scenario
+	models.Scenario_WOP
 
 	// encoding of pointers
-	ScenarioPointersEnconding
+	ScenarioPointersEncoding
 }
 
-// ScenarioPointersEnconding encodes pointers to Struct and
+// ScenarioPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type ScenarioPointersEnconding struct {
+type ScenarioPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -73,7 +73,7 @@ type ScenarioDB struct {
 	// Declation for basic field scenarioDB.MessageVisualSpeed
 	MessageVisualSpeed_Data sql.NullFloat64
 	// encoding of pointers
-	ScenarioPointersEnconding
+	ScenarioPointersEncoding
 }
 
 // ScenarioDBs arrays scenarioDBs
@@ -174,7 +174,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitDeleteInstance(id uint) (E
 	scenarioDB := backRepoScenario.Map_ScenarioDBID_ScenarioDB[id]
 	query := backRepoScenario.db.Unscoped().Delete(&scenarioDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -200,7 +200,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseOneInstance(scenario 
 
 	query := backRepoScenario.db.Create(&scenarioDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -234,7 +234,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseTwoInstance(backRepo 
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoScenario.db.Save(&scenarioDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -361,7 +361,7 @@ func (backRepo *BackRepoStruct) CheckoutScenario(scenario *models.Scenario) {
 			scenarioDB.ID = id
 
 			if err := backRepo.BackRepoScenario.db.First(&scenarioDB, id).Error; err != nil {
-				log.Panicln("CheckoutScenario : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutScenario : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoScenario.CheckoutPhaseOneInstance(&scenarioDB)
 			backRepo.BackRepoScenario.CheckoutPhaseTwoInstance(backRepo, &scenarioDB)
@@ -371,6 +371,26 @@ func (backRepo *BackRepoStruct) CheckoutScenario(scenario *models.Scenario) {
 
 // CopyBasicFieldsFromScenario
 func (scenarioDB *ScenarioDB) CopyBasicFieldsFromScenario(scenario *models.Scenario) {
+	// insertion point for fields commit
+
+	scenarioDB.Name_Data.String = scenario.Name
+	scenarioDB.Name_Data.Valid = true
+
+	scenarioDB.Lat_Data.Float64 = scenario.Lat
+	scenarioDB.Lat_Data.Valid = true
+
+	scenarioDB.Lng_Data.Float64 = scenario.Lng
+	scenarioDB.Lng_Data.Valid = true
+
+	scenarioDB.ZoomLevel_Data.Float64 = scenario.ZoomLevel
+	scenarioDB.ZoomLevel_Data.Valid = true
+
+	scenarioDB.MessageVisualSpeed_Data.Float64 = scenario.MessageVisualSpeed
+	scenarioDB.MessageVisualSpeed_Data.Valid = true
+}
+
+// CopyBasicFieldsFromScenario_WOP
+func (scenarioDB *ScenarioDB) CopyBasicFieldsFromScenario_WOP(scenario *models.Scenario_WOP) {
 	// insertion point for fields commit
 
 	scenarioDB.Name_Data.String = scenario.Name
@@ -419,6 +439,16 @@ func (scenarioDB *ScenarioDB) CopyBasicFieldsToScenario(scenario *models.Scenari
 	scenario.MessageVisualSpeed = scenarioDB.MessageVisualSpeed_Data.Float64
 }
 
+// CopyBasicFieldsToScenario_WOP
+func (scenarioDB *ScenarioDB) CopyBasicFieldsToScenario_WOP(scenario *models.Scenario_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	scenario.Name = scenarioDB.Name_Data.String
+	scenario.Lat = scenarioDB.Lat_Data.Float64
+	scenario.Lng = scenarioDB.Lng_Data.Float64
+	scenario.ZoomLevel = scenarioDB.ZoomLevel_Data.Float64
+	scenario.MessageVisualSpeed = scenarioDB.MessageVisualSpeed_Data.Float64
+}
+
 // CopyBasicFieldsToScenarioWOP
 func (scenarioDB *ScenarioDB) CopyBasicFieldsToScenarioWOP(scenario *ScenarioWOP) {
 	scenario.ID = int(scenarioDB.ID)
@@ -449,12 +479,12 @@ func (backRepoScenario *BackRepoScenarioStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json Scenario ", filename, " ", err.Error())
+		log.Fatal("Cannot json Scenario ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json Scenario file", err.Error())
+		log.Fatal("Cannot write the json Scenario file", err.Error())
 	}
 }
 
@@ -474,7 +504,7 @@ func (backRepoScenario *BackRepoScenarioStruct) BackupXL(file *xlsx.File) {
 
 	sh, err := file.AddSheet("Scenario")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -499,13 +529,13 @@ func (backRepoScenario *BackRepoScenarioStruct) RestoreXLPhaseOne(file *xlsx.Fil
 	sh, ok := file.Sheet["Scenario"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoScenario.rowVisitorScenario)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -527,7 +557,7 @@ func (backRepoScenario *BackRepoScenarioStruct) rowVisitorScenario(row *xlsx.Row
 		scenarioDB.ID = 0
 		query := backRepoScenario.db.Create(scenarioDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoScenario.Map_ScenarioDBID_ScenarioDB[scenarioDB.ID] = scenarioDB
 		BackRepoScenarioid_atBckpTime_newID[scenarioDB_ID_atBackupTime] = scenarioDB.ID
@@ -547,7 +577,7 @@ func (backRepoScenario *BackRepoScenarioStruct) RestorePhaseOne(dirPath string) 
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json Scenario file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json Scenario file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -564,14 +594,14 @@ func (backRepoScenario *BackRepoScenarioStruct) RestorePhaseOne(dirPath string) 
 		scenarioDB.ID = 0
 		query := backRepoScenario.db.Create(scenarioDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoScenario.Map_ScenarioDBID_ScenarioDB[scenarioDB.ID] = scenarioDB
 		BackRepoScenarioid_atBckpTime_newID[scenarioDB_ID_atBackupTime] = scenarioDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json Scenario file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json Scenario file", err.Error())
 	}
 }
 
@@ -588,7 +618,7 @@ func (backRepoScenario *BackRepoScenarioStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoScenario.db.Model(scenarioDB).Updates(*scenarioDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

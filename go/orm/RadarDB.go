@@ -35,15 +35,15 @@ var dummy_Radar_sort sort.Float64Slice
 type RadarAPI struct {
 	gorm.Model
 
-	models.Radar
+	models.Radar_WOP
 
 	// encoding of pointers
-	RadarPointersEnconding
+	RadarPointersEncoding
 }
 
-// RadarPointersEnconding encodes pointers to Struct and
+// RadarPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type RadarPointersEnconding struct {
+type RadarPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -73,7 +73,7 @@ type RadarDB struct {
 	// Declation for basic field radarDB.Range
 	Range_Data sql.NullFloat64
 	// encoding of pointers
-	RadarPointersEnconding
+	RadarPointersEncoding
 }
 
 // RadarDBs arrays radarDBs
@@ -174,7 +174,7 @@ func (backRepoRadar *BackRepoRadarStruct) CommitDeleteInstance(id uint) (Error e
 	radarDB := backRepoRadar.Map_RadarDBID_RadarDB[id]
 	query := backRepoRadar.db.Unscoped().Delete(&radarDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -200,7 +200,7 @@ func (backRepoRadar *BackRepoRadarStruct) CommitPhaseOneInstance(radar *models.R
 
 	query := backRepoRadar.db.Create(&radarDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -234,7 +234,7 @@ func (backRepoRadar *BackRepoRadarStruct) CommitPhaseTwoInstance(backRepo *BackR
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoRadar.db.Save(&radarDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -361,7 +361,7 @@ func (backRepo *BackRepoStruct) CheckoutRadar(radar *models.Radar) {
 			radarDB.ID = id
 
 			if err := backRepo.BackRepoRadar.db.First(&radarDB, id).Error; err != nil {
-				log.Panicln("CheckoutRadar : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutRadar : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoRadar.CheckoutPhaseOneInstance(&radarDB)
 			backRepo.BackRepoRadar.CheckoutPhaseTwoInstance(backRepo, &radarDB)
@@ -371,6 +371,26 @@ func (backRepo *BackRepoStruct) CheckoutRadar(radar *models.Radar) {
 
 // CopyBasicFieldsFromRadar
 func (radarDB *RadarDB) CopyBasicFieldsFromRadar(radar *models.Radar) {
+	// insertion point for fields commit
+
+	radarDB.State_Data.String = radar.State.ToString()
+	radarDB.State_Data.Valid = true
+
+	radarDB.Name_Data.String = radar.Name
+	radarDB.Name_Data.Valid = true
+
+	radarDB.Lat_Data.Float64 = radar.Lat
+	radarDB.Lat_Data.Valid = true
+
+	radarDB.Lng_Data.Float64 = radar.Lng
+	radarDB.Lng_Data.Valid = true
+
+	radarDB.Range_Data.Float64 = radar.Range
+	radarDB.Range_Data.Valid = true
+}
+
+// CopyBasicFieldsFromRadar_WOP
+func (radarDB *RadarDB) CopyBasicFieldsFromRadar_WOP(radar *models.Radar_WOP) {
 	// insertion point for fields commit
 
 	radarDB.State_Data.String = radar.State.ToString()
@@ -419,6 +439,16 @@ func (radarDB *RadarDB) CopyBasicFieldsToRadar(radar *models.Radar) {
 	radar.Range = radarDB.Range_Data.Float64
 }
 
+// CopyBasicFieldsToRadar_WOP
+func (radarDB *RadarDB) CopyBasicFieldsToRadar_WOP(radar *models.Radar_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	radar.State.FromString(radarDB.State_Data.String)
+	radar.Name = radarDB.Name_Data.String
+	radar.Lat = radarDB.Lat_Data.Float64
+	radar.Lng = radarDB.Lng_Data.Float64
+	radar.Range = radarDB.Range_Data.Float64
+}
+
 // CopyBasicFieldsToRadarWOP
 func (radarDB *RadarDB) CopyBasicFieldsToRadarWOP(radar *RadarWOP) {
 	radar.ID = int(radarDB.ID)
@@ -449,12 +479,12 @@ func (backRepoRadar *BackRepoRadarStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json Radar ", filename, " ", err.Error())
+		log.Fatal("Cannot json Radar ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json Radar file", err.Error())
+		log.Fatal("Cannot write the json Radar file", err.Error())
 	}
 }
 
@@ -474,7 +504,7 @@ func (backRepoRadar *BackRepoRadarStruct) BackupXL(file *xlsx.File) {
 
 	sh, err := file.AddSheet("Radar")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -499,13 +529,13 @@ func (backRepoRadar *BackRepoRadarStruct) RestoreXLPhaseOne(file *xlsx.File) {
 	sh, ok := file.Sheet["Radar"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoRadar.rowVisitorRadar)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -527,7 +557,7 @@ func (backRepoRadar *BackRepoRadarStruct) rowVisitorRadar(row *xlsx.Row) error {
 		radarDB.ID = 0
 		query := backRepoRadar.db.Create(radarDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoRadar.Map_RadarDBID_RadarDB[radarDB.ID] = radarDB
 		BackRepoRadarid_atBckpTime_newID[radarDB_ID_atBackupTime] = radarDB.ID
@@ -547,7 +577,7 @@ func (backRepoRadar *BackRepoRadarStruct) RestorePhaseOne(dirPath string) {
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json Radar file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json Radar file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -564,14 +594,14 @@ func (backRepoRadar *BackRepoRadarStruct) RestorePhaseOne(dirPath string) {
 		radarDB.ID = 0
 		query := backRepoRadar.db.Create(radarDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoRadar.Map_RadarDBID_RadarDB[radarDB.ID] = radarDB
 		BackRepoRadarid_atBckpTime_newID[radarDB_ID_atBackupTime] = radarDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json Radar file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json Radar file", err.Error())
 	}
 }
 
@@ -588,7 +618,7 @@ func (backRepoRadar *BackRepoRadarStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoRadar.db.Model(radarDB).Updates(*radarDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

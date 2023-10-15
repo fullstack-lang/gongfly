@@ -35,15 +35,15 @@ var dummy_Message_sort sort.Float64Slice
 type MessageAPI struct {
 	gorm.Model
 
-	models.Message
+	models.Message_WOP
 
 	// encoding of pointers
-	MessagePointersEnconding
+	MessagePointersEncoding
 }
 
-// MessagePointersEnconding encodes pointers to Struct and
+// MessagePointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type MessagePointersEnconding struct {
+type MessagePointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -113,7 +113,7 @@ type MessageDB struct {
 	// provide the sql storage for the boolan
 	Display_Data sql.NullBool
 	// encoding of pointers
-	MessagePointersEnconding
+	MessagePointersEncoding
 }
 
 // MessageDBs arrays messageDBs
@@ -253,7 +253,7 @@ func (backRepoMessage *BackRepoMessageStruct) CommitDeleteInstance(id uint) (Err
 	messageDB := backRepoMessage.Map_MessageDBID_MessageDB[id]
 	query := backRepoMessage.db.Unscoped().Delete(&messageDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -279,7 +279,7 @@ func (backRepoMessage *BackRepoMessageStruct) CommitPhaseOneInstance(message *mo
 
 	query := backRepoMessage.db.Create(&messageDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -313,7 +313,7 @@ func (backRepoMessage *BackRepoMessageStruct) CommitPhaseTwoInstance(backRepo *B
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoMessage.db.Save(&messageDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -440,7 +440,7 @@ func (backRepo *BackRepoStruct) CheckoutMessage(message *models.Message) {
 			messageDB.ID = id
 
 			if err := backRepo.BackRepoMessage.db.First(&messageDB, id).Error; err != nil {
-				log.Panicln("CheckoutMessage : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutMessage : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoMessage.CheckoutPhaseOneInstance(&messageDB)
 			backRepo.BackRepoMessage.CheckoutPhaseTwoInstance(backRepo, &messageDB)
@@ -450,6 +450,65 @@ func (backRepo *BackRepoStruct) CheckoutMessage(message *models.Message) {
 
 // CopyBasicFieldsFromMessage
 func (messageDB *MessageDB) CopyBasicFieldsFromMessage(message *models.Message) {
+	// insertion point for fields commit
+
+	messageDB.Lat_Data.Float64 = message.Lat
+	messageDB.Lat_Data.Valid = true
+
+	messageDB.Lng_Data.Float64 = message.Lng
+	messageDB.Lng_Data.Valid = true
+
+	messageDB.Heading_Data.Float64 = message.Heading
+	messageDB.Heading_Data.Valid = true
+
+	messageDB.Level_Data.Float64 = message.Level
+	messageDB.Level_Data.Valid = true
+
+	messageDB.Speed_Data.Float64 = message.Speed
+	messageDB.Speed_Data.Valid = true
+
+	messageDB.State_Data.String = message.State.ToString()
+	messageDB.State_Data.Valid = true
+
+	messageDB.Name_Data.String = message.Name
+	messageDB.Name_Data.Valid = true
+
+	messageDB.TargetLocationLat_Data.Float64 = message.TargetLocationLat
+	messageDB.TargetLocationLat_Data.Valid = true
+
+	messageDB.TargetLocationLng_Data.Float64 = message.TargetLocationLng
+	messageDB.TargetLocationLng_Data.Valid = true
+
+	messageDB.DistanceToTarget_Data.Float64 = message.DistanceToTarget
+	messageDB.DistanceToTarget_Data.Valid = true
+
+	messageDB.Timestampstring_Data.String = message.Timestampstring
+	messageDB.Timestampstring_Data.Valid = true
+
+	messageDB.DurationSinceSimulationStart_Data.Int64 = int64(message.DurationSinceSimulationStart)
+	messageDB.DurationSinceSimulationStart_Data.Valid = true
+
+	messageDB.Timestampstartstring_Data.String = message.Timestampstartstring
+	messageDB.Timestampstartstring_Data.Valid = true
+
+	messageDB.Source_Data.String = message.Source
+	messageDB.Source_Data.Valid = true
+
+	messageDB.Destination_Data.String = message.Destination
+	messageDB.Destination_Data.Valid = true
+
+	messageDB.Content_Data.String = message.Content
+	messageDB.Content_Data.Valid = true
+
+	messageDB.About_string_Data.String = message.About_string
+	messageDB.About_string_Data.Valid = true
+
+	messageDB.Display_Data.Bool = message.Display
+	messageDB.Display_Data.Valid = true
+}
+
+// CopyBasicFieldsFromMessage_WOP
+func (messageDB *MessageDB) CopyBasicFieldsFromMessage_WOP(message *models.Message_WOP) {
 	// insertion point for fields commit
 
 	messageDB.Lat_Data.Float64 = message.Lat
@@ -589,6 +648,29 @@ func (messageDB *MessageDB) CopyBasicFieldsToMessage(message *models.Message) {
 	message.Display = messageDB.Display_Data.Bool
 }
 
+// CopyBasicFieldsToMessage_WOP
+func (messageDB *MessageDB) CopyBasicFieldsToMessage_WOP(message *models.Message_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	message.Lat = messageDB.Lat_Data.Float64
+	message.Lng = messageDB.Lng_Data.Float64
+	message.Heading = messageDB.Heading_Data.Float64
+	message.Level = messageDB.Level_Data.Float64
+	message.Speed = messageDB.Speed_Data.Float64
+	message.State.FromString(messageDB.State_Data.String)
+	message.Name = messageDB.Name_Data.String
+	message.TargetLocationLat = messageDB.TargetLocationLat_Data.Float64
+	message.TargetLocationLng = messageDB.TargetLocationLng_Data.Float64
+	message.DistanceToTarget = messageDB.DistanceToTarget_Data.Float64
+	message.Timestampstring = messageDB.Timestampstring_Data.String
+	message.DurationSinceSimulationStart = time.Duration(messageDB.DurationSinceSimulationStart_Data.Int64)
+	message.Timestampstartstring = messageDB.Timestampstartstring_Data.String
+	message.Source = messageDB.Source_Data.String
+	message.Destination = messageDB.Destination_Data.String
+	message.Content = messageDB.Content_Data.String
+	message.About_string = messageDB.About_string_Data.String
+	message.Display = messageDB.Display_Data.Bool
+}
+
 // CopyBasicFieldsToMessageWOP
 func (messageDB *MessageDB) CopyBasicFieldsToMessageWOP(message *MessageWOP) {
 	message.ID = int(messageDB.ID)
@@ -632,12 +714,12 @@ func (backRepoMessage *BackRepoMessageStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json Message ", filename, " ", err.Error())
+		log.Fatal("Cannot json Message ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json Message file", err.Error())
+		log.Fatal("Cannot write the json Message file", err.Error())
 	}
 }
 
@@ -657,7 +739,7 @@ func (backRepoMessage *BackRepoMessageStruct) BackupXL(file *xlsx.File) {
 
 	sh, err := file.AddSheet("Message")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -682,13 +764,13 @@ func (backRepoMessage *BackRepoMessageStruct) RestoreXLPhaseOne(file *xlsx.File)
 	sh, ok := file.Sheet["Message"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoMessage.rowVisitorMessage)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -710,7 +792,7 @@ func (backRepoMessage *BackRepoMessageStruct) rowVisitorMessage(row *xlsx.Row) e
 		messageDB.ID = 0
 		query := backRepoMessage.db.Create(messageDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoMessage.Map_MessageDBID_MessageDB[messageDB.ID] = messageDB
 		BackRepoMessageid_atBckpTime_newID[messageDB_ID_atBackupTime] = messageDB.ID
@@ -730,7 +812,7 @@ func (backRepoMessage *BackRepoMessageStruct) RestorePhaseOne(dirPath string) {
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json Message file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json Message file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -747,14 +829,14 @@ func (backRepoMessage *BackRepoMessageStruct) RestorePhaseOne(dirPath string) {
 		messageDB.ID = 0
 		query := backRepoMessage.db.Create(messageDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoMessage.Map_MessageDBID_MessageDB[messageDB.ID] = messageDB
 		BackRepoMessageid_atBckpTime_newID[messageDB_ID_atBackupTime] = messageDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json Message file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json Message file", err.Error())
 	}
 }
 
@@ -771,7 +853,7 @@ func (backRepoMessage *BackRepoMessageStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoMessage.db.Model(messageDB).Updates(*messageDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

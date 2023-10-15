@@ -35,15 +35,15 @@ var dummy_Satellite_sort sort.Float64Slice
 type SatelliteAPI struct {
 	gorm.Model
 
-	models.Satellite
+	models.Satellite_WOP
 
 	// encoding of pointers
-	SatellitePointersEnconding
+	SatellitePointersEncoding
 }
 
-// SatellitePointersEnconding encodes pointers to Struct and
+// SatellitePointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type SatellitePointersEnconding struct {
+type SatellitePointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -88,7 +88,7 @@ type SatelliteDB struct {
 	// Declation for basic field satelliteDB.Timestampstring
 	Timestampstring_Data sql.NullString
 	// encoding of pointers
-	SatellitePointersEnconding
+	SatellitePointersEncoding
 }
 
 // SatelliteDBs arrays satelliteDBs
@@ -204,7 +204,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitDeleteInstance(id uint) 
 	satelliteDB := backRepoSatellite.Map_SatelliteDBID_SatelliteDB[id]
 	query := backRepoSatellite.db.Unscoped().Delete(&satelliteDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -230,7 +230,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseOneInstance(satelli
 
 	query := backRepoSatellite.db.Create(&satelliteDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -264,7 +264,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseTwoInstance(backRep
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoSatellite.db.Save(&satelliteDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -391,7 +391,7 @@ func (backRepo *BackRepoStruct) CheckoutSatellite(satellite *models.Satellite) {
 			satelliteDB.ID = id
 
 			if err := backRepo.BackRepoSatellite.db.First(&satelliteDB, id).Error; err != nil {
-				log.Panicln("CheckoutSatellite : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutSatellite : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoSatellite.CheckoutPhaseOneInstance(&satelliteDB)
 			backRepo.BackRepoSatellite.CheckoutPhaseTwoInstance(backRepo, &satelliteDB)
@@ -401,6 +401,41 @@ func (backRepo *BackRepoStruct) CheckoutSatellite(satellite *models.Satellite) {
 
 // CopyBasicFieldsFromSatellite
 func (satelliteDB *SatelliteDB) CopyBasicFieldsFromSatellite(satellite *models.Satellite) {
+	// insertion point for fields commit
+
+	satelliteDB.Name_Data.String = satellite.Name
+	satelliteDB.Name_Data.Valid = true
+
+	satelliteDB.Line1_Data.String = satellite.Line1
+	satelliteDB.Line1_Data.Valid = true
+
+	satelliteDB.Line2_Data.String = satellite.Line2
+	satelliteDB.Line2_Data.Valid = true
+
+	satelliteDB.Lat_Data.Float64 = satellite.Lat
+	satelliteDB.Lat_Data.Valid = true
+
+	satelliteDB.Lng_Data.Float64 = satellite.Lng
+	satelliteDB.Lng_Data.Valid = true
+
+	satelliteDB.Heading_Data.Float64 = satellite.Heading
+	satelliteDB.Heading_Data.Valid = true
+
+	satelliteDB.Level_Data.Float64 = satellite.Level
+	satelliteDB.Level_Data.Valid = true
+
+	satelliteDB.Speed_Data.Float64 = satellite.Speed
+	satelliteDB.Speed_Data.Valid = true
+
+	satelliteDB.VerticalSpeed_Data.Float64 = satellite.VerticalSpeed
+	satelliteDB.VerticalSpeed_Data.Valid = true
+
+	satelliteDB.Timestampstring_Data.String = satellite.Timestampstring
+	satelliteDB.Timestampstring_Data.Valid = true
+}
+
+// CopyBasicFieldsFromSatellite_WOP
+func (satelliteDB *SatelliteDB) CopyBasicFieldsFromSatellite_WOP(satellite *models.Satellite_WOP) {
 	// insertion point for fields commit
 
 	satelliteDB.Name_Data.String = satellite.Name
@@ -484,6 +519,21 @@ func (satelliteDB *SatelliteDB) CopyBasicFieldsToSatellite(satellite *models.Sat
 	satellite.Timestampstring = satelliteDB.Timestampstring_Data.String
 }
 
+// CopyBasicFieldsToSatellite_WOP
+func (satelliteDB *SatelliteDB) CopyBasicFieldsToSatellite_WOP(satellite *models.Satellite_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	satellite.Name = satelliteDB.Name_Data.String
+	satellite.Line1 = satelliteDB.Line1_Data.String
+	satellite.Line2 = satelliteDB.Line2_Data.String
+	satellite.Lat = satelliteDB.Lat_Data.Float64
+	satellite.Lng = satelliteDB.Lng_Data.Float64
+	satellite.Heading = satelliteDB.Heading_Data.Float64
+	satellite.Level = satelliteDB.Level_Data.Float64
+	satellite.Speed = satelliteDB.Speed_Data.Float64
+	satellite.VerticalSpeed = satelliteDB.VerticalSpeed_Data.Float64
+	satellite.Timestampstring = satelliteDB.Timestampstring_Data.String
+}
+
 // CopyBasicFieldsToSatelliteWOP
 func (satelliteDB *SatelliteDB) CopyBasicFieldsToSatelliteWOP(satellite *SatelliteWOP) {
 	satellite.ID = int(satelliteDB.ID)
@@ -519,12 +569,12 @@ func (backRepoSatellite *BackRepoSatelliteStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json Satellite ", filename, " ", err.Error())
+		log.Fatal("Cannot json Satellite ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json Satellite file", err.Error())
+		log.Fatal("Cannot write the json Satellite file", err.Error())
 	}
 }
 
@@ -544,7 +594,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) BackupXL(file *xlsx.File) {
 
 	sh, err := file.AddSheet("Satellite")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -569,13 +619,13 @@ func (backRepoSatellite *BackRepoSatelliteStruct) RestoreXLPhaseOne(file *xlsx.F
 	sh, ok := file.Sheet["Satellite"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoSatellite.rowVisitorSatellite)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -597,7 +647,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) rowVisitorSatellite(row *xlsx.
 		satelliteDB.ID = 0
 		query := backRepoSatellite.db.Create(satelliteDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoSatellite.Map_SatelliteDBID_SatelliteDB[satelliteDB.ID] = satelliteDB
 		BackRepoSatelliteid_atBckpTime_newID[satelliteDB_ID_atBackupTime] = satelliteDB.ID
@@ -617,7 +667,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) RestorePhaseOne(dirPath string
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json Satellite file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json Satellite file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -634,14 +684,14 @@ func (backRepoSatellite *BackRepoSatelliteStruct) RestorePhaseOne(dirPath string
 		satelliteDB.ID = 0
 		query := backRepoSatellite.db.Create(satelliteDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoSatellite.Map_SatelliteDBID_SatelliteDB[satelliteDB.ID] = satelliteDB
 		BackRepoSatelliteid_atBckpTime_newID[satelliteDB_ID_atBackupTime] = satelliteDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json Satellite file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json Satellite file", err.Error())
 	}
 }
 
@@ -658,7 +708,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoSatellite.db.Model(satelliteDB).Updates(*satelliteDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

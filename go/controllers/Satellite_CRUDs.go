@@ -91,8 +91,8 @@ func (controller *Controller) GetSatellites(c *gin.Context) {
 
 		// insertion point for updating fields
 		satelliteAPI.ID = satelliteDB.ID
-		satelliteDB.CopyBasicFieldsToSatellite(&satelliteAPI.Satellite)
-		satelliteAPI.SatellitePointersEnconding = satelliteDB.SatellitePointersEnconding
+		satelliteDB.CopyBasicFieldsToSatellite_WOP(&satelliteAPI.Satellite_WOP)
+		satelliteAPI.SatellitePointersEncoding = satelliteDB.SatellitePointersEncoding
 		satelliteAPIs = append(satelliteAPIs, satelliteAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostSatellite(c *gin.Context) {
 
 	// Create satellite
 	satelliteDB := orm.SatelliteDB{}
-	satelliteDB.SatellitePointersEnconding = input.SatellitePointersEnconding
-	satelliteDB.CopyBasicFieldsFromSatellite(&input.Satellite)
+	satelliteDB.SatellitePointersEncoding = input.SatellitePointersEncoding
+	satelliteDB.CopyBasicFieldsFromSatellite_WOP(&input.Satellite_WOP)
 
 	query := db.Create(&satelliteDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetSatellite(c *gin.Context) {
 
 	var satelliteAPI orm.SatelliteAPI
 	satelliteAPI.ID = satelliteDB.ID
-	satelliteAPI.SatellitePointersEnconding = satelliteDB.SatellitePointersEnconding
-	satelliteDB.CopyBasicFieldsToSatellite(&satelliteAPI.Satellite)
+	satelliteAPI.SatellitePointersEncoding = satelliteDB.SatellitePointersEncoding
+	satelliteDB.CopyBasicFieldsToSatellite_WOP(&satelliteAPI.Satellite_WOP)
 
 	c.JSON(http.StatusOK, satelliteAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateSatellite(c *gin.Context) {
 	}
 
 	// update
-	satelliteDB.CopyBasicFieldsFromSatellite(&input.Satellite)
-	satelliteDB.SatellitePointersEnconding = input.SatellitePointersEnconding
+	satelliteDB.CopyBasicFieldsFromSatellite_WOP(&input.Satellite_WOP)
+	satelliteDB.SatellitePointersEncoding = input.SatellitePointersEncoding
 
 	query = db.Model(&satelliteDB).Updates(satelliteDB)
 	if query.Error != nil {

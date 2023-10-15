@@ -35,15 +35,15 @@ var dummy_CivilianAirport_sort sort.Float64Slice
 type CivilianAirportAPI struct {
 	gorm.Model
 
-	models.CivilianAirport
+	models.CivilianAirport_WOP
 
 	// encoding of pointers
-	CivilianAirportPointersEnconding
+	CivilianAirportPointersEncoding
 }
 
-// CivilianAirportPointersEnconding encodes pointers to Struct and
+// CivilianAirportPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type CivilianAirportPointersEnconding struct {
+type CivilianAirportPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -67,7 +67,7 @@ type CivilianAirportDB struct {
 	// Declation for basic field civilianairportDB.Name
 	Name_Data sql.NullString
 	// encoding of pointers
-	CivilianAirportPointersEnconding
+	CivilianAirportPointersEncoding
 }
 
 // CivilianAirportDBs arrays civilianairportDBs
@@ -162,7 +162,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitDeleteInstan
 	civilianairportDB := backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[id]
 	query := backRepoCivilianAirport.db.Unscoped().Delete(&civilianairportDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -188,7 +188,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseOneInst
 
 	query := backRepoCivilianAirport.db.Create(&civilianairportDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -222,7 +222,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseTwoInst
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoCivilianAirport.db.Save(&civilianairportDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -349,7 +349,7 @@ func (backRepo *BackRepoStruct) CheckoutCivilianAirport(civilianairport *models.
 			civilianairportDB.ID = id
 
 			if err := backRepo.BackRepoCivilianAirport.db.First(&civilianairportDB, id).Error; err != nil {
-				log.Panicln("CheckoutCivilianAirport : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutCivilianAirport : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoCivilianAirport.CheckoutPhaseOneInstance(&civilianairportDB)
 			backRepo.BackRepoCivilianAirport.CheckoutPhaseTwoInstance(backRepo, &civilianairportDB)
@@ -359,6 +359,20 @@ func (backRepo *BackRepoStruct) CheckoutCivilianAirport(civilianairport *models.
 
 // CopyBasicFieldsFromCivilianAirport
 func (civilianairportDB *CivilianAirportDB) CopyBasicFieldsFromCivilianAirport(civilianairport *models.CivilianAirport) {
+	// insertion point for fields commit
+
+	civilianairportDB.Lat_Data.Float64 = civilianairport.Lat
+	civilianairportDB.Lat_Data.Valid = true
+
+	civilianairportDB.Lng_Data.Float64 = civilianairport.Lng
+	civilianairportDB.Lng_Data.Valid = true
+
+	civilianairportDB.Name_Data.String = civilianairport.Name
+	civilianairportDB.Name_Data.Valid = true
+}
+
+// CopyBasicFieldsFromCivilianAirport_WOP
+func (civilianairportDB *CivilianAirportDB) CopyBasicFieldsFromCivilianAirport_WOP(civilianairport *models.CivilianAirport_WOP) {
 	// insertion point for fields commit
 
 	civilianairportDB.Lat_Data.Float64 = civilianairport.Lat
@@ -393,6 +407,14 @@ func (civilianairportDB *CivilianAirportDB) CopyBasicFieldsToCivilianAirport(civ
 	civilianairport.Name = civilianairportDB.Name_Data.String
 }
 
+// CopyBasicFieldsToCivilianAirport_WOP
+func (civilianairportDB *CivilianAirportDB) CopyBasicFieldsToCivilianAirport_WOP(civilianairport *models.CivilianAirport_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	civilianairport.Lat = civilianairportDB.Lat_Data.Float64
+	civilianairport.Lng = civilianairportDB.Lng_Data.Float64
+	civilianairport.Name = civilianairportDB.Name_Data.String
+}
+
 // CopyBasicFieldsToCivilianAirportWOP
 func (civilianairportDB *CivilianAirportDB) CopyBasicFieldsToCivilianAirportWOP(civilianairport *CivilianAirportWOP) {
 	civilianairport.ID = int(civilianairportDB.ID)
@@ -421,12 +443,12 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) Backup(dirPath str
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json CivilianAirport ", filename, " ", err.Error())
+		log.Fatal("Cannot json CivilianAirport ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json CivilianAirport file", err.Error())
+		log.Fatal("Cannot write the json CivilianAirport file", err.Error())
 	}
 }
 
@@ -446,7 +468,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) BackupXL(file *xls
 
 	sh, err := file.AddSheet("CivilianAirport")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -471,13 +493,13 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) RestoreXLPhaseOne(
 	sh, ok := file.Sheet["CivilianAirport"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoCivilianAirport.rowVisitorCivilianAirport)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -499,7 +521,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) rowVisitorCivilian
 		civilianairportDB.ID = 0
 		query := backRepoCivilianAirport.db.Create(civilianairportDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[civilianairportDB.ID] = civilianairportDB
 		BackRepoCivilianAirportid_atBckpTime_newID[civilianairportDB_ID_atBackupTime] = civilianairportDB.ID
@@ -519,7 +541,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) RestorePhaseOne(di
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json CivilianAirport file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json CivilianAirport file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -536,14 +558,14 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) RestorePhaseOne(di
 		civilianairportDB.ID = 0
 		query := backRepoCivilianAirport.db.Create(civilianairportDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[civilianairportDB.ID] = civilianairportDB
 		BackRepoCivilianAirportid_atBckpTime_newID[civilianairportDB_ID_atBackupTime] = civilianairportDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json CivilianAirport file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json CivilianAirport file", err.Error())
 	}
 }
 
@@ -560,7 +582,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) RestorePhaseTwo() 
 		// update databse with new index encoding
 		query := backRepoCivilianAirport.db.Model(civilianairportDB).Updates(*civilianairportDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 
