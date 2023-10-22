@@ -48,6 +48,8 @@ type StageStruct struct {
 	CivilianAirports           map[*CivilianAirport]any
 	CivilianAirports_mapString map[string]*CivilianAirport
 
+	// insertion point for slice of pointers maps
+
 	OnAfterCivilianAirportCreateCallback OnAfterCreateInterface[CivilianAirport]
 	OnAfterCivilianAirportUpdateCallback OnAfterUpdateInterface[CivilianAirport]
 	OnAfterCivilianAirportDeleteCallback OnAfterDeleteInterface[CivilianAirport]
@@ -55,6 +57,8 @@ type StageStruct struct {
 
 	Liners           map[*Liner]any
 	Liners_mapString map[string]*Liner
+
+	// insertion point for slice of pointers maps
 
 	OnAfterLinerCreateCallback OnAfterCreateInterface[Liner]
 	OnAfterLinerUpdateCallback OnAfterUpdateInterface[Liner]
@@ -64,6 +68,8 @@ type StageStruct struct {
 	Messages           map[*Message]any
 	Messages_mapString map[string]*Message
 
+	// insertion point for slice of pointers maps
+
 	OnAfterMessageCreateCallback OnAfterCreateInterface[Message]
 	OnAfterMessageUpdateCallback OnAfterUpdateInterface[Message]
 	OnAfterMessageDeleteCallback OnAfterDeleteInterface[Message]
@@ -71,6 +77,8 @@ type StageStruct struct {
 
 	OpsLines           map[*OpsLine]any
 	OpsLines_mapString map[string]*OpsLine
+
+	// insertion point for slice of pointers maps
 
 	OnAfterOpsLineCreateCallback OnAfterCreateInterface[OpsLine]
 	OnAfterOpsLineUpdateCallback OnAfterUpdateInterface[OpsLine]
@@ -80,6 +88,8 @@ type StageStruct struct {
 	Radars           map[*Radar]any
 	Radars_mapString map[string]*Radar
 
+	// insertion point for slice of pointers maps
+
 	OnAfterRadarCreateCallback OnAfterCreateInterface[Radar]
 	OnAfterRadarUpdateCallback OnAfterUpdateInterface[Radar]
 	OnAfterRadarDeleteCallback OnAfterDeleteInterface[Radar]
@@ -88,6 +98,8 @@ type StageStruct struct {
 	Satellites           map[*Satellite]any
 	Satellites_mapString map[string]*Satellite
 
+	// insertion point for slice of pointers maps
+
 	OnAfterSatelliteCreateCallback OnAfterCreateInterface[Satellite]
 	OnAfterSatelliteUpdateCallback OnAfterUpdateInterface[Satellite]
 	OnAfterSatelliteDeleteCallback OnAfterDeleteInterface[Satellite]
@@ -95,6 +107,8 @@ type StageStruct struct {
 
 	Scenarios           map[*Scenario]any
 	Scenarios_mapString map[string]*Scenario
+
+	// insertion point for slice of pointers maps
 
 	OnAfterScenarioCreateCallback OnAfterCreateInterface[Scenario]
 	OnAfterScenarioUpdateCallback OnAfterUpdateInterface[Scenario]
@@ -233,6 +247,8 @@ func (stage *StageStruct) CommitWithSuspendedCallbacks() {
 }
 
 func (stage *StageStruct) Commit() {
+	stage.ComputeReverseMaps()
+
 	if stage.BackRepo != nil {
 		stage.BackRepo.Commit(stage)
 	}
@@ -253,6 +269,7 @@ func (stage *StageStruct) Checkout() {
 		stage.BackRepo.Checkout(stage)
 	}
 
+	stage.ComputeReverseMaps()
 	// insertion point for computing the map of number of instances per gongstruct
 	stage.Map_GongStructName_InstancesNb["CivilianAirport"] = len(stage.CivilianAirports)
 	stage.Map_GongStructName_InstancesNb["Liner"] = len(stage.Liners)

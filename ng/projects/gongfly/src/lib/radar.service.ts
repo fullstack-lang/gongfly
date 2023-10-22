@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { RadarDB } from './radar-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -43,10 +44,10 @@ export class RadarService {
 
   /** GET radars from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<RadarDB[]> {
-    return this.getRadars(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<RadarDB[]> {
+    return this.getRadars(GONG__StackPath, frontRepo)
   }
-  getRadars(GONG__StackPath: string): Observable<RadarDB[]> {
+  getRadars(GONG__StackPath: string, frontRepo: FrontRepo): Observable<RadarDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -60,10 +61,10 @@ export class RadarService {
 
   /** GET radar by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<RadarDB> {
-	return this.getRadar(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RadarDB> {
+    return this.getRadar(id, GONG__StackPath, frontRepo)
   }
-  getRadar(id: number, GONG__StackPath: string): Observable<RadarDB> {
+  getRadar(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RadarDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -75,10 +76,10 @@ export class RadarService {
   }
 
   /** POST: add a new radar to the server */
-  post(radardb: RadarDB, GONG__StackPath: string): Observable<RadarDB> {
-    return this.postRadar(radardb, GONG__StackPath)	
+  post(radardb: RadarDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RadarDB> {
+    return this.postRadar(radardb, GONG__StackPath, frontRepo)
   }
-  postRadar(radardb: RadarDB, GONG__StackPath: string): Observable<RadarDB> {
+  postRadar(radardb: RadarDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RadarDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -118,14 +119,15 @@ export class RadarService {
   }
 
   /** PUT: update the radardb on the server */
-  update(radardb: RadarDB, GONG__StackPath: string): Observable<RadarDB> {
-    return this.updateRadar(radardb, GONG__StackPath)
+  update(radardb: RadarDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RadarDB> {
+    return this.updateRadar(radardb, GONG__StackPath, frontRepo)
   }
-  updateRadar(radardb: RadarDB, GONG__StackPath: string): Observable<RadarDB> {
+  updateRadar(radardb: RadarDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RadarDB> {
     const id = typeof radardb === 'number' ? radardb : radardb.ID;
     const url = `${this.radarsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -163,6 +165,6 @@ export class RadarService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

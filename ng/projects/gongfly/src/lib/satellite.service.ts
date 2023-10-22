@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { SatelliteDB } from './satellite-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -43,10 +44,10 @@ export class SatelliteService {
 
   /** GET satellites from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<SatelliteDB[]> {
-    return this.getSatellites(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<SatelliteDB[]> {
+    return this.getSatellites(GONG__StackPath, frontRepo)
   }
-  getSatellites(GONG__StackPath: string): Observable<SatelliteDB[]> {
+  getSatellites(GONG__StackPath: string, frontRepo: FrontRepo): Observable<SatelliteDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -60,10 +61,10 @@ export class SatelliteService {
 
   /** GET satellite by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<SatelliteDB> {
-	return this.getSatellite(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<SatelliteDB> {
+    return this.getSatellite(id, GONG__StackPath, frontRepo)
   }
-  getSatellite(id: number, GONG__StackPath: string): Observable<SatelliteDB> {
+  getSatellite(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<SatelliteDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -75,10 +76,10 @@ export class SatelliteService {
   }
 
   /** POST: add a new satellite to the server */
-  post(satellitedb: SatelliteDB, GONG__StackPath: string): Observable<SatelliteDB> {
-    return this.postSatellite(satellitedb, GONG__StackPath)	
+  post(satellitedb: SatelliteDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<SatelliteDB> {
+    return this.postSatellite(satellitedb, GONG__StackPath, frontRepo)
   }
-  postSatellite(satellitedb: SatelliteDB, GONG__StackPath: string): Observable<SatelliteDB> {
+  postSatellite(satellitedb: SatelliteDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<SatelliteDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -118,14 +119,15 @@ export class SatelliteService {
   }
 
   /** PUT: update the satellitedb on the server */
-  update(satellitedb: SatelliteDB, GONG__StackPath: string): Observable<SatelliteDB> {
-    return this.updateSatellite(satellitedb, GONG__StackPath)
+  update(satellitedb: SatelliteDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<SatelliteDB> {
+    return this.updateSatellite(satellitedb, GONG__StackPath, frontRepo)
   }
-  updateSatellite(satellitedb: SatelliteDB, GONG__StackPath: string): Observable<SatelliteDB> {
+  updateSatellite(satellitedb: SatelliteDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<SatelliteDB> {
     const id = typeof satellitedb === 'number' ? satellitedb : satellitedb.ID;
     const url = `${this.satellitesUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -163,6 +165,6 @@ export class SatelliteService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

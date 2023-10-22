@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { MessageDB } from './message-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -43,10 +44,10 @@ export class MessageService {
 
   /** GET messages from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<MessageDB[]> {
-    return this.getMessages(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MessageDB[]> {
+    return this.getMessages(GONG__StackPath, frontRepo)
   }
-  getMessages(GONG__StackPath: string): Observable<MessageDB[]> {
+  getMessages(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MessageDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -60,10 +61,10 @@ export class MessageService {
 
   /** GET message by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<MessageDB> {
-	return this.getMessage(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MessageDB> {
+    return this.getMessage(id, GONG__StackPath, frontRepo)
   }
-  getMessage(id: number, GONG__StackPath: string): Observable<MessageDB> {
+  getMessage(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MessageDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -75,10 +76,10 @@ export class MessageService {
   }
 
   /** POST: add a new message to the server */
-  post(messagedb: MessageDB, GONG__StackPath: string): Observable<MessageDB> {
-    return this.postMessage(messagedb, GONG__StackPath)	
+  post(messagedb: MessageDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MessageDB> {
+    return this.postMessage(messagedb, GONG__StackPath, frontRepo)
   }
-  postMessage(messagedb: MessageDB, GONG__StackPath: string): Observable<MessageDB> {
+  postMessage(messagedb: MessageDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MessageDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -118,14 +119,15 @@ export class MessageService {
   }
 
   /** PUT: update the messagedb on the server */
-  update(messagedb: MessageDB, GONG__StackPath: string): Observable<MessageDB> {
-    return this.updateMessage(messagedb, GONG__StackPath)
+  update(messagedb: MessageDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MessageDB> {
+    return this.updateMessage(messagedb, GONG__StackPath, frontRepo)
   }
-  updateMessage(messagedb: MessageDB, GONG__StackPath: string): Observable<MessageDB> {
+  updateMessage(messagedb: MessageDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MessageDB> {
     const id = typeof messagedb === 'number' ? messagedb : messagedb.ID;
     const url = `${this.messagesUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -163,6 +165,6 @@ export class MessageService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

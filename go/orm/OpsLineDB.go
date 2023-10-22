@@ -38,7 +38,7 @@ type OpsLineAPI struct {
 	models.OpsLine_WOP
 
 	// encoding of pointers
-	OpsLinePointersEncoding
+	OpsLinePointersEncoding OpsLinePointersEncoding
 }
 
 // OpsLinePointersEncoding encodes pointers to Struct and

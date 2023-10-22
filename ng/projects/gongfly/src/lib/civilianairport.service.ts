@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { CivilianAirportDB } from './civilianairport-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -43,10 +44,10 @@ export class CivilianAirportService {
 
   /** GET civilianairports from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<CivilianAirportDB[]> {
-    return this.getCivilianAirports(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<CivilianAirportDB[]> {
+    return this.getCivilianAirports(GONG__StackPath, frontRepo)
   }
-  getCivilianAirports(GONG__StackPath: string): Observable<CivilianAirportDB[]> {
+  getCivilianAirports(GONG__StackPath: string, frontRepo: FrontRepo): Observable<CivilianAirportDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -60,10 +61,10 @@ export class CivilianAirportService {
 
   /** GET civilianairport by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<CivilianAirportDB> {
-	return this.getCivilianAirport(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CivilianAirportDB> {
+    return this.getCivilianAirport(id, GONG__StackPath, frontRepo)
   }
-  getCivilianAirport(id: number, GONG__StackPath: string): Observable<CivilianAirportDB> {
+  getCivilianAirport(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CivilianAirportDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -75,10 +76,10 @@ export class CivilianAirportService {
   }
 
   /** POST: add a new civilianairport to the server */
-  post(civilianairportdb: CivilianAirportDB, GONG__StackPath: string): Observable<CivilianAirportDB> {
-    return this.postCivilianAirport(civilianairportdb, GONG__StackPath)	
+  post(civilianairportdb: CivilianAirportDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CivilianAirportDB> {
+    return this.postCivilianAirport(civilianairportdb, GONG__StackPath, frontRepo)
   }
-  postCivilianAirport(civilianairportdb: CivilianAirportDB, GONG__StackPath: string): Observable<CivilianAirportDB> {
+  postCivilianAirport(civilianairportdb: CivilianAirportDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CivilianAirportDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -118,14 +119,15 @@ export class CivilianAirportService {
   }
 
   /** PUT: update the civilianairportdb on the server */
-  update(civilianairportdb: CivilianAirportDB, GONG__StackPath: string): Observable<CivilianAirportDB> {
-    return this.updateCivilianAirport(civilianairportdb, GONG__StackPath)
+  update(civilianairportdb: CivilianAirportDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CivilianAirportDB> {
+    return this.updateCivilianAirport(civilianairportdb, GONG__StackPath, frontRepo)
   }
-  updateCivilianAirport(civilianairportdb: CivilianAirportDB, GONG__StackPath: string): Observable<CivilianAirportDB> {
+  updateCivilianAirport(civilianairportdb: CivilianAirportDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CivilianAirportDB> {
     const id = typeof civilianairportdb === 'number' ? civilianairportdb : civilianairportdb.ID;
     const url = `${this.civilianairportsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -163,6 +165,6 @@ export class CivilianAirportService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

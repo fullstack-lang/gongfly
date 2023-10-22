@@ -28,8 +28,15 @@ export class LinerDB {
 	VerticalSpeed: number = 0
 	Timestampstring: string = ""
 
-	// insertion point for other declarations
+	// insertion point for pointers and slices of pointers declarations
 	ReporingLine?: OpsLineDB
+
+
+	LinerPointersEncoding: LinerPointersEncoding = new LinerPointersEncoding
+}
+
+export class LinerPointersEncoding {
+	// insertion point for pointers and slices of pointers encoding fields
 	ReporingLineID: NullInt64 = new NullInt64 // if pointer is null, ReporingLine.ID = 0
 
 }

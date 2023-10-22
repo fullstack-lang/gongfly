@@ -16,5 +16,11 @@ export class CivilianAirportDB {
 	Lng: number = 0
 	Name: string = ""
 
-	// insertion point for other declarations
+	// insertion point for pointers and slices of pointers declarations
+
+	CivilianAirportPointersEncoding: CivilianAirportPointersEncoding = new CivilianAirportPointersEncoding
+}
+
+export class CivilianAirportPointersEncoding {
+	// insertion point for pointers and slices of pointers encoding fields
 }

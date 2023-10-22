@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { OpsLineDB } from './opsline-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 import { ScenarioDB } from './scenario-db'
@@ -44,10 +45,10 @@ export class OpsLineService {
 
   /** GET opslines from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<OpsLineDB[]> {
-    return this.getOpsLines(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<OpsLineDB[]> {
+    return this.getOpsLines(GONG__StackPath, frontRepo)
   }
-  getOpsLines(GONG__StackPath: string): Observable<OpsLineDB[]> {
+  getOpsLines(GONG__StackPath: string, frontRepo: FrontRepo): Observable<OpsLineDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -61,10 +62,10 @@ export class OpsLineService {
 
   /** GET opsline by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<OpsLineDB> {
-	return this.getOpsLine(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<OpsLineDB> {
+    return this.getOpsLine(id, GONG__StackPath, frontRepo)
   }
-  getOpsLine(id: number, GONG__StackPath: string): Observable<OpsLineDB> {
+  getOpsLine(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<OpsLineDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -76,14 +77,17 @@ export class OpsLineService {
   }
 
   /** POST: add a new opsline to the server */
-  post(opslinedb: OpsLineDB, GONG__StackPath: string): Observable<OpsLineDB> {
-    return this.postOpsLine(opslinedb, GONG__StackPath)	
+  post(opslinedb: OpsLineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<OpsLineDB> {
+    return this.postOpsLine(opslinedb, GONG__StackPath, frontRepo)
   }
-  postOpsLine(opslinedb: OpsLineDB, GONG__StackPath: string): Observable<OpsLineDB> {
+  postOpsLine(opslinedb: OpsLineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<OpsLineDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let Scenario = opslinedb.Scenario
-    opslinedb.Scenario = new ScenarioDB
+    if (opslinedb.Scenario != undefined) {
+      opslinedb.OpsLinePointersEncoding.ScenarioID.Int64 = opslinedb.Scenario.ID
+      opslinedb.OpsLinePointersEncoding.ScenarioID.Valid = true
+    }
+    opslinedb.Scenario = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -94,6 +98,7 @@ export class OpsLineService {
     return this.http.post<OpsLineDB>(this.opslinesUrl, opslinedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
+        opslinedb.Scenario = frontRepo.Scenarios.get(opslinedb.OpsLinePointersEncoding.ScenarioID.Int64)
         // this.log(`posted opslinedb id=${opslinedb.ID}`)
       }),
       catchError(this.handleError<OpsLineDB>('postOpsLine'))
@@ -121,16 +126,20 @@ export class OpsLineService {
   }
 
   /** PUT: update the opslinedb on the server */
-  update(opslinedb: OpsLineDB, GONG__StackPath: string): Observable<OpsLineDB> {
-    return this.updateOpsLine(opslinedb, GONG__StackPath)
+  update(opslinedb: OpsLineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<OpsLineDB> {
+    return this.updateOpsLine(opslinedb, GONG__StackPath, frontRepo)
   }
-  updateOpsLine(opslinedb: OpsLineDB, GONG__StackPath: string): Observable<OpsLineDB> {
+  updateOpsLine(opslinedb: OpsLineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<OpsLineDB> {
     const id = typeof opslinedb === 'number' ? opslinedb : opslinedb.ID;
     const url = `${this.opslinesUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let Scenario = opslinedb.Scenario
-    opslinedb.Scenario = new ScenarioDB
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
+    if (opslinedb.Scenario != undefined) {
+      opslinedb.OpsLinePointersEncoding.ScenarioID.Int64 = opslinedb.Scenario.ID
+      opslinedb.OpsLinePointersEncoding.ScenarioID.Valid = true
+    }
+    opslinedb.Scenario = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -141,6 +150,7 @@ export class OpsLineService {
     return this.http.put<OpsLineDB>(url, opslinedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
+        opslinedb.Scenario = frontRepo.Scenarios.get(opslinedb.OpsLinePointersEncoding.ScenarioID.Int64)
         // this.log(`updated opslinedb id=${opslinedb.ID}`)
       }),
       catchError(this.handleError<OpsLineDB>('updateOpsLine'))
@@ -168,6 +178,6 @@ export class OpsLineService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

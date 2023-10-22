@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { LinerDB } from './liner-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 import { OpsLineDB } from './opsline-db'
@@ -44,10 +45,10 @@ export class LinerService {
 
   /** GET liners from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<LinerDB[]> {
-    return this.getLiners(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<LinerDB[]> {
+    return this.getLiners(GONG__StackPath, frontRepo)
   }
-  getLiners(GONG__StackPath: string): Observable<LinerDB[]> {
+  getLiners(GONG__StackPath: string, frontRepo: FrontRepo): Observable<LinerDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -61,10 +62,10 @@ export class LinerService {
 
   /** GET liner by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<LinerDB> {
-	return this.getLiner(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LinerDB> {
+    return this.getLiner(id, GONG__StackPath, frontRepo)
   }
-  getLiner(id: number, GONG__StackPath: string): Observable<LinerDB> {
+  getLiner(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LinerDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -76,14 +77,17 @@ export class LinerService {
   }
 
   /** POST: add a new liner to the server */
-  post(linerdb: LinerDB, GONG__StackPath: string): Observable<LinerDB> {
-    return this.postLiner(linerdb, GONG__StackPath)	
+  post(linerdb: LinerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LinerDB> {
+    return this.postLiner(linerdb, GONG__StackPath, frontRepo)
   }
-  postLiner(linerdb: LinerDB, GONG__StackPath: string): Observable<LinerDB> {
+  postLiner(linerdb: LinerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LinerDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let ReporingLine = linerdb.ReporingLine
-    linerdb.ReporingLine = new OpsLineDB
+    if (linerdb.ReporingLine != undefined) {
+      linerdb.LinerPointersEncoding.ReporingLineID.Int64 = linerdb.ReporingLine.ID
+      linerdb.LinerPointersEncoding.ReporingLineID.Valid = true
+    }
+    linerdb.ReporingLine = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -94,6 +98,7 @@ export class LinerService {
     return this.http.post<LinerDB>(this.linersUrl, linerdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
+        linerdb.ReporingLine = frontRepo.OpsLines.get(linerdb.LinerPointersEncoding.ReporingLineID.Int64)
         // this.log(`posted linerdb id=${linerdb.ID}`)
       }),
       catchError(this.handleError<LinerDB>('postLiner'))
@@ -121,16 +126,20 @@ export class LinerService {
   }
 
   /** PUT: update the linerdb on the server */
-  update(linerdb: LinerDB, GONG__StackPath: string): Observable<LinerDB> {
-    return this.updateLiner(linerdb, GONG__StackPath)
+  update(linerdb: LinerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LinerDB> {
+    return this.updateLiner(linerdb, GONG__StackPath, frontRepo)
   }
-  updateLiner(linerdb: LinerDB, GONG__StackPath: string): Observable<LinerDB> {
+  updateLiner(linerdb: LinerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LinerDB> {
     const id = typeof linerdb === 'number' ? linerdb : linerdb.ID;
     const url = `${this.linersUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let ReporingLine = linerdb.ReporingLine
-    linerdb.ReporingLine = new OpsLineDB
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
+    if (linerdb.ReporingLine != undefined) {
+      linerdb.LinerPointersEncoding.ReporingLineID.Int64 = linerdb.ReporingLine.ID
+      linerdb.LinerPointersEncoding.ReporingLineID.Valid = true
+    }
+    linerdb.ReporingLine = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -141,6 +150,7 @@ export class LinerService {
     return this.http.put<LinerDB>(url, linerdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
+        linerdb.ReporingLine = frontRepo.OpsLines.get(linerdb.LinerPointersEncoding.ReporingLineID.Int64)
         // this.log(`updated linerdb id=${linerdb.ID}`)
       }),
       catchError(this.handleError<LinerDB>('updateLiner'))
@@ -168,6 +178,6 @@ export class LinerService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

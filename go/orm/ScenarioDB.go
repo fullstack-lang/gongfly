@@ -38,7 +38,7 @@ type ScenarioAPI struct {
 	models.Scenario_WOP
 
 	// encoding of pointers
-	ScenarioPointersEncoding
+	ScenarioPointersEncoding ScenarioPointersEncoding
 }
 
 // ScenarioPointersEncoding encodes pointers to Struct and

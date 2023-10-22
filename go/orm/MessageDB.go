@@ -38,7 +38,7 @@ type MessageAPI struct {
 	models.Message_WOP
 
 	// encoding of pointers
-	MessagePointersEncoding
+	MessagePointersEncoding MessagePointersEncoding
 }
 
 // MessagePointersEncoding encodes pointers to Struct and

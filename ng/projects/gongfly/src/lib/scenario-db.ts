@@ -18,5 +18,11 @@ export class ScenarioDB {
 	ZoomLevel: number = 0
 	MessageVisualSpeed: number = 0
 
-	// insertion point for other declarations
+	// insertion point for pointers and slices of pointers declarations
+
+	ScenarioPointersEncoding: ScenarioPointersEncoding = new ScenarioPointersEncoding
+}
+
+export class ScenarioPointersEncoding {
+	// insertion point for pointers and slices of pointers encoding fields
 }

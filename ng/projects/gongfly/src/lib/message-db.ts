@@ -31,6 +31,12 @@ export class MessageDB {
 	About_string: string = ""
 	Display: boolean = false
 
-	// insertion point for other declarations
+	// insertion point for pointers and slices of pointers declarations
 	DurationSinceSimulationStart_string?: string
+
+	MessagePointersEncoding: MessagePointersEncoding = new MessagePointersEncoding
+}
+
+export class MessagePointersEncoding {
+	// insertion point for pointers and slices of pointers encoding fields
 }

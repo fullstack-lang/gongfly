@@ -38,7 +38,7 @@ type LinerAPI struct {
 	models.Liner_WOP
 
 	// encoding of pointers
-	LinerPointersEncoding
+	LinerPointersEncoding LinerPointersEncoding
 }
 
 // LinerPointersEncoding encodes pointers to Struct and

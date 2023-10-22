@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { ScenarioDB } from './scenario-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -43,10 +44,10 @@ export class ScenarioService {
 
   /** GET scenarios from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<ScenarioDB[]> {
-    return this.getScenarios(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<ScenarioDB[]> {
+    return this.getScenarios(GONG__StackPath, frontRepo)
   }
-  getScenarios(GONG__StackPath: string): Observable<ScenarioDB[]> {
+  getScenarios(GONG__StackPath: string, frontRepo: FrontRepo): Observable<ScenarioDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -60,10 +61,10 @@ export class ScenarioService {
 
   /** GET scenario by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<ScenarioDB> {
-	return this.getScenario(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<ScenarioDB> {
+    return this.getScenario(id, GONG__StackPath, frontRepo)
   }
-  getScenario(id: number, GONG__StackPath: string): Observable<ScenarioDB> {
+  getScenario(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<ScenarioDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -75,10 +76,10 @@ export class ScenarioService {
   }
 
   /** POST: add a new scenario to the server */
-  post(scenariodb: ScenarioDB, GONG__StackPath: string): Observable<ScenarioDB> {
-    return this.postScenario(scenariodb, GONG__StackPath)	
+  post(scenariodb: ScenarioDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<ScenarioDB> {
+    return this.postScenario(scenariodb, GONG__StackPath, frontRepo)
   }
-  postScenario(scenariodb: ScenarioDB, GONG__StackPath: string): Observable<ScenarioDB> {
+  postScenario(scenariodb: ScenarioDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<ScenarioDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -118,14 +119,15 @@ export class ScenarioService {
   }
 
   /** PUT: update the scenariodb on the server */
-  update(scenariodb: ScenarioDB, GONG__StackPath: string): Observable<ScenarioDB> {
-    return this.updateScenario(scenariodb, GONG__StackPath)
+  update(scenariodb: ScenarioDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<ScenarioDB> {
+    return this.updateScenario(scenariodb, GONG__StackPath, frontRepo)
   }
-  updateScenario(scenariodb: ScenarioDB, GONG__StackPath: string): Observable<ScenarioDB> {
+  updateScenario(scenariodb: ScenarioDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<ScenarioDB> {
     const id = typeof scenariodb === 'number' ? scenariodb : scenariodb.ID;
     const url = `${this.scenariosUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -163,6 +165,6 @@ export class ScenarioService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

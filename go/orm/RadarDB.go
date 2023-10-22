@@ -38,7 +38,7 @@ type RadarAPI struct {
 	models.Radar_WOP
 
 	// encoding of pointers
-	RadarPointersEncoding
+	RadarPointersEncoding RadarPointersEncoding
 }
 
 // RadarPointersEncoding encodes pointers to Struct and

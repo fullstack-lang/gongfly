@@ -20,8 +20,15 @@ export class OpsLineDB {
 	State: string = ""
 	Name: string = ""
 
-	// insertion point for other declarations
+	// insertion point for pointers and slices of pointers declarations
 	Scenario?: ScenarioDB
+
+
+	OpsLinePointersEncoding: OpsLinePointersEncoding = new OpsLinePointersEncoding
+}
+
+export class OpsLinePointersEncoding {
+	// insertion point for pointers and slices of pointers encoding fields
 	ScenarioID: NullInt64 = new NullInt64 // if pointer is null, Scenario.ID = 0
 
 }

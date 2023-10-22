@@ -38,7 +38,7 @@ type CivilianAirportAPI struct {
 	models.CivilianAirport_WOP
 
 	// encoding of pointers
-	CivilianAirportPointersEncoding
+	CivilianAirportPointersEncoding CivilianAirportPointersEncoding
 }
 
 // CivilianAirportPointersEncoding encodes pointers to Struct and

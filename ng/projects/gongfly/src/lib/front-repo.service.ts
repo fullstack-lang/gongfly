@@ -222,13 +222,13 @@ export class FrontRepoService {
       // expectation for a non-empty array of observables.
       of(null), // 
       // insertion point sub template
-      this.civilianairportService.getCivilianAirports(this.GONG__StackPath),
-      this.linerService.getLiners(this.GONG__StackPath),
-      this.messageService.getMessages(this.GONG__StackPath),
-      this.opslineService.getOpsLines(this.GONG__StackPath),
-      this.radarService.getRadars(this.GONG__StackPath),
-      this.satelliteService.getSatellites(this.GONG__StackPath),
-      this.scenarioService.getScenarios(this.GONG__StackPath),
+      this.civilianairportService.getCivilianAirports(this.GONG__StackPath, this.frontRepo),
+      this.linerService.getLiners(this.GONG__StackPath, this.frontRepo),
+      this.messageService.getMessages(this.GONG__StackPath, this.frontRepo),
+      this.opslineService.getOpsLines(this.GONG__StackPath, this.frontRepo),
+      this.radarService.getRadars(this.GONG__StackPath, this.frontRepo),
+      this.satelliteService.getSatellites(this.GONG__StackPath, this.frontRepo),
+      this.scenarioService.getScenarios(this.GONG__StackPath, this.frontRepo),
     ];
 
   //
@@ -244,13 +244,13 @@ export class FrontRepoService {
     this.observableFrontRepo = [
       of(null), // see above for justification
       // insertion point sub template
-      this.civilianairportService.getCivilianAirports(this.GONG__StackPath),
-      this.linerService.getLiners(this.GONG__StackPath),
-      this.messageService.getMessages(this.GONG__StackPath),
-      this.opslineService.getOpsLines(this.GONG__StackPath),
-      this.radarService.getRadars(this.GONG__StackPath),
-      this.satelliteService.getSatellites(this.GONG__StackPath),
-      this.scenarioService.getScenarios(this.GONG__StackPath),
+      this.civilianairportService.getCivilianAirports(this.GONG__StackPath, this.frontRepo),
+      this.linerService.getLiners(this.GONG__StackPath, this.frontRepo),
+      this.messageService.getMessages(this.GONG__StackPath, this.frontRepo),
+      this.opslineService.getOpsLines(this.GONG__StackPath, this.frontRepo),
+      this.radarService.getRadars(this.GONG__StackPath, this.frontRepo),
+      this.satelliteService.getSatellites(this.GONG__StackPath, this.frontRepo),
+      this.scenarioService.getScenarios(this.GONG__StackPath, this.frontRepo),
     ]
 
     return new Observable<FrontRepo>(
@@ -522,13 +522,12 @@ export class FrontRepoService {
 
 
             // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
+            // Second Step: reddeem slice of pointers fields
             // insertion point sub template for redeem 
             civilianairports.forEach(
               civilianairport => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
               }
             )
             liners.forEach(
@@ -536,20 +535,18 @@ export class FrontRepoService {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
                 // insertion point for pointer field ReporingLine redeeming
                 {
-                  let _opsline = this.frontRepo.OpsLines.get(liner.ReporingLineID.Int64)
+                  let _opsline = this.frontRepo.OpsLines.get(liner.LinerPointersEncoding.ReporingLineID.Int64)
                   if (_opsline) {
                     liner.ReporingLine = _opsline
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
               }
             )
             messages.forEach(
               message => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
               }
             )
             opslines.forEach(
@@ -557,73 +554,30 @@ export class FrontRepoService {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
                 // insertion point for pointer field Scenario redeeming
                 {
-                  let _scenario = this.frontRepo.Scenarios.get(opsline.ScenarioID.Int64)
+                  let _scenario = this.frontRepo.Scenarios.get(opsline.OpsLinePointersEncoding.ScenarioID.Int64)
                   if (_scenario) {
                     opsline.Scenario = _scenario
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
               }
             )
             radars.forEach(
               radar => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
               }
             )
             satellites.forEach(
               satellite => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
               }
             )
             scenarios.forEach(
               scenario => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
-              }
-            )
-
-            // 
-            // Third Step: sort arrays (slices in go) according to their index
-            // insertion point sub template for redeem 
-            civilianairports.forEach(
-              civilianairport => {
-                // insertion point for sorting
-              }
-            )
-            liners.forEach(
-              liner => {
-                // insertion point for sorting
-              }
-            )
-            messages.forEach(
-              message => {
-                // insertion point for sorting
-              }
-            )
-            opslines.forEach(
-              opsline => {
-                // insertion point for sorting
-              }
-            )
-            radars.forEach(
-              radar => {
-                // insertion point for sorting
-              }
-            )
-            satellites.forEach(
-              satellite => {
-                // insertion point for sorting
-              }
-            )
-            scenarios.forEach(
-              scenario => {
-                // insertion point for sorting
+                // insertion point for pointers decoding
               }
             )
 
@@ -642,7 +596,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.civilianairportService.getCivilianAirports(this.GONG__StackPath)
+          this.civilianairportService.getCivilianAirports(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             civilianairports,
@@ -662,8 +616,6 @@ export class FrontRepoService {
                 this.frontRepo.CivilianAirports_batch.set(civilianairport.ID, civilianairport)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -693,7 +645,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.linerService.getLiners(this.GONG__StackPath)
+          this.linerService.getLiners(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             liners,
@@ -715,13 +667,11 @@ export class FrontRepoService {
                 // insertion point for redeeming ONE/ZERO-ONE associations
                 // insertion point for pointer field ReporingLine redeeming
                 {
-                  let _opsline = this.frontRepo.OpsLines.get(liner.ReporingLineID.Int64)
+                  let _opsline = this.frontRepo.OpsLines.get(liner.LinerPointersEncoding.ReporingLineID.Int64)
                   if (_opsline) {
                     liner.ReporingLine = _opsline
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -751,7 +701,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.messageService.getMessages(this.GONG__StackPath)
+          this.messageService.getMessages(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             messages,
@@ -771,8 +721,6 @@ export class FrontRepoService {
                 this.frontRepo.Messages_batch.set(message.ID, message)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -802,7 +750,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.opslineService.getOpsLines(this.GONG__StackPath)
+          this.opslineService.getOpsLines(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             opslines,
@@ -824,13 +772,11 @@ export class FrontRepoService {
                 // insertion point for redeeming ONE/ZERO-ONE associations
                 // insertion point for pointer field Scenario redeeming
                 {
-                  let _scenario = this.frontRepo.Scenarios.get(opsline.ScenarioID.Int64)
+                  let _scenario = this.frontRepo.Scenarios.get(opsline.OpsLinePointersEncoding.ScenarioID.Int64)
                   if (_scenario) {
                     opsline.Scenario = _scenario
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -860,7 +806,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.radarService.getRadars(this.GONG__StackPath)
+          this.radarService.getRadars(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             radars,
@@ -880,8 +826,6 @@ export class FrontRepoService {
                 this.frontRepo.Radars_batch.set(radar.ID, radar)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -911,7 +855,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.satelliteService.getSatellites(this.GONG__StackPath)
+          this.satelliteService.getSatellites(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             satellites,
@@ -931,8 +875,6 @@ export class FrontRepoService {
                 this.frontRepo.Satellites_batch.set(satellite.ID, satellite)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -962,7 +904,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.scenarioService.getScenarios(this.GONG__StackPath)
+          this.scenarioService.getScenarios(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             scenarios,
@@ -982,8 +924,6 @@ export class FrontRepoService {
                 this.frontRepo.Scenarios_batch.set(scenario.ID, scenario)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 

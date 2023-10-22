@@ -268,7 +268,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.Liner:
 		tmp := GetInstanceDBFromInstance[models.Liner, LinerDB](
 			stage, backRepo, inst,
@@ -298,7 +298,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.Message:
 		tmp := GetInstanceDBFromInstance[models.Message, MessageDB](
 			stage, backRepo, inst,
@@ -328,7 +328,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.OpsLine:
 		tmp := GetInstanceDBFromInstance[models.OpsLine, OpsLineDB](
 			stage, backRepo, inst,
@@ -358,7 +358,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.Radar:
 		tmp := GetInstanceDBFromInstance[models.Radar, RadarDB](
 			stage, backRepo, inst,
@@ -388,7 +388,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.Satellite:
 		tmp := GetInstanceDBFromInstance[models.Satellite, SatelliteDB](
 			stage, backRepo, inst,
@@ -418,7 +418,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.Scenario:
 		tmp := GetInstanceDBFromInstance[models.Scenario, ScenarioDB](
 			stage, backRepo, inst,
@@ -448,7 +448,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	default:
 		_ = inst
 	}

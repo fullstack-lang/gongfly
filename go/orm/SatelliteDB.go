@@ -38,7 +38,7 @@ type SatelliteAPI struct {
 	models.Satellite_WOP
 
 	// encoding of pointers
-	SatellitePointersEncoding
+	SatellitePointersEncoding SatellitePointersEncoding
 }
 
 // SatellitePointersEncoding encodes pointers to Struct and

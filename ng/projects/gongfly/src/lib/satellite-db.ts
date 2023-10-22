@@ -23,5 +23,11 @@ export class SatelliteDB {
 	VerticalSpeed: number = 0
 	Timestampstring: string = ""
 
-	// insertion point for other declarations
+	// insertion point for pointers and slices of pointers declarations
+
+	SatellitePointersEncoding: SatellitePointersEncoding = new SatellitePointersEncoding
+}
+
+export class SatellitePointersEncoding {
+	// insertion point for pointers and slices of pointers encoding fields
 }

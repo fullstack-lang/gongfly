@@ -18,5 +18,11 @@ export class RadarDB {
 	Lng: number = 0
 	Range: number = 0
 
-	// insertion point for other declarations
+	// insertion point for pointers and slices of pointers declarations
+
+	RadarPointersEncoding: RadarPointersEncoding = new RadarPointersEncoding
+}
+
+export class RadarPointersEncoding {
+	// insertion point for pointers and slices of pointers encoding fields
 }
