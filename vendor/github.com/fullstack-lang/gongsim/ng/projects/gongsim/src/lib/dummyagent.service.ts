@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { DummyAgentDB } from './dummyagent-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -43,10 +44,10 @@ export class DummyAgentService {
 
   /** GET dummyagents from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<DummyAgentDB[]> {
-    return this.getDummyAgents(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB[]> {
+    return this.getDummyAgents(GONG__StackPath, frontRepo)
   }
-  getDummyAgents(GONG__StackPath: string): Observable<DummyAgentDB[]> {
+  getDummyAgents(GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -60,10 +61,10 @@ export class DummyAgentService {
 
   /** GET dummyagent by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<DummyAgentDB> {
-	return this.getDummyAgent(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
+    return this.getDummyAgent(id, GONG__StackPath, frontRepo)
   }
-  getDummyAgent(id: number, GONG__StackPath: string): Observable<DummyAgentDB> {
+  getDummyAgent(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -75,10 +76,10 @@ export class DummyAgentService {
   }
 
   /** POST: add a new dummyagent to the server */
-  post(dummyagentdb: DummyAgentDB, GONG__StackPath: string): Observable<DummyAgentDB> {
-    return this.postDummyAgent(dummyagentdb, GONG__StackPath)	
+  post(dummyagentdb: DummyAgentDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
+    return this.postDummyAgent(dummyagentdb, GONG__StackPath, frontRepo)
   }
-  postDummyAgent(dummyagentdb: DummyAgentDB, GONG__StackPath: string): Observable<DummyAgentDB> {
+  postDummyAgent(dummyagentdb: DummyAgentDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -118,14 +119,15 @@ export class DummyAgentService {
   }
 
   /** PUT: update the dummyagentdb on the server */
-  update(dummyagentdb: DummyAgentDB, GONG__StackPath: string): Observable<DummyAgentDB> {
-    return this.updateDummyAgent(dummyagentdb, GONG__StackPath)
+  update(dummyagentdb: DummyAgentDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
+    return this.updateDummyAgent(dummyagentdb, GONG__StackPath, frontRepo)
   }
-  updateDummyAgent(dummyagentdb: DummyAgentDB, GONG__StackPath: string): Observable<DummyAgentDB> {
+  updateDummyAgent(dummyagentdb: DummyAgentDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
     const id = typeof dummyagentdb === 'number' ? dummyagentdb : dummyagentdb.ID;
     const url = `${this.dummyagentsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -163,6 +165,6 @@ export class DummyAgentService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

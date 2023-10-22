@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { LayerGroupDB } from './layergroup-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -43,10 +44,10 @@ export class LayerGroupService {
 
   /** GET layergroups from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<LayerGroupDB[]> {
-    return this.getLayerGroups(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB[]> {
+    return this.getLayerGroups(GONG__StackPath, frontRepo)
   }
-  getLayerGroups(GONG__StackPath: string): Observable<LayerGroupDB[]> {
+  getLayerGroups(GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -60,10 +61,10 @@ export class LayerGroupService {
 
   /** GET layergroup by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<LayerGroupDB> {
-	return this.getLayerGroup(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB> {
+    return this.getLayerGroup(id, GONG__StackPath, frontRepo)
   }
-  getLayerGroup(id: number, GONG__StackPath: string): Observable<LayerGroupDB> {
+  getLayerGroup(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -75,10 +76,10 @@ export class LayerGroupService {
   }
 
   /** POST: add a new layergroup to the server */
-  post(layergroupdb: LayerGroupDB, GONG__StackPath: string): Observable<LayerGroupDB> {
-    return this.postLayerGroup(layergroupdb, GONG__StackPath)	
+  post(layergroupdb: LayerGroupDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB> {
+    return this.postLayerGroup(layergroupdb, GONG__StackPath, frontRepo)
   }
-  postLayerGroup(layergroupdb: LayerGroupDB, GONG__StackPath: string): Observable<LayerGroupDB> {
+  postLayerGroup(layergroupdb: LayerGroupDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -118,14 +119,15 @@ export class LayerGroupService {
   }
 
   /** PUT: update the layergroupdb on the server */
-  update(layergroupdb: LayerGroupDB, GONG__StackPath: string): Observable<LayerGroupDB> {
-    return this.updateLayerGroup(layergroupdb, GONG__StackPath)
+  update(layergroupdb: LayerGroupDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB> {
+    return this.updateLayerGroup(layergroupdb, GONG__StackPath, frontRepo)
   }
-  updateLayerGroup(layergroupdb: LayerGroupDB, GONG__StackPath: string): Observable<LayerGroupDB> {
+  updateLayerGroup(layergroupdb: LayerGroupDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB> {
     const id = typeof layergroupdb === 'number' ? layergroupdb : layergroupdb.ID;
     const url = `${this.layergroupsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -163,6 +165,6 @@ export class LayerGroupService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

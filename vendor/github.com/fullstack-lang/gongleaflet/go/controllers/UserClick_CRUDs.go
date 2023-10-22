@@ -91,8 +91,8 @@ func (controller *Controller) GetUserClicks(c *gin.Context) {
 
 		// insertion point for updating fields
 		userclickAPI.ID = userclickDB.ID
-		userclickDB.CopyBasicFieldsToUserClick(&userclickAPI.UserClick)
-		userclickAPI.UserClickPointersEnconding = userclickDB.UserClickPointersEnconding
+		userclickDB.CopyBasicFieldsToUserClick_WOP(&userclickAPI.UserClick_WOP)
+		userclickAPI.UserClickPointersEncoding = userclickDB.UserClickPointersEncoding
 		userclickAPIs = append(userclickAPIs, userclickAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostUserClick(c *gin.Context) {
 
 	// Create userclick
 	userclickDB := orm.UserClickDB{}
-	userclickDB.UserClickPointersEnconding = input.UserClickPointersEnconding
-	userclickDB.CopyBasicFieldsFromUserClick(&input.UserClick)
+	userclickDB.UserClickPointersEncoding = input.UserClickPointersEncoding
+	userclickDB.CopyBasicFieldsFromUserClick_WOP(&input.UserClick_WOP)
 
 	query := db.Create(&userclickDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetUserClick(c *gin.Context) {
 
 	var userclickAPI orm.UserClickAPI
 	userclickAPI.ID = userclickDB.ID
-	userclickAPI.UserClickPointersEnconding = userclickDB.UserClickPointersEnconding
-	userclickDB.CopyBasicFieldsToUserClick(&userclickAPI.UserClick)
+	userclickAPI.UserClickPointersEncoding = userclickDB.UserClickPointersEncoding
+	userclickDB.CopyBasicFieldsToUserClick_WOP(&userclickAPI.UserClick_WOP)
 
 	c.JSON(http.StatusOK, userclickAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateUserClick(c *gin.Context) {
 	}
 
 	// update
-	userclickDB.CopyBasicFieldsFromUserClick(&input.UserClick)
-	userclickDB.UserClickPointersEnconding = input.UserClickPointersEnconding
+	userclickDB.CopyBasicFieldsFromUserClick_WOP(&input.UserClick_WOP)
+	userclickDB.UserClickPointersEncoding = input.UserClickPointersEncoding
 
 	query = db.Model(&userclickDB).Updates(userclickDB)
 	if query.Error != nil {

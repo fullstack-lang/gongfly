@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { EngineDB } from './engine-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -43,10 +44,10 @@ export class EngineService {
 
   /** GET engines from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<EngineDB[]> {
-    return this.getEngines(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB[]> {
+    return this.getEngines(GONG__StackPath, frontRepo)
   }
-  getEngines(GONG__StackPath: string): Observable<EngineDB[]> {
+  getEngines(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -60,10 +61,10 @@ export class EngineService {
 
   /** GET engine by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<EngineDB> {
-	return this.getEngine(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
+    return this.getEngine(id, GONG__StackPath, frontRepo)
   }
-  getEngine(id: number, GONG__StackPath: string): Observable<EngineDB> {
+  getEngine(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -75,10 +76,10 @@ export class EngineService {
   }
 
   /** POST: add a new engine to the server */
-  post(enginedb: EngineDB, GONG__StackPath: string): Observable<EngineDB> {
-    return this.postEngine(enginedb, GONG__StackPath)	
+  post(enginedb: EngineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
+    return this.postEngine(enginedb, GONG__StackPath, frontRepo)
   }
-  postEngine(enginedb: EngineDB, GONG__StackPath: string): Observable<EngineDB> {
+  postEngine(enginedb: EngineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -118,14 +119,15 @@ export class EngineService {
   }
 
   /** PUT: update the enginedb on the server */
-  update(enginedb: EngineDB, GONG__StackPath: string): Observable<EngineDB> {
-    return this.updateEngine(enginedb, GONG__StackPath)
+  update(enginedb: EngineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
+    return this.updateEngine(enginedb, GONG__StackPath, frontRepo)
   }
-  updateEngine(enginedb: EngineDB, GONG__StackPath: string): Observable<EngineDB> {
+  updateEngine(enginedb: EngineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
     const id = typeof enginedb === 'number' ? enginedb : enginedb.ID;
     const url = `${this.enginesUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -163,6 +165,6 @@ export class EngineService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

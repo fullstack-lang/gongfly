@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { VisualTrackDB } from './visualtrack-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 import { LayerGroupDB } from './layergroup-db'
@@ -45,10 +46,10 @@ export class VisualTrackService {
 
   /** GET visualtracks from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<VisualTrackDB[]> {
-    return this.getVisualTracks(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB[]> {
+    return this.getVisualTracks(GONG__StackPath, frontRepo)
   }
-  getVisualTracks(GONG__StackPath: string): Observable<VisualTrackDB[]> {
+  getVisualTracks(GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -62,10 +63,10 @@ export class VisualTrackService {
 
   /** GET visualtrack by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<VisualTrackDB> {
-	return this.getVisualTrack(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
+    return this.getVisualTrack(id, GONG__StackPath, frontRepo)
   }
-  getVisualTrack(id: number, GONG__StackPath: string): Observable<VisualTrackDB> {
+  getVisualTrack(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -77,16 +78,22 @@ export class VisualTrackService {
   }
 
   /** POST: add a new visualtrack to the server */
-  post(visualtrackdb: VisualTrackDB, GONG__StackPath: string): Observable<VisualTrackDB> {
-    return this.postVisualTrack(visualtrackdb, GONG__StackPath)	
+  post(visualtrackdb: VisualTrackDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
+    return this.postVisualTrack(visualtrackdb, GONG__StackPath, frontRepo)
   }
-  postVisualTrack(visualtrackdb: VisualTrackDB, GONG__StackPath: string): Observable<VisualTrackDB> {
+  postVisualTrack(visualtrackdb: VisualTrackDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let LayerGroup = visualtrackdb.LayerGroup
-    visualtrackdb.LayerGroup = new LayerGroupDB
-    let DivIcon = visualtrackdb.DivIcon
-    visualtrackdb.DivIcon = new DivIconDB
+    if (visualtrackdb.LayerGroup != undefined) {
+      visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Int64 = visualtrackdb.LayerGroup.ID
+      visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Valid = true
+    }
+    visualtrackdb.LayerGroup = undefined
+    if (visualtrackdb.DivIcon != undefined) {
+      visualtrackdb.VisualTrackPointersEncoding.DivIconID.Int64 = visualtrackdb.DivIcon.ID
+      visualtrackdb.VisualTrackPointersEncoding.DivIconID.Valid = true
+    }
+    visualtrackdb.DivIcon = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -97,6 +104,8 @@ export class VisualTrackService {
     return this.http.post<VisualTrackDB>(this.visualtracksUrl, visualtrackdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
+        visualtrackdb.LayerGroup = frontRepo.LayerGroups.get(visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Int64)
+        visualtrackdb.DivIcon = frontRepo.DivIcons.get(visualtrackdb.VisualTrackPointersEncoding.DivIconID.Int64)
         // this.log(`posted visualtrackdb id=${visualtrackdb.ID}`)
       }),
       catchError(this.handleError<VisualTrackDB>('postVisualTrack'))
@@ -124,18 +133,25 @@ export class VisualTrackService {
   }
 
   /** PUT: update the visualtrackdb on the server */
-  update(visualtrackdb: VisualTrackDB, GONG__StackPath: string): Observable<VisualTrackDB> {
-    return this.updateVisualTrack(visualtrackdb, GONG__StackPath)
+  update(visualtrackdb: VisualTrackDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
+    return this.updateVisualTrack(visualtrackdb, GONG__StackPath, frontRepo)
   }
-  updateVisualTrack(visualtrackdb: VisualTrackDB, GONG__StackPath: string): Observable<VisualTrackDB> {
+  updateVisualTrack(visualtrackdb: VisualTrackDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
     const id = typeof visualtrackdb === 'number' ? visualtrackdb : visualtrackdb.ID;
     const url = `${this.visualtracksUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let LayerGroup = visualtrackdb.LayerGroup
-    visualtrackdb.LayerGroup = new LayerGroupDB
-    let DivIcon = visualtrackdb.DivIcon
-    visualtrackdb.DivIcon = new DivIconDB
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
+    if (visualtrackdb.LayerGroup != undefined) {
+      visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Int64 = visualtrackdb.LayerGroup.ID
+      visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Valid = true
+    }
+    visualtrackdb.LayerGroup = undefined
+    if (visualtrackdb.DivIcon != undefined) {
+      visualtrackdb.VisualTrackPointersEncoding.DivIconID.Int64 = visualtrackdb.DivIcon.ID
+      visualtrackdb.VisualTrackPointersEncoding.DivIconID.Valid = true
+    }
+    visualtrackdb.DivIcon = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -146,6 +162,8 @@ export class VisualTrackService {
     return this.http.put<VisualTrackDB>(url, visualtrackdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
+        visualtrackdb.LayerGroup = frontRepo.LayerGroups.get(visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Int64)
+        visualtrackdb.DivIcon = frontRepo.DivIcons.get(visualtrackdb.VisualTrackPointersEncoding.DivIconID.Int64)
         // this.log(`updated visualtrackdb id=${visualtrackdb.ID}`)
       }),
       catchError(this.handleError<VisualTrackDB>('updateVisualTrack'))
@@ -173,6 +191,6 @@ export class VisualTrackService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

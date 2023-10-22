@@ -91,8 +91,8 @@ func (controller *Controller) GetDummyAgents(c *gin.Context) {
 
 		// insertion point for updating fields
 		dummyagentAPI.ID = dummyagentDB.ID
-		dummyagentDB.CopyBasicFieldsToDummyAgent(&dummyagentAPI.DummyAgent)
-		dummyagentAPI.DummyAgentPointersEnconding = dummyagentDB.DummyAgentPointersEnconding
+		dummyagentDB.CopyBasicFieldsToDummyAgent_WOP(&dummyagentAPI.DummyAgent_WOP)
+		dummyagentAPI.DummyAgentPointersEncoding = dummyagentDB.DummyAgentPointersEncoding
 		dummyagentAPIs = append(dummyagentAPIs, dummyagentAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostDummyAgent(c *gin.Context) {
 
 	// Create dummyagent
 	dummyagentDB := orm.DummyAgentDB{}
-	dummyagentDB.DummyAgentPointersEnconding = input.DummyAgentPointersEnconding
-	dummyagentDB.CopyBasicFieldsFromDummyAgent(&input.DummyAgent)
+	dummyagentDB.DummyAgentPointersEncoding = input.DummyAgentPointersEncoding
+	dummyagentDB.CopyBasicFieldsFromDummyAgent_WOP(&input.DummyAgent_WOP)
 
 	query := db.Create(&dummyagentDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetDummyAgent(c *gin.Context) {
 
 	var dummyagentAPI orm.DummyAgentAPI
 	dummyagentAPI.ID = dummyagentDB.ID
-	dummyagentAPI.DummyAgentPointersEnconding = dummyagentDB.DummyAgentPointersEnconding
-	dummyagentDB.CopyBasicFieldsToDummyAgent(&dummyagentAPI.DummyAgent)
+	dummyagentAPI.DummyAgentPointersEncoding = dummyagentDB.DummyAgentPointersEncoding
+	dummyagentDB.CopyBasicFieldsToDummyAgent_WOP(&dummyagentAPI.DummyAgent_WOP)
 
 	c.JSON(http.StatusOK, dummyagentAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateDummyAgent(c *gin.Context) {
 	}
 
 	// update
-	dummyagentDB.CopyBasicFieldsFromDummyAgent(&input.DummyAgent)
-	dummyagentDB.DummyAgentPointersEnconding = input.DummyAgentPointersEnconding
+	dummyagentDB.CopyBasicFieldsFromDummyAgent_WOP(&input.DummyAgent_WOP)
+	dummyagentDB.DummyAgentPointersEncoding = input.DummyAgentPointersEncoding
 
 	query = db.Model(&dummyagentDB).Updates(dummyagentDB)
 	if query.Error != nil {

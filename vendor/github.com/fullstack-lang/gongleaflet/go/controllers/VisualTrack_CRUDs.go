@@ -91,8 +91,8 @@ func (controller *Controller) GetVisualTracks(c *gin.Context) {
 
 		// insertion point for updating fields
 		visualtrackAPI.ID = visualtrackDB.ID
-		visualtrackDB.CopyBasicFieldsToVisualTrack(&visualtrackAPI.VisualTrack)
-		visualtrackAPI.VisualTrackPointersEnconding = visualtrackDB.VisualTrackPointersEnconding
+		visualtrackDB.CopyBasicFieldsToVisualTrack_WOP(&visualtrackAPI.VisualTrack_WOP)
+		visualtrackAPI.VisualTrackPointersEncoding = visualtrackDB.VisualTrackPointersEncoding
 		visualtrackAPIs = append(visualtrackAPIs, visualtrackAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostVisualTrack(c *gin.Context) {
 
 	// Create visualtrack
 	visualtrackDB := orm.VisualTrackDB{}
-	visualtrackDB.VisualTrackPointersEnconding = input.VisualTrackPointersEnconding
-	visualtrackDB.CopyBasicFieldsFromVisualTrack(&input.VisualTrack)
+	visualtrackDB.VisualTrackPointersEncoding = input.VisualTrackPointersEncoding
+	visualtrackDB.CopyBasicFieldsFromVisualTrack_WOP(&input.VisualTrack_WOP)
 
 	query := db.Create(&visualtrackDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetVisualTrack(c *gin.Context) {
 
 	var visualtrackAPI orm.VisualTrackAPI
 	visualtrackAPI.ID = visualtrackDB.ID
-	visualtrackAPI.VisualTrackPointersEnconding = visualtrackDB.VisualTrackPointersEnconding
-	visualtrackDB.CopyBasicFieldsToVisualTrack(&visualtrackAPI.VisualTrack)
+	visualtrackAPI.VisualTrackPointersEncoding = visualtrackDB.VisualTrackPointersEncoding
+	visualtrackDB.CopyBasicFieldsToVisualTrack_WOP(&visualtrackAPI.VisualTrack_WOP)
 
 	c.JSON(http.StatusOK, visualtrackAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateVisualTrack(c *gin.Context) {
 	}
 
 	// update
-	visualtrackDB.CopyBasicFieldsFromVisualTrack(&input.VisualTrack)
-	visualtrackDB.VisualTrackPointersEnconding = input.VisualTrackPointersEnconding
+	visualtrackDB.CopyBasicFieldsFromVisualTrack_WOP(&input.VisualTrack_WOP)
+	visualtrackDB.VisualTrackPointersEncoding = input.VisualTrackPointersEncoding
 
 	query = db.Model(&visualtrackDB).Updates(visualtrackDB)
 	if query.Error != nil {

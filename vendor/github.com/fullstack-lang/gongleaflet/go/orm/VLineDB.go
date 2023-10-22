@@ -35,15 +35,15 @@ var dummy_VLine_sort sort.Float64Slice
 type VLineAPI struct {
 	gorm.Model
 
-	models.VLine
+	models.VLine_WOP
 
 	// encoding of pointers
-	VLinePointersEnconding
+	VLinePointersEncoding VLinePointersEncoding
 }
 
-// VLinePointersEnconding encodes pointers to Struct and
+// VLinePointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type VLinePointersEnconding struct {
+type VLinePointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 
 	// field LayerGroup is a pointer to another Struct (optional or 0..1)
@@ -95,7 +95,7 @@ type VLineDB struct {
 	// Declation for basic field vlineDB.MessageBackward
 	MessageBackward_Data sql.NullString
 	// encoding of pointers
-	VLinePointersEnconding
+	VLinePointersEncoding
 }
 
 // VLineDBs arrays vlineDBs
@@ -214,7 +214,7 @@ func (backRepoVLine *BackRepoVLineStruct) CommitDeleteInstance(id uint) (Error e
 	vlineDB := backRepoVLine.Map_VLineDBID_VLineDB[id]
 	query := backRepoVLine.db.Unscoped().Delete(&vlineDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -240,7 +240,7 @@ func (backRepoVLine *BackRepoVLineStruct) CommitPhaseOneInstance(vline *models.V
 
 	query := backRepoVLine.db.Create(&vlineDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -286,7 +286,7 @@ func (backRepoVLine *BackRepoVLineStruct) CommitPhaseTwoInstance(backRepo *BackR
 
 		query := backRepoVLine.db.Save(&vlineDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -418,7 +418,7 @@ func (backRepo *BackRepoStruct) CheckoutVLine(vline *models.VLine) {
 			vlineDB.ID = id
 
 			if err := backRepo.BackRepoVLine.db.First(&vlineDB, id).Error; err != nil {
-				log.Panicln("CheckoutVLine : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutVLine : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoVLine.CheckoutPhaseOneInstance(&vlineDB)
 			backRepo.BackRepoVLine.CheckoutPhaseTwoInstance(backRepo, &vlineDB)
@@ -428,6 +428,44 @@ func (backRepo *BackRepoStruct) CheckoutVLine(vline *models.VLine) {
 
 // CopyBasicFieldsFromVLine
 func (vlineDB *VLineDB) CopyBasicFieldsFromVLine(vline *models.VLine) {
+	// insertion point for fields commit
+
+	vlineDB.StartLat_Data.Float64 = vline.StartLat
+	vlineDB.StartLat_Data.Valid = true
+
+	vlineDB.StartLng_Data.Float64 = vline.StartLng
+	vlineDB.StartLng_Data.Valid = true
+
+	vlineDB.EndLat_Data.Float64 = vline.EndLat
+	vlineDB.EndLat_Data.Valid = true
+
+	vlineDB.EndLng_Data.Float64 = vline.EndLng
+	vlineDB.EndLng_Data.Valid = true
+
+	vlineDB.Name_Data.String = vline.Name
+	vlineDB.Name_Data.Valid = true
+
+	vlineDB.ColorEnum_Data.String = vline.ColorEnum.ToString()
+	vlineDB.ColorEnum_Data.Valid = true
+
+	vlineDB.DashStyleEnum_Data.String = vline.DashStyleEnum.ToString()
+	vlineDB.DashStyleEnum_Data.Valid = true
+
+	vlineDB.IsTransmitting_Data.String = vline.IsTransmitting.ToString()
+	vlineDB.IsTransmitting_Data.Valid = true
+
+	vlineDB.Message_Data.String = vline.Message
+	vlineDB.Message_Data.Valid = true
+
+	vlineDB.IsTransmittingBackward_Data.String = vline.IsTransmittingBackward.ToString()
+	vlineDB.IsTransmittingBackward_Data.Valid = true
+
+	vlineDB.MessageBackward_Data.String = vline.MessageBackward
+	vlineDB.MessageBackward_Data.Valid = true
+}
+
+// CopyBasicFieldsFromVLine_WOP
+func (vlineDB *VLineDB) CopyBasicFieldsFromVLine_WOP(vline *models.VLine_WOP) {
 	// insertion point for fields commit
 
 	vlineDB.StartLat_Data.Float64 = vline.StartLat
@@ -518,6 +556,22 @@ func (vlineDB *VLineDB) CopyBasicFieldsToVLine(vline *models.VLine) {
 	vline.MessageBackward = vlineDB.MessageBackward_Data.String
 }
 
+// CopyBasicFieldsToVLine_WOP
+func (vlineDB *VLineDB) CopyBasicFieldsToVLine_WOP(vline *models.VLine_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	vline.StartLat = vlineDB.StartLat_Data.Float64
+	vline.StartLng = vlineDB.StartLng_Data.Float64
+	vline.EndLat = vlineDB.EndLat_Data.Float64
+	vline.EndLng = vlineDB.EndLng_Data.Float64
+	vline.Name = vlineDB.Name_Data.String
+	vline.ColorEnum.FromString(vlineDB.ColorEnum_Data.String)
+	vline.DashStyleEnum.FromString(vlineDB.DashStyleEnum_Data.String)
+	vline.IsTransmitting.FromString(vlineDB.IsTransmitting_Data.String)
+	vline.Message = vlineDB.Message_Data.String
+	vline.IsTransmittingBackward.FromString(vlineDB.IsTransmittingBackward_Data.String)
+	vline.MessageBackward = vlineDB.MessageBackward_Data.String
+}
+
 // CopyBasicFieldsToVLineWOP
 func (vlineDB *VLineDB) CopyBasicFieldsToVLineWOP(vline *VLineWOP) {
 	vline.ID = int(vlineDB.ID)
@@ -554,12 +608,12 @@ func (backRepoVLine *BackRepoVLineStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json VLine ", filename, " ", err.Error())
+		log.Fatal("Cannot json VLine ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json VLine file", err.Error())
+		log.Fatal("Cannot write the json VLine file", err.Error())
 	}
 }
 
@@ -579,7 +633,7 @@ func (backRepoVLine *BackRepoVLineStruct) BackupXL(file *xlsx.File) {
 
 	sh, err := file.AddSheet("VLine")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -604,13 +658,13 @@ func (backRepoVLine *BackRepoVLineStruct) RestoreXLPhaseOne(file *xlsx.File) {
 	sh, ok := file.Sheet["VLine"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoVLine.rowVisitorVLine)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -632,7 +686,7 @@ func (backRepoVLine *BackRepoVLineStruct) rowVisitorVLine(row *xlsx.Row) error {
 		vlineDB.ID = 0
 		query := backRepoVLine.db.Create(vlineDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoVLine.Map_VLineDBID_VLineDB[vlineDB.ID] = vlineDB
 		BackRepoVLineid_atBckpTime_newID[vlineDB_ID_atBackupTime] = vlineDB.ID
@@ -652,7 +706,7 @@ func (backRepoVLine *BackRepoVLineStruct) RestorePhaseOne(dirPath string) {
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json VLine file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json VLine file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -669,14 +723,14 @@ func (backRepoVLine *BackRepoVLineStruct) RestorePhaseOne(dirPath string) {
 		vlineDB.ID = 0
 		query := backRepoVLine.db.Create(vlineDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoVLine.Map_VLineDBID_VLineDB[vlineDB.ID] = vlineDB
 		BackRepoVLineid_atBckpTime_newID[vlineDB_ID_atBackupTime] = vlineDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json VLine file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json VLine file", err.Error())
 	}
 }
 
@@ -699,7 +753,7 @@ func (backRepoVLine *BackRepoVLineStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoVLine.db.Model(vlineDB).Updates(*vlineDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

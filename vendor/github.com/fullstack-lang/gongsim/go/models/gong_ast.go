@@ -713,7 +713,7 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_Event[identifier].Duration = time.Duration(fielValue)
+					__gong__map_Event[identifier].Duration = time.Duration(int(exprSign) * int(fielValue))
 				}
 			case "GongsimCommand":
 				switch fieldName {

@@ -91,8 +91,8 @@ func (controller *Controller) GetGongsimCommands(c *gin.Context) {
 
 		// insertion point for updating fields
 		gongsimcommandAPI.ID = gongsimcommandDB.ID
-		gongsimcommandDB.CopyBasicFieldsToGongsimCommand(&gongsimcommandAPI.GongsimCommand)
-		gongsimcommandAPI.GongsimCommandPointersEnconding = gongsimcommandDB.GongsimCommandPointersEnconding
+		gongsimcommandDB.CopyBasicFieldsToGongsimCommand_WOP(&gongsimcommandAPI.GongsimCommand_WOP)
+		gongsimcommandAPI.GongsimCommandPointersEncoding = gongsimcommandDB.GongsimCommandPointersEncoding
 		gongsimcommandAPIs = append(gongsimcommandAPIs, gongsimcommandAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostGongsimCommand(c *gin.Context) {
 
 	// Create gongsimcommand
 	gongsimcommandDB := orm.GongsimCommandDB{}
-	gongsimcommandDB.GongsimCommandPointersEnconding = input.GongsimCommandPointersEnconding
-	gongsimcommandDB.CopyBasicFieldsFromGongsimCommand(&input.GongsimCommand)
+	gongsimcommandDB.GongsimCommandPointersEncoding = input.GongsimCommandPointersEncoding
+	gongsimcommandDB.CopyBasicFieldsFromGongsimCommand_WOP(&input.GongsimCommand_WOP)
 
 	query := db.Create(&gongsimcommandDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetGongsimCommand(c *gin.Context) {
 
 	var gongsimcommandAPI orm.GongsimCommandAPI
 	gongsimcommandAPI.ID = gongsimcommandDB.ID
-	gongsimcommandAPI.GongsimCommandPointersEnconding = gongsimcommandDB.GongsimCommandPointersEnconding
-	gongsimcommandDB.CopyBasicFieldsToGongsimCommand(&gongsimcommandAPI.GongsimCommand)
+	gongsimcommandAPI.GongsimCommandPointersEncoding = gongsimcommandDB.GongsimCommandPointersEncoding
+	gongsimcommandDB.CopyBasicFieldsToGongsimCommand_WOP(&gongsimcommandAPI.GongsimCommand_WOP)
 
 	c.JSON(http.StatusOK, gongsimcommandAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateGongsimCommand(c *gin.Context) {
 	}
 
 	// update
-	gongsimcommandDB.CopyBasicFieldsFromGongsimCommand(&input.GongsimCommand)
-	gongsimcommandDB.GongsimCommandPointersEnconding = input.GongsimCommandPointersEnconding
+	gongsimcommandDB.CopyBasicFieldsFromGongsimCommand_WOP(&input.GongsimCommand_WOP)
+	gongsimcommandDB.GongsimCommandPointersEncoding = input.GongsimCommandPointersEncoding
 
 	query = db.Model(&gongsimcommandDB).Updates(gongsimcommandDB)
 	if query.Error != nil {

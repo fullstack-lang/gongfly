@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { EventDB } from './event-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -43,10 +44,10 @@ export class EventService {
 
   /** GET events from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<EventDB[]> {
-    return this.getEvents(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB[]> {
+    return this.getEvents(GONG__StackPath, frontRepo)
   }
-  getEvents(GONG__StackPath: string): Observable<EventDB[]> {
+  getEvents(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -60,10 +61,10 @@ export class EventService {
 
   /** GET event by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<EventDB> {
-	return this.getEvent(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
+    return this.getEvent(id, GONG__StackPath, frontRepo)
   }
-  getEvent(id: number, GONG__StackPath: string): Observable<EventDB> {
+  getEvent(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -75,10 +76,10 @@ export class EventService {
   }
 
   /** POST: add a new event to the server */
-  post(eventdb: EventDB, GONG__StackPath: string): Observable<EventDB> {
-    return this.postEvent(eventdb, GONG__StackPath)	
+  post(eventdb: EventDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
+    return this.postEvent(eventdb, GONG__StackPath, frontRepo)
   }
-  postEvent(eventdb: EventDB, GONG__StackPath: string): Observable<EventDB> {
+  postEvent(eventdb: EventDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -118,14 +119,15 @@ export class EventService {
   }
 
   /** PUT: update the eventdb on the server */
-  update(eventdb: EventDB, GONG__StackPath: string): Observable<EventDB> {
-    return this.updateEvent(eventdb, GONG__StackPath)
+  update(eventdb: EventDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
+    return this.updateEvent(eventdb, GONG__StackPath, frontRepo)
   }
-  updateEvent(eventdb: EventDB, GONG__StackPath: string): Observable<EventDB> {
+  updateEvent(eventdb: EventDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
     const id = typeof eventdb === 'number' ? eventdb : eventdb.ID;
     const url = `${this.eventsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -163,6 +165,6 @@ export class EventService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

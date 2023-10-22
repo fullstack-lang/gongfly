@@ -35,15 +35,15 @@ var dummy_Engine_sort sort.Float64Slice
 type EngineAPI struct {
 	gorm.Model
 
-	models.Engine
+	models.Engine_WOP
 
 	// encoding of pointers
-	EnginePointersEnconding
+	EnginePointersEncoding EnginePointersEncoding
 }
 
-// EnginePointersEnconding encodes pointers to Struct and
+// EnginePointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type EnginePointersEnconding struct {
+type EnginePointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -82,7 +82,7 @@ type EngineDB struct {
 	// Declation for basic field engineDB.Speed
 	Speed_Data sql.NullFloat64
 	// encoding of pointers
-	EnginePointersEnconding
+	EnginePointersEncoding
 }
 
 // EngineDBs arrays engineDBs
@@ -192,7 +192,7 @@ func (backRepoEngine *BackRepoEngineStruct) CommitDeleteInstance(id uint) (Error
 	engineDB := backRepoEngine.Map_EngineDBID_EngineDB[id]
 	query := backRepoEngine.db.Unscoped().Delete(&engineDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -218,7 +218,7 @@ func (backRepoEngine *BackRepoEngineStruct) CommitPhaseOneInstance(engine *model
 
 	query := backRepoEngine.db.Create(&engineDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -252,7 +252,7 @@ func (backRepoEngine *BackRepoEngineStruct) CommitPhaseTwoInstance(backRepo *Bac
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoEngine.db.Save(&engineDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -379,7 +379,7 @@ func (backRepo *BackRepoStruct) CheckoutEngine(engine *models.Engine) {
 			engineDB.ID = id
 
 			if err := backRepo.BackRepoEngine.db.First(&engineDB, id).Error; err != nil {
-				log.Panicln("CheckoutEngine : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutEngine : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoEngine.CheckoutPhaseOneInstance(&engineDB)
 			backRepo.BackRepoEngine.CheckoutPhaseTwoInstance(backRepo, &engineDB)
@@ -389,6 +389,35 @@ func (backRepo *BackRepoStruct) CheckoutEngine(engine *models.Engine) {
 
 // CopyBasicFieldsFromEngine
 func (engineDB *EngineDB) CopyBasicFieldsFromEngine(engine *models.Engine) {
+	// insertion point for fields commit
+
+	engineDB.Name_Data.String = engine.Name
+	engineDB.Name_Data.Valid = true
+
+	engineDB.EndTime_Data.String = engine.EndTime
+	engineDB.EndTime_Data.Valid = true
+
+	engineDB.CurrentTime_Data.String = engine.CurrentTime
+	engineDB.CurrentTime_Data.Valid = true
+
+	engineDB.SecondsSinceStart_Data.Float64 = engine.SecondsSinceStart
+	engineDB.SecondsSinceStart_Data.Valid = true
+
+	engineDB.Fired_Data.Int64 = int64(engine.Fired)
+	engineDB.Fired_Data.Valid = true
+
+	engineDB.ControlMode_Data.String = engine.ControlMode.ToString()
+	engineDB.ControlMode_Data.Valid = true
+
+	engineDB.State_Data.String = engine.State.ToString()
+	engineDB.State_Data.Valid = true
+
+	engineDB.Speed_Data.Float64 = engine.Speed
+	engineDB.Speed_Data.Valid = true
+}
+
+// CopyBasicFieldsFromEngine_WOP
+func (engineDB *EngineDB) CopyBasicFieldsFromEngine_WOP(engine *models.Engine_WOP) {
 	// insertion point for fields commit
 
 	engineDB.Name_Data.String = engine.Name
@@ -458,6 +487,19 @@ func (engineDB *EngineDB) CopyBasicFieldsToEngine(engine *models.Engine) {
 	engine.Speed = engineDB.Speed_Data.Float64
 }
 
+// CopyBasicFieldsToEngine_WOP
+func (engineDB *EngineDB) CopyBasicFieldsToEngine_WOP(engine *models.Engine_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	engine.Name = engineDB.Name_Data.String
+	engine.EndTime = engineDB.EndTime_Data.String
+	engine.CurrentTime = engineDB.CurrentTime_Data.String
+	engine.SecondsSinceStart = engineDB.SecondsSinceStart_Data.Float64
+	engine.Fired = int(engineDB.Fired_Data.Int64)
+	engine.ControlMode.FromString(engineDB.ControlMode_Data.String)
+	engine.State.FromString(engineDB.State_Data.String)
+	engine.Speed = engineDB.Speed_Data.Float64
+}
+
 // CopyBasicFieldsToEngineWOP
 func (engineDB *EngineDB) CopyBasicFieldsToEngineWOP(engine *EngineWOP) {
 	engine.ID = int(engineDB.ID)
@@ -491,12 +533,12 @@ func (backRepoEngine *BackRepoEngineStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json Engine ", filename, " ", err.Error())
+		log.Fatal("Cannot json Engine ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json Engine file", err.Error())
+		log.Fatal("Cannot write the json Engine file", err.Error())
 	}
 }
 
@@ -516,7 +558,7 @@ func (backRepoEngine *BackRepoEngineStruct) BackupXL(file *xlsx.File) {
 
 	sh, err := file.AddSheet("Engine")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -541,13 +583,13 @@ func (backRepoEngine *BackRepoEngineStruct) RestoreXLPhaseOne(file *xlsx.File) {
 	sh, ok := file.Sheet["Engine"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoEngine.rowVisitorEngine)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -569,7 +611,7 @@ func (backRepoEngine *BackRepoEngineStruct) rowVisitorEngine(row *xlsx.Row) erro
 		engineDB.ID = 0
 		query := backRepoEngine.db.Create(engineDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoEngine.Map_EngineDBID_EngineDB[engineDB.ID] = engineDB
 		BackRepoEngineid_atBckpTime_newID[engineDB_ID_atBackupTime] = engineDB.ID
@@ -589,7 +631,7 @@ func (backRepoEngine *BackRepoEngineStruct) RestorePhaseOne(dirPath string) {
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json Engine file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json Engine file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -606,14 +648,14 @@ func (backRepoEngine *BackRepoEngineStruct) RestorePhaseOne(dirPath string) {
 		engineDB.ID = 0
 		query := backRepoEngine.db.Create(engineDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoEngine.Map_EngineDBID_EngineDB[engineDB.ID] = engineDB
 		BackRepoEngineid_atBckpTime_newID[engineDB_ID_atBackupTime] = engineDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json Engine file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json Engine file", err.Error())
 	}
 }
 
@@ -630,7 +672,7 @@ func (backRepoEngine *BackRepoEngineStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoEngine.db.Model(engineDB).Updates(*engineDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

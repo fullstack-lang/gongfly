@@ -91,8 +91,8 @@ func (controller *Controller) GetVLines(c *gin.Context) {
 
 		// insertion point for updating fields
 		vlineAPI.ID = vlineDB.ID
-		vlineDB.CopyBasicFieldsToVLine(&vlineAPI.VLine)
-		vlineAPI.VLinePointersEnconding = vlineDB.VLinePointersEnconding
+		vlineDB.CopyBasicFieldsToVLine_WOP(&vlineAPI.VLine_WOP)
+		vlineAPI.VLinePointersEncoding = vlineDB.VLinePointersEncoding
 		vlineAPIs = append(vlineAPIs, vlineAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostVLine(c *gin.Context) {
 
 	// Create vline
 	vlineDB := orm.VLineDB{}
-	vlineDB.VLinePointersEnconding = input.VLinePointersEnconding
-	vlineDB.CopyBasicFieldsFromVLine(&input.VLine)
+	vlineDB.VLinePointersEncoding = input.VLinePointersEncoding
+	vlineDB.CopyBasicFieldsFromVLine_WOP(&input.VLine_WOP)
 
 	query := db.Create(&vlineDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetVLine(c *gin.Context) {
 
 	var vlineAPI orm.VLineAPI
 	vlineAPI.ID = vlineDB.ID
-	vlineAPI.VLinePointersEnconding = vlineDB.VLinePointersEnconding
-	vlineDB.CopyBasicFieldsToVLine(&vlineAPI.VLine)
+	vlineAPI.VLinePointersEncoding = vlineDB.VLinePointersEncoding
+	vlineDB.CopyBasicFieldsToVLine_WOP(&vlineAPI.VLine_WOP)
 
 	c.JSON(http.StatusOK, vlineAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateVLine(c *gin.Context) {
 	}
 
 	// update
-	vlineDB.CopyBasicFieldsFromVLine(&input.VLine)
-	vlineDB.VLinePointersEnconding = input.VLinePointersEnconding
+	vlineDB.CopyBasicFieldsFromVLine_WOP(&input.VLine_WOP)
+	vlineDB.VLinePointersEncoding = input.VLinePointersEncoding
 
 	query = db.Model(&vlineDB).Updates(vlineDB)
 	if query.Error != nil {

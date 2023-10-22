@@ -19,11 +19,19 @@ export class MarkerDB {
 	Name: string = ""
 	ColorEnum: string = ""
 
-	// insertion point for other declarations
+	// insertion point for pointers and slices of pointers declarations
 	LayerGroup?: LayerGroupDB
-	LayerGroupID: NullInt64 = new NullInt64 // if pointer is null, LayerGroup.ID = 0
 
 	DivIcon?: DivIconDB
+
+
+	MarkerPointersEncoding: MarkerPointersEncoding = new MarkerPointersEncoding
+}
+
+export class MarkerPointersEncoding {
+	// insertion point for pointers and slices of pointers encoding fields
+	LayerGroupID: NullInt64 = new NullInt64 // if pointer is null, LayerGroup.ID = 0
+
 	DivIconID: NullInt64 = new NullInt64 // if pointer is null, DivIcon.ID = 0
 
 }

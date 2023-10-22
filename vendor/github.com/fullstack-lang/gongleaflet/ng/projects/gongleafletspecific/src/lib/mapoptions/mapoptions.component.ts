@@ -143,7 +143,7 @@ export class MapoptionsComponent implements OnInit {
       userClick.Lat = e.latlng.lat
       userClick.Lng = e.latlng.lng
 
-      this.userClickService.postUserClick(userClick, this.GONG__StackPath).subscribe(
+      this.userClickService.postUserClick(userClick, this.GONG__StackPath, this.frontRepoService.frontRepo).subscribe(
         (userClick) => {
           console.log("user clicked")
           this.userClickService.UserClickServiceChanged.next("post")
@@ -196,7 +196,7 @@ export class MapoptionsComponent implements OnInit {
     if (visualTrack.DivIcon) {
       var icon: L.DivIcon = manageLeafletItems.newIcon(
         visualTrack.ID + '-track',
-        'layer-' + visualTrack.LayerGroupID.Int64,
+        'layer-',
         visualTrack.DivIcon.SVG,
         DEFAULT_ICON_SIZE,
         color,
@@ -438,36 +438,36 @@ export class MapoptionsComponent implements OnInit {
   // markers
   manageMakers() {
 
-    for (let gongMarker of this.frontRepo!.Markers_array) {
+    for (let _marker of this.frontRepo!.Markers_array) {
 
       // get the leaflet kin of the gong Marker
       let leafletMarker: L.Marker | undefined
-      leafletMarker = this.mapMarkerID_LeafletMarker.get(gongMarker.ID)
+      leafletMarker = this.mapMarkerID_LeafletMarker.get(_marker.ID)
 
       // if absent, create the kin
       if (!leafletMarker) {
         // console.log("Gong Marker " + gongMarker.Name + " has no leaflet kin")
-        var color = manageLeafletItems.getColor(gongMarker.ColorEnum);
+        var color = manageLeafletItems.getColor(_marker.ColorEnum);
 
         var icon: L.DivIcon = manageLeafletItems.newIcon(
-          gongMarker.ID,
-          'layer-' + gongMarker.LayerGroupID.Int64,
-          this.mapGongDivIconID_divIconSVG.get(gongMarker.DivIconID.Int64)!,
+          _marker.ID,
+          'layer-',
+          _marker.DivIcon?.SVG!,
           DEFAULT_ICON_SIZE,
           color,
-          gongMarker.Name
+          _marker.Name
         );
 
         // creation
         leafletMarker = manageLeafletItems.newMarkerWithIcon(
-          gongMarker.Lat,
-          gongMarker.Lng,
+          _marker.Lat,
+          _marker.Lng,
           icon
         )
 
         // get the leallet layerGroup of the marker
         let leafletLayerGroup: L.LayerGroup<L.Layer> | undefined
-        let markerLayerGroup = gongMarker.LayerGroup
+        let markerLayerGroup = _marker.LayerGroup
         if (markerLayerGroup) {
           leafletLayerGroup = this.mapGongLayerGroupID_LeafletLayerGroup.get(markerLayerGroup.ID)
           if (leafletLayerGroup) {
@@ -476,7 +476,7 @@ export class MapoptionsComponent implements OnInit {
         }
 
         // add the kin to the map
-        this.mapMarkerID_LeafletMarker.set(gongMarker.ID, leafletMarker)
+        this.mapMarkerID_LeafletMarker.set(_marker.ID, leafletMarker)
       } else {
         // console.log("Gong Marker " + gongMarker.Name + " has already a leaflet kin")
       }

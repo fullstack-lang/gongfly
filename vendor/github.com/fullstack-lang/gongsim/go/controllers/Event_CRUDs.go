@@ -91,8 +91,8 @@ func (controller *Controller) GetEvents(c *gin.Context) {
 
 		// insertion point for updating fields
 		eventAPI.ID = eventDB.ID
-		eventDB.CopyBasicFieldsToEvent(&eventAPI.Event)
-		eventAPI.EventPointersEnconding = eventDB.EventPointersEnconding
+		eventDB.CopyBasicFieldsToEvent_WOP(&eventAPI.Event_WOP)
+		eventAPI.EventPointersEncoding = eventDB.EventPointersEncoding
 		eventAPIs = append(eventAPIs, eventAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostEvent(c *gin.Context) {
 
 	// Create event
 	eventDB := orm.EventDB{}
-	eventDB.EventPointersEnconding = input.EventPointersEnconding
-	eventDB.CopyBasicFieldsFromEvent(&input.Event)
+	eventDB.EventPointersEncoding = input.EventPointersEncoding
+	eventDB.CopyBasicFieldsFromEvent_WOP(&input.Event_WOP)
 
 	query := db.Create(&eventDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetEvent(c *gin.Context) {
 
 	var eventAPI orm.EventAPI
 	eventAPI.ID = eventDB.ID
-	eventAPI.EventPointersEnconding = eventDB.EventPointersEnconding
-	eventDB.CopyBasicFieldsToEvent(&eventAPI.Event)
+	eventAPI.EventPointersEncoding = eventDB.EventPointersEncoding
+	eventDB.CopyBasicFieldsToEvent_WOP(&eventAPI.Event_WOP)
 
 	c.JSON(http.StatusOK, eventAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateEvent(c *gin.Context) {
 	}
 
 	// update
-	eventDB.CopyBasicFieldsFromEvent(&input.Event)
-	eventDB.EventPointersEnconding = input.EventPointersEnconding
+	eventDB.CopyBasicFieldsFromEvent_WOP(&input.Event_WOP)
+	eventDB.EventPointersEncoding = input.EventPointersEncoding
 
 	query = db.Model(&eventDB).Updates(eventDB)
 	if query.Error != nil {

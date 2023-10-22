@@ -91,8 +91,8 @@ func (controller *Controller) GetMarkers(c *gin.Context) {
 
 		// insertion point for updating fields
 		markerAPI.ID = markerDB.ID
-		markerDB.CopyBasicFieldsToMarker(&markerAPI.Marker)
-		markerAPI.MarkerPointersEnconding = markerDB.MarkerPointersEnconding
+		markerDB.CopyBasicFieldsToMarker_WOP(&markerAPI.Marker_WOP)
+		markerAPI.MarkerPointersEncoding = markerDB.MarkerPointersEncoding
 		markerAPIs = append(markerAPIs, markerAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostMarker(c *gin.Context) {
 
 	// Create marker
 	markerDB := orm.MarkerDB{}
-	markerDB.MarkerPointersEnconding = input.MarkerPointersEnconding
-	markerDB.CopyBasicFieldsFromMarker(&input.Marker)
+	markerDB.MarkerPointersEncoding = input.MarkerPointersEncoding
+	markerDB.CopyBasicFieldsFromMarker_WOP(&input.Marker_WOP)
 
 	query := db.Create(&markerDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetMarker(c *gin.Context) {
 
 	var markerAPI orm.MarkerAPI
 	markerAPI.ID = markerDB.ID
-	markerAPI.MarkerPointersEnconding = markerDB.MarkerPointersEnconding
-	markerDB.CopyBasicFieldsToMarker(&markerAPI.Marker)
+	markerAPI.MarkerPointersEncoding = markerDB.MarkerPointersEncoding
+	markerDB.CopyBasicFieldsToMarker_WOP(&markerAPI.Marker_WOP)
 
 	c.JSON(http.StatusOK, markerAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateMarker(c *gin.Context) {
 	}
 
 	// update
-	markerDB.CopyBasicFieldsFromMarker(&input.Marker)
-	markerDB.MarkerPointersEnconding = input.MarkerPointersEnconding
+	markerDB.CopyBasicFieldsFromMarker_WOP(&input.Marker_WOP)
+	markerDB.MarkerPointersEncoding = input.MarkerPointersEncoding
 
 	query = db.Model(&markerDB).Updates(markerDB)
 	if query.Error != nil {

@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 
-import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs';
+import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs'
 
-// insertion point sub template for services imports 
+// insertion point sub template for services imports
 import { CircleDB } from './circle-db'
 import { CircleService } from './circle.service'
 
@@ -33,34 +33,99 @@ import { VisualTrackService } from './visualtrack.service'
 
 
 // FrontRepo stores all instances in a front repository (design pattern repository)
-export class FrontRepo { // insertion point sub template 
-  Circles_array = new Array<CircleDB>(); // array of repo instances
-  Circles = new Map<number, CircleDB>(); // map of repo instances
-  Circles_batch = new Map<number, CircleDB>(); // same but only in last GET (for finding repo instances to delete)
-  DivIcons_array = new Array<DivIconDB>(); // array of repo instances
-  DivIcons = new Map<number, DivIconDB>(); // map of repo instances
-  DivIcons_batch = new Map<number, DivIconDB>(); // same but only in last GET (for finding repo instances to delete)
-  LayerGroups_array = new Array<LayerGroupDB>(); // array of repo instances
-  LayerGroups = new Map<number, LayerGroupDB>(); // map of repo instances
-  LayerGroups_batch = new Map<number, LayerGroupDB>(); // same but only in last GET (for finding repo instances to delete)
-  LayerGroupUses_array = new Array<LayerGroupUseDB>(); // array of repo instances
-  LayerGroupUses = new Map<number, LayerGroupUseDB>(); // map of repo instances
-  LayerGroupUses_batch = new Map<number, LayerGroupUseDB>(); // same but only in last GET (for finding repo instances to delete)
-  MapOptionss_array = new Array<MapOptionsDB>(); // array of repo instances
-  MapOptionss = new Map<number, MapOptionsDB>(); // map of repo instances
-  MapOptionss_batch = new Map<number, MapOptionsDB>(); // same but only in last GET (for finding repo instances to delete)
-  Markers_array = new Array<MarkerDB>(); // array of repo instances
-  Markers = new Map<number, MarkerDB>(); // map of repo instances
-  Markers_batch = new Map<number, MarkerDB>(); // same but only in last GET (for finding repo instances to delete)
-  UserClicks_array = new Array<UserClickDB>(); // array of repo instances
-  UserClicks = new Map<number, UserClickDB>(); // map of repo instances
-  UserClicks_batch = new Map<number, UserClickDB>(); // same but only in last GET (for finding repo instances to delete)
-  VLines_array = new Array<VLineDB>(); // array of repo instances
-  VLines = new Map<number, VLineDB>(); // map of repo instances
-  VLines_batch = new Map<number, VLineDB>(); // same but only in last GET (for finding repo instances to delete)
-  VisualTracks_array = new Array<VisualTrackDB>(); // array of repo instances
-  VisualTracks = new Map<number, VisualTrackDB>(); // map of repo instances
-  VisualTracks_batch = new Map<number, VisualTrackDB>(); // same but only in last GET (for finding repo instances to delete)
+export class FrontRepo { // insertion point sub template
+  Circles_array = new Array<CircleDB>() // array of repo instances
+  Circles = new Map<number, CircleDB>() // map of repo instances
+  Circles_batch = new Map<number, CircleDB>() // same but only in last GET (for finding repo instances to delete)
+
+  DivIcons_array = new Array<DivIconDB>() // array of repo instances
+  DivIcons = new Map<number, DivIconDB>() // map of repo instances
+  DivIcons_batch = new Map<number, DivIconDB>() // same but only in last GET (for finding repo instances to delete)
+
+  LayerGroups_array = new Array<LayerGroupDB>() // array of repo instances
+  LayerGroups = new Map<number, LayerGroupDB>() // map of repo instances
+  LayerGroups_batch = new Map<number, LayerGroupDB>() // same but only in last GET (for finding repo instances to delete)
+
+  LayerGroupUses_array = new Array<LayerGroupUseDB>() // array of repo instances
+  LayerGroupUses = new Map<number, LayerGroupUseDB>() // map of repo instances
+  LayerGroupUses_batch = new Map<number, LayerGroupUseDB>() // same but only in last GET (for finding repo instances to delete)
+
+  MapOptionss_array = new Array<MapOptionsDB>() // array of repo instances
+  MapOptionss = new Map<number, MapOptionsDB>() // map of repo instances
+  MapOptionss_batch = new Map<number, MapOptionsDB>() // same but only in last GET (for finding repo instances to delete)
+
+  Markers_array = new Array<MarkerDB>() // array of repo instances
+  Markers = new Map<number, MarkerDB>() // map of repo instances
+  Markers_batch = new Map<number, MarkerDB>() // same but only in last GET (for finding repo instances to delete)
+
+  UserClicks_array = new Array<UserClickDB>() // array of repo instances
+  UserClicks = new Map<number, UserClickDB>() // map of repo instances
+  UserClicks_batch = new Map<number, UserClickDB>() // same but only in last GET (for finding repo instances to delete)
+
+  VLines_array = new Array<VLineDB>() // array of repo instances
+  VLines = new Map<number, VLineDB>() // map of repo instances
+  VLines_batch = new Map<number, VLineDB>() // same but only in last GET (for finding repo instances to delete)
+
+  VisualTracks_array = new Array<VisualTrackDB>() // array of repo instances
+  VisualTracks = new Map<number, VisualTrackDB>() // map of repo instances
+  VisualTracks_batch = new Map<number, VisualTrackDB>() // same but only in last GET (for finding repo instances to delete)
+
+
+  // getArray allows for a get function that is robust to refactoring of the named struct name
+  // for instance frontRepo.getArray<Astruct>( Astruct.GONGSTRUCT_NAME), is robust to a refactoring of Astruct identifier
+  // contrary to frontRepo.Astructs_array which is not refactored when Astruct identifier is modified
+  getArray<Type>(gongStructName: string): Array<Type> {
+    switch (gongStructName) {
+      // insertion point
+      case 'Circle':
+        return this.Circles_array as unknown as Array<Type>
+      case 'DivIcon':
+        return this.DivIcons_array as unknown as Array<Type>
+      case 'LayerGroup':
+        return this.LayerGroups_array as unknown as Array<Type>
+      case 'LayerGroupUse':
+        return this.LayerGroupUses_array as unknown as Array<Type>
+      case 'MapOptions':
+        return this.MapOptionss_array as unknown as Array<Type>
+      case 'Marker':
+        return this.Markers_array as unknown as Array<Type>
+      case 'UserClick':
+        return this.UserClicks_array as unknown as Array<Type>
+      case 'VLine':
+        return this.VLines_array as unknown as Array<Type>
+      case 'VisualTrack':
+        return this.VisualTracks_array as unknown as Array<Type>
+      default:
+        throw new Error("Type not recognized");
+    }
+  }
+
+  // getMap allows for a get function that is robust to refactoring of the named struct name
+  getMap<Type>(gongStructName: string): Map<number, Type> {
+    switch (gongStructName) {
+      // insertion point
+      case 'Circle':
+        return this.Circles_array as unknown as Map<number, Type>
+      case 'DivIcon':
+        return this.DivIcons_array as unknown as Map<number, Type>
+      case 'LayerGroup':
+        return this.LayerGroups_array as unknown as Map<number, Type>
+      case 'LayerGroupUse':
+        return this.LayerGroupUses_array as unknown as Map<number, Type>
+      case 'MapOptions':
+        return this.MapOptionss_array as unknown as Map<number, Type>
+      case 'Marker':
+        return this.Markers_array as unknown as Map<number, Type>
+      case 'UserClick':
+        return this.UserClicks_array as unknown as Map<number, Type>
+      case 'VLine':
+        return this.VLines_array as unknown as Map<number, Type>
+      case 'VisualTrack':
+        return this.VisualTracks_array as unknown as Map<number, Type>
+      default:
+        throw new Error("Type not recognized");
+    }
+  }
 }
 
 // the table component is called in different ways
@@ -161,7 +226,7 @@ export class FrontRepoService {
   }
 
   // typing of observable can be messy in typescript. Therefore, one force the type
-  observableFrontRepo: [ 
+  observableFrontRepo: [
     Observable<null>, // see below for the of(null) observable
     // insertion point sub template 
     Observable<CircleDB[]>,
@@ -173,25 +238,25 @@ export class FrontRepoService {
     Observable<UserClickDB[]>,
     Observable<VLineDB[]>,
     Observable<VisualTrackDB[]>,
-  ] = [ 
-    // Using "combineLatest" with a placeholder observable.
-    //
-    // This allows the typescript compiler to pass when no GongStruct is present in the front API
-    //
-    // The "of(null)" is a "meaningless" observable that emits a single value (null) and completes.
-    // This is used as a workaround to satisfy TypeScript requirements and the "combineLatest" 
-    // expectation for a non-empty array of observables.
-    of(null), // 
-    // insertion point sub template
-      this.circleService.getCircles(this.GONG__StackPath),
-      this.diviconService.getDivIcons(this.GONG__StackPath),
-      this.layergroupService.getLayerGroups(this.GONG__StackPath),
-      this.layergroupuseService.getLayerGroupUses(this.GONG__StackPath),
-      this.mapoptionsService.getMapOptionss(this.GONG__StackPath),
-      this.markerService.getMarkers(this.GONG__StackPath),
-      this.userclickService.getUserClicks(this.GONG__StackPath),
-      this.vlineService.getVLines(this.GONG__StackPath),
-      this.visualtrackService.getVisualTracks(this.GONG__StackPath),
+  ] = [
+      // Using "combineLatest" with a placeholder observable.
+      //
+      // This allows the typescript compiler to pass when no GongStruct is present in the front API
+      //
+      // The "of(null)" is a "meaningless" observable that emits a single value (null) and completes.
+      // This is used as a workaround to satisfy TypeScript requirements and the "combineLatest" 
+      // expectation for a non-empty array of observables.
+      of(null), // 
+      // insertion point sub template
+      this.circleService.getCircles(this.GONG__StackPath, this.frontRepo),
+      this.diviconService.getDivIcons(this.GONG__StackPath, this.frontRepo),
+      this.layergroupService.getLayerGroups(this.GONG__StackPath, this.frontRepo),
+      this.layergroupuseService.getLayerGroupUses(this.GONG__StackPath, this.frontRepo),
+      this.mapoptionsService.getMapOptionss(this.GONG__StackPath, this.frontRepo),
+      this.markerService.getMarkers(this.GONG__StackPath, this.frontRepo),
+      this.userclickService.getUserClicks(this.GONG__StackPath, this.frontRepo),
+      this.vlineService.getVLines(this.GONG__StackPath, this.frontRepo),
+      this.visualtrackService.getVisualTracks(this.GONG__StackPath, this.frontRepo),
     ];
 
   //
@@ -204,18 +269,18 @@ export class FrontRepoService {
 
     this.GONG__StackPath = GONG__StackPath
 
-    this.observableFrontRepo = [ 
+    this.observableFrontRepo = [
       of(null), // see above for justification
       // insertion point sub template
-      this.circleService.getCircles(this.GONG__StackPath),
-      this.diviconService.getDivIcons(this.GONG__StackPath),
-      this.layergroupService.getLayerGroups(this.GONG__StackPath),
-      this.layergroupuseService.getLayerGroupUses(this.GONG__StackPath),
-      this.mapoptionsService.getMapOptionss(this.GONG__StackPath),
-      this.markerService.getMarkers(this.GONG__StackPath),
-      this.userclickService.getUserClicks(this.GONG__StackPath),
-      this.vlineService.getVLines(this.GONG__StackPath),
-      this.visualtrackService.getVisualTracks(this.GONG__StackPath),
+      this.circleService.getCircles(this.GONG__StackPath, this.frontRepo),
+      this.diviconService.getDivIcons(this.GONG__StackPath, this.frontRepo),
+      this.layergroupService.getLayerGroups(this.GONG__StackPath, this.frontRepo),
+      this.layergroupuseService.getLayerGroupUses(this.GONG__StackPath, this.frontRepo),
+      this.mapoptionsService.getMapOptionss(this.GONG__StackPath, this.frontRepo),
+      this.markerService.getMarkers(this.GONG__StackPath, this.frontRepo),
+      this.userclickService.getUserClicks(this.GONG__StackPath, this.frontRepo),
+      this.vlineService.getVLines(this.GONG__StackPath, this.frontRepo),
+      this.visualtrackService.getVisualTracks(this.GONG__StackPath, this.frontRepo),
     ]
 
     return new Observable<FrontRepo>(
@@ -223,7 +288,7 @@ export class FrontRepoService {
         combineLatest(
           this.observableFrontRepo
         ).subscribe(
-          ([ 
+          ([
             ___of_null, // see above for the explanation about of
             // insertion point sub template for declarations 
             circles_,
@@ -559,34 +624,31 @@ export class FrontRepoService {
 
 
             // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
+            // Second Step: reddeem slice of pointers fields
             // insertion point sub template for redeem 
             circles.forEach(
               circle => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
                 // insertion point for pointer field LayerGroup redeeming
                 {
-                  let _layergroup = this.frontRepo.LayerGroups.get(circle.LayerGroupID.Int64)
+                  let _layergroup = this.frontRepo.LayerGroups.get(circle.CirclePointersEncoding.LayerGroupID.Int64)
                   if (_layergroup) {
                     circle.LayerGroup = _layergroup
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
               }
             )
             divicons.forEach(
               divicon => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
               }
             )
             layergroups.forEach(
               layergroup => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
               }
             )
             layergroupuses.forEach(
@@ -594,33 +656,25 @@ export class FrontRepoService {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
                 // insertion point for pointer field LayerGroup redeeming
                 {
-                  let _layergroup = this.frontRepo.LayerGroups.get(layergroupuse.LayerGroupID.Int64)
+                  let _layergroup = this.frontRepo.LayerGroups.get(layergroupuse.LayerGroupUsePointersEncoding.LayerGroupID.Int64)
                   if (_layergroup) {
                     layergroupuse.LayerGroup = _layergroup
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field MapOptions.LayerGroupUses redeeming
-                {
-                  let _mapoptions = this.frontRepo.MapOptionss.get(layergroupuse.MapOptions_LayerGroupUsesDBID.Int64)
-                  if (_mapoptions) {
-                    if (_mapoptions.LayerGroupUses == undefined) {
-                      _mapoptions.LayerGroupUses = new Array<LayerGroupUseDB>()
-                    }
-                    _mapoptions.LayerGroupUses.push(layergroupuse)
-                    if (layergroupuse.MapOptions_LayerGroupUses_reverse == undefined) {
-                      layergroupuse.MapOptions_LayerGroupUses_reverse = _mapoptions
-                    }
-                  }
-                }
+                // insertion point for pointers decoding
               }
             )
             mapoptionss.forEach(
               mapoptions => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
+                mapoptions.LayerGroupUses = new Array<LayerGroupUseDB>()
+                for (let _id of mapoptions.MapOptionsPointersEncoding.LayerGroupUses) {
+                  let _layergroupuse = this.frontRepo.LayerGroupUses.get(_id)
+                  if (_layergroupuse != undefined) {
+                    mapoptions.LayerGroupUses.push(_layergroupuse!)
+                  }
+                }
               }
             )
             markers.forEach(
@@ -628,27 +682,25 @@ export class FrontRepoService {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
                 // insertion point for pointer field LayerGroup redeeming
                 {
-                  let _layergroup = this.frontRepo.LayerGroups.get(marker.LayerGroupID.Int64)
+                  let _layergroup = this.frontRepo.LayerGroups.get(marker.MarkerPointersEncoding.LayerGroupID.Int64)
                   if (_layergroup) {
                     marker.LayerGroup = _layergroup
                   }
                 }
                 // insertion point for pointer field DivIcon redeeming
                 {
-                  let _divicon = this.frontRepo.DivIcons.get(marker.DivIconID.Int64)
+                  let _divicon = this.frontRepo.DivIcons.get(marker.MarkerPointersEncoding.DivIconID.Int64)
                   if (_divicon) {
                     marker.DivIcon = _divicon
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
               }
             )
             userclicks.forEach(
               userclick => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
               }
             )
             vlines.forEach(
@@ -656,13 +708,12 @@ export class FrontRepoService {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
                 // insertion point for pointer field LayerGroup redeeming
                 {
-                  let _layergroup = this.frontRepo.LayerGroups.get(vline.LayerGroupID.Int64)
+                  let _layergroup = this.frontRepo.LayerGroups.get(vline.VLinePointersEncoding.LayerGroupID.Int64)
                   if (_layergroup) {
                     vline.LayerGroup = _layergroup
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
               }
             )
             visualtracks.forEach(
@@ -670,79 +721,19 @@ export class FrontRepoService {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
                 // insertion point for pointer field LayerGroup redeeming
                 {
-                  let _layergroup = this.frontRepo.LayerGroups.get(visualtrack.LayerGroupID.Int64)
+                  let _layergroup = this.frontRepo.LayerGroups.get(visualtrack.VisualTrackPointersEncoding.LayerGroupID.Int64)
                   if (_layergroup) {
                     visualtrack.LayerGroup = _layergroup
                   }
                 }
                 // insertion point for pointer field DivIcon redeeming
                 {
-                  let _divicon = this.frontRepo.DivIcons.get(visualtrack.DivIconID.Int64)
+                  let _divicon = this.frontRepo.DivIcons.get(visualtrack.VisualTrackPointersEncoding.DivIconID.Int64)
                   if (_divicon) {
                     visualtrack.DivIcon = _divicon
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
-              }
-            )
-
-            // 
-            // Third Step: sort arrays (slices in go) according to their index
-            // insertion point sub template for redeem 
-            circles.forEach(
-              circle => {
-                // insertion point for sorting
-              }
-            )
-            divicons.forEach(
-              divicon => {
-                // insertion point for sorting
-              }
-            )
-            layergroups.forEach(
-              layergroup => {
-                // insertion point for sorting
-              }
-            )
-            layergroupuses.forEach(
-              layergroupuse => {
-                // insertion point for sorting
-              }
-            )
-            mapoptionss.forEach(
-              mapoptions => {
-                // insertion point for sorting
-                mapoptions.LayerGroupUses?.sort((t1, t2) => {
-                  if (t1.MapOptions_LayerGroupUsesDBID_Index.Int64 > t2.MapOptions_LayerGroupUsesDBID_Index.Int64) {
-                    return 1;
-                  }
-                  if (t1.MapOptions_LayerGroupUsesDBID_Index.Int64 < t2.MapOptions_LayerGroupUsesDBID_Index.Int64) {
-                    return -1;
-                  }
-                  return 0;
-                })
-
-              }
-            )
-            markers.forEach(
-              marker => {
-                // insertion point for sorting
-              }
-            )
-            userclicks.forEach(
-              userclick => {
-                // insertion point for sorting
-              }
-            )
-            vlines.forEach(
-              vline => {
-                // insertion point for sorting
-              }
-            )
-            visualtracks.forEach(
-              visualtrack => {
-                // insertion point for sorting
+                // insertion point for pointers decoding
               }
             )
 
@@ -761,7 +752,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.circleService.getCircles(this.GONG__StackPath)
+          this.circleService.getCircles(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             circles,
@@ -783,13 +774,11 @@ export class FrontRepoService {
                 // insertion point for redeeming ONE/ZERO-ONE associations
                 // insertion point for pointer field LayerGroup redeeming
                 {
-                  let _layergroup = this.frontRepo.LayerGroups.get(circle.LayerGroupID.Int64)
+                  let _layergroup = this.frontRepo.LayerGroups.get(circle.CirclePointersEncoding.LayerGroupID.Int64)
                   if (_layergroup) {
                     circle.LayerGroup = _layergroup
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -819,7 +808,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.diviconService.getDivIcons(this.GONG__StackPath)
+          this.diviconService.getDivIcons(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             divicons,
@@ -839,8 +828,6 @@ export class FrontRepoService {
                 this.frontRepo.DivIcons_batch.set(divicon.ID, divicon)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -870,7 +857,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.layergroupService.getLayerGroups(this.GONG__StackPath)
+          this.layergroupService.getLayerGroups(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             layergroups,
@@ -890,8 +877,6 @@ export class FrontRepoService {
                 this.frontRepo.LayerGroups_batch.set(layergroup.ID, layergroup)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -921,7 +906,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.layergroupuseService.getLayerGroupUses(this.GONG__StackPath)
+          this.layergroupuseService.getLayerGroupUses(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             layergroupuses,
@@ -943,24 +928,9 @@ export class FrontRepoService {
                 // insertion point for redeeming ONE/ZERO-ONE associations
                 // insertion point for pointer field LayerGroup redeeming
                 {
-                  let _layergroup = this.frontRepo.LayerGroups.get(layergroupuse.LayerGroupID.Int64)
+                  let _layergroup = this.frontRepo.LayerGroups.get(layergroupuse.LayerGroupUsePointersEncoding.LayerGroupID.Int64)
                   if (_layergroup) {
                     layergroupuse.LayerGroup = _layergroup
-                  }
-                }
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field MapOptions.LayerGroupUses redeeming
-                {
-                  let _mapoptions = this.frontRepo.MapOptionss.get(layergroupuse.MapOptions_LayerGroupUsesDBID.Int64)
-                  if (_mapoptions) {
-                    if (_mapoptions.LayerGroupUses == undefined) {
-                      _mapoptions.LayerGroupUses = new Array<LayerGroupUseDB>()
-                    }
-                    _mapoptions.LayerGroupUses.push(layergroupuse)
-                    if (layergroupuse.MapOptions_LayerGroupUses_reverse == undefined) {
-                      layergroupuse.MapOptions_LayerGroupUses_reverse = _mapoptions
-                    }
                   }
                 }
               }
@@ -992,7 +962,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.mapoptionsService.getMapOptionss(this.GONG__StackPath)
+          this.mapoptionsService.getMapOptionss(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             mapoptionss,
@@ -1012,8 +982,6 @@ export class FrontRepoService {
                 this.frontRepo.MapOptionss_batch.set(mapoptions.ID, mapoptions)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -1043,7 +1011,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.markerService.getMarkers(this.GONG__StackPath)
+          this.markerService.getMarkers(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             markers,
@@ -1065,20 +1033,18 @@ export class FrontRepoService {
                 // insertion point for redeeming ONE/ZERO-ONE associations
                 // insertion point for pointer field LayerGroup redeeming
                 {
-                  let _layergroup = this.frontRepo.LayerGroups.get(marker.LayerGroupID.Int64)
+                  let _layergroup = this.frontRepo.LayerGroups.get(marker.MarkerPointersEncoding.LayerGroupID.Int64)
                   if (_layergroup) {
                     marker.LayerGroup = _layergroup
                   }
                 }
                 // insertion point for pointer field DivIcon redeeming
                 {
-                  let _divicon = this.frontRepo.DivIcons.get(marker.DivIconID.Int64)
+                  let _divicon = this.frontRepo.DivIcons.get(marker.MarkerPointersEncoding.DivIconID.Int64)
                   if (_divicon) {
                     marker.DivIcon = _divicon
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -1108,7 +1074,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.userclickService.getUserClicks(this.GONG__StackPath)
+          this.userclickService.getUserClicks(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             userclicks,
@@ -1128,8 +1094,6 @@ export class FrontRepoService {
                 this.frontRepo.UserClicks_batch.set(userclick.ID, userclick)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -1159,7 +1123,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.vlineService.getVLines(this.GONG__StackPath)
+          this.vlineService.getVLines(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             vlines,
@@ -1181,13 +1145,11 @@ export class FrontRepoService {
                 // insertion point for redeeming ONE/ZERO-ONE associations
                 // insertion point for pointer field LayerGroup redeeming
                 {
-                  let _layergroup = this.frontRepo.LayerGroups.get(vline.LayerGroupID.Int64)
+                  let _layergroup = this.frontRepo.LayerGroups.get(vline.VLinePointersEncoding.LayerGroupID.Int64)
                   if (_layergroup) {
                     vline.LayerGroup = _layergroup
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -1217,7 +1179,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.visualtrackService.getVisualTracks(this.GONG__StackPath)
+          this.visualtrackService.getVisualTracks(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             visualtracks,
@@ -1239,20 +1201,18 @@ export class FrontRepoService {
                 // insertion point for redeeming ONE/ZERO-ONE associations
                 // insertion point for pointer field LayerGroup redeeming
                 {
-                  let _layergroup = this.frontRepo.LayerGroups.get(visualtrack.LayerGroupID.Int64)
+                  let _layergroup = this.frontRepo.LayerGroups.get(visualtrack.VisualTrackPointersEncoding.LayerGroupID.Int64)
                   if (_layergroup) {
                     visualtrack.LayerGroup = _layergroup
                   }
                 }
                 // insertion point for pointer field DivIcon redeeming
                 {
-                  let _divicon = this.frontRepo.DivIcons.get(visualtrack.DivIconID.Int64)
+                  let _divicon = this.frontRepo.DivIcons.get(visualtrack.VisualTrackPointersEncoding.DivIconID.Int64)
                   if (_divicon) {
                     visualtrack.DivIcon = _divicon
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 

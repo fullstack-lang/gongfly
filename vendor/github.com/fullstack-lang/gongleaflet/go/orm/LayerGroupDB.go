@@ -35,15 +35,15 @@ var dummy_LayerGroup_sort sort.Float64Slice
 type LayerGroupAPI struct {
 	gorm.Model
 
-	models.LayerGroup
+	models.LayerGroup_WOP
 
 	// encoding of pointers
-	LayerGroupPointersEnconding
+	LayerGroupPointersEncoding LayerGroupPointersEncoding
 }
 
-// LayerGroupPointersEnconding encodes pointers to Struct and
+// LayerGroupPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type LayerGroupPointersEnconding struct {
+type LayerGroupPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -64,7 +64,7 @@ type LayerGroupDB struct {
 	// Declation for basic field layergroupDB.DisplayName
 	DisplayName_Data sql.NullString
 	// encoding of pointers
-	LayerGroupPointersEnconding
+	LayerGroupPointersEncoding
 }
 
 // LayerGroupDBs arrays layergroupDBs
@@ -156,7 +156,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitDeleteInstance(id uint
 	layergroupDB := backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[id]
 	query := backRepoLayerGroup.db.Unscoped().Delete(&layergroupDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -182,7 +182,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitPhaseOneInstance(layer
 
 	query := backRepoLayerGroup.db.Create(&layergroupDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -216,7 +216,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitPhaseTwoInstance(backR
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoLayerGroup.db.Save(&layergroupDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -343,7 +343,7 @@ func (backRepo *BackRepoStruct) CheckoutLayerGroup(layergroup *models.LayerGroup
 			layergroupDB.ID = id
 
 			if err := backRepo.BackRepoLayerGroup.db.First(&layergroupDB, id).Error; err != nil {
-				log.Panicln("CheckoutLayerGroup : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutLayerGroup : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoLayerGroup.CheckoutPhaseOneInstance(&layergroupDB)
 			backRepo.BackRepoLayerGroup.CheckoutPhaseTwoInstance(backRepo, &layergroupDB)
@@ -353,6 +353,17 @@ func (backRepo *BackRepoStruct) CheckoutLayerGroup(layergroup *models.LayerGroup
 
 // CopyBasicFieldsFromLayerGroup
 func (layergroupDB *LayerGroupDB) CopyBasicFieldsFromLayerGroup(layergroup *models.LayerGroup) {
+	// insertion point for fields commit
+
+	layergroupDB.Name_Data.String = layergroup.Name
+	layergroupDB.Name_Data.Valid = true
+
+	layergroupDB.DisplayName_Data.String = layergroup.DisplayName
+	layergroupDB.DisplayName_Data.Valid = true
+}
+
+// CopyBasicFieldsFromLayerGroup_WOP
+func (layergroupDB *LayerGroupDB) CopyBasicFieldsFromLayerGroup_WOP(layergroup *models.LayerGroup_WOP) {
 	// insertion point for fields commit
 
 	layergroupDB.Name_Data.String = layergroup.Name
@@ -375,6 +386,13 @@ func (layergroupDB *LayerGroupDB) CopyBasicFieldsFromLayerGroupWOP(layergroup *L
 
 // CopyBasicFieldsToLayerGroup
 func (layergroupDB *LayerGroupDB) CopyBasicFieldsToLayerGroup(layergroup *models.LayerGroup) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	layergroup.Name = layergroupDB.Name_Data.String
+	layergroup.DisplayName = layergroupDB.DisplayName_Data.String
+}
+
+// CopyBasicFieldsToLayerGroup_WOP
+func (layergroupDB *LayerGroupDB) CopyBasicFieldsToLayerGroup_WOP(layergroup *models.LayerGroup_WOP) {
 	// insertion point for checkout of basic fields (back repo to stage)
 	layergroup.Name = layergroupDB.Name_Data.String
 	layergroup.DisplayName = layergroupDB.DisplayName_Data.String
@@ -407,12 +425,12 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json LayerGroup ", filename, " ", err.Error())
+		log.Fatal("Cannot json LayerGroup ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json LayerGroup file", err.Error())
+		log.Fatal("Cannot write the json LayerGroup file", err.Error())
 	}
 }
 
@@ -432,7 +450,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) BackupXL(file *xlsx.File) {
 
 	sh, err := file.AddSheet("LayerGroup")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -457,13 +475,13 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) RestoreXLPhaseOne(file *xlsx
 	sh, ok := file.Sheet["LayerGroup"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoLayerGroup.rowVisitorLayerGroup)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -485,7 +503,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) rowVisitorLayerGroup(row *xl
 		layergroupDB.ID = 0
 		query := backRepoLayerGroup.db.Create(layergroupDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[layergroupDB.ID] = layergroupDB
 		BackRepoLayerGroupid_atBckpTime_newID[layergroupDB_ID_atBackupTime] = layergroupDB.ID
@@ -505,7 +523,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) RestorePhaseOne(dirPath stri
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json LayerGroup file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json LayerGroup file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -522,14 +540,14 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) RestorePhaseOne(dirPath stri
 		layergroupDB.ID = 0
 		query := backRepoLayerGroup.db.Create(layergroupDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[layergroupDB.ID] = layergroupDB
 		BackRepoLayerGroupid_atBckpTime_newID[layergroupDB_ID_atBackupTime] = layergroupDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json LayerGroup file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json LayerGroup file", err.Error())
 	}
 }
 
@@ -546,7 +564,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoLayerGroup.db.Model(layergroupDB).Updates(*layergroupDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

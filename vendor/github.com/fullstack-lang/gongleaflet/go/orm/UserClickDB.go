@@ -35,15 +35,15 @@ var dummy_UserClick_sort sort.Float64Slice
 type UserClickAPI struct {
 	gorm.Model
 
-	models.UserClick
+	models.UserClick_WOP
 
 	// encoding of pointers
-	UserClickPointersEnconding
+	UserClickPointersEncoding UserClickPointersEncoding
 }
 
-// UserClickPointersEnconding encodes pointers to Struct and
+// UserClickPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type UserClickPointersEnconding struct {
+type UserClickPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -70,7 +70,7 @@ type UserClickDB struct {
 	// Declation for basic field userclickDB.TimeOfClick
 	TimeOfClick_Data sql.NullTime
 	// encoding of pointers
-	UserClickPointersEnconding
+	UserClickPointersEncoding
 }
 
 // UserClickDBs arrays userclickDBs
@@ -168,7 +168,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) CommitDeleteInstance(id uint) 
 	userclickDB := backRepoUserClick.Map_UserClickDBID_UserClickDB[id]
 	query := backRepoUserClick.db.Unscoped().Delete(&userclickDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -194,7 +194,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) CommitPhaseOneInstance(usercli
 
 	query := backRepoUserClick.db.Create(&userclickDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -228,7 +228,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) CommitPhaseTwoInstance(backRep
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoUserClick.db.Save(&userclickDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -355,7 +355,7 @@ func (backRepo *BackRepoStruct) CheckoutUserClick(userclick *models.UserClick) {
 			userclickDB.ID = id
 
 			if err := backRepo.BackRepoUserClick.db.First(&userclickDB, id).Error; err != nil {
-				log.Panicln("CheckoutUserClick : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutUserClick : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoUserClick.CheckoutPhaseOneInstance(&userclickDB)
 			backRepo.BackRepoUserClick.CheckoutPhaseTwoInstance(backRepo, &userclickDB)
@@ -365,6 +365,23 @@ func (backRepo *BackRepoStruct) CheckoutUserClick(userclick *models.UserClick) {
 
 // CopyBasicFieldsFromUserClick
 func (userclickDB *UserClickDB) CopyBasicFieldsFromUserClick(userclick *models.UserClick) {
+	// insertion point for fields commit
+
+	userclickDB.Name_Data.String = userclick.Name
+	userclickDB.Name_Data.Valid = true
+
+	userclickDB.Lat_Data.Float64 = userclick.Lat
+	userclickDB.Lat_Data.Valid = true
+
+	userclickDB.Lng_Data.Float64 = userclick.Lng
+	userclickDB.Lng_Data.Valid = true
+
+	userclickDB.TimeOfClick_Data.Time = userclick.TimeOfClick
+	userclickDB.TimeOfClick_Data.Valid = true
+}
+
+// CopyBasicFieldsFromUserClick_WOP
+func (userclickDB *UserClickDB) CopyBasicFieldsFromUserClick_WOP(userclick *models.UserClick_WOP) {
 	// insertion point for fields commit
 
 	userclickDB.Name_Data.String = userclick.Name
@@ -406,6 +423,15 @@ func (userclickDB *UserClickDB) CopyBasicFieldsToUserClick(userclick *models.Use
 	userclick.TimeOfClick = userclickDB.TimeOfClick_Data.Time
 }
 
+// CopyBasicFieldsToUserClick_WOP
+func (userclickDB *UserClickDB) CopyBasicFieldsToUserClick_WOP(userclick *models.UserClick_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	userclick.Name = userclickDB.Name_Data.String
+	userclick.Lat = userclickDB.Lat_Data.Float64
+	userclick.Lng = userclickDB.Lng_Data.Float64
+	userclick.TimeOfClick = userclickDB.TimeOfClick_Data.Time
+}
+
 // CopyBasicFieldsToUserClickWOP
 func (userclickDB *UserClickDB) CopyBasicFieldsToUserClickWOP(userclick *UserClickWOP) {
 	userclick.ID = int(userclickDB.ID)
@@ -435,12 +461,12 @@ func (backRepoUserClick *BackRepoUserClickStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json UserClick ", filename, " ", err.Error())
+		log.Fatal("Cannot json UserClick ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json UserClick file", err.Error())
+		log.Fatal("Cannot write the json UserClick file", err.Error())
 	}
 }
 
@@ -460,7 +486,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) BackupXL(file *xlsx.File) {
 
 	sh, err := file.AddSheet("UserClick")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -485,13 +511,13 @@ func (backRepoUserClick *BackRepoUserClickStruct) RestoreXLPhaseOne(file *xlsx.F
 	sh, ok := file.Sheet["UserClick"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoUserClick.rowVisitorUserClick)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -513,7 +539,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) rowVisitorUserClick(row *xlsx.
 		userclickDB.ID = 0
 		query := backRepoUserClick.db.Create(userclickDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoUserClick.Map_UserClickDBID_UserClickDB[userclickDB.ID] = userclickDB
 		BackRepoUserClickid_atBckpTime_newID[userclickDB_ID_atBackupTime] = userclickDB.ID
@@ -533,7 +559,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) RestorePhaseOne(dirPath string
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json UserClick file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json UserClick file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -550,14 +576,14 @@ func (backRepoUserClick *BackRepoUserClickStruct) RestorePhaseOne(dirPath string
 		userclickDB.ID = 0
 		query := backRepoUserClick.db.Create(userclickDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoUserClick.Map_UserClickDBID_UserClickDB[userclickDB.ID] = userclickDB
 		BackRepoUserClickid_atBckpTime_newID[userclickDB_ID_atBackupTime] = userclickDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json UserClick file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json UserClick file", err.Error())
 	}
 }
 
@@ -574,7 +600,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoUserClick.db.Model(userclickDB).Updates(*userclickDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

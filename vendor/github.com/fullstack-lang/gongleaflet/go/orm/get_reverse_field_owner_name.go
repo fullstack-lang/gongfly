@@ -144,10 +144,8 @@ func GetReverseFieldOwnerName[T models.Gongstruct](
 		case "MapOptions":
 			switch reverseField.Fieldname {
 			case "LayerGroupUses":
-				if tmp != nil && tmp.MapOptions_LayerGroupUsesDBID.Int64 != 0 {
-					id := uint(tmp.MapOptions_LayerGroupUsesDBID.Int64)
-					reservePointerTarget := backRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr[id]
-					res = reservePointerTarget.Name
+				if _mapoptions, ok := stage.MapOptions_LayerGroupUses_reverseMap[inst]; ok {
+					res = _mapoptions.Name
 				}
 			}
 		case "Marker":
@@ -394,7 +392,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.DivIcon:
 		tmp := GetInstanceDBFromInstance[models.DivIcon, DivIconDB](
 			stage, backRepo, inst,
@@ -430,7 +428,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.LayerGroup:
 		tmp := GetInstanceDBFromInstance[models.LayerGroup, LayerGroupDB](
 			stage, backRepo, inst,
@@ -466,7 +464,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.LayerGroupUse:
 		tmp := GetInstanceDBFromInstance[models.LayerGroupUse, LayerGroupUseDB](
 			stage, backRepo, inst,
@@ -489,11 +487,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 		case "MapOptions":
 			switch reverseField.Fieldname {
 			case "LayerGroupUses":
-				if tmp != nil && tmp.MapOptions_LayerGroupUsesDBID.Int64 != 0 {
-					id := uint(tmp.MapOptions_LayerGroupUsesDBID.Int64)
-					reservePointerTarget := backRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr[id]
-					res = reservePointerTarget
-				}
+				res = stage.MapOptions_LayerGroupUses_reverseMap[inst]
 			}
 		case "Marker":
 			switch reverseField.Fieldname {
@@ -508,7 +502,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.MapOptions:
 		tmp := GetInstanceDBFromInstance[models.MapOptions, MapOptionsDB](
 			stage, backRepo, inst,
@@ -544,7 +538,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.Marker:
 		tmp := GetInstanceDBFromInstance[models.Marker, MarkerDB](
 			stage, backRepo, inst,
@@ -580,7 +574,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.UserClick:
 		tmp := GetInstanceDBFromInstance[models.UserClick, UserClickDB](
 			stage, backRepo, inst,
@@ -616,7 +610,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.VLine:
 		tmp := GetInstanceDBFromInstance[models.VLine, VLineDB](
 			stage, backRepo, inst,
@@ -652,7 +646,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	case *models.VisualTrack:
 		tmp := GetInstanceDBFromInstance[models.VisualTrack, VisualTrackDB](
 			stage, backRepo, inst,
@@ -688,7 +682,7 @@ func GetReverseFieldOwner[T models.Gongstruct](
 			switch reverseField.Fieldname {
 			}
 		}
-	
+
 	default:
 		_ = inst
 	}

@@ -12,8 +12,10 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { MapOptionsDB } from './mapoptions-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
+import { LayerGroupUseDB } from './layergroupuse-db'
 
 @Injectable({
   providedIn: 'root'
@@ -43,10 +45,10 @@ export class MapOptionsService {
 
   /** GET mapoptionss from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<MapOptionsDB[]> {
-    return this.getMapOptionss(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB[]> {
+    return this.getMapOptionss(GONG__StackPath, frontRepo)
   }
-  getMapOptionss(GONG__StackPath: string): Observable<MapOptionsDB[]> {
+  getMapOptionss(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -60,10 +62,10 @@ export class MapOptionsService {
 
   /** GET mapoptions by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<MapOptionsDB> {
-	return this.getMapOptions(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
+    return this.getMapOptions(id, GONG__StackPath, frontRepo)
   }
-  getMapOptions(id: number, GONG__StackPath: string): Observable<MapOptionsDB> {
+  getMapOptions(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -75,13 +77,15 @@ export class MapOptionsService {
   }
 
   /** POST: add a new mapoptions to the server */
-  post(mapoptionsdb: MapOptionsDB, GONG__StackPath: string): Observable<MapOptionsDB> {
-    return this.postMapOptions(mapoptionsdb, GONG__StackPath)	
+  post(mapoptionsdb: MapOptionsDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
+    return this.postMapOptions(mapoptionsdb, GONG__StackPath, frontRepo)
   }
-  postMapOptions(mapoptionsdb: MapOptionsDB, GONG__StackPath: string): Observable<MapOptionsDB> {
+  postMapOptions(mapoptionsdb: MapOptionsDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let LayerGroupUses = mapoptionsdb.LayerGroupUses
+    for (let _layergroupuse of mapoptionsdb.LayerGroupUses) {
+      mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses.push(_layergroupuse.ID)
+    }
     mapoptionsdb.LayerGroupUses = []
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -93,7 +97,13 @@ export class MapOptionsService {
     return this.http.post<MapOptionsDB>(this.mapoptionssUrl, mapoptionsdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      mapoptionsdb.LayerGroupUses = LayerGroupUses
+        mapoptionsdb.LayerGroupUses = new Array<LayerGroupUseDB>()
+        for (let _id of mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses) {
+          let _layergroupuse = frontRepo.LayerGroupUses.get(_id)
+          if (_layergroupuse != undefined) {
+            mapoptionsdb.LayerGroupUses.push(_layergroupuse!)
+          }
+        }
         // this.log(`posted mapoptionsdb id=${mapoptionsdb.ID}`)
       }),
       catchError(this.handleError<MapOptionsDB>('postMapOptions'))
@@ -121,15 +131,18 @@ export class MapOptionsService {
   }
 
   /** PUT: update the mapoptionsdb on the server */
-  update(mapoptionsdb: MapOptionsDB, GONG__StackPath: string): Observable<MapOptionsDB> {
-    return this.updateMapOptions(mapoptionsdb, GONG__StackPath)
+  update(mapoptionsdb: MapOptionsDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
+    return this.updateMapOptions(mapoptionsdb, GONG__StackPath, frontRepo)
   }
-  updateMapOptions(mapoptionsdb: MapOptionsDB, GONG__StackPath: string): Observable<MapOptionsDB> {
+  updateMapOptions(mapoptionsdb: MapOptionsDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
     const id = typeof mapoptionsdb === 'number' ? mapoptionsdb : mapoptionsdb.ID;
     const url = `${this.mapoptionssUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let LayerGroupUses = mapoptionsdb.LayerGroupUses
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
+    for (let _layergroupuse of mapoptionsdb.LayerGroupUses) {
+      mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses.push(_layergroupuse.ID)
+    }
     mapoptionsdb.LayerGroupUses = []
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -141,7 +154,13 @@ export class MapOptionsService {
     return this.http.put<MapOptionsDB>(url, mapoptionsdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      mapoptionsdb.LayerGroupUses = LayerGroupUses
+        mapoptionsdb.LayerGroupUses = new Array<LayerGroupUseDB>()
+        for (let _id of mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses) {
+          let _layergroupuse = frontRepo.LayerGroupUses.get(_id)
+          if (_layergroupuse != undefined) {
+            mapoptionsdb.LayerGroupUses.push(_layergroupuse!)
+          }
+        }
         // this.log(`updated mapoptionsdb id=${mapoptionsdb.ID}`)
       }),
       catchError(this.handleError<MapOptionsDB>('updateMapOptions'))
@@ -169,6 +188,6 @@ export class MapOptionsService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

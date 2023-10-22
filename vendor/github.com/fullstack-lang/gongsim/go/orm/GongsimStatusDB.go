@@ -35,15 +35,15 @@ var dummy_GongsimStatus_sort sort.Float64Slice
 type GongsimStatusAPI struct {
 	gorm.Model
 
-	models.GongsimStatus
+	models.GongsimStatus_WOP
 
 	// encoding of pointers
-	GongsimStatusPointersEnconding
+	GongsimStatusPointersEncoding GongsimStatusPointersEncoding
 }
 
-// GongsimStatusPointersEnconding encodes pointers to Struct and
+// GongsimStatusPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type GongsimStatusPointersEnconding struct {
+type GongsimStatusPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -73,7 +73,7 @@ type GongsimStatusDB struct {
 	// Declation for basic field gongsimstatusDB.SpeedCommandCompletionDate
 	SpeedCommandCompletionDate_Data sql.NullString
 	// encoding of pointers
-	GongsimStatusPointersEnconding
+	GongsimStatusPointersEncoding
 }
 
 // GongsimStatusDBs arrays gongsimstatusDBs
@@ -174,7 +174,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitDeleteInstance(i
 	gongsimstatusDB := backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[id]
 	query := backRepoGongsimStatus.db.Unscoped().Delete(&gongsimstatusDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -200,7 +200,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseOneInstance
 
 	query := backRepoGongsimStatus.db.Create(&gongsimstatusDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -234,7 +234,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseTwoInstance
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoGongsimStatus.db.Save(&gongsimstatusDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -361,7 +361,7 @@ func (backRepo *BackRepoStruct) CheckoutGongsimStatus(gongsimstatus *models.Gong
 			gongsimstatusDB.ID = id
 
 			if err := backRepo.BackRepoGongsimStatus.db.First(&gongsimstatusDB, id).Error; err != nil {
-				log.Panicln("CheckoutGongsimStatus : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutGongsimStatus : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoGongsimStatus.CheckoutPhaseOneInstance(&gongsimstatusDB)
 			backRepo.BackRepoGongsimStatus.CheckoutPhaseTwoInstance(backRepo, &gongsimstatusDB)
@@ -371,6 +371,26 @@ func (backRepo *BackRepoStruct) CheckoutGongsimStatus(gongsimstatus *models.Gong
 
 // CopyBasicFieldsFromGongsimStatus
 func (gongsimstatusDB *GongsimStatusDB) CopyBasicFieldsFromGongsimStatus(gongsimstatus *models.GongsimStatus) {
+	// insertion point for fields commit
+
+	gongsimstatusDB.Name_Data.String = gongsimstatus.Name
+	gongsimstatusDB.Name_Data.Valid = true
+
+	gongsimstatusDB.CurrentCommand_Data.String = gongsimstatus.CurrentCommand.ToString()
+	gongsimstatusDB.CurrentCommand_Data.Valid = true
+
+	gongsimstatusDB.CompletionDate_Data.String = gongsimstatus.CompletionDate
+	gongsimstatusDB.CompletionDate_Data.Valid = true
+
+	gongsimstatusDB.CurrentSpeedCommand_Data.String = gongsimstatus.CurrentSpeedCommand.ToString()
+	gongsimstatusDB.CurrentSpeedCommand_Data.Valid = true
+
+	gongsimstatusDB.SpeedCommandCompletionDate_Data.String = gongsimstatus.SpeedCommandCompletionDate
+	gongsimstatusDB.SpeedCommandCompletionDate_Data.Valid = true
+}
+
+// CopyBasicFieldsFromGongsimStatus_WOP
+func (gongsimstatusDB *GongsimStatusDB) CopyBasicFieldsFromGongsimStatus_WOP(gongsimstatus *models.GongsimStatus_WOP) {
 	// insertion point for fields commit
 
 	gongsimstatusDB.Name_Data.String = gongsimstatus.Name
@@ -419,6 +439,16 @@ func (gongsimstatusDB *GongsimStatusDB) CopyBasicFieldsToGongsimStatus(gongsimst
 	gongsimstatus.SpeedCommandCompletionDate = gongsimstatusDB.SpeedCommandCompletionDate_Data.String
 }
 
+// CopyBasicFieldsToGongsimStatus_WOP
+func (gongsimstatusDB *GongsimStatusDB) CopyBasicFieldsToGongsimStatus_WOP(gongsimstatus *models.GongsimStatus_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	gongsimstatus.Name = gongsimstatusDB.Name_Data.String
+	gongsimstatus.CurrentCommand.FromString(gongsimstatusDB.CurrentCommand_Data.String)
+	gongsimstatus.CompletionDate = gongsimstatusDB.CompletionDate_Data.String
+	gongsimstatus.CurrentSpeedCommand.FromString(gongsimstatusDB.CurrentSpeedCommand_Data.String)
+	gongsimstatus.SpeedCommandCompletionDate = gongsimstatusDB.SpeedCommandCompletionDate_Data.String
+}
+
 // CopyBasicFieldsToGongsimStatusWOP
 func (gongsimstatusDB *GongsimStatusDB) CopyBasicFieldsToGongsimStatusWOP(gongsimstatus *GongsimStatusWOP) {
 	gongsimstatus.ID = int(gongsimstatusDB.ID)
@@ -449,12 +479,12 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) Backup(dirPath string)
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json GongsimStatus ", filename, " ", err.Error())
+		log.Fatal("Cannot json GongsimStatus ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json GongsimStatus file", err.Error())
+		log.Fatal("Cannot write the json GongsimStatus file", err.Error())
 	}
 }
 
@@ -474,7 +504,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) BackupXL(file *xlsx.Fi
 
 	sh, err := file.AddSheet("GongsimStatus")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -499,13 +529,13 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) RestoreXLPhaseOne(file
 	sh, ok := file.Sheet["GongsimStatus"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoGongsimStatus.rowVisitorGongsimStatus)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -527,7 +557,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) rowVisitorGongsimStatu
 		gongsimstatusDB.ID = 0
 		query := backRepoGongsimStatus.db.Create(gongsimstatusDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[gongsimstatusDB.ID] = gongsimstatusDB
 		BackRepoGongsimStatusid_atBckpTime_newID[gongsimstatusDB_ID_atBackupTime] = gongsimstatusDB.ID
@@ -547,7 +577,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) RestorePhaseOne(dirPat
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json GongsimStatus file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json GongsimStatus file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -564,14 +594,14 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) RestorePhaseOne(dirPat
 		gongsimstatusDB.ID = 0
 		query := backRepoGongsimStatus.db.Create(gongsimstatusDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[gongsimstatusDB.ID] = gongsimstatusDB
 		BackRepoGongsimStatusid_atBckpTime_newID[gongsimstatusDB_ID_atBackupTime] = gongsimstatusDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json GongsimStatus file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json GongsimStatus file", err.Error())
 	}
 }
 
@@ -588,7 +618,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoGongsimStatus.db.Model(gongsimstatusDB).Updates(*gongsimstatusDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

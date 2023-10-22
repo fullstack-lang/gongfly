@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { DivIconDB } from './divicon-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -43,10 +44,10 @@ export class DivIconService {
 
   /** GET divicons from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<DivIconDB[]> {
-    return this.getDivIcons(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB[]> {
+    return this.getDivIcons(GONG__StackPath, frontRepo)
   }
-  getDivIcons(GONG__StackPath: string): Observable<DivIconDB[]> {
+  getDivIcons(GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -60,10 +61,10 @@ export class DivIconService {
 
   /** GET divicon by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<DivIconDB> {
-	return this.getDivIcon(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
+    return this.getDivIcon(id, GONG__StackPath, frontRepo)
   }
-  getDivIcon(id: number, GONG__StackPath: string): Observable<DivIconDB> {
+  getDivIcon(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -75,10 +76,10 @@ export class DivIconService {
   }
 
   /** POST: add a new divicon to the server */
-  post(divicondb: DivIconDB, GONG__StackPath: string): Observable<DivIconDB> {
-    return this.postDivIcon(divicondb, GONG__StackPath)	
+  post(divicondb: DivIconDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
+    return this.postDivIcon(divicondb, GONG__StackPath, frontRepo)
   }
-  postDivIcon(divicondb: DivIconDB, GONG__StackPath: string): Observable<DivIconDB> {
+  postDivIcon(divicondb: DivIconDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -118,14 +119,15 @@ export class DivIconService {
   }
 
   /** PUT: update the divicondb on the server */
-  update(divicondb: DivIconDB, GONG__StackPath: string): Observable<DivIconDB> {
-    return this.updateDivIcon(divicondb, GONG__StackPath)
+  update(divicondb: DivIconDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
+    return this.updateDivIcon(divicondb, GONG__StackPath, frontRepo)
   }
-  updateDivIcon(divicondb: DivIconDB, GONG__StackPath: string): Observable<DivIconDB> {
+  updateDivIcon(divicondb: DivIconDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
     const id = typeof divicondb === 'number' ? divicondb : divicondb.ID;
     const url = `${this.diviconsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -163,6 +165,6 @@ export class DivIconService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

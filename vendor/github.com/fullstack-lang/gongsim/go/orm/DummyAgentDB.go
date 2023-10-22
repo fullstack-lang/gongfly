@@ -35,15 +35,15 @@ var dummy_DummyAgent_sort sort.Float64Slice
 type DummyAgentAPI struct {
 	gorm.Model
 
-	models.DummyAgent
+	models.DummyAgent_WOP
 
 	// encoding of pointers
-	DummyAgentPointersEnconding
+	DummyAgentPointersEncoding DummyAgentPointersEncoding
 }
 
-// DummyAgentPointersEnconding encodes pointers to Struct and
+// DummyAgentPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type DummyAgentPointersEnconding struct {
+type DummyAgentPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -64,7 +64,7 @@ type DummyAgentDB struct {
 	// Declation for basic field dummyagentDB.Name
 	Name_Data sql.NullString
 	// encoding of pointers
-	DummyAgentPointersEnconding
+	DummyAgentPointersEncoding
 }
 
 // DummyAgentDBs arrays dummyagentDBs
@@ -156,7 +156,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitDeleteInstance(id uint
 	dummyagentDB := backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[id]
 	query := backRepoDummyAgent.db.Unscoped().Delete(&dummyagentDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -182,7 +182,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseOneInstance(dummy
 
 	query := backRepoDummyAgent.db.Create(&dummyagentDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -216,7 +216,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseTwoInstance(backR
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoDummyAgent.db.Save(&dummyagentDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -343,7 +343,7 @@ func (backRepo *BackRepoStruct) CheckoutDummyAgent(dummyagent *models.DummyAgent
 			dummyagentDB.ID = id
 
 			if err := backRepo.BackRepoDummyAgent.db.First(&dummyagentDB, id).Error; err != nil {
-				log.Panicln("CheckoutDummyAgent : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutDummyAgent : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoDummyAgent.CheckoutPhaseOneInstance(&dummyagentDB)
 			backRepo.BackRepoDummyAgent.CheckoutPhaseTwoInstance(backRepo, &dummyagentDB)
@@ -353,6 +353,17 @@ func (backRepo *BackRepoStruct) CheckoutDummyAgent(dummyagent *models.DummyAgent
 
 // CopyBasicFieldsFromDummyAgent
 func (dummyagentDB *DummyAgentDB) CopyBasicFieldsFromDummyAgent(dummyagent *models.DummyAgent) {
+	// insertion point for fields commit
+
+	dummyagentDB.TechName_Data.String = dummyagent.TechName
+	dummyagentDB.TechName_Data.Valid = true
+
+	dummyagentDB.Name_Data.String = dummyagent.Name
+	dummyagentDB.Name_Data.Valid = true
+}
+
+// CopyBasicFieldsFromDummyAgent_WOP
+func (dummyagentDB *DummyAgentDB) CopyBasicFieldsFromDummyAgent_WOP(dummyagent *models.DummyAgent_WOP) {
 	// insertion point for fields commit
 
 	dummyagentDB.TechName_Data.String = dummyagent.TechName
@@ -375,6 +386,13 @@ func (dummyagentDB *DummyAgentDB) CopyBasicFieldsFromDummyAgentWOP(dummyagent *D
 
 // CopyBasicFieldsToDummyAgent
 func (dummyagentDB *DummyAgentDB) CopyBasicFieldsToDummyAgent(dummyagent *models.DummyAgent) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	dummyagent.TechName = dummyagentDB.TechName_Data.String
+	dummyagent.Name = dummyagentDB.Name_Data.String
+}
+
+// CopyBasicFieldsToDummyAgent_WOP
+func (dummyagentDB *DummyAgentDB) CopyBasicFieldsToDummyAgent_WOP(dummyagent *models.DummyAgent_WOP) {
 	// insertion point for checkout of basic fields (back repo to stage)
 	dummyagent.TechName = dummyagentDB.TechName_Data.String
 	dummyagent.Name = dummyagentDB.Name_Data.String
@@ -407,12 +425,12 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json DummyAgent ", filename, " ", err.Error())
+		log.Fatal("Cannot json DummyAgent ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json DummyAgent file", err.Error())
+		log.Fatal("Cannot write the json DummyAgent file", err.Error())
 	}
 }
 
@@ -432,7 +450,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) BackupXL(file *xlsx.File) {
 
 	sh, err := file.AddSheet("DummyAgent")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -457,13 +475,13 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) RestoreXLPhaseOne(file *xlsx
 	sh, ok := file.Sheet["DummyAgent"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoDummyAgent.rowVisitorDummyAgent)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -485,7 +503,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) rowVisitorDummyAgent(row *xl
 		dummyagentDB.ID = 0
 		query := backRepoDummyAgent.db.Create(dummyagentDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[dummyagentDB.ID] = dummyagentDB
 		BackRepoDummyAgentid_atBckpTime_newID[dummyagentDB_ID_atBackupTime] = dummyagentDB.ID
@@ -505,7 +523,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) RestorePhaseOne(dirPath stri
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json DummyAgent file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json DummyAgent file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -522,14 +540,14 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) RestorePhaseOne(dirPath stri
 		dummyagentDB.ID = 0
 		query := backRepoDummyAgent.db.Create(dummyagentDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[dummyagentDB.ID] = dummyagentDB
 		BackRepoDummyAgentid_atBckpTime_newID[dummyagentDB_ID_atBackupTime] = dummyagentDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json DummyAgent file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json DummyAgent file", err.Error())
 	}
 }
 
@@ -546,7 +564,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoDummyAgent.db.Model(dummyagentDB).Updates(*dummyagentDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

@@ -24,6 +24,13 @@ export class MapOptionsDB {
 	AttributionControl: boolean = false
 	ZoomSnap: number = 0
 
-	// insertion point for other declarations
-	LayerGroupUses?: Array<LayerGroupUseDB>
+	// insertion point for pointers and slices of pointers declarations
+	LayerGroupUses: Array<LayerGroupUseDB> = []
+
+	MapOptionsPointersEncoding: MapOptionsPointersEncoding = new MapOptionsPointersEncoding
+}
+
+export class MapOptionsPointersEncoding {
+	// insertion point for pointers and slices of pointers encoding fields
+	LayerGroupUses: number[] = []
 }

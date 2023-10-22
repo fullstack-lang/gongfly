@@ -35,15 +35,15 @@ var dummy_VisualTrack_sort sort.Float64Slice
 type VisualTrackAPI struct {
 	gorm.Model
 
-	models.VisualTrack
+	models.VisualTrack_WOP
 
 	// encoding of pointers
-	VisualTrackPointersEnconding
+	VisualTrackPointersEncoding VisualTrackPointersEncoding
 }
 
-// VisualTrackPointersEnconding encodes pointers to Struct and
+// VisualTrackPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type VisualTrackPointersEnconding struct {
+type VisualTrackPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 
 	// field LayerGroup is a pointer to another Struct (optional or 0..1)
@@ -98,7 +98,7 @@ type VisualTrackDB struct {
 	// provide the sql storage for the boolan
 	DisplayLevelAndSpeed_Data sql.NullBool
 	// encoding of pointers
-	VisualTrackPointersEnconding
+	VisualTrackPointersEncoding
 }
 
 // VisualTrackDBs arrays visualtrackDBs
@@ -214,7 +214,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitDeleteInstance(id ui
 	visualtrackDB := backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[id]
 	query := backRepoVisualTrack.db.Unscoped().Delete(&visualtrackDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -240,7 +240,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseOneInstance(vis
 
 	query := backRepoVisualTrack.db.Create(&visualtrackDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -298,7 +298,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseTwoInstance(bac
 
 		query := backRepoVisualTrack.db.Save(&visualtrackDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -435,7 +435,7 @@ func (backRepo *BackRepoStruct) CheckoutVisualTrack(visualtrack *models.VisualTr
 			visualtrackDB.ID = id
 
 			if err := backRepo.BackRepoVisualTrack.db.First(&visualtrackDB, id).Error; err != nil {
-				log.Panicln("CheckoutVisualTrack : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutVisualTrack : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoVisualTrack.CheckoutPhaseOneInstance(&visualtrackDB)
 			backRepo.BackRepoVisualTrack.CheckoutPhaseTwoInstance(backRepo, &visualtrackDB)
@@ -445,6 +445,41 @@ func (backRepo *BackRepoStruct) CheckoutVisualTrack(visualtrack *models.VisualTr
 
 // CopyBasicFieldsFromVisualTrack
 func (visualtrackDB *VisualTrackDB) CopyBasicFieldsFromVisualTrack(visualtrack *models.VisualTrack) {
+	// insertion point for fields commit
+
+	visualtrackDB.Lat_Data.Float64 = visualtrack.Lat
+	visualtrackDB.Lat_Data.Valid = true
+
+	visualtrackDB.Lng_Data.Float64 = visualtrack.Lng
+	visualtrackDB.Lng_Data.Valid = true
+
+	visualtrackDB.Heading_Data.Float64 = visualtrack.Heading
+	visualtrackDB.Heading_Data.Valid = true
+
+	visualtrackDB.Level_Data.Float64 = visualtrack.Level
+	visualtrackDB.Level_Data.Valid = true
+
+	visualtrackDB.Speed_Data.Float64 = visualtrack.Speed
+	visualtrackDB.Speed_Data.Valid = true
+
+	visualtrackDB.VerticalSpeed_Data.Float64 = visualtrack.VerticalSpeed
+	visualtrackDB.VerticalSpeed_Data.Valid = true
+
+	visualtrackDB.Name_Data.String = visualtrack.Name
+	visualtrackDB.Name_Data.Valid = true
+
+	visualtrackDB.ColorEnum_Data.String = visualtrack.ColorEnum.ToString()
+	visualtrackDB.ColorEnum_Data.Valid = true
+
+	visualtrackDB.DisplayTrackHistory_Data.Bool = visualtrack.DisplayTrackHistory
+	visualtrackDB.DisplayTrackHistory_Data.Valid = true
+
+	visualtrackDB.DisplayLevelAndSpeed_Data.Bool = visualtrack.DisplayLevelAndSpeed
+	visualtrackDB.DisplayLevelAndSpeed_Data.Valid = true
+}
+
+// CopyBasicFieldsFromVisualTrack_WOP
+func (visualtrackDB *VisualTrackDB) CopyBasicFieldsFromVisualTrack_WOP(visualtrack *models.VisualTrack_WOP) {
 	// insertion point for fields commit
 
 	visualtrackDB.Lat_Data.Float64 = visualtrack.Lat
@@ -528,6 +563,21 @@ func (visualtrackDB *VisualTrackDB) CopyBasicFieldsToVisualTrack(visualtrack *mo
 	visualtrack.DisplayLevelAndSpeed = visualtrackDB.DisplayLevelAndSpeed_Data.Bool
 }
 
+// CopyBasicFieldsToVisualTrack_WOP
+func (visualtrackDB *VisualTrackDB) CopyBasicFieldsToVisualTrack_WOP(visualtrack *models.VisualTrack_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	visualtrack.Lat = visualtrackDB.Lat_Data.Float64
+	visualtrack.Lng = visualtrackDB.Lng_Data.Float64
+	visualtrack.Heading = visualtrackDB.Heading_Data.Float64
+	visualtrack.Level = visualtrackDB.Level_Data.Float64
+	visualtrack.Speed = visualtrackDB.Speed_Data.Float64
+	visualtrack.VerticalSpeed = visualtrackDB.VerticalSpeed_Data.Float64
+	visualtrack.Name = visualtrackDB.Name_Data.String
+	visualtrack.ColorEnum.FromString(visualtrackDB.ColorEnum_Data.String)
+	visualtrack.DisplayTrackHistory = visualtrackDB.DisplayTrackHistory_Data.Bool
+	visualtrack.DisplayLevelAndSpeed = visualtrackDB.DisplayLevelAndSpeed_Data.Bool
+}
+
 // CopyBasicFieldsToVisualTrackWOP
 func (visualtrackDB *VisualTrackDB) CopyBasicFieldsToVisualTrackWOP(visualtrack *VisualTrackWOP) {
 	visualtrack.ID = int(visualtrackDB.ID)
@@ -563,12 +613,12 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json VisualTrack ", filename, " ", err.Error())
+		log.Fatal("Cannot json VisualTrack ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json VisualTrack file", err.Error())
+		log.Fatal("Cannot write the json VisualTrack file", err.Error())
 	}
 }
 
@@ -588,7 +638,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) BackupXL(file *xlsx.File) 
 
 	sh, err := file.AddSheet("VisualTrack")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -613,13 +663,13 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) RestoreXLPhaseOne(file *xl
 	sh, ok := file.Sheet["VisualTrack"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoVisualTrack.rowVisitorVisualTrack)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -641,7 +691,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) rowVisitorVisualTrack(row 
 		visualtrackDB.ID = 0
 		query := backRepoVisualTrack.db.Create(visualtrackDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[visualtrackDB.ID] = visualtrackDB
 		BackRepoVisualTrackid_atBckpTime_newID[visualtrackDB_ID_atBackupTime] = visualtrackDB.ID
@@ -661,7 +711,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) RestorePhaseOne(dirPath st
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json VisualTrack file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json VisualTrack file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -678,14 +728,14 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) RestorePhaseOne(dirPath st
 		visualtrackDB.ID = 0
 		query := backRepoVisualTrack.db.Create(visualtrackDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[visualtrackDB.ID] = visualtrackDB
 		BackRepoVisualTrackid_atBckpTime_newID[visualtrackDB_ID_atBackupTime] = visualtrackDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json VisualTrack file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json VisualTrack file", err.Error())
 	}
 }
 
@@ -714,7 +764,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoVisualTrack.db.Model(visualtrackDB).Updates(*visualtrackDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

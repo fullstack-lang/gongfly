@@ -35,26 +35,20 @@ var dummy_LayerGroupUse_sort sort.Float64Slice
 type LayerGroupUseAPI struct {
 	gorm.Model
 
-	models.LayerGroupUse
+	models.LayerGroupUse_WOP
 
 	// encoding of pointers
-	LayerGroupUsePointersEnconding
+	LayerGroupUsePointersEncoding LayerGroupUsePointersEncoding
 }
 
-// LayerGroupUsePointersEnconding encodes pointers to Struct and
+// LayerGroupUsePointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type LayerGroupUsePointersEnconding struct {
+type LayerGroupUsePointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 
 	// field LayerGroup is a pointer to another Struct (optional or 0..1)
 	// This field is generated into another field to enable AS ONE association
 	LayerGroupID sql.NullInt64
-
-	// Implementation of a reverse ID for field MapOptions{}.LayerGroupUses []*LayerGroupUse
-	MapOptions_LayerGroupUsesDBID sql.NullInt64
-
-	// implementation of the index of the withing the slice
-	MapOptions_LayerGroupUsesDBID_Index sql.NullInt64
 }
 
 // LayerGroupUseDB describes a layergroupuse in the database
@@ -75,7 +69,7 @@ type LayerGroupUseDB struct {
 	// provide the sql storage for the boolan
 	Display_Data sql.NullBool
 	// encoding of pointers
-	LayerGroupUsePointersEnconding
+	LayerGroupUsePointersEncoding
 }
 
 // LayerGroupUseDBs arrays layergroupuseDBs
@@ -167,7 +161,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CommitDeleteInstance(i
 	layergroupuseDB := backRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUseDB[id]
 	query := backRepoLayerGroupUse.db.Unscoped().Delete(&layergroupuseDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -193,7 +187,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CommitPhaseOneInstance
 
 	query := backRepoLayerGroupUse.db.Create(&layergroupuseDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -239,7 +233,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CommitPhaseTwoInstance
 
 		query := backRepoLayerGroupUse.db.Save(&layergroupuseDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -371,7 +365,7 @@ func (backRepo *BackRepoStruct) CheckoutLayerGroupUse(layergroupuse *models.Laye
 			layergroupuseDB.ID = id
 
 			if err := backRepo.BackRepoLayerGroupUse.db.First(&layergroupuseDB, id).Error; err != nil {
-				log.Panicln("CheckoutLayerGroupUse : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutLayerGroupUse : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoLayerGroupUse.CheckoutPhaseOneInstance(&layergroupuseDB)
 			backRepo.BackRepoLayerGroupUse.CheckoutPhaseTwoInstance(backRepo, &layergroupuseDB)
@@ -381,6 +375,17 @@ func (backRepo *BackRepoStruct) CheckoutLayerGroupUse(layergroupuse *models.Laye
 
 // CopyBasicFieldsFromLayerGroupUse
 func (layergroupuseDB *LayerGroupUseDB) CopyBasicFieldsFromLayerGroupUse(layergroupuse *models.LayerGroupUse) {
+	// insertion point for fields commit
+
+	layergroupuseDB.Name_Data.String = layergroupuse.Name
+	layergroupuseDB.Name_Data.Valid = true
+
+	layergroupuseDB.Display_Data.Bool = layergroupuse.Display
+	layergroupuseDB.Display_Data.Valid = true
+}
+
+// CopyBasicFieldsFromLayerGroupUse_WOP
+func (layergroupuseDB *LayerGroupUseDB) CopyBasicFieldsFromLayerGroupUse_WOP(layergroupuse *models.LayerGroupUse_WOP) {
 	// insertion point for fields commit
 
 	layergroupuseDB.Name_Data.String = layergroupuse.Name
@@ -403,6 +408,13 @@ func (layergroupuseDB *LayerGroupUseDB) CopyBasicFieldsFromLayerGroupUseWOP(laye
 
 // CopyBasicFieldsToLayerGroupUse
 func (layergroupuseDB *LayerGroupUseDB) CopyBasicFieldsToLayerGroupUse(layergroupuse *models.LayerGroupUse) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	layergroupuse.Name = layergroupuseDB.Name_Data.String
+	layergroupuse.Display = layergroupuseDB.Display_Data.Bool
+}
+
+// CopyBasicFieldsToLayerGroupUse_WOP
+func (layergroupuseDB *LayerGroupUseDB) CopyBasicFieldsToLayerGroupUse_WOP(layergroupuse *models.LayerGroupUse_WOP) {
 	// insertion point for checkout of basic fields (back repo to stage)
 	layergroupuse.Name = layergroupuseDB.Name_Data.String
 	layergroupuse.Display = layergroupuseDB.Display_Data.Bool
@@ -435,12 +447,12 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) Backup(dirPath string)
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json LayerGroupUse ", filename, " ", err.Error())
+		log.Fatal("Cannot json LayerGroupUse ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json LayerGroupUse file", err.Error())
+		log.Fatal("Cannot write the json LayerGroupUse file", err.Error())
 	}
 }
 
@@ -460,7 +472,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) BackupXL(file *xlsx.Fi
 
 	sh, err := file.AddSheet("LayerGroupUse")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -485,13 +497,13 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) RestoreXLPhaseOne(file
 	sh, ok := file.Sheet["LayerGroupUse"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoLayerGroupUse.rowVisitorLayerGroupUse)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -513,7 +525,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) rowVisitorLayerGroupUs
 		layergroupuseDB.ID = 0
 		query := backRepoLayerGroupUse.db.Create(layergroupuseDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUseDB[layergroupuseDB.ID] = layergroupuseDB
 		BackRepoLayerGroupUseid_atBckpTime_newID[layergroupuseDB_ID_atBackupTime] = layergroupuseDB.ID
@@ -533,7 +545,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) RestorePhaseOne(dirPat
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json LayerGroupUse file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json LayerGroupUse file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -550,14 +562,14 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) RestorePhaseOne(dirPat
 		layergroupuseDB.ID = 0
 		query := backRepoLayerGroupUse.db.Create(layergroupuseDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUseDB[layergroupuseDB.ID] = layergroupuseDB
 		BackRepoLayerGroupUseid_atBckpTime_newID[layergroupuseDB_ID_atBackupTime] = layergroupuseDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json LayerGroupUse file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json LayerGroupUse file", err.Error())
 	}
 }
 
@@ -577,16 +589,10 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) RestorePhaseTwo() {
 			layergroupuseDB.LayerGroupID.Valid = true
 		}
 
-		// This reindex layergroupuse.LayerGroupUses
-		if layergroupuseDB.MapOptions_LayerGroupUsesDBID.Int64 != 0 {
-			layergroupuseDB.MapOptions_LayerGroupUsesDBID.Int64 =
-				int64(BackRepoMapOptionsid_atBckpTime_newID[uint(layergroupuseDB.MapOptions_LayerGroupUsesDBID.Int64)])
-		}
-
 		// update databse with new index encoding
 		query := backRepoLayerGroupUse.db.Model(layergroupuseDB).Updates(*layergroupuseDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 
@@ -610,15 +616,6 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) ResetReversePointersIn
 		_ = layergroupuseDB // to avoid unused variable error if there are no reverse to reset
 
 		// insertion point for reverse pointers reset
-		if layergroupuseDB.MapOptions_LayerGroupUsesDBID.Int64 != 0 {
-			layergroupuseDB.MapOptions_LayerGroupUsesDBID.Int64 = 0
-			layergroupuseDB.MapOptions_LayerGroupUsesDBID.Valid = true
-
-			// save the reset
-			if q := backRepoLayerGroupUse.db.Save(layergroupuseDB); q.Error != nil {
-				return q.Error
-			}
-		}
 		// end of insertion point for reverse pointers reset
 	}
 

@@ -91,8 +91,8 @@ func (controller *Controller) GetLayerGroups(c *gin.Context) {
 
 		// insertion point for updating fields
 		layergroupAPI.ID = layergroupDB.ID
-		layergroupDB.CopyBasicFieldsToLayerGroup(&layergroupAPI.LayerGroup)
-		layergroupAPI.LayerGroupPointersEnconding = layergroupDB.LayerGroupPointersEnconding
+		layergroupDB.CopyBasicFieldsToLayerGroup_WOP(&layergroupAPI.LayerGroup_WOP)
+		layergroupAPI.LayerGroupPointersEncoding = layergroupDB.LayerGroupPointersEncoding
 		layergroupAPIs = append(layergroupAPIs, layergroupAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostLayerGroup(c *gin.Context) {
 
 	// Create layergroup
 	layergroupDB := orm.LayerGroupDB{}
-	layergroupDB.LayerGroupPointersEnconding = input.LayerGroupPointersEnconding
-	layergroupDB.CopyBasicFieldsFromLayerGroup(&input.LayerGroup)
+	layergroupDB.LayerGroupPointersEncoding = input.LayerGroupPointersEncoding
+	layergroupDB.CopyBasicFieldsFromLayerGroup_WOP(&input.LayerGroup_WOP)
 
 	query := db.Create(&layergroupDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetLayerGroup(c *gin.Context) {
 
 	var layergroupAPI orm.LayerGroupAPI
 	layergroupAPI.ID = layergroupDB.ID
-	layergroupAPI.LayerGroupPointersEnconding = layergroupDB.LayerGroupPointersEnconding
-	layergroupDB.CopyBasicFieldsToLayerGroup(&layergroupAPI.LayerGroup)
+	layergroupAPI.LayerGroupPointersEncoding = layergroupDB.LayerGroupPointersEncoding
+	layergroupDB.CopyBasicFieldsToLayerGroup_WOP(&layergroupAPI.LayerGroup_WOP)
 
 	c.JSON(http.StatusOK, layergroupAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateLayerGroup(c *gin.Context) {
 	}
 
 	// update
-	layergroupDB.CopyBasicFieldsFromLayerGroup(&input.LayerGroup)
-	layergroupDB.LayerGroupPointersEnconding = input.LayerGroupPointersEnconding
+	layergroupDB.CopyBasicFieldsFromLayerGroup_WOP(&input.LayerGroup_WOP)
+	layergroupDB.LayerGroupPointersEncoding = input.LayerGroupPointersEncoding
 
 	query = db.Model(&layergroupDB).Updates(layergroupDB)
 	if query.Error != nil {

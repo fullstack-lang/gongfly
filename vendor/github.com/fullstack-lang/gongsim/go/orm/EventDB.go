@@ -35,15 +35,15 @@ var dummy_Event_sort sort.Float64Slice
 type EventAPI struct {
 	gorm.Model
 
-	models.Event
+	models.Event_WOP
 
 	// encoding of pointers
-	EventPointersEnconding
+	EventPointersEncoding EventPointersEncoding
 }
 
-// EventPointersEnconding encodes pointers to Struct and
+// EventPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type EventPointersEnconding struct {
+type EventPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -64,7 +64,7 @@ type EventDB struct {
 	// Declation for basic field eventDB.Duration
 	Duration_Data sql.NullInt64
 	// encoding of pointers
-	EventPointersEnconding
+	EventPointersEncoding
 }
 
 // EventDBs arrays eventDBs
@@ -156,7 +156,7 @@ func (backRepoEvent *BackRepoEventStruct) CommitDeleteInstance(id uint) (Error e
 	eventDB := backRepoEvent.Map_EventDBID_EventDB[id]
 	query := backRepoEvent.db.Unscoped().Delete(&eventDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -182,7 +182,7 @@ func (backRepoEvent *BackRepoEventStruct) CommitPhaseOneInstance(event *models.E
 
 	query := backRepoEvent.db.Create(&eventDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -216,7 +216,7 @@ func (backRepoEvent *BackRepoEventStruct) CommitPhaseTwoInstance(backRepo *BackR
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoEvent.db.Save(&eventDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -343,7 +343,7 @@ func (backRepo *BackRepoStruct) CheckoutEvent(event *models.Event) {
 			eventDB.ID = id
 
 			if err := backRepo.BackRepoEvent.db.First(&eventDB, id).Error; err != nil {
-				log.Panicln("CheckoutEvent : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutEvent : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoEvent.CheckoutPhaseOneInstance(&eventDB)
 			backRepo.BackRepoEvent.CheckoutPhaseTwoInstance(backRepo, &eventDB)
@@ -353,6 +353,17 @@ func (backRepo *BackRepoStruct) CheckoutEvent(event *models.Event) {
 
 // CopyBasicFieldsFromEvent
 func (eventDB *EventDB) CopyBasicFieldsFromEvent(event *models.Event) {
+	// insertion point for fields commit
+
+	eventDB.Name_Data.String = event.Name
+	eventDB.Name_Data.Valid = true
+
+	eventDB.Duration_Data.Int64 = int64(event.Duration)
+	eventDB.Duration_Data.Valid = true
+}
+
+// CopyBasicFieldsFromEvent_WOP
+func (eventDB *EventDB) CopyBasicFieldsFromEvent_WOP(event *models.Event_WOP) {
 	// insertion point for fields commit
 
 	eventDB.Name_Data.String = event.Name
@@ -375,6 +386,13 @@ func (eventDB *EventDB) CopyBasicFieldsFromEventWOP(event *EventWOP) {
 
 // CopyBasicFieldsToEvent
 func (eventDB *EventDB) CopyBasicFieldsToEvent(event *models.Event) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	event.Name = eventDB.Name_Data.String
+	event.Duration = time.Duration(eventDB.Duration_Data.Int64)
+}
+
+// CopyBasicFieldsToEvent_WOP
+func (eventDB *EventDB) CopyBasicFieldsToEvent_WOP(event *models.Event_WOP) {
 	// insertion point for checkout of basic fields (back repo to stage)
 	event.Name = eventDB.Name_Data.String
 	event.Duration = time.Duration(eventDB.Duration_Data.Int64)
@@ -407,12 +425,12 @@ func (backRepoEvent *BackRepoEventStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json Event ", filename, " ", err.Error())
+		log.Fatal("Cannot json Event ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json Event file", err.Error())
+		log.Fatal("Cannot write the json Event file", err.Error())
 	}
 }
 
@@ -432,7 +450,7 @@ func (backRepoEvent *BackRepoEventStruct) BackupXL(file *xlsx.File) {
 
 	sh, err := file.AddSheet("Event")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -457,13 +475,13 @@ func (backRepoEvent *BackRepoEventStruct) RestoreXLPhaseOne(file *xlsx.File) {
 	sh, ok := file.Sheet["Event"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoEvent.rowVisitorEvent)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -485,7 +503,7 @@ func (backRepoEvent *BackRepoEventStruct) rowVisitorEvent(row *xlsx.Row) error {
 		eventDB.ID = 0
 		query := backRepoEvent.db.Create(eventDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoEvent.Map_EventDBID_EventDB[eventDB.ID] = eventDB
 		BackRepoEventid_atBckpTime_newID[eventDB_ID_atBackupTime] = eventDB.ID
@@ -505,7 +523,7 @@ func (backRepoEvent *BackRepoEventStruct) RestorePhaseOne(dirPath string) {
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json Event file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json Event file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -522,14 +540,14 @@ func (backRepoEvent *BackRepoEventStruct) RestorePhaseOne(dirPath string) {
 		eventDB.ID = 0
 		query := backRepoEvent.db.Create(eventDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoEvent.Map_EventDBID_EventDB[eventDB.ID] = eventDB
 		BackRepoEventid_atBckpTime_newID[eventDB_ID_atBackupTime] = eventDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json Event file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json Event file", err.Error())
 	}
 }
 
@@ -546,7 +564,7 @@ func (backRepoEvent *BackRepoEventStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoEvent.db.Model(eventDB).Updates(*eventDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

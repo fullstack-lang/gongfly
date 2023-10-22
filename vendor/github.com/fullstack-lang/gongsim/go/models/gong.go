@@ -4,15 +4,25 @@ package models
 import (
 	"errors"
 	"fmt"
-	"sync"
+	"math"
 	"time"
 )
+
+func __Gong__Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
 
 // errUnkownEnum is returns when a value cannot match enum values
 var errUnkownEnum = errors.New("unkown enum")
 
 // needed to avoid when fmt package is not needed by generated code
 var __dummy__fmt_variable fmt.Scanner
+
+// idem for math package when not need by generated code
+var __dummy_math_variable = math.E
 
 // swagger:ignore
 type __void any
@@ -38,6 +48,8 @@ type StageStruct struct {
 	DummyAgents           map[*DummyAgent]any
 	DummyAgents_mapString map[string]*DummyAgent
 
+	// insertion point for slice of pointers maps
+
 	OnAfterDummyAgentCreateCallback OnAfterCreateInterface[DummyAgent]
 	OnAfterDummyAgentUpdateCallback OnAfterUpdateInterface[DummyAgent]
 	OnAfterDummyAgentDeleteCallback OnAfterDeleteInterface[DummyAgent]
@@ -45,6 +57,8 @@ type StageStruct struct {
 
 	Engines           map[*Engine]any
 	Engines_mapString map[string]*Engine
+
+	// insertion point for slice of pointers maps
 
 	OnAfterEngineCreateCallback OnAfterCreateInterface[Engine]
 	OnAfterEngineUpdateCallback OnAfterUpdateInterface[Engine]
@@ -54,6 +68,8 @@ type StageStruct struct {
 	Events           map[*Event]any
 	Events_mapString map[string]*Event
 
+	// insertion point for slice of pointers maps
+
 	OnAfterEventCreateCallback OnAfterCreateInterface[Event]
 	OnAfterEventUpdateCallback OnAfterUpdateInterface[Event]
 	OnAfterEventDeleteCallback OnAfterDeleteInterface[Event]
@@ -62,6 +78,8 @@ type StageStruct struct {
 	GongsimCommands           map[*GongsimCommand]any
 	GongsimCommands_mapString map[string]*GongsimCommand
 
+	// insertion point for slice of pointers maps
+
 	OnAfterGongsimCommandCreateCallback OnAfterCreateInterface[GongsimCommand]
 	OnAfterGongsimCommandUpdateCallback OnAfterUpdateInterface[GongsimCommand]
 	OnAfterGongsimCommandDeleteCallback OnAfterDeleteInterface[GongsimCommand]
@@ -69,6 +87,8 @@ type StageStruct struct {
 
 	GongsimStatuss           map[*GongsimStatus]any
 	GongsimStatuss_mapString map[string]*GongsimStatus
+
+	// insertion point for slice of pointers maps
 
 	OnAfterGongsimStatusCreateCallback OnAfterCreateInterface[GongsimStatus]
 	OnAfterGongsimStatusUpdateCallback OnAfterUpdateInterface[GongsimStatus]
@@ -153,17 +173,6 @@ type BackRepoInterface interface {
 	GetLastPushFromFrontNb() uint
 }
 
-var _stage *StageStruct
-
-var once sync.Once
-
-func GetDefaultStage() *StageStruct {
-	once.Do(func() {
-		_stage = NewStage("")
-	})
-	return _stage
-}
-
 func NewStage(path string) (stage *StageStruct) {
 
 	stage = &StageStruct{ // insertion point for array initiatialisation
@@ -208,6 +217,8 @@ func (stage *StageStruct) CommitWithSuspendedCallbacks() {
 }
 
 func (stage *StageStruct) Commit() {
+	stage.ComputeReverseMaps()
+
 	if stage.BackRepo != nil {
 		stage.BackRepo.Commit(stage)
 	}
@@ -226,6 +237,7 @@ func (stage *StageStruct) Checkout() {
 		stage.BackRepo.Checkout(stage)
 	}
 
+	stage.ComputeReverseMaps()
 	// insertion point for computing the map of number of instances per gongstruct
 	stage.Map_GongStructName_InstancesNb["DummyAgent"] = len(stage.DummyAgents)
 	stage.Map_GongStructName_InstancesNb["Engine"] = len(stage.Engines)
@@ -1042,7 +1054,46 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 		case "Name":
 			res = inferedInstance.Name
 		case "Duration":
-			res = fmt.Sprintf("%d", inferedInstance.Duration)
+			if math.Abs(inferedInstance.Duration.Hours()) >= 24 {
+				days := __Gong__Abs(int(int(inferedInstance.Duration.Hours()) / 24))
+				months := int(days / 31)
+				days = days - months*31
+
+				remainingHours := int(inferedInstance.Duration.Hours()) % 24
+				remainingMinutes := int(inferedInstance.Duration.Minutes()) % 60
+				remainingSeconds := int(inferedInstance.Duration.Seconds()) % 60
+
+				if inferedInstance.Duration.Hours() < 0 {
+					res = "- "
+				}
+
+				if months > 0 {
+					if months > 1 {
+						res = res + fmt.Sprintf("%d months", months)
+					} else {
+						res = res + fmt.Sprintf("%d month", months)
+					}
+				}
+				if days > 0 {
+					if months != 0 {
+						res = res + ", "
+					}
+					if days > 1 {
+						res = res + fmt.Sprintf("%d days", days)
+					} else {
+						res = res + fmt.Sprintf("%d day", days)
+					}
+
+				}
+				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
+					if days != 0 || (days == 0 && months != 0) {
+						res = res + ", "
+					}
+					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+				}
+			} else {
+				res = fmt.Sprintf("%s\n", inferedInstance.Duration.String())
+			}
 		}
 	case *GongsimCommand:
 		switch fieldName {
@@ -1126,7 +1177,46 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 		case "Name":
 			res = inferedInstance.Name
 		case "Duration":
-			res = fmt.Sprintf("%d", inferedInstance.Duration)
+			if math.Abs(inferedInstance.Duration.Hours()) >= 24 {
+				days := __Gong__Abs(int(int(inferedInstance.Duration.Hours()) / 24))
+				months := int(days / 31)
+				days = days - months*31
+
+				remainingHours := int(inferedInstance.Duration.Hours()) % 24
+				remainingMinutes := int(inferedInstance.Duration.Minutes()) % 60
+				remainingSeconds := int(inferedInstance.Duration.Seconds()) % 60
+
+				if inferedInstance.Duration.Hours() < 0 {
+					res = "- "
+				}
+
+				if months > 0 {
+					if months > 1 {
+						res = res + fmt.Sprintf("%d months", months)
+					} else {
+						res = res + fmt.Sprintf("%d month", months)
+					}
+				}
+				if days > 0 {
+					if months != 0 {
+						res = res + ", "
+					}
+					if days > 1 {
+						res = res + fmt.Sprintf("%d days", days)
+					} else {
+						res = res + fmt.Sprintf("%d day", days)
+					}
+
+				}
+				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
+					if days != 0 || (days == 0 && months != 0) {
+						res = res + ", "
+					}
+					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+				}
+			} else {
+				res = fmt.Sprintf("%s\n", inferedInstance.Duration.String())
+			}
 		}
 	case GongsimCommand:
 		switch fieldName {

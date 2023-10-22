@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { GongsimStatusDB } from './gongsimstatus-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -43,10 +44,10 @@ export class GongsimStatusService {
 
   /** GET gongsimstatuss from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<GongsimStatusDB[]> {
-    return this.getGongsimStatuss(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB[]> {
+    return this.getGongsimStatuss(GONG__StackPath, frontRepo)
   }
-  getGongsimStatuss(GONG__StackPath: string): Observable<GongsimStatusDB[]> {
+  getGongsimStatuss(GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -60,10 +61,10 @@ export class GongsimStatusService {
 
   /** GET gongsimstatus by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<GongsimStatusDB> {
-	return this.getGongsimStatus(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
+    return this.getGongsimStatus(id, GONG__StackPath, frontRepo)
   }
-  getGongsimStatus(id: number, GONG__StackPath: string): Observable<GongsimStatusDB> {
+  getGongsimStatus(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -75,10 +76,10 @@ export class GongsimStatusService {
   }
 
   /** POST: add a new gongsimstatus to the server */
-  post(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string): Observable<GongsimStatusDB> {
-    return this.postGongsimStatus(gongsimstatusdb, GONG__StackPath)	
+  post(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
+    return this.postGongsimStatus(gongsimstatusdb, GONG__StackPath, frontRepo)
   }
-  postGongsimStatus(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string): Observable<GongsimStatusDB> {
+  postGongsimStatus(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -118,14 +119,15 @@ export class GongsimStatusService {
   }
 
   /** PUT: update the gongsimstatusdb on the server */
-  update(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string): Observable<GongsimStatusDB> {
-    return this.updateGongsimStatus(gongsimstatusdb, GONG__StackPath)
+  update(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
+    return this.updateGongsimStatus(gongsimstatusdb, GONG__StackPath, frontRepo)
   }
-  updateGongsimStatus(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string): Observable<GongsimStatusDB> {
+  updateGongsimStatus(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
     const id = typeof gongsimstatusdb === 'number' ? gongsimstatusdb : gongsimstatusdb.ID;
     const url = `${this.gongsimstatussUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -163,6 +165,6 @@ export class GongsimStatusService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

@@ -12,10 +12,10 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { LayerGroupUseDB } from './layergroupuse-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 import { LayerGroupDB } from './layergroup-db'
-import { MapOptionsDB } from './mapoptions-db'
 
 @Injectable({
   providedIn: 'root'
@@ -45,10 +45,10 @@ export class LayerGroupUseService {
 
   /** GET layergroupuses from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<LayerGroupUseDB[]> {
-    return this.getLayerGroupUses(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupUseDB[]> {
+    return this.getLayerGroupUses(GONG__StackPath, frontRepo)
   }
-  getLayerGroupUses(GONG__StackPath: string): Observable<LayerGroupUseDB[]> {
+  getLayerGroupUses(GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupUseDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -62,10 +62,10 @@ export class LayerGroupUseService {
 
   /** GET layergroupuse by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<LayerGroupUseDB> {
-	return this.getLayerGroupUse(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupUseDB> {
+    return this.getLayerGroupUse(id, GONG__StackPath, frontRepo)
   }
-  getLayerGroupUse(id: number, GONG__StackPath: string): Observable<LayerGroupUseDB> {
+  getLayerGroupUse(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupUseDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -77,16 +77,17 @@ export class LayerGroupUseService {
   }
 
   /** POST: add a new layergroupuse to the server */
-  post(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string): Observable<LayerGroupUseDB> {
-    return this.postLayerGroupUse(layergroupusedb, GONG__StackPath)	
+  post(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupUseDB> {
+    return this.postLayerGroupUse(layergroupusedb, GONG__StackPath, frontRepo)
   }
-  postLayerGroupUse(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string): Observable<LayerGroupUseDB> {
+  postLayerGroupUse(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupUseDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let LayerGroup = layergroupusedb.LayerGroup
-    layergroupusedb.LayerGroup = new LayerGroupDB
-    let _MapOptions_LayerGroupUses_reverse = layergroupusedb.MapOptions_LayerGroupUses_reverse
-    layergroupusedb.MapOptions_LayerGroupUses_reverse = new MapOptionsDB
+    if (layergroupusedb.LayerGroup != undefined) {
+      layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Int64 = layergroupusedb.LayerGroup.ID
+      layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Valid = true
+    }
+    layergroupusedb.LayerGroup = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -97,7 +98,7 @@ export class LayerGroupUseService {
     return this.http.post<LayerGroupUseDB>(this.layergroupusesUrl, layergroupusedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        layergroupusedb.MapOptions_LayerGroupUses_reverse = _MapOptions_LayerGroupUses_reverse
+        layergroupusedb.LayerGroup = frontRepo.LayerGroups.get(layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Int64)
         // this.log(`posted layergroupusedb id=${layergroupusedb.ID}`)
       }),
       catchError(this.handleError<LayerGroupUseDB>('postLayerGroupUse'))
@@ -125,18 +126,20 @@ export class LayerGroupUseService {
   }
 
   /** PUT: update the layergroupusedb on the server */
-  update(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string): Observable<LayerGroupUseDB> {
-    return this.updateLayerGroupUse(layergroupusedb, GONG__StackPath)
+  update(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupUseDB> {
+    return this.updateLayerGroupUse(layergroupusedb, GONG__StackPath, frontRepo)
   }
-  updateLayerGroupUse(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string): Observable<LayerGroupUseDB> {
+  updateLayerGroupUse(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupUseDB> {
     const id = typeof layergroupusedb === 'number' ? layergroupusedb : layergroupusedb.ID;
     const url = `${this.layergroupusesUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let LayerGroup = layergroupusedb.LayerGroup
-    layergroupusedb.LayerGroup = new LayerGroupDB
-    let _MapOptions_LayerGroupUses_reverse = layergroupusedb.MapOptions_LayerGroupUses_reverse
-    layergroupusedb.MapOptions_LayerGroupUses_reverse = new MapOptionsDB
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
+    if (layergroupusedb.LayerGroup != undefined) {
+      layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Int64 = layergroupusedb.LayerGroup.ID
+      layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Valid = true
+    }
+    layergroupusedb.LayerGroup = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -147,7 +150,7 @@ export class LayerGroupUseService {
     return this.http.put<LayerGroupUseDB>(url, layergroupusedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        layergroupusedb.MapOptions_LayerGroupUses_reverse = _MapOptions_LayerGroupUses_reverse
+        layergroupusedb.LayerGroup = frontRepo.LayerGroups.get(layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Int64)
         // this.log(`updated layergroupusedb id=${layergroupusedb.ID}`)
       }),
       catchError(this.handleError<LayerGroupUseDB>('updateLayerGroupUse'))
@@ -175,6 +178,6 @@ export class LayerGroupUseService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

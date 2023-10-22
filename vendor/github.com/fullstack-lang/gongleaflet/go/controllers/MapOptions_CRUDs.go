@@ -91,8 +91,8 @@ func (controller *Controller) GetMapOptionss(c *gin.Context) {
 
 		// insertion point for updating fields
 		mapoptionsAPI.ID = mapoptionsDB.ID
-		mapoptionsDB.CopyBasicFieldsToMapOptions(&mapoptionsAPI.MapOptions)
-		mapoptionsAPI.MapOptionsPointersEnconding = mapoptionsDB.MapOptionsPointersEnconding
+		mapoptionsDB.CopyBasicFieldsToMapOptions_WOP(&mapoptionsAPI.MapOptions_WOP)
+		mapoptionsAPI.MapOptionsPointersEncoding = mapoptionsDB.MapOptionsPointersEncoding
 		mapoptionsAPIs = append(mapoptionsAPIs, mapoptionsAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostMapOptions(c *gin.Context) {
 
 	// Create mapoptions
 	mapoptionsDB := orm.MapOptionsDB{}
-	mapoptionsDB.MapOptionsPointersEnconding = input.MapOptionsPointersEnconding
-	mapoptionsDB.CopyBasicFieldsFromMapOptions(&input.MapOptions)
+	mapoptionsDB.MapOptionsPointersEncoding = input.MapOptionsPointersEncoding
+	mapoptionsDB.CopyBasicFieldsFromMapOptions_WOP(&input.MapOptions_WOP)
 
 	query := db.Create(&mapoptionsDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetMapOptions(c *gin.Context) {
 
 	var mapoptionsAPI orm.MapOptionsAPI
 	mapoptionsAPI.ID = mapoptionsDB.ID
-	mapoptionsAPI.MapOptionsPointersEnconding = mapoptionsDB.MapOptionsPointersEnconding
-	mapoptionsDB.CopyBasicFieldsToMapOptions(&mapoptionsAPI.MapOptions)
+	mapoptionsAPI.MapOptionsPointersEncoding = mapoptionsDB.MapOptionsPointersEncoding
+	mapoptionsDB.CopyBasicFieldsToMapOptions_WOP(&mapoptionsAPI.MapOptions_WOP)
 
 	c.JSON(http.StatusOK, mapoptionsAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateMapOptions(c *gin.Context) {
 	}
 
 	// update
-	mapoptionsDB.CopyBasicFieldsFromMapOptions(&input.MapOptions)
-	mapoptionsDB.MapOptionsPointersEnconding = input.MapOptionsPointersEnconding
+	mapoptionsDB.CopyBasicFieldsFromMapOptions_WOP(&input.MapOptions_WOP)
+	mapoptionsDB.MapOptionsPointersEncoding = input.MapOptionsPointersEncoding
 
 	query = db.Model(&mapoptionsDB).Updates(mapoptionsDB)
 	if query.Error != nil {

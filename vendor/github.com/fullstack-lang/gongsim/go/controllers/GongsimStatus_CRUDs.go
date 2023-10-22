@@ -91,8 +91,8 @@ func (controller *Controller) GetGongsimStatuss(c *gin.Context) {
 
 		// insertion point for updating fields
 		gongsimstatusAPI.ID = gongsimstatusDB.ID
-		gongsimstatusDB.CopyBasicFieldsToGongsimStatus(&gongsimstatusAPI.GongsimStatus)
-		gongsimstatusAPI.GongsimStatusPointersEnconding = gongsimstatusDB.GongsimStatusPointersEnconding
+		gongsimstatusDB.CopyBasicFieldsToGongsimStatus_WOP(&gongsimstatusAPI.GongsimStatus_WOP)
+		gongsimstatusAPI.GongsimStatusPointersEncoding = gongsimstatusDB.GongsimStatusPointersEncoding
 		gongsimstatusAPIs = append(gongsimstatusAPIs, gongsimstatusAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostGongsimStatus(c *gin.Context) {
 
 	// Create gongsimstatus
 	gongsimstatusDB := orm.GongsimStatusDB{}
-	gongsimstatusDB.GongsimStatusPointersEnconding = input.GongsimStatusPointersEnconding
-	gongsimstatusDB.CopyBasicFieldsFromGongsimStatus(&input.GongsimStatus)
+	gongsimstatusDB.GongsimStatusPointersEncoding = input.GongsimStatusPointersEncoding
+	gongsimstatusDB.CopyBasicFieldsFromGongsimStatus_WOP(&input.GongsimStatus_WOP)
 
 	query := db.Create(&gongsimstatusDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetGongsimStatus(c *gin.Context) {
 
 	var gongsimstatusAPI orm.GongsimStatusAPI
 	gongsimstatusAPI.ID = gongsimstatusDB.ID
-	gongsimstatusAPI.GongsimStatusPointersEnconding = gongsimstatusDB.GongsimStatusPointersEnconding
-	gongsimstatusDB.CopyBasicFieldsToGongsimStatus(&gongsimstatusAPI.GongsimStatus)
+	gongsimstatusAPI.GongsimStatusPointersEncoding = gongsimstatusDB.GongsimStatusPointersEncoding
+	gongsimstatusDB.CopyBasicFieldsToGongsimStatus_WOP(&gongsimstatusAPI.GongsimStatus_WOP)
 
 	c.JSON(http.StatusOK, gongsimstatusAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateGongsimStatus(c *gin.Context) {
 	}
 
 	// update
-	gongsimstatusDB.CopyBasicFieldsFromGongsimStatus(&input.GongsimStatus)
-	gongsimstatusDB.GongsimStatusPointersEnconding = input.GongsimStatusPointersEnconding
+	gongsimstatusDB.CopyBasicFieldsFromGongsimStatus_WOP(&input.GongsimStatus_WOP)
+	gongsimstatusDB.GongsimStatusPointersEncoding = input.GongsimStatusPointersEncoding
 
 	query = db.Model(&gongsimstatusDB).Updates(gongsimstatusDB)
 	if query.Error != nil {

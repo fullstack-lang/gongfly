@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { UserClickDB } from './userclick-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -43,10 +44,10 @@ export class UserClickService {
 
   /** GET userclicks from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<UserClickDB[]> {
-    return this.getUserClicks(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB[]> {
+    return this.getUserClicks(GONG__StackPath, frontRepo)
   }
-  getUserClicks(GONG__StackPath: string): Observable<UserClickDB[]> {
+  getUserClicks(GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -60,10 +61,10 @@ export class UserClickService {
 
   /** GET userclick by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<UserClickDB> {
-	return this.getUserClick(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
+    return this.getUserClick(id, GONG__StackPath, frontRepo)
   }
-  getUserClick(id: number, GONG__StackPath: string): Observable<UserClickDB> {
+  getUserClick(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -75,10 +76,10 @@ export class UserClickService {
   }
 
   /** POST: add a new userclick to the server */
-  post(userclickdb: UserClickDB, GONG__StackPath: string): Observable<UserClickDB> {
-    return this.postUserClick(userclickdb, GONG__StackPath)	
+  post(userclickdb: UserClickDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
+    return this.postUserClick(userclickdb, GONG__StackPath, frontRepo)
   }
-  postUserClick(userclickdb: UserClickDB, GONG__StackPath: string): Observable<UserClickDB> {
+  postUserClick(userclickdb: UserClickDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -118,14 +119,15 @@ export class UserClickService {
   }
 
   /** PUT: update the userclickdb on the server */
-  update(userclickdb: UserClickDB, GONG__StackPath: string): Observable<UserClickDB> {
-    return this.updateUserClick(userclickdb, GONG__StackPath)
+  update(userclickdb: UserClickDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
+    return this.updateUserClick(userclickdb, GONG__StackPath, frontRepo)
   }
-  updateUserClick(userclickdb: UserClickDB, GONG__StackPath: string): Observable<UserClickDB> {
+  updateUserClick(userclickdb: UserClickDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
     const id = typeof userclickdb === 'number' ? userclickdb : userclickdb.ID;
     const url = `${this.userclicksUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -163,6 +165,6 @@ export class UserClickService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

@@ -5,12 +5,12 @@ go 1.21.0
 toolchain go1.21.1
 
 require (
-	github.com/fullstack-lang/gong v0.0.0-20230927123434-7273186d4ab9
-	github.com/fullstack-lang/gongdoc v0.0.0-20230926210904-476b4c5dbaa6
-	github.com/fullstack-lang/gongleaflet v0.0.0-20230927064310-26b99f1e3018
-	github.com/fullstack-lang/gongsim v0.0.0-20230926230324-ca527a5ce35b
-	github.com/fullstack-lang/gongtable v0.0.0-20230926211041-4bb09bc505d5
-	github.com/fullstack-lang/gongtree v0.0.0-20230926211214-e3497f326b68
+	github.com/fullstack-lang/gong v0.0.0-20231022160118-3b82c4b205f7
+	github.com/fullstack-lang/gongdoc v0.0.0-20231022160119-ccd59c0bedc3
+	github.com/fullstack-lang/gongleaflet v0.0.0-20231022154751-8bc52babda19
+	github.com/fullstack-lang/gongsim v0.0.0-20231022160321-6cce72966af6
+	github.com/fullstack-lang/gongtable v0.0.0-20231022160120-aeb4f65ad433
+	github.com/fullstack-lang/gongtree v0.0.0-20231022091724-c491bd3b2f58
 	github.com/fullstack-lang/maticons v0.0.0-20230823061653-70c364fbdd00
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/static v0.0.1
@@ -20,26 +20,26 @@ require (
 	github.com/kellydunn/golang-geo v0.7.0
 	github.com/tealeg/xlsx/v3 v3.3.2
 	github.com/xuri/excelize/v2 v2.8.0
-	gorm.io/gorm v1.25.4
+	gorm.io/gorm v1.25.5
 )
 
 require (
-	github.com/bytedance/sonic v1.10.1 // indirect
+	github.com/bytedance/sonic v1.10.2 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
 	github.com/frankban/quicktest v1.14.6 // indirect
-	github.com/fullstack-lang/gongsvg v0.0.0-20230926210616-2f9e5108c76d // indirect
-	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
+	github.com/fullstack-lang/gongsvg v0.0.0-20231022153214-681e8c94b7e8 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/glebarez/go-sqlite v1.21.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.15.4 // indirect
+	github.com/go-playground/validator/v10 v10.15.5 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/google/btree v1.1.2 // indirect
-	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
@@ -50,7 +50,7 @@ require (
 	github.com/kylelemons/go-gypsy v1.0.0 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/lib/pq v1.10.9 // indirect
-	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
@@ -70,15 +70,15 @@ require (
 	github.com/xuri/nfp v0.0.0-20230919160717-d98342af3f05 // indirect
 	github.com/ziutek/mymysql v1.5.4 // indirect
 	golang.org/x/arch v0.5.0 // indirect
-	golang.org/x/crypto v0.13.0 // indirect
-	golang.org/x/mod v0.12.0 // indirect
-	golang.org/x/net v0.15.0 // indirect
-	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/mod v0.13.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	modernc.org/libc v1.24.1 // indirect
+	modernc.org/libc v1.27.0 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
 	modernc.org/memory v1.7.2 // indirect
-	modernc.org/sqlite v1.25.0 // indirect
+	modernc.org/sqlite v1.26.0 // indirect
 )

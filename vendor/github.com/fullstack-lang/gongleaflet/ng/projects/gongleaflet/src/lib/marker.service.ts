@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { MarkerDB } from './marker-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 import { LayerGroupDB } from './layergroup-db'
@@ -45,10 +46,10 @@ export class MarkerService {
 
   /** GET markers from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string): Observable<MarkerDB[]> {
-    return this.getMarkers(GONG__StackPath)
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB[]> {
+    return this.getMarkers(GONG__StackPath, frontRepo)
   }
-  getMarkers(GONG__StackPath: string): Observable<MarkerDB[]> {
+  getMarkers(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -62,10 +63,10 @@ export class MarkerService {
 
   /** GET marker by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string): Observable<MarkerDB> {
-	return this.getMarker(id, GONG__StackPath)
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
+    return this.getMarker(id, GONG__StackPath, frontRepo)
   }
-  getMarker(id: number, GONG__StackPath: string): Observable<MarkerDB> {
+  getMarker(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -77,16 +78,22 @@ export class MarkerService {
   }
 
   /** POST: add a new marker to the server */
-  post(markerdb: MarkerDB, GONG__StackPath: string): Observable<MarkerDB> {
-    return this.postMarker(markerdb, GONG__StackPath)	
+  post(markerdb: MarkerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
+    return this.postMarker(markerdb, GONG__StackPath, frontRepo)
   }
-  postMarker(markerdb: MarkerDB, GONG__StackPath: string): Observable<MarkerDB> {
+  postMarker(markerdb: MarkerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let LayerGroup = markerdb.LayerGroup
-    markerdb.LayerGroup = new LayerGroupDB
-    let DivIcon = markerdb.DivIcon
-    markerdb.DivIcon = new DivIconDB
+    if (markerdb.LayerGroup != undefined) {
+      markerdb.MarkerPointersEncoding.LayerGroupID.Int64 = markerdb.LayerGroup.ID
+      markerdb.MarkerPointersEncoding.LayerGroupID.Valid = true
+    }
+    markerdb.LayerGroup = undefined
+    if (markerdb.DivIcon != undefined) {
+      markerdb.MarkerPointersEncoding.DivIconID.Int64 = markerdb.DivIcon.ID
+      markerdb.MarkerPointersEncoding.DivIconID.Valid = true
+    }
+    markerdb.DivIcon = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -97,6 +104,8 @@ export class MarkerService {
     return this.http.post<MarkerDB>(this.markersUrl, markerdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
+        markerdb.LayerGroup = frontRepo.LayerGroups.get(markerdb.MarkerPointersEncoding.LayerGroupID.Int64)
+        markerdb.DivIcon = frontRepo.DivIcons.get(markerdb.MarkerPointersEncoding.DivIconID.Int64)
         // this.log(`posted markerdb id=${markerdb.ID}`)
       }),
       catchError(this.handleError<MarkerDB>('postMarker'))
@@ -124,18 +133,25 @@ export class MarkerService {
   }
 
   /** PUT: update the markerdb on the server */
-  update(markerdb: MarkerDB, GONG__StackPath: string): Observable<MarkerDB> {
-    return this.updateMarker(markerdb, GONG__StackPath)
+  update(markerdb: MarkerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
+    return this.updateMarker(markerdb, GONG__StackPath, frontRepo)
   }
-  updateMarker(markerdb: MarkerDB, GONG__StackPath: string): Observable<MarkerDB> {
+  updateMarker(markerdb: MarkerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
     const id = typeof markerdb === 'number' ? markerdb : markerdb.ID;
     const url = `${this.markersUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let LayerGroup = markerdb.LayerGroup
-    markerdb.LayerGroup = new LayerGroupDB
-    let DivIcon = markerdb.DivIcon
-    markerdb.DivIcon = new DivIconDB
+    // insertion point for reset of pointers (to avoid circular JSON)
+	// and encoding of pointers
+    if (markerdb.LayerGroup != undefined) {
+      markerdb.MarkerPointersEncoding.LayerGroupID.Int64 = markerdb.LayerGroup.ID
+      markerdb.MarkerPointersEncoding.LayerGroupID.Valid = true
+    }
+    markerdb.LayerGroup = undefined
+    if (markerdb.DivIcon != undefined) {
+      markerdb.MarkerPointersEncoding.DivIconID.Int64 = markerdb.DivIcon.ID
+      markerdb.MarkerPointersEncoding.DivIconID.Valid = true
+    }
+    markerdb.DivIcon = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -146,6 +162,8 @@ export class MarkerService {
     return this.http.put<MarkerDB>(url, markerdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
+        markerdb.LayerGroup = frontRepo.LayerGroups.get(markerdb.MarkerPointersEncoding.LayerGroupID.Int64)
+        markerdb.DivIcon = frontRepo.DivIcons.get(markerdb.MarkerPointersEncoding.DivIconID.Int64)
         // this.log(`updated markerdb id=${markerdb.ID}`)
       }),
       catchError(this.handleError<MarkerDB>('updateMarker'))
@@ -173,6 +191,6 @@ export class MarkerService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

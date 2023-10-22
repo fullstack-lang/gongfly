@@ -4,15 +4,25 @@ package models
 import (
 	"errors"
 	"fmt"
-	"sync"
+	"math"
 	"time"
 )
+
+func __Gong__Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
 
 // errUnkownEnum is returns when a value cannot match enum values
 var errUnkownEnum = errors.New("unkown enum")
 
 // needed to avoid when fmt package is not needed by generated code
 var __dummy__fmt_variable fmt.Scanner
+
+// idem for math package when not need by generated code
+var __dummy_math_variable = math.E
 
 // swagger:ignore
 type __void any
@@ -38,6 +48,8 @@ type StageStruct struct {
 	Circles           map[*Circle]any
 	Circles_mapString map[string]*Circle
 
+	// insertion point for slice of pointers maps
+
 	OnAfterCircleCreateCallback OnAfterCreateInterface[Circle]
 	OnAfterCircleUpdateCallback OnAfterUpdateInterface[Circle]
 	OnAfterCircleDeleteCallback OnAfterDeleteInterface[Circle]
@@ -45,6 +57,8 @@ type StageStruct struct {
 
 	DivIcons           map[*DivIcon]any
 	DivIcons_mapString map[string]*DivIcon
+
+	// insertion point for slice of pointers maps
 
 	OnAfterDivIconCreateCallback OnAfterCreateInterface[DivIcon]
 	OnAfterDivIconUpdateCallback OnAfterUpdateInterface[DivIcon]
@@ -54,6 +68,8 @@ type StageStruct struct {
 	LayerGroups           map[*LayerGroup]any
 	LayerGroups_mapString map[string]*LayerGroup
 
+	// insertion point for slice of pointers maps
+
 	OnAfterLayerGroupCreateCallback OnAfterCreateInterface[LayerGroup]
 	OnAfterLayerGroupUpdateCallback OnAfterUpdateInterface[LayerGroup]
 	OnAfterLayerGroupDeleteCallback OnAfterDeleteInterface[LayerGroup]
@@ -61,6 +77,8 @@ type StageStruct struct {
 
 	LayerGroupUses           map[*LayerGroupUse]any
 	LayerGroupUses_mapString map[string]*LayerGroupUse
+
+	// insertion point for slice of pointers maps
 
 	OnAfterLayerGroupUseCreateCallback OnAfterCreateInterface[LayerGroupUse]
 	OnAfterLayerGroupUseUpdateCallback OnAfterUpdateInterface[LayerGroupUse]
@@ -70,6 +88,9 @@ type StageStruct struct {
 	MapOptionss           map[*MapOptions]any
 	MapOptionss_mapString map[string]*MapOptions
 
+	// insertion point for slice of pointers maps
+	MapOptions_LayerGroupUses_reverseMap map[*LayerGroupUse]*MapOptions
+
 	OnAfterMapOptionsCreateCallback OnAfterCreateInterface[MapOptions]
 	OnAfterMapOptionsUpdateCallback OnAfterUpdateInterface[MapOptions]
 	OnAfterMapOptionsDeleteCallback OnAfterDeleteInterface[MapOptions]
@@ -77,6 +98,8 @@ type StageStruct struct {
 
 	Markers           map[*Marker]any
 	Markers_mapString map[string]*Marker
+
+	// insertion point for slice of pointers maps
 
 	OnAfterMarkerCreateCallback OnAfterCreateInterface[Marker]
 	OnAfterMarkerUpdateCallback OnAfterUpdateInterface[Marker]
@@ -86,6 +109,8 @@ type StageStruct struct {
 	UserClicks           map[*UserClick]any
 	UserClicks_mapString map[string]*UserClick
 
+	// insertion point for slice of pointers maps
+
 	OnAfterUserClickCreateCallback OnAfterCreateInterface[UserClick]
 	OnAfterUserClickUpdateCallback OnAfterUpdateInterface[UserClick]
 	OnAfterUserClickDeleteCallback OnAfterDeleteInterface[UserClick]
@@ -94,6 +119,8 @@ type StageStruct struct {
 	VLines           map[*VLine]any
 	VLines_mapString map[string]*VLine
 
+	// insertion point for slice of pointers maps
+
 	OnAfterVLineCreateCallback OnAfterCreateInterface[VLine]
 	OnAfterVLineUpdateCallback OnAfterUpdateInterface[VLine]
 	OnAfterVLineDeleteCallback OnAfterDeleteInterface[VLine]
@@ -101,6 +128,8 @@ type StageStruct struct {
 
 	VisualTracks           map[*VisualTrack]any
 	VisualTracks_mapString map[string]*VisualTrack
+
+	// insertion point for slice of pointers maps
 
 	OnAfterVisualTrackCreateCallback OnAfterCreateInterface[VisualTrack]
 	OnAfterVisualTrackUpdateCallback OnAfterUpdateInterface[VisualTrack]
@@ -193,17 +222,6 @@ type BackRepoInterface interface {
 	GetLastPushFromFrontNb() uint
 }
 
-var _stage *StageStruct
-
-var once sync.Once
-
-func GetDefaultStage() *StageStruct {
-	once.Do(func() {
-		_stage = NewStage("")
-	})
-	return _stage
-}
-
 func NewStage(path string) (stage *StageStruct) {
 
 	stage = &StageStruct{ // insertion point for array initiatialisation
@@ -260,6 +278,8 @@ func (stage *StageStruct) CommitWithSuspendedCallbacks() {
 }
 
 func (stage *StageStruct) Commit() {
+	stage.ComputeReverseMaps()
+
 	if stage.BackRepo != nil {
 		stage.BackRepo.Commit(stage)
 	}
@@ -282,6 +302,7 @@ func (stage *StageStruct) Checkout() {
 		stage.BackRepo.Checkout(stage)
 	}
 
+	stage.ComputeReverseMaps()
 	// insertion point for computing the map of number of instances per gongstruct
 	stage.Map_GongStructName_InstancesNb["Circle"] = len(stage.Circles)
 	stage.Map_GongStructName_InstancesNb["DivIcon"] = len(stage.DivIcons)

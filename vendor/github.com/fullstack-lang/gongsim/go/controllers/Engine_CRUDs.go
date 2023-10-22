@@ -91,8 +91,8 @@ func (controller *Controller) GetEngines(c *gin.Context) {
 
 		// insertion point for updating fields
 		engineAPI.ID = engineDB.ID
-		engineDB.CopyBasicFieldsToEngine(&engineAPI.Engine)
-		engineAPI.EnginePointersEnconding = engineDB.EnginePointersEnconding
+		engineDB.CopyBasicFieldsToEngine_WOP(&engineAPI.Engine_WOP)
+		engineAPI.EnginePointersEncoding = engineDB.EnginePointersEncoding
 		engineAPIs = append(engineAPIs, engineAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostEngine(c *gin.Context) {
 
 	// Create engine
 	engineDB := orm.EngineDB{}
-	engineDB.EnginePointersEnconding = input.EnginePointersEnconding
-	engineDB.CopyBasicFieldsFromEngine(&input.Engine)
+	engineDB.EnginePointersEncoding = input.EnginePointersEncoding
+	engineDB.CopyBasicFieldsFromEngine_WOP(&input.Engine_WOP)
 
 	query := db.Create(&engineDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetEngine(c *gin.Context) {
 
 	var engineAPI orm.EngineAPI
 	engineAPI.ID = engineDB.ID
-	engineAPI.EnginePointersEnconding = engineDB.EnginePointersEnconding
-	engineDB.CopyBasicFieldsToEngine(&engineAPI.Engine)
+	engineAPI.EnginePointersEncoding = engineDB.EnginePointersEncoding
+	engineDB.CopyBasicFieldsToEngine_WOP(&engineAPI.Engine_WOP)
 
 	c.JSON(http.StatusOK, engineAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateEngine(c *gin.Context) {
 	}
 
 	// update
-	engineDB.CopyBasicFieldsFromEngine(&input.Engine)
-	engineDB.EnginePointersEnconding = input.EnginePointersEnconding
+	engineDB.CopyBasicFieldsFromEngine_WOP(&input.Engine_WOP)
+	engineDB.EnginePointersEncoding = input.EnginePointersEncoding
 
 	query = db.Model(&engineDB).Updates(engineDB)
 	if query.Error != nil {

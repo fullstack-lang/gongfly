@@ -91,8 +91,8 @@ func (controller *Controller) GetDivIcons(c *gin.Context) {
 
 		// insertion point for updating fields
 		diviconAPI.ID = diviconDB.ID
-		diviconDB.CopyBasicFieldsToDivIcon(&diviconAPI.DivIcon)
-		diviconAPI.DivIconPointersEnconding = diviconDB.DivIconPointersEnconding
+		diviconDB.CopyBasicFieldsToDivIcon_WOP(&diviconAPI.DivIcon_WOP)
+		diviconAPI.DivIconPointersEncoding = diviconDB.DivIconPointersEncoding
 		diviconAPIs = append(diviconAPIs, diviconAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostDivIcon(c *gin.Context) {
 
 	// Create divicon
 	diviconDB := orm.DivIconDB{}
-	diviconDB.DivIconPointersEnconding = input.DivIconPointersEnconding
-	diviconDB.CopyBasicFieldsFromDivIcon(&input.DivIcon)
+	diviconDB.DivIconPointersEncoding = input.DivIconPointersEncoding
+	diviconDB.CopyBasicFieldsFromDivIcon_WOP(&input.DivIcon_WOP)
 
 	query := db.Create(&diviconDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetDivIcon(c *gin.Context) {
 
 	var diviconAPI orm.DivIconAPI
 	diviconAPI.ID = diviconDB.ID
-	diviconAPI.DivIconPointersEnconding = diviconDB.DivIconPointersEnconding
-	diviconDB.CopyBasicFieldsToDivIcon(&diviconAPI.DivIcon)
+	diviconAPI.DivIconPointersEncoding = diviconDB.DivIconPointersEncoding
+	diviconDB.CopyBasicFieldsToDivIcon_WOP(&diviconAPI.DivIcon_WOP)
 
 	c.JSON(http.StatusOK, diviconAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateDivIcon(c *gin.Context) {
 	}
 
 	// update
-	diviconDB.CopyBasicFieldsFromDivIcon(&input.DivIcon)
-	diviconDB.DivIconPointersEnconding = input.DivIconPointersEnconding
+	diviconDB.CopyBasicFieldsFromDivIcon_WOP(&input.DivIcon_WOP)
+	diviconDB.DivIconPointersEncoding = input.DivIconPointersEncoding
 
 	query = db.Model(&diviconDB).Updates(diviconDB)
 	if query.Error != nil {

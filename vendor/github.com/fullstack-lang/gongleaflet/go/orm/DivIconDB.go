@@ -35,15 +35,15 @@ var dummy_DivIcon_sort sort.Float64Slice
 type DivIconAPI struct {
 	gorm.Model
 
-	models.DivIcon
+	models.DivIcon_WOP
 
 	// encoding of pointers
-	DivIconPointersEnconding
+	DivIconPointersEncoding DivIconPointersEncoding
 }
 
-// DivIconPointersEnconding encodes pointers to Struct and
+// DivIconPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type DivIconPointersEnconding struct {
+type DivIconPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -64,7 +64,7 @@ type DivIconDB struct {
 	// Declation for basic field diviconDB.SVG
 	SVG_Data sql.NullString
 	// encoding of pointers
-	DivIconPointersEnconding
+	DivIconPointersEncoding
 }
 
 // DivIconDBs arrays diviconDBs
@@ -156,7 +156,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitDeleteInstance(id uint) (Err
 	diviconDB := backRepoDivIcon.Map_DivIconDBID_DivIconDB[id]
 	query := backRepoDivIcon.db.Unscoped().Delete(&diviconDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -182,7 +182,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseOneInstance(divicon *mo
 
 	query := backRepoDivIcon.db.Create(&diviconDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -216,7 +216,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseTwoInstance(backRepo *B
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoDivIcon.db.Save(&diviconDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -343,7 +343,7 @@ func (backRepo *BackRepoStruct) CheckoutDivIcon(divicon *models.DivIcon) {
 			diviconDB.ID = id
 
 			if err := backRepo.BackRepoDivIcon.db.First(&diviconDB, id).Error; err != nil {
-				log.Panicln("CheckoutDivIcon : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutDivIcon : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoDivIcon.CheckoutPhaseOneInstance(&diviconDB)
 			backRepo.BackRepoDivIcon.CheckoutPhaseTwoInstance(backRepo, &diviconDB)
@@ -353,6 +353,17 @@ func (backRepo *BackRepoStruct) CheckoutDivIcon(divicon *models.DivIcon) {
 
 // CopyBasicFieldsFromDivIcon
 func (diviconDB *DivIconDB) CopyBasicFieldsFromDivIcon(divicon *models.DivIcon) {
+	// insertion point for fields commit
+
+	diviconDB.Name_Data.String = divicon.Name
+	diviconDB.Name_Data.Valid = true
+
+	diviconDB.SVG_Data.String = divicon.SVG
+	diviconDB.SVG_Data.Valid = true
+}
+
+// CopyBasicFieldsFromDivIcon_WOP
+func (diviconDB *DivIconDB) CopyBasicFieldsFromDivIcon_WOP(divicon *models.DivIcon_WOP) {
 	// insertion point for fields commit
 
 	diviconDB.Name_Data.String = divicon.Name
@@ -375,6 +386,13 @@ func (diviconDB *DivIconDB) CopyBasicFieldsFromDivIconWOP(divicon *DivIconWOP) {
 
 // CopyBasicFieldsToDivIcon
 func (diviconDB *DivIconDB) CopyBasicFieldsToDivIcon(divicon *models.DivIcon) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	divicon.Name = diviconDB.Name_Data.String
+	divicon.SVG = diviconDB.SVG_Data.String
+}
+
+// CopyBasicFieldsToDivIcon_WOP
+func (diviconDB *DivIconDB) CopyBasicFieldsToDivIcon_WOP(divicon *models.DivIcon_WOP) {
 	// insertion point for checkout of basic fields (back repo to stage)
 	divicon.Name = diviconDB.Name_Data.String
 	divicon.SVG = diviconDB.SVG_Data.String
@@ -407,12 +425,12 @@ func (backRepoDivIcon *BackRepoDivIconStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json DivIcon ", filename, " ", err.Error())
+		log.Fatal("Cannot json DivIcon ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json DivIcon file", err.Error())
+		log.Fatal("Cannot write the json DivIcon file", err.Error())
 	}
 }
 
@@ -432,7 +450,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) BackupXL(file *xlsx.File) {
 
 	sh, err := file.AddSheet("DivIcon")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -457,13 +475,13 @@ func (backRepoDivIcon *BackRepoDivIconStruct) RestoreXLPhaseOne(file *xlsx.File)
 	sh, ok := file.Sheet["DivIcon"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoDivIcon.rowVisitorDivIcon)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -485,7 +503,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) rowVisitorDivIcon(row *xlsx.Row) e
 		diviconDB.ID = 0
 		query := backRepoDivIcon.db.Create(diviconDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoDivIcon.Map_DivIconDBID_DivIconDB[diviconDB.ID] = diviconDB
 		BackRepoDivIconid_atBckpTime_newID[diviconDB_ID_atBackupTime] = diviconDB.ID
@@ -505,7 +523,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) RestorePhaseOne(dirPath string) {
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json DivIcon file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json DivIcon file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -522,14 +540,14 @@ func (backRepoDivIcon *BackRepoDivIconStruct) RestorePhaseOne(dirPath string) {
 		diviconDB.ID = 0
 		query := backRepoDivIcon.db.Create(diviconDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoDivIcon.Map_DivIconDBID_DivIconDB[diviconDB.ID] = diviconDB
 		BackRepoDivIconid_atBckpTime_newID[diviconDB_ID_atBackupTime] = diviconDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json DivIcon file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json DivIcon file", err.Error())
 	}
 }
 
@@ -546,7 +564,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoDivIcon.db.Model(diviconDB).Updates(*diviconDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

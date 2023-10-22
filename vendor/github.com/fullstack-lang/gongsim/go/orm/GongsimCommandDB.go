@@ -35,15 +35,15 @@ var dummy_GongsimCommand_sort sort.Float64Slice
 type GongsimCommandAPI struct {
 	gorm.Model
 
-	models.GongsimCommand
+	models.GongsimCommand_WOP
 
 	// encoding of pointers
-	GongsimCommandPointersEnconding
+	GongsimCommandPointersEncoding GongsimCommandPointersEncoding
 }
 
-// GongsimCommandPointersEnconding encodes pointers to Struct and
+// GongsimCommandPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type GongsimCommandPointersEnconding struct {
+type GongsimCommandPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 
 	// field Engine is a pointer to another Struct (optional or 0..1)
@@ -77,7 +77,7 @@ type GongsimCommandDB struct {
 	// Declation for basic field gongsimcommandDB.DateSpeedCommand
 	DateSpeedCommand_Data sql.NullString
 	// encoding of pointers
-	GongsimCommandPointersEnconding
+	GongsimCommandPointersEncoding
 }
 
 // GongsimCommandDBs arrays gongsimcommandDBs
@@ -178,7 +178,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) CommitDeleteInstance
 	gongsimcommandDB := backRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandDB[id]
 	query := backRepoGongsimCommand.db.Unscoped().Delete(&gongsimcommandDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -204,7 +204,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) CommitPhaseOneInstan
 
 	query := backRepoGongsimCommand.db.Create(&gongsimcommandDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -250,7 +250,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) CommitPhaseTwoInstan
 
 		query := backRepoGongsimCommand.db.Save(&gongsimcommandDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -382,7 +382,7 @@ func (backRepo *BackRepoStruct) CheckoutGongsimCommand(gongsimcommand *models.Go
 			gongsimcommandDB.ID = id
 
 			if err := backRepo.BackRepoGongsimCommand.db.First(&gongsimcommandDB, id).Error; err != nil {
-				log.Panicln("CheckoutGongsimCommand : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutGongsimCommand : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoGongsimCommand.CheckoutPhaseOneInstance(&gongsimcommandDB)
 			backRepo.BackRepoGongsimCommand.CheckoutPhaseTwoInstance(backRepo, &gongsimcommandDB)
@@ -392,6 +392,26 @@ func (backRepo *BackRepoStruct) CheckoutGongsimCommand(gongsimcommand *models.Go
 
 // CopyBasicFieldsFromGongsimCommand
 func (gongsimcommandDB *GongsimCommandDB) CopyBasicFieldsFromGongsimCommand(gongsimcommand *models.GongsimCommand) {
+	// insertion point for fields commit
+
+	gongsimcommandDB.Name_Data.String = gongsimcommand.Name
+	gongsimcommandDB.Name_Data.Valid = true
+
+	gongsimcommandDB.Command_Data.String = gongsimcommand.Command.ToString()
+	gongsimcommandDB.Command_Data.Valid = true
+
+	gongsimcommandDB.CommandDate_Data.String = gongsimcommand.CommandDate
+	gongsimcommandDB.CommandDate_Data.Valid = true
+
+	gongsimcommandDB.SpeedCommandType_Data.String = gongsimcommand.SpeedCommandType.ToString()
+	gongsimcommandDB.SpeedCommandType_Data.Valid = true
+
+	gongsimcommandDB.DateSpeedCommand_Data.String = gongsimcommand.DateSpeedCommand
+	gongsimcommandDB.DateSpeedCommand_Data.Valid = true
+}
+
+// CopyBasicFieldsFromGongsimCommand_WOP
+func (gongsimcommandDB *GongsimCommandDB) CopyBasicFieldsFromGongsimCommand_WOP(gongsimcommand *models.GongsimCommand_WOP) {
 	// insertion point for fields commit
 
 	gongsimcommandDB.Name_Data.String = gongsimcommand.Name
@@ -440,6 +460,16 @@ func (gongsimcommandDB *GongsimCommandDB) CopyBasicFieldsToGongsimCommand(gongsi
 	gongsimcommand.DateSpeedCommand = gongsimcommandDB.DateSpeedCommand_Data.String
 }
 
+// CopyBasicFieldsToGongsimCommand_WOP
+func (gongsimcommandDB *GongsimCommandDB) CopyBasicFieldsToGongsimCommand_WOP(gongsimcommand *models.GongsimCommand_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	gongsimcommand.Name = gongsimcommandDB.Name_Data.String
+	gongsimcommand.Command.FromString(gongsimcommandDB.Command_Data.String)
+	gongsimcommand.CommandDate = gongsimcommandDB.CommandDate_Data.String
+	gongsimcommand.SpeedCommandType.FromString(gongsimcommandDB.SpeedCommandType_Data.String)
+	gongsimcommand.DateSpeedCommand = gongsimcommandDB.DateSpeedCommand_Data.String
+}
+
 // CopyBasicFieldsToGongsimCommandWOP
 func (gongsimcommandDB *GongsimCommandDB) CopyBasicFieldsToGongsimCommandWOP(gongsimcommand *GongsimCommandWOP) {
 	gongsimcommand.ID = int(gongsimcommandDB.ID)
@@ -470,12 +500,12 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) Backup(dirPath strin
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json GongsimCommand ", filename, " ", err.Error())
+		log.Fatal("Cannot json GongsimCommand ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json GongsimCommand file", err.Error())
+		log.Fatal("Cannot write the json GongsimCommand file", err.Error())
 	}
 }
 
@@ -495,7 +525,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) BackupXL(file *xlsx.
 
 	sh, err := file.AddSheet("GongsimCommand")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -520,13 +550,13 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) RestoreXLPhaseOne(fi
 	sh, ok := file.Sheet["GongsimCommand"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoGongsimCommand.rowVisitorGongsimCommand)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -548,7 +578,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) rowVisitorGongsimCom
 		gongsimcommandDB.ID = 0
 		query := backRepoGongsimCommand.db.Create(gongsimcommandDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandDB[gongsimcommandDB.ID] = gongsimcommandDB
 		BackRepoGongsimCommandid_atBckpTime_newID[gongsimcommandDB_ID_atBackupTime] = gongsimcommandDB.ID
@@ -568,7 +598,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) RestorePhaseOne(dirP
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json GongsimCommand file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json GongsimCommand file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -585,14 +615,14 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) RestorePhaseOne(dirP
 		gongsimcommandDB.ID = 0
 		query := backRepoGongsimCommand.db.Create(gongsimcommandDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandDB[gongsimcommandDB.ID] = gongsimcommandDB
 		BackRepoGongsimCommandid_atBckpTime_newID[gongsimcommandDB_ID_atBackupTime] = gongsimcommandDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json GongsimCommand file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json GongsimCommand file", err.Error())
 	}
 }
 
@@ -615,7 +645,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoGongsimCommand.db.Model(gongsimcommandDB).Updates(*gongsimcommandDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

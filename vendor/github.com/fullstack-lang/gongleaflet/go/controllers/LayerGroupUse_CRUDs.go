@@ -91,8 +91,8 @@ func (controller *Controller) GetLayerGroupUses(c *gin.Context) {
 
 		// insertion point for updating fields
 		layergroupuseAPI.ID = layergroupuseDB.ID
-		layergroupuseDB.CopyBasicFieldsToLayerGroupUse(&layergroupuseAPI.LayerGroupUse)
-		layergroupuseAPI.LayerGroupUsePointersEnconding = layergroupuseDB.LayerGroupUsePointersEnconding
+		layergroupuseDB.CopyBasicFieldsToLayerGroupUse_WOP(&layergroupuseAPI.LayerGroupUse_WOP)
+		layergroupuseAPI.LayerGroupUsePointersEncoding = layergroupuseDB.LayerGroupUsePointersEncoding
 		layergroupuseAPIs = append(layergroupuseAPIs, layergroupuseAPI)
 	}
 
@@ -147,8 +147,8 @@ func (controller *Controller) PostLayerGroupUse(c *gin.Context) {
 
 	// Create layergroupuse
 	layergroupuseDB := orm.LayerGroupUseDB{}
-	layergroupuseDB.LayerGroupUsePointersEnconding = input.LayerGroupUsePointersEnconding
-	layergroupuseDB.CopyBasicFieldsFromLayerGroupUse(&input.LayerGroupUse)
+	layergroupuseDB.LayerGroupUsePointersEncoding = input.LayerGroupUsePointersEncoding
+	layergroupuseDB.CopyBasicFieldsFromLayerGroupUse_WOP(&input.LayerGroupUse_WOP)
 
 	query := db.Create(&layergroupuseDB)
 	if query.Error != nil {
@@ -217,8 +217,8 @@ func (controller *Controller) GetLayerGroupUse(c *gin.Context) {
 
 	var layergroupuseAPI orm.LayerGroupUseAPI
 	layergroupuseAPI.ID = layergroupuseDB.ID
-	layergroupuseAPI.LayerGroupUsePointersEnconding = layergroupuseDB.LayerGroupUsePointersEnconding
-	layergroupuseDB.CopyBasicFieldsToLayerGroupUse(&layergroupuseAPI.LayerGroupUse)
+	layergroupuseAPI.LayerGroupUsePointersEncoding = layergroupuseDB.LayerGroupUsePointersEncoding
+	layergroupuseDB.CopyBasicFieldsToLayerGroupUse_WOP(&layergroupuseAPI.LayerGroupUse_WOP)
 
 	c.JSON(http.StatusOK, layergroupuseAPI)
 }
@@ -276,8 +276,8 @@ func (controller *Controller) UpdateLayerGroupUse(c *gin.Context) {
 	}
 
 	// update
-	layergroupuseDB.CopyBasicFieldsFromLayerGroupUse(&input.LayerGroupUse)
-	layergroupuseDB.LayerGroupUsePointersEnconding = input.LayerGroupUsePointersEnconding
+	layergroupuseDB.CopyBasicFieldsFromLayerGroupUse_WOP(&input.LayerGroupUse_WOP)
+	layergroupuseDB.LayerGroupUsePointersEncoding = input.LayerGroupUsePointersEncoding
 
 	query = db.Model(&layergroupuseDB).Updates(layergroupuseDB)
 	if query.Error != nil {

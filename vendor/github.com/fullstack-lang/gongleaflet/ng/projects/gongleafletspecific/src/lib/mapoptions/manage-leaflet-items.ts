@@ -2,7 +2,6 @@ import { Type } from '@angular/core';
 import * as gongleaflet from 'gongleaflet';
 
 import * as L from 'leaflet';
-import { map } from 'rxjs/operators';
 
 // return the mapOptions that is passed to the 
 // creation of the map
@@ -97,7 +96,7 @@ export function newMarkerWithIcon(lat: number, lng: number, icon: L.DivIcon): L.
 
 export function newCircle(circle: gongleaflet.CircleDB): L.Circle {
   return L.circle([circle.Lat, circle.Lng], {
-    className: 'layer-' + circle.LayerGroupID.Int64,
+    className: 'layer-',
     radius: circle.Radius * 1000,
     color: getColor(circle.ColorEnum),
     opacity: 0.2,
@@ -114,7 +113,7 @@ export function newLine(newLineData: gongleaflet.VLineDB): L.Polyline {
       L.latLng(newLineData.EndLat, newLineData.EndLng),
     ])
     .setStyle({
-      className: 'layer-' + newLineData.LayerGroupID.Int64,
+      className: 'layer-',
       weight: 2,
       dashArray: getDashStyle(newLineData.DashStyleEnum),
       opacity: 0.5,
