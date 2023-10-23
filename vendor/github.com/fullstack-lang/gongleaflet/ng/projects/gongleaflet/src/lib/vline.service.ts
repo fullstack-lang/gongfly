@@ -55,7 +55,6 @@ export class VLineService {
     return this.http.get<VLineDB[]>(this.vlinesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched vlines')),
         catchError(this.handleError<VLineDB[]>('getVLines', []))
       );
   }
@@ -134,7 +133,7 @@ export class VLineService {
     const url = `${this.vlinesUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
     if (vlinedb.LayerGroup != undefined) {
       vlinedb.VLinePointersEncoding.LayerGroupID.Int64 = vlinedb.LayerGroup.ID
       vlinedb.VLinePointersEncoding.LayerGroupID.Valid = true

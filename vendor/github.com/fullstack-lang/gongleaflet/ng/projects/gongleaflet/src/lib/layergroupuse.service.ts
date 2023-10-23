@@ -55,7 +55,6 @@ export class LayerGroupUseService {
     return this.http.get<LayerGroupUseDB[]>(this.layergroupusesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched layergroupuses')),
         catchError(this.handleError<LayerGroupUseDB[]>('getLayerGroupUses', []))
       );
   }
@@ -134,7 +133,7 @@ export class LayerGroupUseService {
     const url = `${this.layergroupusesUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
     if (layergroupusedb.LayerGroup != undefined) {
       layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Int64 = layergroupusedb.LayerGroup.ID
       layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Valid = true

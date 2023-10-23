@@ -56,7 +56,6 @@ export class MarkerService {
     return this.http.get<MarkerDB[]>(this.markersUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched markers')),
         catchError(this.handleError<MarkerDB[]>('getMarkers', []))
       );
   }
@@ -141,7 +140,7 @@ export class MarkerService {
     const url = `${this.markersUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
     if (markerdb.LayerGroup != undefined) {
       markerdb.MarkerPointersEncoding.LayerGroupID.Int64 = markerdb.LayerGroup.ID
       markerdb.MarkerPointersEncoding.LayerGroupID.Valid = true

@@ -54,7 +54,6 @@ export class DivIconService {
     return this.http.get<DivIconDB[]>(this.diviconsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched divicons')),
         catchError(this.handleError<DivIconDB[]>('getDivIcons', []))
       );
   }
@@ -127,7 +126,7 @@ export class DivIconService {
     const url = `${this.diviconsUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {

@@ -54,7 +54,6 @@ export class LayerGroupService {
     return this.http.get<LayerGroupDB[]>(this.layergroupsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched layergroups')),
         catchError(this.handleError<LayerGroupDB[]>('getLayerGroups', []))
       );
   }
@@ -127,7 +126,7 @@ export class LayerGroupService {
     const url = `${this.layergroupsUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {

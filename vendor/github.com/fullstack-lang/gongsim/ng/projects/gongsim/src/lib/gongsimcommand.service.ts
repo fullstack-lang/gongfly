@@ -55,7 +55,6 @@ export class GongsimCommandService {
     return this.http.get<GongsimCommandDB[]>(this.gongsimcommandsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched gongsimcommands')),
         catchError(this.handleError<GongsimCommandDB[]>('getGongsimCommands', []))
       );
   }
@@ -134,7 +133,7 @@ export class GongsimCommandService {
     const url = `${this.gongsimcommandsUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
     if (gongsimcommanddb.Engine != undefined) {
       gongsimcommanddb.GongsimCommandPointersEncoding.EngineID.Int64 = gongsimcommanddb.Engine.ID
       gongsimcommanddb.GongsimCommandPointersEncoding.EngineID.Valid = true

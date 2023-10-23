@@ -54,7 +54,6 @@ export class EngineService {
     return this.http.get<EngineDB[]>(this.enginesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched engines')),
         catchError(this.handleError<EngineDB[]>('getEngines', []))
       );
   }
@@ -127,7 +126,7 @@ export class EngineService {
     const url = `${this.enginesUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {

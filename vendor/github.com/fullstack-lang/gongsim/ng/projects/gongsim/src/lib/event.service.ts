@@ -54,7 +54,6 @@ export class EventService {
     return this.http.get<EventDB[]>(this.eventsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched events')),
         catchError(this.handleError<EventDB[]>('getEvents', []))
       );
   }
@@ -127,7 +126,7 @@ export class EventService {
     const url = `${this.eventsUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {

@@ -56,7 +56,6 @@ export class VisualTrackService {
     return this.http.get<VisualTrackDB[]>(this.visualtracksUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched visualtracks')),
         catchError(this.handleError<VisualTrackDB[]>('getVisualTracks', []))
       );
   }
@@ -141,7 +140,7 @@ export class VisualTrackService {
     const url = `${this.visualtracksUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
     if (visualtrackdb.LayerGroup != undefined) {
       visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Int64 = visualtrackdb.LayerGroup.ID
       visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Valid = true

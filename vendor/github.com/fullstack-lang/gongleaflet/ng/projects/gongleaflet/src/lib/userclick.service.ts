@@ -54,7 +54,6 @@ export class UserClickService {
     return this.http.get<UserClickDB[]>(this.userclicksUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched userclicks')),
         catchError(this.handleError<UserClickDB[]>('getUserClicks', []))
       );
   }
@@ -127,7 +126,7 @@ export class UserClickService {
     const url = `${this.userclicksUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {

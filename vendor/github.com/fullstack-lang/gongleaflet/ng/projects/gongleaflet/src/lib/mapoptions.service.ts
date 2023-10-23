@@ -55,7 +55,6 @@ export class MapOptionsService {
     return this.http.get<MapOptionsDB[]>(this.mapoptionssUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched mapoptionss')),
         catchError(this.handleError<MapOptionsDB[]>('getMapOptionss', []))
       );
   }
@@ -83,6 +82,7 @@ export class MapOptionsService {
   postMapOptions(mapoptionsdb: MapOptionsDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses = []
     for (let _layergroupuse of mapoptionsdb.LayerGroupUses) {
       mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses.push(_layergroupuse.ID)
     }
@@ -139,7 +139,8 @@ export class MapOptionsService {
     const url = `${this.mapoptionssUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
+    mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses = []
     for (let _layergroupuse of mapoptionsdb.LayerGroupUses) {
       mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses.push(_layergroupuse.ID)
     }

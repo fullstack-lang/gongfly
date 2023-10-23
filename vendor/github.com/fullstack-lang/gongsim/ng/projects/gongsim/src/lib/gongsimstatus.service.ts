@@ -54,7 +54,6 @@ export class GongsimStatusService {
     return this.http.get<GongsimStatusDB[]>(this.gongsimstatussUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched gongsimstatuss')),
         catchError(this.handleError<GongsimStatusDB[]>('getGongsimStatuss', []))
       );
   }
@@ -127,7 +126,7 @@ export class GongsimStatusService {
     const url = `${this.gongsimstatussUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {

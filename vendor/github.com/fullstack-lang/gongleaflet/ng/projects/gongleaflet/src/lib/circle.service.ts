@@ -55,7 +55,6 @@ export class CircleService {
     return this.http.get<CircleDB[]>(this.circlesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched circles')),
         catchError(this.handleError<CircleDB[]>('getCircles', []))
       );
   }
@@ -134,7 +133,7 @@ export class CircleService {
     const url = `${this.circlesUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
     if (circledb.LayerGroup != undefined) {
       circledb.CirclePointersEncoding.LayerGroupID.Int64 = circledb.LayerGroup.ID
       circledb.CirclePointersEncoding.LayerGroupID.Valid = true
