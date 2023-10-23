@@ -55,7 +55,6 @@ export class OpsLineService {
     return this.http.get<OpsLineDB[]>(this.opslinesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched opslines')),
         catchError(this.handleError<OpsLineDB[]>('getOpsLines', []))
       );
   }
@@ -134,7 +133,7 @@ export class OpsLineService {
     const url = `${this.opslinesUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
     if (opslinedb.Scenario != undefined) {
       opslinedb.OpsLinePointersEncoding.ScenarioID.Int64 = opslinedb.Scenario.ID
       opslinedb.OpsLinePointersEncoding.ScenarioID.Valid = true

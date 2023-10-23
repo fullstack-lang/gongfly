@@ -54,7 +54,6 @@ export class CivilianAirportService {
     return this.http.get<CivilianAirportDB[]>(this.civilianairportsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched civilianairports')),
         catchError(this.handleError<CivilianAirportDB[]>('getCivilianAirports', []))
       );
   }
@@ -127,7 +126,7 @@ export class CivilianAirportService {
     const url = `${this.civilianairportsUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {

@@ -55,7 +55,6 @@ export class LinerService {
     return this.http.get<LinerDB[]>(this.linersUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched liners')),
         catchError(this.handleError<LinerDB[]>('getLiners', []))
       );
   }
@@ -134,7 +133,7 @@ export class LinerService {
     const url = `${this.linersUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
     if (linerdb.ReporingLine != undefined) {
       linerdb.LinerPointersEncoding.ReporingLineID.Int64 = linerdb.ReporingLine.ID
       linerdb.LinerPointersEncoding.ReporingLineID.Valid = true

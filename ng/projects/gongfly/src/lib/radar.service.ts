@@ -54,7 +54,6 @@ export class RadarService {
     return this.http.get<RadarDB[]>(this.radarsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched radars')),
         catchError(this.handleError<RadarDB[]>('getRadars', []))
       );
   }
@@ -127,7 +126,7 @@ export class RadarService {
     const url = `${this.radarsUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {

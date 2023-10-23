@@ -54,7 +54,6 @@ export class MessageService {
     return this.http.get<MessageDB[]>(this.messagesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched messages')),
         catchError(this.handleError<MessageDB[]>('getMessages', []))
       );
   }
@@ -127,7 +126,7 @@ export class MessageService {
     const url = `${this.messagesUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {

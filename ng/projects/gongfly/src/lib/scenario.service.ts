@@ -54,7 +54,6 @@ export class ScenarioService {
     return this.http.get<ScenarioDB[]>(this.scenariosUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched scenarios')),
         catchError(this.handleError<ScenarioDB[]>('getScenarios', []))
       );
   }
@@ -127,7 +126,7 @@ export class ScenarioService {
     const url = `${this.scenariosUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {

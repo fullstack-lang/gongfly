@@ -54,7 +54,6 @@ export class SatelliteService {
     return this.http.get<SatelliteDB[]>(this.satellitesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched satellites')),
         catchError(this.handleError<SatelliteDB[]>('getSatellites', []))
       );
   }
@@ -127,7 +126,7 @@ export class SatelliteService {
     const url = `${this.satellitesUrl}/${id}`;
 
     // insertion point for reset of pointers (to avoid circular JSON)
-	// and encoding of pointers
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
