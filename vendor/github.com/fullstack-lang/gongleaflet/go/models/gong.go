@@ -1514,7 +1514,7 @@ func GetFields[Type Gongstruct]() (res []string) {
 	case LayerGroup:
 		res = []string{"Name", "DisplayName"}
 	case LayerGroupUse:
-		res = []string{"Name", "Display", "LayerGroup"}
+		res = []string{"Name", "IsDisplayed", "LayerGroup"}
 	case MapOptions:
 		res = []string{"Lat", "Lng", "Name", "ZoomLevel", "UrlTemplate", "Attribution", "MaxZoom", "ZoomControl", "AttributionControl", "ZoomSnap", "LayerGroupUses"}
 	case Marker:
@@ -1591,7 +1591,7 @@ func GetFieldsFromPointer[Type PointerToGongstruct]() (res []string) {
 	case *LayerGroup:
 		res = []string{"Name", "DisplayName"}
 	case *LayerGroupUse:
-		res = []string{"Name", "Display", "LayerGroup"}
+		res = []string{"Name", "IsDisplayed", "LayerGroup"}
 	case *MapOptions:
 		res = []string{"Lat", "Lng", "Name", "ZoomLevel", "UrlTemplate", "Attribution", "MaxZoom", "ZoomControl", "AttributionControl", "ZoomSnap", "LayerGroupUses"}
 	case *Marker:
@@ -1653,8 +1653,8 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 		// string value of fields
 		case "Name":
 			res = inferedInstance.Name
-		case "Display":
-			res = fmt.Sprintf("%t", inferedInstance.Display)
+		case "IsDisplayed":
+			res = fmt.Sprintf("%t", inferedInstance.IsDisplayed)
 		case "LayerGroup":
 			if inferedInstance.LayerGroup != nil {
 				res = inferedInstance.LayerGroup.Name
@@ -1844,8 +1844,8 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 		// string value of fields
 		case "Name":
 			res = inferedInstance.Name
-		case "Display":
-			res = fmt.Sprintf("%t", inferedInstance.Display)
+		case "IsDisplayed":
+			res = fmt.Sprintf("%t", inferedInstance.IsDisplayed)
 		case "LayerGroup":
 			if inferedInstance.LayerGroup != nil {
 				res = inferedInstance.LayerGroup.Name

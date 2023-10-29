@@ -40,21 +40,21 @@ func LoadMapOptions(stage *gongleaflet_models.StageStruct) {
 func LoadLayerGroupsUse(stage *gongleaflet_models.StageStruct) {
 
 	AircraftLayerGroupUse = (&gongleaflet_models.LayerGroupUse{
-		Name:       string(gongfly_models.Aircraft_),
-		LayerGroup: AircraftLayerGroup,
-		Display:    true,
+		Name:        string(gongfly_models.Aircraft_),
+		LayerGroup:  AircraftLayerGroup,
+		IsDisplayed: true,
 	})
 
 	SatelitteLayerGroupUse = (&gongleaflet_models.LayerGroupUse{
-		Name:       string(gongfly_models.Satellite_),
-		LayerGroup: SatelliteLayerGroup,
-		Display:    true,
+		Name:        string(gongfly_models.Satellite_),
+		LayerGroup:  SatelliteLayerGroup,
+		IsDisplayed: true,
 	})
 
 	CenterLayerGroupUse = (&gongleaflet_models.LayerGroupUse{
-		Name:       string(gongfly_models.Center_),
-		LayerGroup: CenterLayerGroup,
-		Display:    true,
+		Name:        string(gongfly_models.Center_),
+		LayerGroup:  CenterLayerGroup,
+		IsDisplayed: true,
 	})
 
 	AircraftLayerGroupUse.Stage(stage)

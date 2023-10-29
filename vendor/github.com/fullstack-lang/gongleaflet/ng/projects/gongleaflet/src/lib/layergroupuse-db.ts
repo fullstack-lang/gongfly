@@ -14,7 +14,7 @@ export class LayerGroupUseDB {
 
 	// insertion point for basic fields declarations
 	Name: string = ""
-	Display: boolean = false
+	IsDisplayed: boolean = false
 
 	// insertion point for pointers and slices of pointers declarations
 	LayerGroup?: LayerGroupDB

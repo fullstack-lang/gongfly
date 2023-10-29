@@ -41,7 +41,7 @@ func FillUpForm[T models.Gongstruct](
 	case *models.LayerGroupUse:
 		// insertion point
 		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, playground.formStage, formGroup, false)
-		BasicFieldtoForm("Display", instanceWithInferedType.Display, instanceWithInferedType, playground.formStage, formGroup, false)
+		BasicFieldtoForm("IsDisplayed", instanceWithInferedType.IsDisplayed, instanceWithInferedType, playground.formStage, formGroup, false)
 		AssociationFieldToForm("LayerGroup", instanceWithInferedType.LayerGroup, formGroup, playground)
 		{
 			var rf models.ReverseField

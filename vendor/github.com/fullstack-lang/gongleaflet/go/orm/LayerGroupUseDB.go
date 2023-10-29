@@ -65,9 +65,9 @@ type LayerGroupUseDB struct {
 	// Declation for basic field layergroupuseDB.Name
 	Name_Data sql.NullString
 
-	// Declation for basic field layergroupuseDB.Display
+	// Declation for basic field layergroupuseDB.IsDisplayed
 	// provide the sql storage for the boolan
-	Display_Data sql.NullBool
+	IsDisplayed_Data sql.NullBool
 	// encoding of pointers
 	LayerGroupUsePointersEncoding
 }
@@ -91,7 +91,7 @@ type LayerGroupUseWOP struct {
 
 	Name string `xlsx:"1"`
 
-	Display bool `xlsx:"2"`
+	IsDisplayed bool `xlsx:"2"`
 	// insertion for WOP pointer fields
 }
 
@@ -99,7 +99,7 @@ var LayerGroupUse_Fields = []string{
 	// insertion for WOP basic fields
 	"ID",
 	"Name",
-	"Display",
+	"IsDisplayed",
 }
 
 type BackRepoLayerGroupUseStruct struct {
@@ -380,8 +380,8 @@ func (layergroupuseDB *LayerGroupUseDB) CopyBasicFieldsFromLayerGroupUse(layergr
 	layergroupuseDB.Name_Data.String = layergroupuse.Name
 	layergroupuseDB.Name_Data.Valid = true
 
-	layergroupuseDB.Display_Data.Bool = layergroupuse.Display
-	layergroupuseDB.Display_Data.Valid = true
+	layergroupuseDB.IsDisplayed_Data.Bool = layergroupuse.IsDisplayed
+	layergroupuseDB.IsDisplayed_Data.Valid = true
 }
 
 // CopyBasicFieldsFromLayerGroupUse_WOP
@@ -391,8 +391,8 @@ func (layergroupuseDB *LayerGroupUseDB) CopyBasicFieldsFromLayerGroupUse_WOP(lay
 	layergroupuseDB.Name_Data.String = layergroupuse.Name
 	layergroupuseDB.Name_Data.Valid = true
 
-	layergroupuseDB.Display_Data.Bool = layergroupuse.Display
-	layergroupuseDB.Display_Data.Valid = true
+	layergroupuseDB.IsDisplayed_Data.Bool = layergroupuse.IsDisplayed
+	layergroupuseDB.IsDisplayed_Data.Valid = true
 }
 
 // CopyBasicFieldsFromLayerGroupUseWOP
@@ -402,22 +402,22 @@ func (layergroupuseDB *LayerGroupUseDB) CopyBasicFieldsFromLayerGroupUseWOP(laye
 	layergroupuseDB.Name_Data.String = layergroupuse.Name
 	layergroupuseDB.Name_Data.Valid = true
 
-	layergroupuseDB.Display_Data.Bool = layergroupuse.Display
-	layergroupuseDB.Display_Data.Valid = true
+	layergroupuseDB.IsDisplayed_Data.Bool = layergroupuse.IsDisplayed
+	layergroupuseDB.IsDisplayed_Data.Valid = true
 }
 
 // CopyBasicFieldsToLayerGroupUse
 func (layergroupuseDB *LayerGroupUseDB) CopyBasicFieldsToLayerGroupUse(layergroupuse *models.LayerGroupUse) {
 	// insertion point for checkout of basic fields (back repo to stage)
 	layergroupuse.Name = layergroupuseDB.Name_Data.String
-	layergroupuse.Display = layergroupuseDB.Display_Data.Bool
+	layergroupuse.IsDisplayed = layergroupuseDB.IsDisplayed_Data.Bool
 }
 
 // CopyBasicFieldsToLayerGroupUse_WOP
 func (layergroupuseDB *LayerGroupUseDB) CopyBasicFieldsToLayerGroupUse_WOP(layergroupuse *models.LayerGroupUse_WOP) {
 	// insertion point for checkout of basic fields (back repo to stage)
 	layergroupuse.Name = layergroupuseDB.Name_Data.String
-	layergroupuse.Display = layergroupuseDB.Display_Data.Bool
+	layergroupuse.IsDisplayed = layergroupuseDB.IsDisplayed_Data.Bool
 }
 
 // CopyBasicFieldsToLayerGroupUseWOP
@@ -425,7 +425,7 @@ func (layergroupuseDB *LayerGroupUseDB) CopyBasicFieldsToLayerGroupUseWOP(layerg
 	layergroupuse.ID = int(layergroupuseDB.ID)
 	// insertion point for checkout of basic fields (back repo to stage)
 	layergroupuse.Name = layergroupuseDB.Name_Data.String
-	layergroupuse.Display = layergroupuseDB.Display_Data.Bool
+	layergroupuse.IsDisplayed = layergroupuseDB.IsDisplayed_Data.Bool
 }
 
 // Backup generates a json file from a slice of all LayerGroupUseDB instances in the backrepo

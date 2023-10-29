@@ -288,8 +288,8 @@ func (layergroupuseFormCallback *LayerGroupUseFormCallback) OnSave() {
 		// insertion point per field
 		case "Name":
 			FormDivBasicFieldToField(&(layergroupuse_.Name), formDiv)
-		case "Display":
-			FormDivBasicFieldToField(&(layergroupuse_.Display), formDiv)
+		case "IsDisplayed":
+			FormDivBasicFieldToField(&(layergroupuse_.IsDisplayed), formDiv)
 		case "LayerGroup":
 			FormDivSelectFieldToField(&(layergroupuse_.LayerGroup), layergroupuseFormCallback.playground.stageOfInterest, formDiv)
 		case "MapOptions:LayerGroupUses":

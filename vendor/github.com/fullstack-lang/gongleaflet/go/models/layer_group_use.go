@@ -7,7 +7,7 @@ type LayerGroupUse struct {
 	Name string
 
 	// indicate wether to display the layer
-	Display bool
+	IsDisplayed bool
 
 	LayerGroup *LayerGroup
 }

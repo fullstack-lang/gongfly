@@ -67,7 +67,7 @@ export class CartoatcControlSettingsComponent implements OnInit {
               layerItem.id = gongLayerGroup.ID
               layerItem.name = gongLayerGroup.Name
               layerItem.display = gongLayerGroup.DisplayName || gongLayerGroup.Name
-              layerItem.status = gongLayerGroupUse.Display
+              layerItem.status = gongLayerGroupUse.IsDisplayed
 
               this.list.push(layerItem)
 
@@ -89,11 +89,11 @@ export class CartoatcControlSettingsComponent implements OnInit {
 
     let layerGroupUse = this.mapLayerGroupID_gongLayerGroupUse.get(id)
     if (layerGroupUse) {
-      layerGroupUse.Display = !layerGroupUse.Display
+      layerGroupUse.IsDisplayed = !layerGroupUse.IsDisplayed
 
       this.layerGroupUseService.updateLayerGroupUse(layerGroupUse, this.GONG__StackPath, this.frontRepoService.frontRepo).subscribe(
         () => {
-          console.log("layer group use " + layerGroupUse?.Name + " display value updated to " + layerGroupUse?.Display)
+          console.log("layer group use " + layerGroupUse?.Name + " display value updated to " + layerGroupUse?.IsDisplayed)
 
           this.layerGroupUseService.LayerGroupUseServiceChanged.next("update")
         }

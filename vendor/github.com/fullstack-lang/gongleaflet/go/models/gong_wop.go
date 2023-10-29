@@ -32,7 +32,7 @@ type LayerGroup_WOP struct {
 type LayerGroupUse_WOP struct {
 	// insertion point
 	Name string
-	Display bool
+	IsDisplayed bool
 }
 
 type MapOptions_WOP struct {

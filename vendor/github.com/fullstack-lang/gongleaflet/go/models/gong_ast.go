@@ -995,13 +995,13 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 			case "LayerGroupUse":
 				switch fieldName {
 				// insertion point for field dependant code
-				case "Display":
+				case "IsDisplayed":
 					// convert string to boolean
 					fielValue, err := strconv.ParseBool(ident.Name)
 					if err != nil {
 						log.Fatalln(err)
 					}
-					__gong__map_LayerGroupUse[identifier].Display = fielValue
+					__gong__map_LayerGroupUse[identifier].IsDisplayed = fielValue
 				case "LayerGroup":
 					targetIdentifier := ident.Name
 					__gong__map_LayerGroupUse[identifier].LayerGroup = __gong__map_LayerGroup[targetIdentifier]

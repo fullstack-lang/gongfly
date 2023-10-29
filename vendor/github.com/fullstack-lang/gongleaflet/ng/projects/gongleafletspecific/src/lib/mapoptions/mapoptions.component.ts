@@ -319,7 +319,7 @@ export class MapoptionsComponent implements OnInit {
 
     // workaround to an issue. If the layer is not part of the root of the layers, the dot icon is
     // not removed properly. Therefore, it is important NOT to add dotIcon is the layer is not set
-    if (groupLayerUse?.Display == false) {
+    if (groupLayerUse?.IsDisplayed == false) {
       return
     }
 
@@ -394,7 +394,7 @@ export class MapoptionsComponent implements OnInit {
         let hasToBeAdded: boolean = false
 
         // does the LayerGroup has to be displayed ?
-        if (gongLayerGroupUse?.Display) {
+        if (gongLayerGroupUse?.IsDisplayed) {
           // The layer group has to be displayed
 
           // if the leaflet not layer already in the root of all LayerGroup, add it

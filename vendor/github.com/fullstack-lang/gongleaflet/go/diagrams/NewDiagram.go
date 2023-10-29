@@ -81,7 +81,7 @@ var map_DocLink_Identifier_NewDiagram map[string]any = map[string]any{
 
 	"ref_models.LayerGroupUse": &(ref_models.LayerGroupUse{}),
 
-	"ref_models.LayerGroupUse.Display": (ref_models.LayerGroupUse{}).Display,
+	"ref_models.LayerGroupUse.Display": (ref_models.LayerGroupUse{}).IsDisplayed,
 
 	"ref_models.LayerGroupUse.LayerGroup": (ref_models.LayerGroupUse{}).LayerGroup,
 
@@ -307,8 +307,6 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__Link__000006_LayerGroup := (&models.Link{Name: `LayerGroup`}).Stage(stage)
 	__Link__000007_LayerGroupUses := (&models.Link{Name: `LayerGroupUses`}).Stage(stage)
 
-	// Declarations of staged instances of Node
-
 	// Declarations of staged instances of NoteShape
 
 	// Declarations of staged instances of NoteShapeLink
@@ -327,8 +325,6 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__Position__000010_Pos_NewDiagram_UserClick := (&models.Position{Name: `Pos-NewDiagram-UserClick`}).Stage(stage)
 	__Position__000011_Pos_NewDiagram_VLine := (&models.Position{Name: `Pos-NewDiagram-VLine`}).Stage(stage)
 	__Position__000012_Pos_NewDiagram_VisualTrack := (&models.Position{Name: `Pos-NewDiagram-VisualTrack`}).Stage(stage)
-
-	// Declarations of staged instances of Tree
 
 	// Declarations of staged instances of UmlState
 
@@ -377,10 +373,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.VLine.ColorEnum]
-	__Field__000002_ColorEnum.Identifier = `ref_models.VLine.ColorEnum`
+	//gong:ident [ref_models.Marker.ColorEnum]
+	__Field__000002_ColorEnum.Identifier = `ref_models.Marker.ColorEnum`
 	__Field__000002_ColorEnum.FieldTypeAsString = ``
-	__Field__000002_ColorEnum.Structname = `VLine`
+	__Field__000002_ColorEnum.Structname = `Marker`
 	__Field__000002_ColorEnum.Fieldtypename = `ColorEnum`
 
 	// Field values setup
@@ -399,10 +395,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.Circle.ColorEnum]
-	__Field__000004_ColorEnum.Identifier = `ref_models.Circle.ColorEnum`
+	//gong:ident [ref_models.VLine.ColorEnum]
+	__Field__000004_ColorEnum.Identifier = `ref_models.VLine.ColorEnum`
 	__Field__000004_ColorEnum.FieldTypeAsString = ``
-	__Field__000004_ColorEnum.Structname = `Circle`
+	__Field__000004_ColorEnum.Structname = `VLine`
 	__Field__000004_ColorEnum.Fieldtypename = `ColorEnum`
 
 	// Field values setup
@@ -410,10 +406,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.Marker.ColorEnum]
-	__Field__000005_ColorEnum.Identifier = `ref_models.Marker.ColorEnum`
+	//gong:ident [ref_models.Circle.ColorEnum]
+	__Field__000005_ColorEnum.Identifier = `ref_models.Circle.ColorEnum`
 	__Field__000005_ColorEnum.FieldTypeAsString = ``
-	__Field__000005_ColorEnum.Structname = `Marker`
+	__Field__000005_ColorEnum.Structname = `Circle`
 	__Field__000005_ColorEnum.Fieldtypename = `ColorEnum`
 
 	// Field values setup
@@ -542,10 +538,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.Circle.Lat]
-	__Field__000017_Lat.Identifier = `ref_models.Circle.Lat`
+	//gong:ident [ref_models.Marker.Lat]
+	__Field__000017_Lat.Identifier = `ref_models.Marker.Lat`
 	__Field__000017_Lat.FieldTypeAsString = ``
-	__Field__000017_Lat.Structname = `Circle`
+	__Field__000017_Lat.Structname = `Marker`
 	__Field__000017_Lat.Fieldtypename = `float64`
 
 	// Field values setup
@@ -553,10 +549,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.UserClick.Lat]
-	__Field__000018_Lat.Identifier = `ref_models.UserClick.Lat`
+	//gong:ident [ref_models.MapOptions.Lat]
+	__Field__000018_Lat.Identifier = `ref_models.MapOptions.Lat`
 	__Field__000018_Lat.FieldTypeAsString = ``
-	__Field__000018_Lat.Structname = `UserClick`
+	__Field__000018_Lat.Structname = `MapOptions`
 	__Field__000018_Lat.Fieldtypename = `float64`
 
 	// Field values setup
@@ -564,10 +560,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.Marker.Lat]
-	__Field__000019_Lat.Identifier = `ref_models.Marker.Lat`
+	//gong:ident [ref_models.UserClick.Lat]
+	__Field__000019_Lat.Identifier = `ref_models.UserClick.Lat`
 	__Field__000019_Lat.FieldTypeAsString = ``
-	__Field__000019_Lat.Structname = `Marker`
+	__Field__000019_Lat.Structname = `UserClick`
 	__Field__000019_Lat.Fieldtypename = `float64`
 
 	// Field values setup
@@ -575,10 +571,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.MapOptions.Lat]
-	__Field__000020_Lat.Identifier = `ref_models.MapOptions.Lat`
+	//gong:ident [ref_models.VisualTrack.Lat]
+	__Field__000020_Lat.Identifier = `ref_models.VisualTrack.Lat`
 	__Field__000020_Lat.FieldTypeAsString = ``
-	__Field__000020_Lat.Structname = `MapOptions`
+	__Field__000020_Lat.Structname = `VisualTrack`
 	__Field__000020_Lat.Fieldtypename = `float64`
 
 	// Field values setup
@@ -586,10 +582,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.VisualTrack.Lat]
-	__Field__000021_Lat.Identifier = `ref_models.VisualTrack.Lat`
+	//gong:ident [ref_models.Circle.Lat]
+	__Field__000021_Lat.Identifier = `ref_models.Circle.Lat`
 	__Field__000021_Lat.FieldTypeAsString = ``
-	__Field__000021_Lat.Structname = `VisualTrack`
+	__Field__000021_Lat.Structname = `Circle`
 	__Field__000021_Lat.Fieldtypename = `float64`
 
 	// Field values setup
@@ -608,10 +604,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.VisualTrack.Lng]
-	__Field__000023_Lng.Identifier = `ref_models.VisualTrack.Lng`
+	//gong:ident [ref_models.MapOptions.Lng]
+	__Field__000023_Lng.Identifier = `ref_models.MapOptions.Lng`
 	__Field__000023_Lng.FieldTypeAsString = ``
-	__Field__000023_Lng.Structname = `VisualTrack`
+	__Field__000023_Lng.Structname = `MapOptions`
 	__Field__000023_Lng.Fieldtypename = `float64`
 
 	// Field values setup
@@ -619,10 +615,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.UserClick.Lng]
-	__Field__000024_Lng.Identifier = `ref_models.UserClick.Lng`
+	//gong:ident [ref_models.Marker.Lng]
+	__Field__000024_Lng.Identifier = `ref_models.Marker.Lng`
 	__Field__000024_Lng.FieldTypeAsString = ``
-	__Field__000024_Lng.Structname = `UserClick`
+	__Field__000024_Lng.Structname = `Marker`
 	__Field__000024_Lng.Fieldtypename = `float64`
 
 	// Field values setup
@@ -630,10 +626,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.Marker.Lng]
-	__Field__000025_Lng.Identifier = `ref_models.Marker.Lng`
+	//gong:ident [ref_models.VisualTrack.Lng]
+	__Field__000025_Lng.Identifier = `ref_models.VisualTrack.Lng`
 	__Field__000025_Lng.FieldTypeAsString = ``
-	__Field__000025_Lng.Structname = `Marker`
+	__Field__000025_Lng.Structname = `VisualTrack`
 	__Field__000025_Lng.Fieldtypename = `float64`
 
 	// Field values setup
@@ -652,10 +648,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.MapOptions.Lng]
-	__Field__000027_Lng.Identifier = `ref_models.MapOptions.Lng`
+	//gong:ident [ref_models.UserClick.Lng]
+	__Field__000027_Lng.Identifier = `ref_models.UserClick.Lng`
 	__Field__000027_Lng.FieldTypeAsString = ``
-	__Field__000027_Lng.Structname = `MapOptions`
+	__Field__000027_Lng.Structname = `UserClick`
 	__Field__000027_Lng.Fieldtypename = `float64`
 
 	// Field values setup
@@ -696,10 +692,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.DivIcon.Name]
-	__Field__000031_Name.Identifier = `ref_models.DivIcon.Name`
+	//gong:ident [ref_models.MapOptions.Name]
+	__Field__000031_Name.Identifier = `ref_models.MapOptions.Name`
 	__Field__000031_Name.FieldTypeAsString = ``
-	__Field__000031_Name.Structname = `DivIcon`
+	__Field__000031_Name.Structname = `MapOptions`
 	__Field__000031_Name.Fieldtypename = `string`
 
 	// Field values setup
@@ -707,10 +703,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.LayerGroup.Name]
-	__Field__000032_Name.Identifier = `ref_models.LayerGroup.Name`
+	//gong:ident [ref_models.VLine.Name]
+	__Field__000032_Name.Identifier = `ref_models.VLine.Name`
 	__Field__000032_Name.FieldTypeAsString = ``
-	__Field__000032_Name.Structname = `LayerGroup`
+	__Field__000032_Name.Structname = `VLine`
 	__Field__000032_Name.Fieldtypename = `string`
 
 	// Field values setup
@@ -718,10 +714,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.VisualTrack.Name]
-	__Field__000033_Name.Identifier = `ref_models.VisualTrack.Name`
+	//gong:ident [ref_models.Marker.Name]
+	__Field__000033_Name.Identifier = `ref_models.Marker.Name`
 	__Field__000033_Name.FieldTypeAsString = ``
-	__Field__000033_Name.Structname = `VisualTrack`
+	__Field__000033_Name.Structname = `Marker`
 	__Field__000033_Name.Fieldtypename = `string`
 
 	// Field values setup
@@ -740,10 +736,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.Marker.Name]
-	__Field__000035_Name.Identifier = `ref_models.Marker.Name`
+	//gong:ident [ref_models.DivIcon.Name]
+	__Field__000035_Name.Identifier = `ref_models.DivIcon.Name`
 	__Field__000035_Name.FieldTypeAsString = ``
-	__Field__000035_Name.Structname = `Marker`
+	__Field__000035_Name.Structname = `DivIcon`
 	__Field__000035_Name.Fieldtypename = `string`
 
 	// Field values setup
@@ -751,10 +747,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.VLine.Name]
-	__Field__000036_Name.Identifier = `ref_models.VLine.Name`
+	//gong:ident [ref_models.VisualTrack.Name]
+	__Field__000036_Name.Identifier = `ref_models.VisualTrack.Name`
 	__Field__000036_Name.FieldTypeAsString = ``
-	__Field__000036_Name.Structname = `VLine`
+	__Field__000036_Name.Structname = `VisualTrack`
 	__Field__000036_Name.Fieldtypename = `string`
 
 	// Field values setup
@@ -762,10 +758,10 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.MapOptions.Name]
-	__Field__000037_Name.Identifier = `ref_models.MapOptions.Name`
+	//gong:ident [ref_models.LayerGroup.Name]
+	__Field__000037_Name.Identifier = `ref_models.LayerGroup.Name`
 	__Field__000037_Name.FieldTypeAsString = ``
-	__Field__000037_Name.Structname = `MapOptions`
+	__Field__000037_Name.Structname = `LayerGroup`
 	__Field__000037_Name.Fieldtypename = `string`
 
 	// Field values setup
@@ -1054,8 +1050,8 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	//gong:ident [ref_models.Circle]
 	__GongStructShape__000000_NewDiagram_Circle.Identifier = `ref_models.Circle`
-	__GongStructShape__000000_NewDiagram_Circle.ShowNbInstances = false
-	__GongStructShape__000000_NewDiagram_Circle.NbInstances = 0
+	__GongStructShape__000000_NewDiagram_Circle.ShowNbInstances = true
+	__GongStructShape__000000_NewDiagram_Circle.NbInstances = 1
 	__GongStructShape__000000_NewDiagram_Circle.Width = 240.000000
 	__GongStructShape__000000_NewDiagram_Circle.Heigth = 153.000000
 	__GongStructShape__000000_NewDiagram_Circle.IsSelected = false
@@ -1067,8 +1063,8 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	//gong:ident [ref_models.DivIcon]
 	__GongStructShape__000001_NewDiagram_DivIcon.Identifier = `ref_models.DivIcon`
-	__GongStructShape__000001_NewDiagram_DivIcon.ShowNbInstances = false
-	__GongStructShape__000001_NewDiagram_DivIcon.NbInstances = 0
+	__GongStructShape__000001_NewDiagram_DivIcon.ShowNbInstances = true
+	__GongStructShape__000001_NewDiagram_DivIcon.NbInstances = 11
 	__GongStructShape__000001_NewDiagram_DivIcon.Width = 240.000000
 	__GongStructShape__000001_NewDiagram_DivIcon.Heigth = 93.000000
 	__GongStructShape__000001_NewDiagram_DivIcon.IsSelected = false
@@ -1080,8 +1076,8 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	//gong:ident [ref_models.LayerGroup]
 	__GongStructShape__000002_NewDiagram_LayerGroup.Identifier = `ref_models.LayerGroup`
-	__GongStructShape__000002_NewDiagram_LayerGroup.ShowNbInstances = false
-	__GongStructShape__000002_NewDiagram_LayerGroup.NbInstances = 0
+	__GongStructShape__000002_NewDiagram_LayerGroup.ShowNbInstances = true
+	__GongStructShape__000002_NewDiagram_LayerGroup.NbInstances = 4
 	__GongStructShape__000002_NewDiagram_LayerGroup.Width = 240.000000
 	__GongStructShape__000002_NewDiagram_LayerGroup.Heigth = 93.000000
 	__GongStructShape__000002_NewDiagram_LayerGroup.IsSelected = false
@@ -1093,8 +1089,8 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	//gong:ident [ref_models.LayerGroupUse]
 	__GongStructShape__000003_NewDiagram_LayerGroupUse.Identifier = `ref_models.LayerGroupUse`
-	__GongStructShape__000003_NewDiagram_LayerGroupUse.ShowNbInstances = false
-	__GongStructShape__000003_NewDiagram_LayerGroupUse.NbInstances = 0
+	__GongStructShape__000003_NewDiagram_LayerGroupUse.ShowNbInstances = true
+	__GongStructShape__000003_NewDiagram_LayerGroupUse.NbInstances = 6
 	__GongStructShape__000003_NewDiagram_LayerGroupUse.Width = 240.000000
 	__GongStructShape__000003_NewDiagram_LayerGroupUse.Heigth = 93.000000
 	__GongStructShape__000003_NewDiagram_LayerGroupUse.IsSelected = false
@@ -1106,8 +1102,8 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	//gong:ident [ref_models.MapOptions]
 	__GongStructShape__000004_NewDiagram_MapOptions.Identifier = `ref_models.MapOptions`
-	__GongStructShape__000004_NewDiagram_MapOptions.ShowNbInstances = false
-	__GongStructShape__000004_NewDiagram_MapOptions.NbInstances = 0
+	__GongStructShape__000004_NewDiagram_MapOptions.ShowNbInstances = true
+	__GongStructShape__000004_NewDiagram_MapOptions.NbInstances = 2
 	__GongStructShape__000004_NewDiagram_MapOptions.Width = 240.000000
 	__GongStructShape__000004_NewDiagram_MapOptions.Heigth = 213.000000
 	__GongStructShape__000004_NewDiagram_MapOptions.IsSelected = false
@@ -1119,8 +1115,8 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	//gong:ident [ref_models.Marker]
 	__GongStructShape__000005_NewDiagram_Marker.Identifier = `ref_models.Marker`
-	__GongStructShape__000005_NewDiagram_Marker.ShowNbInstances = false
-	__GongStructShape__000005_NewDiagram_Marker.NbInstances = 0
+	__GongStructShape__000005_NewDiagram_Marker.ShowNbInstances = true
+	__GongStructShape__000005_NewDiagram_Marker.NbInstances = 3
 	__GongStructShape__000005_NewDiagram_Marker.Width = 240.000000
 	__GongStructShape__000005_NewDiagram_Marker.Heigth = 123.000000
 	__GongStructShape__000005_NewDiagram_Marker.IsSelected = false
@@ -1132,7 +1128,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	//gong:ident [ref_models.UserClick]
 	__GongStructShape__000006_NewDiagram_UserClick.Identifier = `ref_models.UserClick`
-	__GongStructShape__000006_NewDiagram_UserClick.ShowNbInstances = false
+	__GongStructShape__000006_NewDiagram_UserClick.ShowNbInstances = true
 	__GongStructShape__000006_NewDiagram_UserClick.NbInstances = 0
 	__GongStructShape__000006_NewDiagram_UserClick.Width = 240.000000
 	__GongStructShape__000006_NewDiagram_UserClick.Heigth = 123.000000
@@ -1145,8 +1141,8 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	//gong:ident [ref_models.VLine]
 	__GongStructShape__000007_NewDiagram_VLine.Identifier = `ref_models.VLine`
-	__GongStructShape__000007_NewDiagram_VLine.ShowNbInstances = false
-	__GongStructShape__000007_NewDiagram_VLine.NbInstances = 0
+	__GongStructShape__000007_NewDiagram_VLine.ShowNbInstances = true
+	__GongStructShape__000007_NewDiagram_VLine.NbInstances = 1
 	__GongStructShape__000007_NewDiagram_VLine.Width = 240.000000
 	__GongStructShape__000007_NewDiagram_VLine.Heigth = 228.000000
 	__GongStructShape__000007_NewDiagram_VLine.IsSelected = false
@@ -1158,8 +1154,8 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	//gong:ident [ref_models.VisualTrack]
 	__GongStructShape__000008_NewDiagram_VisualTrack.Identifier = `ref_models.VisualTrack`
-	__GongStructShape__000008_NewDiagram_VisualTrack.ShowNbInstances = false
-	__GongStructShape__000008_NewDiagram_VisualTrack.NbInstances = 0
+	__GongStructShape__000008_NewDiagram_VisualTrack.ShowNbInstances = true
+	__GongStructShape__000008_NewDiagram_VisualTrack.NbInstances = 2
 	__GongStructShape__000008_NewDiagram_VisualTrack.Width = 240.000000
 	__GongStructShape__000008_NewDiagram_VisualTrack.Heigth = 213.000000
 	__GongStructShape__000008_NewDiagram_VisualTrack.IsSelected = false
@@ -1176,8 +1172,19 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	//gong:ident [ref_models.DivIcon]
 	__Link__000000_DivIcon.Fieldtypename = `ref_models.DivIcon`
+	__Link__000000_DivIcon.FieldOffsetX = -68.000000
+	__Link__000000_DivIcon.FieldOffsetY = -11.000000
 	__Link__000000_DivIcon.TargetMultiplicity = models.ZERO_ONE
+	__Link__000000_DivIcon.TargetMultiplicityOffsetX = -38.000000
+	__Link__000000_DivIcon.TargetMultiplicityOffsetY = 17.000000
 	__Link__000000_DivIcon.SourceMultiplicity = models.MANY
+	__Link__000000_DivIcon.SourceMultiplicityOffsetX = -15.000000
+	__Link__000000_DivIcon.SourceMultiplicityOffsetY = 18.000000
+	__Link__000000_DivIcon.StartOrientation = models.ORIENTATION_HORIZONTAL
+	__Link__000000_DivIcon.StartRatio = 1.731707
+	__Link__000000_DivIcon.EndOrientation = models.ORIENTATION_HORIZONTAL
+	__Link__000000_DivIcon.EndRatio = 0.000000
+	__Link__000000_DivIcon.CornerOffsetRatio = -0.591597
 
 	// Link values setup
 	__Link__000001_DivIcon.Name = `DivIcon`
@@ -1191,83 +1198,149 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	//gong:ident [ref_models.DivIcon]
 	__Link__000001_DivIcon.Fieldtypename = `ref_models.DivIcon`
+	__Link__000001_DivIcon.FieldOffsetX = -44.000000
+	__Link__000001_DivIcon.FieldOffsetY = -14.000000
 	__Link__000001_DivIcon.TargetMultiplicity = models.ZERO_ONE
+	__Link__000001_DivIcon.TargetMultiplicityOffsetX = -37.000000
+	__Link__000001_DivIcon.TargetMultiplicityOffsetY = 20.000000
 	__Link__000001_DivIcon.SourceMultiplicity = models.MANY
+	__Link__000001_DivIcon.SourceMultiplicityOffsetX = 17.000000
+	__Link__000001_DivIcon.SourceMultiplicityOffsetY = 21.000000
+	__Link__000001_DivIcon.StartOrientation = models.ORIENTATION_HORIZONTAL
+	__Link__000001_DivIcon.StartRatio = 0.523474
+	__Link__000001_DivIcon.EndOrientation = models.ORIENTATION_HORIZONTAL
+	__Link__000001_DivIcon.EndRatio = 0.661290
+	__Link__000001_DivIcon.CornerOffsetRatio = 1.225139
 
 	// Link values setup
 	__Link__000002_LayerGroup.Name = `LayerGroup`
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.LayerGroupUse.LayerGroup]
-	__Link__000002_LayerGroup.Identifier = `ref_models.LayerGroupUse.LayerGroup`
+	//gong:ident [ref_models.Marker.LayerGroup]
+	__Link__000002_LayerGroup.Identifier = `ref_models.Marker.LayerGroup`
 
 	// comment added to overcome the problem with the comment map association
 
 	//gong:ident [ref_models.LayerGroup]
 	__Link__000002_LayerGroup.Fieldtypename = `ref_models.LayerGroup`
+	__Link__000002_LayerGroup.FieldOffsetX = -2.000000
+	__Link__000002_LayerGroup.FieldOffsetY = -21.000000
 	__Link__000002_LayerGroup.TargetMultiplicity = models.ZERO_ONE
+	__Link__000002_LayerGroup.TargetMultiplicityOffsetX = 11.000000
+	__Link__000002_LayerGroup.TargetMultiplicityOffsetY = 21.000000
 	__Link__000002_LayerGroup.SourceMultiplicity = models.MANY
+	__Link__000002_LayerGroup.SourceMultiplicityOffsetX = -12.000000
+	__Link__000002_LayerGroup.SourceMultiplicityOffsetY = 18.000000
+	__Link__000002_LayerGroup.StartOrientation = models.ORIENTATION_HORIZONTAL
+	__Link__000002_LayerGroup.StartRatio = 0.593496
+	__Link__000002_LayerGroup.EndOrientation = models.ORIENTATION_HORIZONTAL
+	__Link__000002_LayerGroup.EndRatio = 0.750000
+	__Link__000002_LayerGroup.CornerOffsetRatio = -0.312431
 
 	// Link values setup
 	__Link__000003_LayerGroup.Name = `LayerGroup`
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.Marker.LayerGroup]
-	__Link__000003_LayerGroup.Identifier = `ref_models.Marker.LayerGroup`
+	//gong:ident [ref_models.VLine.LayerGroup]
+	__Link__000003_LayerGroup.Identifier = `ref_models.VLine.LayerGroup`
 
 	// comment added to overcome the problem with the comment map association
 
 	//gong:ident [ref_models.LayerGroup]
 	__Link__000003_LayerGroup.Fieldtypename = `ref_models.LayerGroup`
+	__Link__000003_LayerGroup.FieldOffsetX = 13.000000
+	__Link__000003_LayerGroup.FieldOffsetY = 20.000000
 	__Link__000003_LayerGroup.TargetMultiplicity = models.ZERO_ONE
+	__Link__000003_LayerGroup.TargetMultiplicityOffsetX = -25.000000
+	__Link__000003_LayerGroup.TargetMultiplicityOffsetY = 13.000000
 	__Link__000003_LayerGroup.SourceMultiplicity = models.MANY
+	__Link__000003_LayerGroup.SourceMultiplicityOffsetX = -15.000000
+	__Link__000003_LayerGroup.SourceMultiplicityOffsetY = 21.000000
+	__Link__000003_LayerGroup.StartOrientation = models.ORIENTATION_HORIZONTAL
+	__Link__000003_LayerGroup.StartRatio = 0.112939
+	__Link__000003_LayerGroup.EndOrientation = models.ORIENTATION_VERTICAL
+	__Link__000003_LayerGroup.EndRatio = 0.712569
+	__Link__000003_LayerGroup.CornerOffsetRatio = -0.816886
 
 	// Link values setup
 	__Link__000004_LayerGroup.Name = `LayerGroup`
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.VLine.LayerGroup]
-	__Link__000004_LayerGroup.Identifier = `ref_models.VLine.LayerGroup`
+	//gong:ident [ref_models.VisualTrack.LayerGroup]
+	__Link__000004_LayerGroup.Identifier = `ref_models.VisualTrack.LayerGroup`
 
 	// comment added to overcome the problem with the comment map association
 
 	//gong:ident [ref_models.LayerGroup]
 	__Link__000004_LayerGroup.Fieldtypename = `ref_models.LayerGroup`
+	__Link__000004_LayerGroup.FieldOffsetX = -76.000000
+	__Link__000004_LayerGroup.FieldOffsetY = 27.000000
 	__Link__000004_LayerGroup.TargetMultiplicity = models.ZERO_ONE
+	__Link__000004_LayerGroup.TargetMultiplicityOffsetX = 11.000000
+	__Link__000004_LayerGroup.TargetMultiplicityOffsetY = 24.000000
 	__Link__000004_LayerGroup.SourceMultiplicity = models.MANY
+	__Link__000004_LayerGroup.SourceMultiplicityOffsetX = -18.000000
+	__Link__000004_LayerGroup.SourceMultiplicityOffsetY = -8.000000
+	__Link__000004_LayerGroup.StartOrientation = models.ORIENTATION_VERTICAL
+	__Link__000004_LayerGroup.StartRatio = 0.283403
+	__Link__000004_LayerGroup.EndOrientation = models.ORIENTATION_VERTICAL
+	__Link__000004_LayerGroup.EndRatio = 0.129236
+	__Link__000004_LayerGroup.CornerOffsetRatio = -0.504695
 
 	// Link values setup
 	__Link__000005_LayerGroup.Name = `LayerGroup`
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.VisualTrack.LayerGroup]
-	__Link__000005_LayerGroup.Identifier = `ref_models.VisualTrack.LayerGroup`
+	//gong:ident [ref_models.Circle.LayerGroup]
+	__Link__000005_LayerGroup.Identifier = `ref_models.Circle.LayerGroup`
 
 	// comment added to overcome the problem with the comment map association
 
 	//gong:ident [ref_models.LayerGroup]
 	__Link__000005_LayerGroup.Fieldtypename = `ref_models.LayerGroup`
+	__Link__000005_LayerGroup.FieldOffsetX = -60.000000
+	__Link__000005_LayerGroup.FieldOffsetY = -9.000000
 	__Link__000005_LayerGroup.TargetMultiplicity = models.ZERO_ONE
+	__Link__000005_LayerGroup.TargetMultiplicityOffsetX = 12.000000
+	__Link__000005_LayerGroup.TargetMultiplicityOffsetY = -7.000000
 	__Link__000005_LayerGroup.SourceMultiplicity = models.MANY
+	__Link__000005_LayerGroup.SourceMultiplicityOffsetX = -15.000000
+	__Link__000005_LayerGroup.SourceMultiplicityOffsetY = 22.000000
+	__Link__000005_LayerGroup.StartOrientation = models.ORIENTATION_HORIZONTAL
+	__Link__000005_LayerGroup.StartRatio = 0.233660
+	__Link__000005_LayerGroup.EndOrientation = models.ORIENTATION_VERTICAL
+	__Link__000005_LayerGroup.EndRatio = 0.820903
+	__Link__000005_LayerGroup.CornerOffsetRatio = 0.222222
 
 	// Link values setup
 	__Link__000006_LayerGroup.Name = `LayerGroup`
 
 	// comment added to overcome the problem with the comment map association
 
-	//gong:ident [ref_models.Circle.LayerGroup]
-	__Link__000006_LayerGroup.Identifier = `ref_models.Circle.LayerGroup`
+	//gong:ident [ref_models.LayerGroupUse.LayerGroup]
+	__Link__000006_LayerGroup.Identifier = `ref_models.LayerGroupUse.LayerGroup`
 
 	// comment added to overcome the problem with the comment map association
 
 	//gong:ident [ref_models.LayerGroup]
 	__Link__000006_LayerGroup.Fieldtypename = `ref_models.LayerGroup`
+	__Link__000006_LayerGroup.FieldOffsetX = -64.000000
+	__Link__000006_LayerGroup.FieldOffsetY = -18.000000
 	__Link__000006_LayerGroup.TargetMultiplicity = models.ZERO_ONE
+	__Link__000006_LayerGroup.TargetMultiplicityOffsetX = -38.000000
+	__Link__000006_LayerGroup.TargetMultiplicityOffsetY = 20.000000
 	__Link__000006_LayerGroup.SourceMultiplicity = models.MANY
+	__Link__000006_LayerGroup.SourceMultiplicityOffsetX = -31.000000
+	__Link__000006_LayerGroup.SourceMultiplicityOffsetY = -6.000000
+	__Link__000006_LayerGroup.StartOrientation = models.ORIENTATION_HORIZONTAL
+	__Link__000006_LayerGroup.StartRatio = 0.886201
+	__Link__000006_LayerGroup.EndOrientation = models.ORIENTATION_HORIZONTAL
+	__Link__000006_LayerGroup.EndRatio = 0.531362
+	__Link__000006_LayerGroup.CornerOffsetRatio = -0.508194
 
 	// Link values setup
 	__Link__000007_LayerGroupUses.Name = `LayerGroupUses`
@@ -1281,17 +1354,28 @@ func NewDiagramInjection(stage *models.StageStruct) {
 
 	//gong:ident [ref_models.LayerGroupUse]
 	__Link__000007_LayerGroupUses.Fieldtypename = `ref_models.LayerGroupUse`
+	__Link__000007_LayerGroupUses.FieldOffsetX = -80.000000
+	__Link__000007_LayerGroupUses.FieldOffsetY = -18.999992
 	__Link__000007_LayerGroupUses.TargetMultiplicity = models.MANY
+	__Link__000007_LayerGroupUses.TargetMultiplicityOffsetX = -24.000000
+	__Link__000007_LayerGroupUses.TargetMultiplicityOffsetY = 16.000000
 	__Link__000007_LayerGroupUses.SourceMultiplicity = models.ZERO_ONE
+	__Link__000007_LayerGroupUses.SourceMultiplicityOffsetX = 10.000000
+	__Link__000007_LayerGroupUses.SourceMultiplicityOffsetY = 20.999992
+	__Link__000007_LayerGroupUses.StartOrientation = models.ORIENTATION_HORIZONTAL
+	__Link__000007_LayerGroupUses.StartRatio = 0.268545
+	__Link__000007_LayerGroupUses.EndOrientation = models.ORIENTATION_HORIZONTAL
+	__Link__000007_LayerGroupUses.EndRatio = 0.163082
+	__Link__000007_LayerGroupUses.CornerOffsetRatio = 1.280278
 
 	// Position values setup
-	__Position__000000_Pos_NewDiagram_Circle.X = 740.000000
-	__Position__000000_Pos_NewDiagram_Circle.Y = 250.000000
+	__Position__000000_Pos_NewDiagram_Circle.X = 817.000000
+	__Position__000000_Pos_NewDiagram_Circle.Y = 191.000000
 	__Position__000000_Pos_NewDiagram_Circle.Name = `Pos-NewDiagram-Circle`
 
 	// Position values setup
-	__Position__000001_Pos_NewDiagram_ColorEnum.X = 60.000000
-	__Position__000001_Pos_NewDiagram_ColorEnum.Y = 340.000000
+	__Position__000001_Pos_NewDiagram_ColorEnum.X = 44.000000
+	__Position__000001_Pos_NewDiagram_ColorEnum.Y = 315.000000
 	__Position__000001_Pos_NewDiagram_ColorEnum.Name = `Pos-NewDiagram-ColorEnum`
 
 	// Position values setup
@@ -1300,28 +1384,28 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__Position__000002_Pos_NewDiagram_DashStyleEnum.Name = `Pos-NewDiagram-DashStyleEnum`
 
 	// Position values setup
-	__Position__000003_Pos_NewDiagram_DivIcon.X = 340.000000
-	__Position__000003_Pos_NewDiagram_DivIcon.Y = 650.000000
+	__Position__000003_Pos_NewDiagram_DivIcon.X = 820.000000
+	__Position__000003_Pos_NewDiagram_DivIcon.Y = 834.000000
 	__Position__000003_Pos_NewDiagram_DivIcon.Name = `Pos-NewDiagram-DivIcon`
 
 	// Position values setup
-	__Position__000004_Pos_NewDiagram_LayerGroup.X = 960.000000
-	__Position__000004_Pos_NewDiagram_LayerGroup.Y = 120.000000
+	__Position__000004_Pos_NewDiagram_LayerGroup.X = 434.000000
+	__Position__000004_Pos_NewDiagram_LayerGroup.Y = 287.000000
 	__Position__000004_Pos_NewDiagram_LayerGroup.Name = `Pos-NewDiagram-LayerGroup`
 
 	// Position values setup
-	__Position__000005_Pos_NewDiagram_LayerGroupUse.X = 560.000000
-	__Position__000005_Pos_NewDiagram_LayerGroupUse.Y = 120.000000
+	__Position__000005_Pos_NewDiagram_LayerGroupUse.X = 435.000000
+	__Position__000005_Pos_NewDiagram_LayerGroupUse.Y = 113.000000
 	__Position__000005_Pos_NewDiagram_LayerGroupUse.Name = `Pos-NewDiagram-LayerGroupUse`
 
 	// Position values setup
-	__Position__000006_Pos_NewDiagram_MapOptions.X = 120.000000
-	__Position__000006_Pos_NewDiagram_MapOptions.Y = 20.000000
+	__Position__000006_Pos_NewDiagram_MapOptions.X = 45.000000
+	__Position__000006_Pos_NewDiagram_MapOptions.Y = 76.000000
 	__Position__000006_Pos_NewDiagram_MapOptions.Name = `Pos-NewDiagram-MapOptions`
 
 	// Position values setup
-	__Position__000007_Pos_NewDiagram_Marker.X = 740.000000
-	__Position__000007_Pos_NewDiagram_Marker.Y = 420.000000
+	__Position__000007_Pos_NewDiagram_Marker.X = 820.000000
+	__Position__000007_Pos_NewDiagram_Marker.Y = 425.000000
 	__Position__000007_Pos_NewDiagram_Marker.Name = `Pos-NewDiagram-Marker`
 
 	// Position values setup
@@ -1335,18 +1419,18 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__Position__000009_Pos_NewDiagram_TransmittingEnum.Name = `Pos-NewDiagram-TransmittingEnum`
 
 	// Position values setup
-	__Position__000010_Pos_NewDiagram_UserClick.X = 50.000000
-	__Position__000010_Pos_NewDiagram_UserClick.Y = 560.000000
+	__Position__000010_Pos_NewDiagram_UserClick.X = 43.000000
+	__Position__000010_Pos_NewDiagram_UserClick.Y = 490.000000
 	__Position__000010_Pos_NewDiagram_UserClick.Name = `Pos-NewDiagram-UserClick`
 
 	// Position values setup
-	__Position__000011_Pos_NewDiagram_VLine.X = 740.000000
-	__Position__000011_Pos_NewDiagram_VLine.Y = 560.000000
+	__Position__000011_Pos_NewDiagram_VLine.X = 819.000000
+	__Position__000011_Pos_NewDiagram_VLine.Y = 572.000000
 	__Position__000011_Pos_NewDiagram_VLine.Name = `Pos-NewDiagram-VLine`
 
 	// Position values setup
-	__Position__000012_Pos_NewDiagram_VisualTrack.X = 740.000000
-	__Position__000012_Pos_NewDiagram_VisualTrack.Y = 820.000000
+	__Position__000012_Pos_NewDiagram_VisualTrack.X = 392.000000
+	__Position__000012_Pos_NewDiagram_VisualTrack.Y = 837.000000
 	__Position__000012_Pos_NewDiagram_VisualTrack.Name = `Pos-NewDiagram-VisualTrack`
 
 	// Vertice values setup
@@ -1420,27 +1504,27 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongEnumShape__000003_NewDiagram_TransmittingEnum.GongEnumValueEntrys = append(__GongEnumShape__000003_NewDiagram_TransmittingEnum.GongEnumValueEntrys, __GongEnumValueEntry__000008_IS_TRANSMITTING)
 	__GongEnumShape__000003_NewDiagram_TransmittingEnum.GongEnumValueEntrys = append(__GongEnumShape__000003_NewDiagram_TransmittingEnum.GongEnumValueEntrys, __GongEnumValueEntry__000007_IS_NOT_TRANSMITTING)
 	__GongStructShape__000000_NewDiagram_Circle.Position = __Position__000000_Pos_NewDiagram_Circle
-	__GongStructShape__000000_NewDiagram_Circle.Fields = append(__GongStructShape__000000_NewDiagram_Circle.Fields, __Field__000017_Lat)
+	__GongStructShape__000000_NewDiagram_Circle.Fields = append(__GongStructShape__000000_NewDiagram_Circle.Fields, __Field__000021_Lat)
 	__GongStructShape__000000_NewDiagram_Circle.Fields = append(__GongStructShape__000000_NewDiagram_Circle.Fields, __Field__000026_Lng)
 	__GongStructShape__000000_NewDiagram_Circle.Fields = append(__GongStructShape__000000_NewDiagram_Circle.Fields, __Field__000039_Name)
 	__GongStructShape__000000_NewDiagram_Circle.Fields = append(__GongStructShape__000000_NewDiagram_Circle.Fields, __Field__000040_Radius)
-	__GongStructShape__000000_NewDiagram_Circle.Fields = append(__GongStructShape__000000_NewDiagram_Circle.Fields, __Field__000004_ColorEnum)
+	__GongStructShape__000000_NewDiagram_Circle.Fields = append(__GongStructShape__000000_NewDiagram_Circle.Fields, __Field__000005_ColorEnum)
 	__GongStructShape__000000_NewDiagram_Circle.Fields = append(__GongStructShape__000000_NewDiagram_Circle.Fields, __Field__000006_DashStyleEnum)
-	__GongStructShape__000000_NewDiagram_Circle.Links = append(__GongStructShape__000000_NewDiagram_Circle.Links, __Link__000006_LayerGroup)
+	__GongStructShape__000000_NewDiagram_Circle.Links = append(__GongStructShape__000000_NewDiagram_Circle.Links, __Link__000005_LayerGroup)
 	__GongStructShape__000001_NewDiagram_DivIcon.Position = __Position__000003_Pos_NewDiagram_DivIcon
-	__GongStructShape__000001_NewDiagram_DivIcon.Fields = append(__GongStructShape__000001_NewDiagram_DivIcon.Fields, __Field__000031_Name)
+	__GongStructShape__000001_NewDiagram_DivIcon.Fields = append(__GongStructShape__000001_NewDiagram_DivIcon.Fields, __Field__000035_Name)
 	__GongStructShape__000001_NewDiagram_DivIcon.Fields = append(__GongStructShape__000001_NewDiagram_DivIcon.Fields, __Field__000041_SVG)
 	__GongStructShape__000002_NewDiagram_LayerGroup.Position = __Position__000004_Pos_NewDiagram_LayerGroup
-	__GongStructShape__000002_NewDiagram_LayerGroup.Fields = append(__GongStructShape__000002_NewDiagram_LayerGroup.Fields, __Field__000032_Name)
+	__GongStructShape__000002_NewDiagram_LayerGroup.Fields = append(__GongStructShape__000002_NewDiagram_LayerGroup.Fields, __Field__000037_Name)
 	__GongStructShape__000002_NewDiagram_LayerGroup.Fields = append(__GongStructShape__000002_NewDiagram_LayerGroup.Fields, __Field__000010_DisplayName)
 	__GongStructShape__000003_NewDiagram_LayerGroupUse.Position = __Position__000005_Pos_NewDiagram_LayerGroupUse
 	__GongStructShape__000003_NewDiagram_LayerGroupUse.Fields = append(__GongStructShape__000003_NewDiagram_LayerGroupUse.Fields, __Field__000034_Name)
 	__GongStructShape__000003_NewDiagram_LayerGroupUse.Fields = append(__GongStructShape__000003_NewDiagram_LayerGroupUse.Fields, __Field__000008_Display)
-	__GongStructShape__000003_NewDiagram_LayerGroupUse.Links = append(__GongStructShape__000003_NewDiagram_LayerGroupUse.Links, __Link__000002_LayerGroup)
+	__GongStructShape__000003_NewDiagram_LayerGroupUse.Links = append(__GongStructShape__000003_NewDiagram_LayerGroupUse.Links, __Link__000006_LayerGroup)
 	__GongStructShape__000004_NewDiagram_MapOptions.Position = __Position__000006_Pos_NewDiagram_MapOptions
-	__GongStructShape__000004_NewDiagram_MapOptions.Fields = append(__GongStructShape__000004_NewDiagram_MapOptions.Fields, __Field__000020_Lat)
-	__GongStructShape__000004_NewDiagram_MapOptions.Fields = append(__GongStructShape__000004_NewDiagram_MapOptions.Fields, __Field__000027_Lng)
-	__GongStructShape__000004_NewDiagram_MapOptions.Fields = append(__GongStructShape__000004_NewDiagram_MapOptions.Fields, __Field__000037_Name)
+	__GongStructShape__000004_NewDiagram_MapOptions.Fields = append(__GongStructShape__000004_NewDiagram_MapOptions.Fields, __Field__000018_Lat)
+	__GongStructShape__000004_NewDiagram_MapOptions.Fields = append(__GongStructShape__000004_NewDiagram_MapOptions.Fields, __Field__000023_Lng)
+	__GongStructShape__000004_NewDiagram_MapOptions.Fields = append(__GongStructShape__000004_NewDiagram_MapOptions.Fields, __Field__000031_Name)
 	__GongStructShape__000004_NewDiagram_MapOptions.Fields = append(__GongStructShape__000004_NewDiagram_MapOptions.Fields, __Field__000049_ZoomLevel)
 	__GongStructShape__000004_NewDiagram_MapOptions.Fields = append(__GongStructShape__000004_NewDiagram_MapOptions.Fields, __Field__000046_UrlTemplate)
 	__GongStructShape__000004_NewDiagram_MapOptions.Fields = append(__GongStructShape__000004_NewDiagram_MapOptions.Fields, __Field__000000_Attribution)
@@ -1450,51 +1534,49 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000004_NewDiagram_MapOptions.Fields = append(__GongStructShape__000004_NewDiagram_MapOptions.Fields, __Field__000050_ZoomSnap)
 	__GongStructShape__000004_NewDiagram_MapOptions.Links = append(__GongStructShape__000004_NewDiagram_MapOptions.Links, __Link__000007_LayerGroupUses)
 	__GongStructShape__000005_NewDiagram_Marker.Position = __Position__000007_Pos_NewDiagram_Marker
-	__GongStructShape__000005_NewDiagram_Marker.Fields = append(__GongStructShape__000005_NewDiagram_Marker.Fields, __Field__000019_Lat)
-	__GongStructShape__000005_NewDiagram_Marker.Fields = append(__GongStructShape__000005_NewDiagram_Marker.Fields, __Field__000025_Lng)
-	__GongStructShape__000005_NewDiagram_Marker.Fields = append(__GongStructShape__000005_NewDiagram_Marker.Fields, __Field__000035_Name)
-	__GongStructShape__000005_NewDiagram_Marker.Fields = append(__GongStructShape__000005_NewDiagram_Marker.Fields, __Field__000005_ColorEnum)
+	__GongStructShape__000005_NewDiagram_Marker.Fields = append(__GongStructShape__000005_NewDiagram_Marker.Fields, __Field__000017_Lat)
+	__GongStructShape__000005_NewDiagram_Marker.Fields = append(__GongStructShape__000005_NewDiagram_Marker.Fields, __Field__000024_Lng)
+	__GongStructShape__000005_NewDiagram_Marker.Fields = append(__GongStructShape__000005_NewDiagram_Marker.Fields, __Field__000033_Name)
+	__GongStructShape__000005_NewDiagram_Marker.Fields = append(__GongStructShape__000005_NewDiagram_Marker.Fields, __Field__000002_ColorEnum)
 	__GongStructShape__000005_NewDiagram_Marker.Links = append(__GongStructShape__000005_NewDiagram_Marker.Links, __Link__000000_DivIcon)
-	__GongStructShape__000005_NewDiagram_Marker.Links = append(__GongStructShape__000005_NewDiagram_Marker.Links, __Link__000003_LayerGroup)
+	__GongStructShape__000005_NewDiagram_Marker.Links = append(__GongStructShape__000005_NewDiagram_Marker.Links, __Link__000002_LayerGroup)
 	__GongStructShape__000006_NewDiagram_UserClick.Position = __Position__000010_Pos_NewDiagram_UserClick
 	__GongStructShape__000006_NewDiagram_UserClick.Fields = append(__GongStructShape__000006_NewDiagram_UserClick.Fields, __Field__000038_Name)
-	__GongStructShape__000006_NewDiagram_UserClick.Fields = append(__GongStructShape__000006_NewDiagram_UserClick.Fields, __Field__000018_Lat)
-	__GongStructShape__000006_NewDiagram_UserClick.Fields = append(__GongStructShape__000006_NewDiagram_UserClick.Fields, __Field__000024_Lng)
+	__GongStructShape__000006_NewDiagram_UserClick.Fields = append(__GongStructShape__000006_NewDiagram_UserClick.Fields, __Field__000019_Lat)
+	__GongStructShape__000006_NewDiagram_UserClick.Fields = append(__GongStructShape__000006_NewDiagram_UserClick.Fields, __Field__000027_Lng)
 	__GongStructShape__000006_NewDiagram_UserClick.Fields = append(__GongStructShape__000006_NewDiagram_UserClick.Fields, __Field__000045_TimeOfClick)
 	__GongStructShape__000007_NewDiagram_VLine.Position = __Position__000011_Pos_NewDiagram_VLine
 	__GongStructShape__000007_NewDiagram_VLine.Fields = append(__GongStructShape__000007_NewDiagram_VLine.Fields, __Field__000043_StartLat)
 	__GongStructShape__000007_NewDiagram_VLine.Fields = append(__GongStructShape__000007_NewDiagram_VLine.Fields, __Field__000044_StartLng)
 	__GongStructShape__000007_NewDiagram_VLine.Fields = append(__GongStructShape__000007_NewDiagram_VLine.Fields, __Field__000012_EndLat)
 	__GongStructShape__000007_NewDiagram_VLine.Fields = append(__GongStructShape__000007_NewDiagram_VLine.Fields, __Field__000013_EndLng)
-	__GongStructShape__000007_NewDiagram_VLine.Fields = append(__GongStructShape__000007_NewDiagram_VLine.Fields, __Field__000036_Name)
-	__GongStructShape__000007_NewDiagram_VLine.Fields = append(__GongStructShape__000007_NewDiagram_VLine.Fields, __Field__000002_ColorEnum)
+	__GongStructShape__000007_NewDiagram_VLine.Fields = append(__GongStructShape__000007_NewDiagram_VLine.Fields, __Field__000032_Name)
+	__GongStructShape__000007_NewDiagram_VLine.Fields = append(__GongStructShape__000007_NewDiagram_VLine.Fields, __Field__000004_ColorEnum)
 	__GongStructShape__000007_NewDiagram_VLine.Fields = append(__GongStructShape__000007_NewDiagram_VLine.Fields, __Field__000007_DashStyleEnum)
 	__GongStructShape__000007_NewDiagram_VLine.Fields = append(__GongStructShape__000007_NewDiagram_VLine.Fields, __Field__000015_IsTransmitting)
 	__GongStructShape__000007_NewDiagram_VLine.Fields = append(__GongStructShape__000007_NewDiagram_VLine.Fields, __Field__000029_Message)
 	__GongStructShape__000007_NewDiagram_VLine.Fields = append(__GongStructShape__000007_NewDiagram_VLine.Fields, __Field__000016_IsTransmittingBackward)
 	__GongStructShape__000007_NewDiagram_VLine.Fields = append(__GongStructShape__000007_NewDiagram_VLine.Fields, __Field__000030_MessageBackward)
-	__GongStructShape__000007_NewDiagram_VLine.Links = append(__GongStructShape__000007_NewDiagram_VLine.Links, __Link__000004_LayerGroup)
+	__GongStructShape__000007_NewDiagram_VLine.Links = append(__GongStructShape__000007_NewDiagram_VLine.Links, __Link__000003_LayerGroup)
 	__GongStructShape__000008_NewDiagram_VisualTrack.Position = __Position__000012_Pos_NewDiagram_VisualTrack
-	__GongStructShape__000008_NewDiagram_VisualTrack.Fields = append(__GongStructShape__000008_NewDiagram_VisualTrack.Fields, __Field__000021_Lat)
-	__GongStructShape__000008_NewDiagram_VisualTrack.Fields = append(__GongStructShape__000008_NewDiagram_VisualTrack.Fields, __Field__000023_Lng)
+	__GongStructShape__000008_NewDiagram_VisualTrack.Fields = append(__GongStructShape__000008_NewDiagram_VisualTrack.Fields, __Field__000020_Lat)
+	__GongStructShape__000008_NewDiagram_VisualTrack.Fields = append(__GongStructShape__000008_NewDiagram_VisualTrack.Fields, __Field__000025_Lng)
 	__GongStructShape__000008_NewDiagram_VisualTrack.Fields = append(__GongStructShape__000008_NewDiagram_VisualTrack.Fields, __Field__000014_Heading)
 	__GongStructShape__000008_NewDiagram_VisualTrack.Fields = append(__GongStructShape__000008_NewDiagram_VisualTrack.Fields, __Field__000022_Level)
 	__GongStructShape__000008_NewDiagram_VisualTrack.Fields = append(__GongStructShape__000008_NewDiagram_VisualTrack.Fields, __Field__000042_Speed)
 	__GongStructShape__000008_NewDiagram_VisualTrack.Fields = append(__GongStructShape__000008_NewDiagram_VisualTrack.Fields, __Field__000047_VerticalSpeed)
-	__GongStructShape__000008_NewDiagram_VisualTrack.Fields = append(__GongStructShape__000008_NewDiagram_VisualTrack.Fields, __Field__000033_Name)
+	__GongStructShape__000008_NewDiagram_VisualTrack.Fields = append(__GongStructShape__000008_NewDiagram_VisualTrack.Fields, __Field__000036_Name)
 	__GongStructShape__000008_NewDiagram_VisualTrack.Fields = append(__GongStructShape__000008_NewDiagram_VisualTrack.Fields, __Field__000003_ColorEnum)
 	__GongStructShape__000008_NewDiagram_VisualTrack.Fields = append(__GongStructShape__000008_NewDiagram_VisualTrack.Fields, __Field__000011_DisplayTrackHistory)
 	__GongStructShape__000008_NewDiagram_VisualTrack.Fields = append(__GongStructShape__000008_NewDiagram_VisualTrack.Fields, __Field__000009_DisplayLevelAndSpeed)
 	__GongStructShape__000008_NewDiagram_VisualTrack.Links = append(__GongStructShape__000008_NewDiagram_VisualTrack.Links, __Link__000001_DivIcon)
-	__GongStructShape__000008_NewDiagram_VisualTrack.Links = append(__GongStructShape__000008_NewDiagram_VisualTrack.Links, __Link__000005_LayerGroup)
+	__GongStructShape__000008_NewDiagram_VisualTrack.Links = append(__GongStructShape__000008_NewDiagram_VisualTrack.Links, __Link__000004_LayerGroup)
 	__Link__000000_DivIcon.Middlevertice = __Vertice__000003_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_Marker_and_NewDiagram_DivIcon
 	__Link__000001_DivIcon.Middlevertice = __Vertice__000006_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_VisualTrack_and_NewDiagram_DivIcon
-	__Link__000002_LayerGroup.Middlevertice = __Vertice__000001_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_LayerGroupUse_and_NewDiagram_LayerGroup
-	__Link__000003_LayerGroup.Middlevertice = __Vertice__000004_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_Marker_and_NewDiagram_LayerGroup
-	__Link__000004_LayerGroup.Middlevertice = __Vertice__000005_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_VLine_and_NewDiagram_LayerGroup
-	__Link__000005_LayerGroup.Middlevertice = __Vertice__000007_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_VisualTrack_and_NewDiagram_LayerGroup
-	__Link__000006_LayerGroup.Middlevertice = __Vertice__000000_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_Circle_and_NewDiagram_LayerGroup
+	__Link__000002_LayerGroup.Middlevertice = __Vertice__000004_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_Marker_and_NewDiagram_LayerGroup
+	__Link__000003_LayerGroup.Middlevertice = __Vertice__000005_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_VLine_and_NewDiagram_LayerGroup
+	__Link__000004_LayerGroup.Middlevertice = __Vertice__000007_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_VisualTrack_and_NewDiagram_LayerGroup
+	__Link__000005_LayerGroup.Middlevertice = __Vertice__000000_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_Circle_and_NewDiagram_LayerGroup
+	__Link__000006_LayerGroup.Middlevertice = __Vertice__000001_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_LayerGroupUse_and_NewDiagram_LayerGroup
 	__Link__000007_LayerGroupUses.Middlevertice = __Vertice__000002_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_MapOptions_and_NewDiagram_LayerGroupUse
 }
-
-
