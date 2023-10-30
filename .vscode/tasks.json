@@ -88,6 +88,19 @@
       ]
     },
     {
+      "label": "01 - gongc gongfly -skipGoModCommands -skipNpmInstall",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/go/models"
+      },
+      "command": "gongc",
+      "group": "build",
+      "args": [
+        "-skipGoModCommands",
+        "-skipNpmInstall"
+      ]
+    },
+    {
       "label": "00 - update dependencies & go mod vendor",
       "type": "shell",
       "group": "build",

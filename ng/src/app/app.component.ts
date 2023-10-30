@@ -40,6 +40,8 @@ export class AppComponent implements OnInit {
   GongsimStackType = "github.com/fullstack-lang/gongsim/go/models"
   GongleafletStackType = "github.com/fullstack-lang/gongleaflet/go/models"
 
+  StackNames = gongfly.StacksNames
+
   constructor(
   ) {
 

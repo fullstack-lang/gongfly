@@ -12,7 +12,7 @@
         <ng-container *ngTemplateOutlet="radioToolbar"></ng-container>
     </as-split-area>
     <as-split-area [size]="$any('*')">
-        <lib-gongfly-dashboard [GONG__SIM__StackPath]="StackName" [GONG__LEAFLET__StackPath]="StackName">
+        <lib-gongfly-dashboard [GONG__SIM__StackPath]="StackNames.GongsimStackName" [GONG__LEAFLET__StackPath]="StackNames.GongLeafleatStackName">
         </lib-gongfly-dashboard>
     </as-split-area>
 </as-split>
@@ -26,15 +26,15 @@
             <as-split-area [size]=50>
                 <as-split direction="horizontal">
                     <as-split-area [size]="20">
-                        <lib-tree [GONG__StackPath]="StackName+'-sidebar'" name="gong"></lib-tree>
+                        <lib-tree [GONG__StackPath]="StackNames.GongflyProbeStacksPrefix+'-sidebar'" name="gong"></lib-tree>
                     </as-split-area>
                     <as-split-area [size]="50">
                         <div [ngStyle]="scrollStyle">
-                            <lib-material-table TableName="Table" [DataStack]="StackName+'-table'"></lib-material-table>
+                            <lib-material-table TableName="Table" [DataStack]="StackNames.GongflyProbeStacksPrefix+'-table'"></lib-material-table>
                         </div>
                     </as-split-area>
                     <as-split-area [size]="30">
-                        <lib-material-form FormName="Form" [DataStack]="StackName+'-form'"></lib-material-form>
+                        <lib-material-form FormName="Form" [DataStack]="StackNames.GongflyProbeStacksPrefix+'-form'"></lib-material-form>
                     </as-split-area>
                 </as-split>
             </as-split-area>
@@ -54,15 +54,15 @@
             <as-split-area [size]=50>
                 <as-split direction="horizontal">
                     <as-split-area [size]="20">
-                        <lib-tree [GONG__StackPath]="StackName+'-sidebar'" name="gong"></lib-tree>
+                        <lib-tree [GONG__StackPath]="StackNames.GongsimProbeStacksPrefix+'-sidebar'" name="gong"></lib-tree>
                     </as-split-area>
                     <as-split-area [size]="50">
                         <div [ngStyle]="scrollStyle">
-                            <lib-material-table TableName="Table" [DataStack]="StackName+'-table'"></lib-material-table>
+                            <lib-material-table TableName="Table" [DataStack]="StackNames.GongsimProbeStacksPrefix+'-table'"></lib-material-table>
                         </div>
                     </as-split-area>
                     <as-split-area [size]="30">
-                        <lib-material-form FormName="Form" [DataStack]="StackName+'-form'"></lib-material-form>
+                        <lib-material-form FormName="Form" [DataStack]="StackNames.GongsimProbeStacksPrefix+'-form'"></lib-material-form>
                     </as-split-area>
                 </as-split>
             </as-split-area>
@@ -82,15 +82,15 @@
             <as-split-area [size]=50>
                 <as-split direction="horizontal">
                     <as-split-area [size]="20">
-                        <lib-tree [GONG__StackPath]="StackName+'-sidebar'" name="gong"></lib-tree>
+                        <lib-tree [GONG__StackPath]="StackNames.GongleafletProbeStacksPrefix+'-sidebar'" name="gong"></lib-tree>
                     </as-split-area>
                     <as-split-area [size]="50">
                         <div [ngStyle]="scrollStyle">
-                            <lib-material-table TableName="Table" [DataStack]="StackName+'-table'"></lib-material-table>
+                            <lib-material-table TableName="Table" [DataStack]="StackNames.GongleafletProbeStacksPrefix+'-table'"></lib-material-table>
                         </div>
                     </as-split-area>
                     <as-split-area [size]="30">
-                        <lib-material-form FormName="Form" [DataStack]="StackName+'-form'"></lib-material-form>
+                        <lib-material-form FormName="Form" [DataStack]="StackNames.GongleafletProbeStacksPrefix+'-form'"></lib-material-form>
                     </as-split-area>
                 </as-split>
             </as-split-area>

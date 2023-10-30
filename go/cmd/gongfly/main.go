@@ -56,10 +56,10 @@ func main() {
 	var backRepo *gongfly_orm.BackRepoStruct
 
 	// persistence in a SQLite file on disk in memory
-	stage, backRepo = gongfly_fullstack.NewStackInstance(r, "gongfly")
+	stage, backRepo = gongfly_fullstack.NewStackInstance(r, gongfly_models.GongflyStackName.ToString())
 
-	gongleafletStage, gongleafletBackrepo := gongleaflet_fullstack.NewStackInstance(r, "gongfly")
-	gongsimStage, gongsimBackrepo := gongsim_fullstack.NewStackInstance(r, "gongfly")
+	gongleafletStage, gongleafletBackrepo := gongleaflet_fullstack.NewStackInstance(r, gongfly_models.GongLeafleatStackName.ToString())
+	gongsimStage, gongsimBackrepo := gongsim_fullstack.NewStackInstance(r, gongfly_models.GongsimStackName.ToString())
 
 	simulation := simulation.NewSimulation(stage, gongsimStage, gongleafletStage)
 
@@ -93,13 +93,13 @@ func main() {
 	gongleafletStage.Commit()
 
 	gongfly_probe.NewProbe(r, gongfly_go.GoModelsDir, gongfly_go.GoDiagramsDir,
-		*embeddedDiagrams, "gongfly", stage, backRepo)
+		*embeddedDiagrams, gongfly_models.GongflyProbeStacksPrefix.ToString(), stage, backRepo)
 
 	gongleaflet_probe.NewProbe(r, gongleaflet_go.GoModelsDir, gongleaflet_go.GoDiagramsDir,
-		*embeddedDiagrams, "gongleaflet", gongleafletStage, gongleafletBackrepo)
+		true, gongfly_models.GongleafletProbeStacksPrefix.ToString(), gongleafletStage, gongleafletBackrepo)
 
 	gongsim_probe.NewProbe(r, gongsim_go.GoModelsDir, gongsim_go.GoDiagramsDir,
-		*embeddedDiagrams, "gongsim", gongsimStage, gongsimBackrepo)
+		true, gongfly_models.GongsimProbeStacksPrefix.ToString(), gongsimStage, gongsimBackrepo)
 
 	log.Printf("Server ready serve on localhost:" + strconv.Itoa(*port))
 	err := r.Run(":" + strconv.Itoa(*port))

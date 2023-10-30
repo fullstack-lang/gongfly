@@ -548,16 +548,134 @@ func (reportenum ReportEnum) CodeValues() (res []string) {
 	return
 }
 
+// Utility function for StacksNames
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (stacksnames StacksNames) ToString() (res string) {
+
+	// migration of former implementation of enum
+	switch stacksnames {
+	// insertion code per enum code
+	case GongflyStackName:
+		res = "gongfly"
+	case GongLeafleatStackName:
+		res = "gongleaflet"
+	case GongsimStackName:
+		res = "gongsim"
+	case GongflyProbeStacksPrefix:
+		res = "gongfly-probe"
+	case GongsimProbeStacksPrefix:
+		res = "gongsim-probe"
+	case GongleafletProbeStacksPrefix:
+		res = "gongleaflet-probe"
+	}
+	return
+}
+
+func (stacksnames *StacksNames) FromString(input string) (err error) {
+
+	switch input {
+	// insertion code per enum code
+	case "gongfly":
+		*stacksnames = GongflyStackName
+	case "gongleaflet":
+		*stacksnames = GongLeafleatStackName
+	case "gongsim":
+		*stacksnames = GongsimStackName
+	case "gongfly-probe":
+		*stacksnames = GongflyProbeStacksPrefix
+	case "gongsim-probe":
+		*stacksnames = GongsimProbeStacksPrefix
+	case "gongleaflet-probe":
+		*stacksnames = GongleafletProbeStacksPrefix
+	default:
+		return errUnkownEnum
+	}
+	return
+}
+
+func (stacksnames *StacksNames) FromCodeString(input string) (err error) {
+
+	switch input {
+	// insertion code per enum code
+	case "GongflyStackName":
+		*stacksnames = GongflyStackName
+	case "GongLeafleatStackName":
+		*stacksnames = GongLeafleatStackName
+	case "GongsimStackName":
+		*stacksnames = GongsimStackName
+	case "GongflyProbeStacksPrefix":
+		*stacksnames = GongflyProbeStacksPrefix
+	case "GongsimProbeStacksPrefix":
+		*stacksnames = GongsimProbeStacksPrefix
+	case "GongleafletProbeStacksPrefix":
+		*stacksnames = GongleafletProbeStacksPrefix
+	default:
+		return errUnkownEnum
+	}
+	return
+}
+
+func (stacksnames *StacksNames) ToCodeString() (res string) {
+
+	switch *stacksnames {
+	// insertion code per enum code
+	case GongflyStackName:
+		res = "GongflyStackName"
+	case GongLeafleatStackName:
+		res = "GongLeafleatStackName"
+	case GongsimStackName:
+		res = "GongsimStackName"
+	case GongflyProbeStacksPrefix:
+		res = "GongflyProbeStacksPrefix"
+	case GongsimProbeStacksPrefix:
+		res = "GongsimProbeStacksPrefix"
+	case GongleafletProbeStacksPrefix:
+		res = "GongleafletProbeStacksPrefix"
+	}
+	return
+}
+
+func (stacksnames StacksNames) Codes() (res []string) {
+
+	res = make([]string, 0)
+
+	// insertion code per enum code
+	res = append(res, "GongflyStackName")
+	res = append(res, "GongLeafleatStackName")
+	res = append(res, "GongsimStackName")
+	res = append(res, "GongflyProbeStacksPrefix")
+	res = append(res, "GongsimProbeStacksPrefix")
+	res = append(res, "GongleafletProbeStacksPrefix")
+
+	return
+}
+
+func (stacksnames StacksNames) CodeValues() (res []string) {
+
+	res = make([]string, 0)
+
+	// insertion code per enum code
+	res = append(res, "gongfly")
+	res = append(res, "gongleaflet")
+	res = append(res, "gongsim")
+	res = append(res, "gongfly-probe")
+	res = append(res, "gongsim-probe")
+	res = append(res, "gongleaflet-probe")
+
+	return
+}
+
 // end of insertion point for enum utility functions
 
 type GongstructEnumStringField interface {
-	string | ConceptEnum | LinerStateEnum | MessageStateEnum | OperationalLineStateEnum | OrderEnum | RadarStateEnum | ReportEnum
+	string | ConceptEnum | LinerStateEnum | MessageStateEnum | OperationalLineStateEnum | OrderEnum | RadarStateEnum | ReportEnum | StacksNames
 	Codes() []string
 	CodeValues() []string
 }
 
 type PointerToGongstructEnumStringField interface {
-	*ConceptEnum | *LinerStateEnum | *MessageStateEnum | *OperationalLineStateEnum | *OrderEnum | *RadarStateEnum | *ReportEnum
+	*ConceptEnum | *LinerStateEnum | *MessageStateEnum | *OperationalLineStateEnum | *OrderEnum | *RadarStateEnum | *ReportEnum | *StacksNames
 	FromCodeString(input string) (err error)
 }
 
