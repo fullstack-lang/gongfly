@@ -12,17 +12,17 @@ import (
 
 type TreeNodeImplGongstruct struct {
 	gongStruct *gong_models.GongStruct
-	playground *Playground
+	probe *Probe
 }
 
 func NewTreeNodeImplGongstruct(
 	gongStruct *gong_models.GongStruct,
-	playground *Playground,
+	probe *Probe,
 ) (nodeImplGongstruct *TreeNodeImplGongstruct) {
 
 	nodeImplGongstruct = new(TreeNodeImplGongstruct)
 	nodeImplGongstruct.gongStruct = gongStruct
-	nodeImplGongstruct.playground = playground
+	nodeImplGongstruct.probe = probe
 	return
 }
 
@@ -53,25 +53,25 @@ func (nodeImplGongstruct *TreeNodeImplGongstruct) OnAfterUpdate(
 
 	// insertion point
 	if nodeImplGongstruct.gongStruct.GetName() == "CivilianAirport" {
-		fillUpTable[models.CivilianAirport](nodeImplGongstruct.playground)
+		fillUpTable[models.CivilianAirport](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "Liner" {
-		fillUpTable[models.Liner](nodeImplGongstruct.playground)
+		fillUpTable[models.Liner](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "Message" {
-		fillUpTable[models.Message](nodeImplGongstruct.playground)
+		fillUpTable[models.Message](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "OpsLine" {
-		fillUpTable[models.OpsLine](nodeImplGongstruct.playground)
+		fillUpTable[models.OpsLine](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "Radar" {
-		fillUpTable[models.Radar](nodeImplGongstruct.playground)
+		fillUpTable[models.Radar](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "Satellite" {
-		fillUpTable[models.Satellite](nodeImplGongstruct.playground)
+		fillUpTable[models.Satellite](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "Scenario" {
-		fillUpTable[models.Scenario](nodeImplGongstruct.playground)
+		fillUpTable[models.Scenario](nodeImplGongstruct.probe)
 	}
 
 	// set color for node and reset all other nodes color
@@ -81,5 +81,5 @@ func (nodeImplGongstruct *TreeNodeImplGongstruct) OnAfterUpdate(
 	stagedNode.BackgroundColor = "lightgrey"
 	gongtreeStage.Commit()
 
-	nodeImplGongstruct.playground.tableStage.Commit()
+	nodeImplGongstruct.probe.tableStage.Commit()
 }

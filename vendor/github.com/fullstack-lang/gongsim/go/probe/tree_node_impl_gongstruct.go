@@ -12,17 +12,17 @@ import (
 
 type TreeNodeImplGongstruct struct {
 	gongStruct *gong_models.GongStruct
-	playground *Playground
+	probe *Probe
 }
 
 func NewTreeNodeImplGongstruct(
 	gongStruct *gong_models.GongStruct,
-	playground *Playground,
+	probe *Probe,
 ) (nodeImplGongstruct *TreeNodeImplGongstruct) {
 
 	nodeImplGongstruct = new(TreeNodeImplGongstruct)
 	nodeImplGongstruct.gongStruct = gongStruct
-	nodeImplGongstruct.playground = playground
+	nodeImplGongstruct.probe = probe
 	return
 }
 
@@ -53,19 +53,19 @@ func (nodeImplGongstruct *TreeNodeImplGongstruct) OnAfterUpdate(
 
 	// insertion point
 	if nodeImplGongstruct.gongStruct.GetName() == "DummyAgent" {
-		fillUpTable[models.DummyAgent](nodeImplGongstruct.playground)
+		fillUpTable[models.DummyAgent](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "Engine" {
-		fillUpTable[models.Engine](nodeImplGongstruct.playground)
+		fillUpTable[models.Engine](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "Event" {
-		fillUpTable[models.Event](nodeImplGongstruct.playground)
+		fillUpTable[models.Event](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "GongsimCommand" {
-		fillUpTable[models.GongsimCommand](nodeImplGongstruct.playground)
+		fillUpTable[models.GongsimCommand](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "GongsimStatus" {
-		fillUpTable[models.GongsimStatus](nodeImplGongstruct.playground)
+		fillUpTable[models.GongsimStatus](nodeImplGongstruct.probe)
 	}
 
 	// set color for node and reset all other nodes color
@@ -75,5 +75,5 @@ func (nodeImplGongstruct *TreeNodeImplGongstruct) OnAfterUpdate(
 	stagedNode.BackgroundColor = "lightgrey"
 	gongtreeStage.Commit()
 
-	nodeImplGongstruct.playground.tableStage.Commit()
+	nodeImplGongstruct.probe.tableStage.Commit()
 }

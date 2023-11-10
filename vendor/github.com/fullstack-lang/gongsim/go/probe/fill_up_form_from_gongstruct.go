@@ -7,8 +7,8 @@ import (
 	"github.com/fullstack-lang/gongsim/go/models"
 )
 
-func FillUpFormFromGongstruct[T models.Gongstruct](instance *T, playground *Playground) {
-	formStage := playground.formStage
+func FillUpFormFromGongstruct[T models.Gongstruct](instance *T, probe *Probe) {
+	formStage := probe.formStage
 	formStage.Reset()
 	formStage.Commit()
 
@@ -20,50 +20,50 @@ func FillUpFormFromGongstruct[T models.Gongstruct](instance *T, playground *Play
 			Label: "Update DummyAgent Form",
 			OnSave: __gong__New__DummyAgentFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.Engine:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update Engine Form",
 			OnSave: __gong__New__EngineFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.Event:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update Event Form",
 			OnSave: __gong__New__EventFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.GongsimCommand:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update GongsimCommand Form",
 			OnSave: __gong__New__GongsimCommandFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.GongsimStatus:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update GongsimStatus Form",
 			OnSave: __gong__New__GongsimStatusFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	default:
 		_ = instancesTyped
 	}

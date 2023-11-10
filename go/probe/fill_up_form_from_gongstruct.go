@@ -7,8 +7,8 @@ import (
 	"github.com/fullstack-lang/gongfly/go/models"
 )
 
-func FillUpFormFromGongstruct[T models.Gongstruct](instance *T, playground *Playground) {
-	formStage := playground.formStage
+func FillUpFormFromGongstruct[T models.Gongstruct](instance *T, probe *Probe) {
+	formStage := probe.formStage
 	formStage.Reset()
 	formStage.Commit()
 
@@ -20,70 +20,70 @@ func FillUpFormFromGongstruct[T models.Gongstruct](instance *T, playground *Play
 			Label: "Update CivilianAirport Form",
 			OnSave: __gong__New__CivilianAirportFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.Liner:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update Liner Form",
 			OnSave: __gong__New__LinerFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.Message:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update Message Form",
 			OnSave: __gong__New__MessageFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.OpsLine:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update OpsLine Form",
 			OnSave: __gong__New__OpsLineFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.Radar:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update Radar Form",
 			OnSave: __gong__New__RadarFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.Satellite:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update Satellite Form",
 			OnSave: __gong__New__SatelliteFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.Scenario:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update Scenario Form",
 			OnSave: __gong__New__ScenarioFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	default:
 		_ = instancesTyped
 	}

@@ -8,11 +8,11 @@ import (
 )
 
 func FillUpFormFromGongstructName(
-	playground *Playground,
+	probe *Probe,
 	gongstructName string,
 	isNewInstance bool,
 ) {
-	formStage := playground.formStage
+	formStage := probe.formStage
 	formStage.Reset()
 	formStage.Commit()
 
@@ -32,55 +32,55 @@ func FillUpFormFromGongstructName(
 			Label: prefix + " DummyAgent Form",
 			OnSave: __gong__New__DummyAgentFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		dummyagent := new(models.DummyAgent)
-		FillUpForm(dummyagent, formGroup, playground)
+		FillUpForm(dummyagent, formGroup, probe)
 	case "Engine":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " Engine Form",
 			OnSave: __gong__New__EngineFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		engine := new(models.Engine)
-		FillUpForm(engine, formGroup, playground)
+		FillUpForm(engine, formGroup, probe)
 	case "Event":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " Event Form",
 			OnSave: __gong__New__EventFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		event := new(models.Event)
-		FillUpForm(event, formGroup, playground)
+		FillUpForm(event, formGroup, probe)
 	case "GongsimCommand":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " GongsimCommand Form",
 			OnSave: __gong__New__GongsimCommandFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		gongsimcommand := new(models.GongsimCommand)
-		FillUpForm(gongsimcommand, formGroup, playground)
+		FillUpForm(gongsimcommand, formGroup, probe)
 	case "GongsimStatus":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " GongsimStatus Form",
 			OnSave: __gong__New__GongsimStatusFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		gongsimstatus := new(models.GongsimStatus)
-		FillUpForm(gongsimstatus, formGroup, playground)
+		FillUpForm(gongsimstatus, formGroup, probe)
 	}
 	formStage.Commit()
 }

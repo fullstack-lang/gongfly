@@ -31,6 +31,7 @@ import { VLineService } from './vline.service'
 import { VisualTrackDB } from './visualtrack-db'
 import { VisualTrackService } from './visualtrack.service'
 
+export const StackType = "github.com/fullstack-lang/gongleaflet/go/models"
 
 // FrontRepo stores all instances in a front repository (design pattern repository)
 export class FrontRepo { // insertion point sub template

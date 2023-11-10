@@ -19,6 +19,7 @@ import { GongsimCommandService } from './gongsimcommand.service'
 import { GongsimStatusDB } from './gongsimstatus-db'
 import { GongsimStatusService } from './gongsimstatus.service'
 
+export const StackType = "github.com/fullstack-lang/gongsim/go/models"
 
 // FrontRepo stores all instances in a front repository (design pattern repository)
 export class FrontRepo { // insertion point sub template

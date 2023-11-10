@@ -20,10 +20,10 @@ var __dummy_orm = orm.BackRepoStruct{}
 // insertion point
 func __gong__New__CircleFormCallback(
 	circle *models.Circle,
-	playground *Playground,
+	probe *Probe,
 ) (circleFormCallback *CircleFormCallback) {
 	circleFormCallback = new(CircleFormCallback)
-	circleFormCallback.playground = playground
+	circleFormCallback.probe = probe
 	circleFormCallback.circle = circle
 
 	circleFormCallback.CreationMode = (circle == nil)
@@ -37,7 +37,7 @@ type CircleFormCallback struct {
 	// If the form call is called on the creation of a new instnace
 	CreationMode bool
 
-	playground *Playground
+	probe *Probe
 }
 
 func (circleFormCallback *CircleFormCallback) OnSave() {
@@ -46,16 +46,16 @@ func (circleFormCallback *CircleFormCallback) OnSave() {
 
 	// checkout formStage to have the form group on the stage synchronized with the
 	// back repo (and front repo)
-	circleFormCallback.playground.formStage.Checkout()
+	circleFormCallback.probe.formStage.Checkout()
 
 	if circleFormCallback.circle == nil {
-		circleFormCallback.circle = new(models.Circle).Stage(circleFormCallback.playground.stageOfInterest)
+		circleFormCallback.circle = new(models.Circle).Stage(circleFormCallback.probe.stageOfInterest)
 	}
 	circle_ := circleFormCallback.circle
 	_ = circle_
 
 	// get the formGroup
-	formGroup := circleFormCallback.playground.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
+	formGroup := circleFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
 
 	for _, formDiv := range formGroup.FormDivs {
 		switch formDiv.Name {
@@ -73,39 +73,39 @@ func (circleFormCallback *CircleFormCallback) OnSave() {
 		case "DashStyleEnum":
 			FormDivEnumStringFieldToField(&(circle_.DashStyleEnum), formDiv)
 		case "LayerGroup":
-			FormDivSelectFieldToField(&(circle_.LayerGroup), circleFormCallback.playground.stageOfInterest, formDiv)
+			FormDivSelectFieldToField(&(circle_.LayerGroup), circleFormCallback.probe.stageOfInterest, formDiv)
 		}
 	}
 
-	circleFormCallback.playground.stageOfInterest.Commit()
+	circleFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.Circle](
-		circleFormCallback.playground,
+		circleFormCallback.probe,
 	)
-	circleFormCallback.playground.tableStage.Commit()
+	circleFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
 	if circleFormCallback.CreationMode {
-		circleFormCallback.playground.formStage.Reset()
+		circleFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
 			OnSave: __gong__New__CircleFormCallback(
 				nil,
-				circleFormCallback.playground,
+				circleFormCallback.probe,
 			),
-		}).Stage(circleFormCallback.playground.formStage)
+		}).Stage(circleFormCallback.probe.formStage)
 		circle := new(models.Circle)
-		FillUpForm(circle, newFormGroup, circleFormCallback.playground)
-		circleFormCallback.playground.formStage.Commit()
+		FillUpForm(circle, newFormGroup, circleFormCallback.probe)
+		circleFormCallback.probe.formStage.Commit()
 	}
 
-	fillUpTree(circleFormCallback.playground)
+	fillUpTree(circleFormCallback.probe)
 }
 func __gong__New__DivIconFormCallback(
 	divicon *models.DivIcon,
-	playground *Playground,
+	probe *Probe,
 ) (diviconFormCallback *DivIconFormCallback) {
 	diviconFormCallback = new(DivIconFormCallback)
-	diviconFormCallback.playground = playground
+	diviconFormCallback.probe = probe
 	diviconFormCallback.divicon = divicon
 
 	diviconFormCallback.CreationMode = (divicon == nil)
@@ -119,7 +119,7 @@ type DivIconFormCallback struct {
 	// If the form call is called on the creation of a new instnace
 	CreationMode bool
 
-	playground *Playground
+	probe *Probe
 }
 
 func (diviconFormCallback *DivIconFormCallback) OnSave() {
@@ -128,16 +128,16 @@ func (diviconFormCallback *DivIconFormCallback) OnSave() {
 
 	// checkout formStage to have the form group on the stage synchronized with the
 	// back repo (and front repo)
-	diviconFormCallback.playground.formStage.Checkout()
+	diviconFormCallback.probe.formStage.Checkout()
 
 	if diviconFormCallback.divicon == nil {
-		diviconFormCallback.divicon = new(models.DivIcon).Stage(diviconFormCallback.playground.stageOfInterest)
+		diviconFormCallback.divicon = new(models.DivIcon).Stage(diviconFormCallback.probe.stageOfInterest)
 	}
 	divicon_ := diviconFormCallback.divicon
 	_ = divicon_
 
 	// get the formGroup
-	formGroup := diviconFormCallback.playground.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
+	formGroup := diviconFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
 
 	for _, formDiv := range formGroup.FormDivs {
 		switch formDiv.Name {
@@ -149,35 +149,35 @@ func (diviconFormCallback *DivIconFormCallback) OnSave() {
 		}
 	}
 
-	diviconFormCallback.playground.stageOfInterest.Commit()
+	diviconFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.DivIcon](
-		diviconFormCallback.playground,
+		diviconFormCallback.probe,
 	)
-	diviconFormCallback.playground.tableStage.Commit()
+	diviconFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
 	if diviconFormCallback.CreationMode {
-		diviconFormCallback.playground.formStage.Reset()
+		diviconFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
 			OnSave: __gong__New__DivIconFormCallback(
 				nil,
-				diviconFormCallback.playground,
+				diviconFormCallback.probe,
 			),
-		}).Stage(diviconFormCallback.playground.formStage)
+		}).Stage(diviconFormCallback.probe.formStage)
 		divicon := new(models.DivIcon)
-		FillUpForm(divicon, newFormGroup, diviconFormCallback.playground)
-		diviconFormCallback.playground.formStage.Commit()
+		FillUpForm(divicon, newFormGroup, diviconFormCallback.probe)
+		diviconFormCallback.probe.formStage.Commit()
 	}
 
-	fillUpTree(diviconFormCallback.playground)
+	fillUpTree(diviconFormCallback.probe)
 }
 func __gong__New__LayerGroupFormCallback(
 	layergroup *models.LayerGroup,
-	playground *Playground,
+	probe *Probe,
 ) (layergroupFormCallback *LayerGroupFormCallback) {
 	layergroupFormCallback = new(LayerGroupFormCallback)
-	layergroupFormCallback.playground = playground
+	layergroupFormCallback.probe = probe
 	layergroupFormCallback.layergroup = layergroup
 
 	layergroupFormCallback.CreationMode = (layergroup == nil)
@@ -191,7 +191,7 @@ type LayerGroupFormCallback struct {
 	// If the form call is called on the creation of a new instnace
 	CreationMode bool
 
-	playground *Playground
+	probe *Probe
 }
 
 func (layergroupFormCallback *LayerGroupFormCallback) OnSave() {
@@ -200,16 +200,16 @@ func (layergroupFormCallback *LayerGroupFormCallback) OnSave() {
 
 	// checkout formStage to have the form group on the stage synchronized with the
 	// back repo (and front repo)
-	layergroupFormCallback.playground.formStage.Checkout()
+	layergroupFormCallback.probe.formStage.Checkout()
 
 	if layergroupFormCallback.layergroup == nil {
-		layergroupFormCallback.layergroup = new(models.LayerGroup).Stage(layergroupFormCallback.playground.stageOfInterest)
+		layergroupFormCallback.layergroup = new(models.LayerGroup).Stage(layergroupFormCallback.probe.stageOfInterest)
 	}
 	layergroup_ := layergroupFormCallback.layergroup
 	_ = layergroup_
 
 	// get the formGroup
-	formGroup := layergroupFormCallback.playground.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
+	formGroup := layergroupFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
 
 	for _, formDiv := range formGroup.FormDivs {
 		switch formDiv.Name {
@@ -221,35 +221,35 @@ func (layergroupFormCallback *LayerGroupFormCallback) OnSave() {
 		}
 	}
 
-	layergroupFormCallback.playground.stageOfInterest.Commit()
+	layergroupFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.LayerGroup](
-		layergroupFormCallback.playground,
+		layergroupFormCallback.probe,
 	)
-	layergroupFormCallback.playground.tableStage.Commit()
+	layergroupFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
 	if layergroupFormCallback.CreationMode {
-		layergroupFormCallback.playground.formStage.Reset()
+		layergroupFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
 			OnSave: __gong__New__LayerGroupFormCallback(
 				nil,
-				layergroupFormCallback.playground,
+				layergroupFormCallback.probe,
 			),
-		}).Stage(layergroupFormCallback.playground.formStage)
+		}).Stage(layergroupFormCallback.probe.formStage)
 		layergroup := new(models.LayerGroup)
-		FillUpForm(layergroup, newFormGroup, layergroupFormCallback.playground)
-		layergroupFormCallback.playground.formStage.Commit()
+		FillUpForm(layergroup, newFormGroup, layergroupFormCallback.probe)
+		layergroupFormCallback.probe.formStage.Commit()
 	}
 
-	fillUpTree(layergroupFormCallback.playground)
+	fillUpTree(layergroupFormCallback.probe)
 }
 func __gong__New__LayerGroupUseFormCallback(
 	layergroupuse *models.LayerGroupUse,
-	playground *Playground,
+	probe *Probe,
 ) (layergroupuseFormCallback *LayerGroupUseFormCallback) {
 	layergroupuseFormCallback = new(LayerGroupUseFormCallback)
-	layergroupuseFormCallback.playground = playground
+	layergroupuseFormCallback.probe = probe
 	layergroupuseFormCallback.layergroupuse = layergroupuse
 
 	layergroupuseFormCallback.CreationMode = (layergroupuse == nil)
@@ -263,7 +263,7 @@ type LayerGroupUseFormCallback struct {
 	// If the form call is called on the creation of a new instnace
 	CreationMode bool
 
-	playground *Playground
+	probe *Probe
 }
 
 func (layergroupuseFormCallback *LayerGroupUseFormCallback) OnSave() {
@@ -272,16 +272,16 @@ func (layergroupuseFormCallback *LayerGroupUseFormCallback) OnSave() {
 
 	// checkout formStage to have the form group on the stage synchronized with the
 	// back repo (and front repo)
-	layergroupuseFormCallback.playground.formStage.Checkout()
+	layergroupuseFormCallback.probe.formStage.Checkout()
 
 	if layergroupuseFormCallback.layergroupuse == nil {
-		layergroupuseFormCallback.layergroupuse = new(models.LayerGroupUse).Stage(layergroupuseFormCallback.playground.stageOfInterest)
+		layergroupuseFormCallback.layergroupuse = new(models.LayerGroupUse).Stage(layergroupuseFormCallback.probe.stageOfInterest)
 	}
 	layergroupuse_ := layergroupuseFormCallback.layergroupuse
 	_ = layergroupuse_
 
 	// get the formGroup
-	formGroup := layergroupuseFormCallback.playground.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
+	formGroup := layergroupuseFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
 
 	for _, formDiv := range formGroup.FormDivs {
 		switch formDiv.Name {
@@ -291,7 +291,7 @@ func (layergroupuseFormCallback *LayerGroupUseFormCallback) OnSave() {
 		case "IsDisplayed":
 			FormDivBasicFieldToField(&(layergroupuse_.IsDisplayed), formDiv)
 		case "LayerGroup":
-			FormDivSelectFieldToField(&(layergroupuse_.LayerGroup), layergroupuseFormCallback.playground.stageOfInterest, formDiv)
+			FormDivSelectFieldToField(&(layergroupuse_.LayerGroup), layergroupuseFormCallback.probe.stageOfInterest, formDiv)
 		case "MapOptions:LayerGroupUses":
 			// we need to retrieve the field owner before the change
 			var pastMapOptionsOwner *models.MapOptions
@@ -300,8 +300,8 @@ func (layergroupuseFormCallback *LayerGroupUseFormCallback) OnSave() {
 			rf.GongstructName = "MapOptions"
 			rf.Fieldname = "LayerGroupUses"
 			reverseFieldOwner := orm.GetReverseFieldOwner(
-				layergroupuseFormCallback.playground.stageOfInterest,
-				layergroupuseFormCallback.playground.backRepoOfInterest,
+				layergroupuseFormCallback.probe.stageOfInterest,
+				layergroupuseFormCallback.probe.backRepoOfInterest,
 				layergroupuse_,
 				&rf)
 
@@ -317,7 +317,7 @@ func (layergroupuseFormCallback *LayerGroupUseFormCallback) OnSave() {
 				// we need to retrieve the field owner after the change
 				// parse all astrcut and get the one with the name in the
 				// div
-				for _mapoptions := range *models.GetGongstructInstancesSet[models.MapOptions](layergroupuseFormCallback.playground.stageOfInterest) {
+				for _mapoptions := range *models.GetGongstructInstancesSet[models.MapOptions](layergroupuseFormCallback.probe.stageOfInterest) {
 
 					// the match is base on the name
 					if _mapoptions.GetName() == formDiv.FormFields[0].FormFieldSelect.Value.GetName() {
@@ -337,35 +337,35 @@ func (layergroupuseFormCallback *LayerGroupUseFormCallback) OnSave() {
 		}
 	}
 
-	layergroupuseFormCallback.playground.stageOfInterest.Commit()
+	layergroupuseFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.LayerGroupUse](
-		layergroupuseFormCallback.playground,
+		layergroupuseFormCallback.probe,
 	)
-	layergroupuseFormCallback.playground.tableStage.Commit()
+	layergroupuseFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
 	if layergroupuseFormCallback.CreationMode {
-		layergroupuseFormCallback.playground.formStage.Reset()
+		layergroupuseFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
 			OnSave: __gong__New__LayerGroupUseFormCallback(
 				nil,
-				layergroupuseFormCallback.playground,
+				layergroupuseFormCallback.probe,
 			),
-		}).Stage(layergroupuseFormCallback.playground.formStage)
+		}).Stage(layergroupuseFormCallback.probe.formStage)
 		layergroupuse := new(models.LayerGroupUse)
-		FillUpForm(layergroupuse, newFormGroup, layergroupuseFormCallback.playground)
-		layergroupuseFormCallback.playground.formStage.Commit()
+		FillUpForm(layergroupuse, newFormGroup, layergroupuseFormCallback.probe)
+		layergroupuseFormCallback.probe.formStage.Commit()
 	}
 
-	fillUpTree(layergroupuseFormCallback.playground)
+	fillUpTree(layergroupuseFormCallback.probe)
 }
 func __gong__New__MapOptionsFormCallback(
 	mapoptions *models.MapOptions,
-	playground *Playground,
+	probe *Probe,
 ) (mapoptionsFormCallback *MapOptionsFormCallback) {
 	mapoptionsFormCallback = new(MapOptionsFormCallback)
-	mapoptionsFormCallback.playground = playground
+	mapoptionsFormCallback.probe = probe
 	mapoptionsFormCallback.mapoptions = mapoptions
 
 	mapoptionsFormCallback.CreationMode = (mapoptions == nil)
@@ -379,7 +379,7 @@ type MapOptionsFormCallback struct {
 	// If the form call is called on the creation of a new instnace
 	CreationMode bool
 
-	playground *Playground
+	probe *Probe
 }
 
 func (mapoptionsFormCallback *MapOptionsFormCallback) OnSave() {
@@ -388,16 +388,16 @@ func (mapoptionsFormCallback *MapOptionsFormCallback) OnSave() {
 
 	// checkout formStage to have the form group on the stage synchronized with the
 	// back repo (and front repo)
-	mapoptionsFormCallback.playground.formStage.Checkout()
+	mapoptionsFormCallback.probe.formStage.Checkout()
 
 	if mapoptionsFormCallback.mapoptions == nil {
-		mapoptionsFormCallback.mapoptions = new(models.MapOptions).Stage(mapoptionsFormCallback.playground.stageOfInterest)
+		mapoptionsFormCallback.mapoptions = new(models.MapOptions).Stage(mapoptionsFormCallback.probe.stageOfInterest)
 	}
 	mapoptions_ := mapoptionsFormCallback.mapoptions
 	_ = mapoptions_
 
 	// get the formGroup
-	formGroup := mapoptionsFormCallback.playground.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
+	formGroup := mapoptionsFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
 
 	for _, formDiv := range formGroup.FormDivs {
 		switch formDiv.Name {
@@ -425,35 +425,35 @@ func (mapoptionsFormCallback *MapOptionsFormCallback) OnSave() {
 		}
 	}
 
-	mapoptionsFormCallback.playground.stageOfInterest.Commit()
+	mapoptionsFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.MapOptions](
-		mapoptionsFormCallback.playground,
+		mapoptionsFormCallback.probe,
 	)
-	mapoptionsFormCallback.playground.tableStage.Commit()
+	mapoptionsFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
 	if mapoptionsFormCallback.CreationMode {
-		mapoptionsFormCallback.playground.formStage.Reset()
+		mapoptionsFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
 			OnSave: __gong__New__MapOptionsFormCallback(
 				nil,
-				mapoptionsFormCallback.playground,
+				mapoptionsFormCallback.probe,
 			),
-		}).Stage(mapoptionsFormCallback.playground.formStage)
+		}).Stage(mapoptionsFormCallback.probe.formStage)
 		mapoptions := new(models.MapOptions)
-		FillUpForm(mapoptions, newFormGroup, mapoptionsFormCallback.playground)
-		mapoptionsFormCallback.playground.formStage.Commit()
+		FillUpForm(mapoptions, newFormGroup, mapoptionsFormCallback.probe)
+		mapoptionsFormCallback.probe.formStage.Commit()
 	}
 
-	fillUpTree(mapoptionsFormCallback.playground)
+	fillUpTree(mapoptionsFormCallback.probe)
 }
 func __gong__New__MarkerFormCallback(
 	marker *models.Marker,
-	playground *Playground,
+	probe *Probe,
 ) (markerFormCallback *MarkerFormCallback) {
 	markerFormCallback = new(MarkerFormCallback)
-	markerFormCallback.playground = playground
+	markerFormCallback.probe = probe
 	markerFormCallback.marker = marker
 
 	markerFormCallback.CreationMode = (marker == nil)
@@ -467,7 +467,7 @@ type MarkerFormCallback struct {
 	// If the form call is called on the creation of a new instnace
 	CreationMode bool
 
-	playground *Playground
+	probe *Probe
 }
 
 func (markerFormCallback *MarkerFormCallback) OnSave() {
@@ -476,16 +476,16 @@ func (markerFormCallback *MarkerFormCallback) OnSave() {
 
 	// checkout formStage to have the form group on the stage synchronized with the
 	// back repo (and front repo)
-	markerFormCallback.playground.formStage.Checkout()
+	markerFormCallback.probe.formStage.Checkout()
 
 	if markerFormCallback.marker == nil {
-		markerFormCallback.marker = new(models.Marker).Stage(markerFormCallback.playground.stageOfInterest)
+		markerFormCallback.marker = new(models.Marker).Stage(markerFormCallback.probe.stageOfInterest)
 	}
 	marker_ := markerFormCallback.marker
 	_ = marker_
 
 	// get the formGroup
-	formGroup := markerFormCallback.playground.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
+	formGroup := markerFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
 
 	for _, formDiv := range formGroup.FormDivs {
 		switch formDiv.Name {
@@ -499,41 +499,41 @@ func (markerFormCallback *MarkerFormCallback) OnSave() {
 		case "ColorEnum":
 			FormDivEnumStringFieldToField(&(marker_.ColorEnum), formDiv)
 		case "LayerGroup":
-			FormDivSelectFieldToField(&(marker_.LayerGroup), markerFormCallback.playground.stageOfInterest, formDiv)
+			FormDivSelectFieldToField(&(marker_.LayerGroup), markerFormCallback.probe.stageOfInterest, formDiv)
 		case "DivIcon":
-			FormDivSelectFieldToField(&(marker_.DivIcon), markerFormCallback.playground.stageOfInterest, formDiv)
+			FormDivSelectFieldToField(&(marker_.DivIcon), markerFormCallback.probe.stageOfInterest, formDiv)
 		}
 	}
 
-	markerFormCallback.playground.stageOfInterest.Commit()
+	markerFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.Marker](
-		markerFormCallback.playground,
+		markerFormCallback.probe,
 	)
-	markerFormCallback.playground.tableStage.Commit()
+	markerFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
 	if markerFormCallback.CreationMode {
-		markerFormCallback.playground.formStage.Reset()
+		markerFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
 			OnSave: __gong__New__MarkerFormCallback(
 				nil,
-				markerFormCallback.playground,
+				markerFormCallback.probe,
 			),
-		}).Stage(markerFormCallback.playground.formStage)
+		}).Stage(markerFormCallback.probe.formStage)
 		marker := new(models.Marker)
-		FillUpForm(marker, newFormGroup, markerFormCallback.playground)
-		markerFormCallback.playground.formStage.Commit()
+		FillUpForm(marker, newFormGroup, markerFormCallback.probe)
+		markerFormCallback.probe.formStage.Commit()
 	}
 
-	fillUpTree(markerFormCallback.playground)
+	fillUpTree(markerFormCallback.probe)
 }
 func __gong__New__UserClickFormCallback(
 	userclick *models.UserClick,
-	playground *Playground,
+	probe *Probe,
 ) (userclickFormCallback *UserClickFormCallback) {
 	userclickFormCallback = new(UserClickFormCallback)
-	userclickFormCallback.playground = playground
+	userclickFormCallback.probe = probe
 	userclickFormCallback.userclick = userclick
 
 	userclickFormCallback.CreationMode = (userclick == nil)
@@ -547,7 +547,7 @@ type UserClickFormCallback struct {
 	// If the form call is called on the creation of a new instnace
 	CreationMode bool
 
-	playground *Playground
+	probe *Probe
 }
 
 func (userclickFormCallback *UserClickFormCallback) OnSave() {
@@ -556,16 +556,16 @@ func (userclickFormCallback *UserClickFormCallback) OnSave() {
 
 	// checkout formStage to have the form group on the stage synchronized with the
 	// back repo (and front repo)
-	userclickFormCallback.playground.formStage.Checkout()
+	userclickFormCallback.probe.formStage.Checkout()
 
 	if userclickFormCallback.userclick == nil {
-		userclickFormCallback.userclick = new(models.UserClick).Stage(userclickFormCallback.playground.stageOfInterest)
+		userclickFormCallback.userclick = new(models.UserClick).Stage(userclickFormCallback.probe.stageOfInterest)
 	}
 	userclick_ := userclickFormCallback.userclick
 	_ = userclick_
 
 	// get the formGroup
-	formGroup := userclickFormCallback.playground.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
+	formGroup := userclickFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
 
 	for _, formDiv := range formGroup.FormDivs {
 		switch formDiv.Name {
@@ -579,35 +579,35 @@ func (userclickFormCallback *UserClickFormCallback) OnSave() {
 		}
 	}
 
-	userclickFormCallback.playground.stageOfInterest.Commit()
+	userclickFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.UserClick](
-		userclickFormCallback.playground,
+		userclickFormCallback.probe,
 	)
-	userclickFormCallback.playground.tableStage.Commit()
+	userclickFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
 	if userclickFormCallback.CreationMode {
-		userclickFormCallback.playground.formStage.Reset()
+		userclickFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
 			OnSave: __gong__New__UserClickFormCallback(
 				nil,
-				userclickFormCallback.playground,
+				userclickFormCallback.probe,
 			),
-		}).Stage(userclickFormCallback.playground.formStage)
+		}).Stage(userclickFormCallback.probe.formStage)
 		userclick := new(models.UserClick)
-		FillUpForm(userclick, newFormGroup, userclickFormCallback.playground)
-		userclickFormCallback.playground.formStage.Commit()
+		FillUpForm(userclick, newFormGroup, userclickFormCallback.probe)
+		userclickFormCallback.probe.formStage.Commit()
 	}
 
-	fillUpTree(userclickFormCallback.playground)
+	fillUpTree(userclickFormCallback.probe)
 }
 func __gong__New__VLineFormCallback(
 	vline *models.VLine,
-	playground *Playground,
+	probe *Probe,
 ) (vlineFormCallback *VLineFormCallback) {
 	vlineFormCallback = new(VLineFormCallback)
-	vlineFormCallback.playground = playground
+	vlineFormCallback.probe = probe
 	vlineFormCallback.vline = vline
 
 	vlineFormCallback.CreationMode = (vline == nil)
@@ -621,7 +621,7 @@ type VLineFormCallback struct {
 	// If the form call is called on the creation of a new instnace
 	CreationMode bool
 
-	playground *Playground
+	probe *Probe
 }
 
 func (vlineFormCallback *VLineFormCallback) OnSave() {
@@ -630,16 +630,16 @@ func (vlineFormCallback *VLineFormCallback) OnSave() {
 
 	// checkout formStage to have the form group on the stage synchronized with the
 	// back repo (and front repo)
-	vlineFormCallback.playground.formStage.Checkout()
+	vlineFormCallback.probe.formStage.Checkout()
 
 	if vlineFormCallback.vline == nil {
-		vlineFormCallback.vline = new(models.VLine).Stage(vlineFormCallback.playground.stageOfInterest)
+		vlineFormCallback.vline = new(models.VLine).Stage(vlineFormCallback.probe.stageOfInterest)
 	}
 	vline_ := vlineFormCallback.vline
 	_ = vline_
 
 	// get the formGroup
-	formGroup := vlineFormCallback.playground.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
+	formGroup := vlineFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
 
 	for _, formDiv := range formGroup.FormDivs {
 		switch formDiv.Name {
@@ -659,7 +659,7 @@ func (vlineFormCallback *VLineFormCallback) OnSave() {
 		case "DashStyleEnum":
 			FormDivEnumStringFieldToField(&(vline_.DashStyleEnum), formDiv)
 		case "LayerGroup":
-			FormDivSelectFieldToField(&(vline_.LayerGroup), vlineFormCallback.playground.stageOfInterest, formDiv)
+			FormDivSelectFieldToField(&(vline_.LayerGroup), vlineFormCallback.probe.stageOfInterest, formDiv)
 		case "IsTransmitting":
 			FormDivEnumStringFieldToField(&(vline_.IsTransmitting), formDiv)
 		case "Message":
@@ -671,35 +671,35 @@ func (vlineFormCallback *VLineFormCallback) OnSave() {
 		}
 	}
 
-	vlineFormCallback.playground.stageOfInterest.Commit()
+	vlineFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.VLine](
-		vlineFormCallback.playground,
+		vlineFormCallback.probe,
 	)
-	vlineFormCallback.playground.tableStage.Commit()
+	vlineFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
 	if vlineFormCallback.CreationMode {
-		vlineFormCallback.playground.formStage.Reset()
+		vlineFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
 			OnSave: __gong__New__VLineFormCallback(
 				nil,
-				vlineFormCallback.playground,
+				vlineFormCallback.probe,
 			),
-		}).Stage(vlineFormCallback.playground.formStage)
+		}).Stage(vlineFormCallback.probe.formStage)
 		vline := new(models.VLine)
-		FillUpForm(vline, newFormGroup, vlineFormCallback.playground)
-		vlineFormCallback.playground.formStage.Commit()
+		FillUpForm(vline, newFormGroup, vlineFormCallback.probe)
+		vlineFormCallback.probe.formStage.Commit()
 	}
 
-	fillUpTree(vlineFormCallback.playground)
+	fillUpTree(vlineFormCallback.probe)
 }
 func __gong__New__VisualTrackFormCallback(
 	visualtrack *models.VisualTrack,
-	playground *Playground,
+	probe *Probe,
 ) (visualtrackFormCallback *VisualTrackFormCallback) {
 	visualtrackFormCallback = new(VisualTrackFormCallback)
-	visualtrackFormCallback.playground = playground
+	visualtrackFormCallback.probe = probe
 	visualtrackFormCallback.visualtrack = visualtrack
 
 	visualtrackFormCallback.CreationMode = (visualtrack == nil)
@@ -713,7 +713,7 @@ type VisualTrackFormCallback struct {
 	// If the form call is called on the creation of a new instnace
 	CreationMode bool
 
-	playground *Playground
+	probe *Probe
 }
 
 func (visualtrackFormCallback *VisualTrackFormCallback) OnSave() {
@@ -722,16 +722,16 @@ func (visualtrackFormCallback *VisualTrackFormCallback) OnSave() {
 
 	// checkout formStage to have the form group on the stage synchronized with the
 	// back repo (and front repo)
-	visualtrackFormCallback.playground.formStage.Checkout()
+	visualtrackFormCallback.probe.formStage.Checkout()
 
 	if visualtrackFormCallback.visualtrack == nil {
-		visualtrackFormCallback.visualtrack = new(models.VisualTrack).Stage(visualtrackFormCallback.playground.stageOfInterest)
+		visualtrackFormCallback.visualtrack = new(models.VisualTrack).Stage(visualtrackFormCallback.probe.stageOfInterest)
 	}
 	visualtrack_ := visualtrackFormCallback.visualtrack
 	_ = visualtrack_
 
 	// get the formGroup
-	formGroup := visualtrackFormCallback.playground.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
+	formGroup := visualtrackFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
 
 	for _, formDiv := range formGroup.FormDivs {
 		switch formDiv.Name {
@@ -753,9 +753,9 @@ func (visualtrackFormCallback *VisualTrackFormCallback) OnSave() {
 		case "ColorEnum":
 			FormDivEnumStringFieldToField(&(visualtrack_.ColorEnum), formDiv)
 		case "LayerGroup":
-			FormDivSelectFieldToField(&(visualtrack_.LayerGroup), visualtrackFormCallback.playground.stageOfInterest, formDiv)
+			FormDivSelectFieldToField(&(visualtrack_.LayerGroup), visualtrackFormCallback.probe.stageOfInterest, formDiv)
 		case "DivIcon":
-			FormDivSelectFieldToField(&(visualtrack_.DivIcon), visualtrackFormCallback.playground.stageOfInterest, formDiv)
+			FormDivSelectFieldToField(&(visualtrack_.DivIcon), visualtrackFormCallback.probe.stageOfInterest, formDiv)
 		case "DisplayTrackHistory":
 			FormDivBasicFieldToField(&(visualtrack_.DisplayTrackHistory), formDiv)
 		case "DisplayLevelAndSpeed":
@@ -763,26 +763,26 @@ func (visualtrackFormCallback *VisualTrackFormCallback) OnSave() {
 		}
 	}
 
-	visualtrackFormCallback.playground.stageOfInterest.Commit()
+	visualtrackFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.VisualTrack](
-		visualtrackFormCallback.playground,
+		visualtrackFormCallback.probe,
 	)
-	visualtrackFormCallback.playground.tableStage.Commit()
+	visualtrackFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
 	if visualtrackFormCallback.CreationMode {
-		visualtrackFormCallback.playground.formStage.Reset()
+		visualtrackFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
 			OnSave: __gong__New__VisualTrackFormCallback(
 				nil,
-				visualtrackFormCallback.playground,
+				visualtrackFormCallback.probe,
 			),
-		}).Stage(visualtrackFormCallback.playground.formStage)
+		}).Stage(visualtrackFormCallback.probe.formStage)
 		visualtrack := new(models.VisualTrack)
-		FillUpForm(visualtrack, newFormGroup, visualtrackFormCallback.playground)
-		visualtrackFormCallback.playground.formStage.Commit()
+		FillUpForm(visualtrack, newFormGroup, visualtrackFormCallback.probe)
+		visualtrackFormCallback.probe.formStage.Commit()
 	}
 
-	fillUpTree(visualtrackFormCallback.playground)
+	fillUpTree(visualtrackFormCallback.probe)
 }

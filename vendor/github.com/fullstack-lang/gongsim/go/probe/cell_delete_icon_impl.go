@@ -11,17 +11,17 @@ import (
 
 func NewCellDeleteIconImpl[T models.Gongstruct](
 	Instance *T,
-	playground *Playground,
+	probe *Probe,
 ) (cellDeleteIconImpl *CellDeleteIconImpl[T]) {
 	cellDeleteIconImpl = new(CellDeleteIconImpl[T])
 	cellDeleteIconImpl.Instance = Instance
-	cellDeleteIconImpl.playground = playground
+	cellDeleteIconImpl.probe = probe
 	return
 }
 
 type CellDeleteIconImpl[T models.Gongstruct] struct {
 	Instance   *T
-	playground *Playground
+	probe *Probe
 }
 
 func (cellDeleteIconImpl *CellDeleteIconImpl[T]) CellIconUpdated(stage *gongtable.StageStruct,
@@ -31,22 +31,22 @@ func (cellDeleteIconImpl *CellDeleteIconImpl[T]) CellIconUpdated(stage *gongtabl
 	switch instancesTyped := any(cellDeleteIconImpl.Instance).(type) {
 	// insertion point
 	case *models.DummyAgent:
-		instancesTyped.Unstage(cellDeleteIconImpl.playground.stageOfInterest)
+		instancesTyped.Unstage(cellDeleteIconImpl.probe.stageOfInterest)
 	case *models.Engine:
-		instancesTyped.Unstage(cellDeleteIconImpl.playground.stageOfInterest)
+		instancesTyped.Unstage(cellDeleteIconImpl.probe.stageOfInterest)
 	case *models.Event:
-		instancesTyped.Unstage(cellDeleteIconImpl.playground.stageOfInterest)
+		instancesTyped.Unstage(cellDeleteIconImpl.probe.stageOfInterest)
 	case *models.GongsimCommand:
-		instancesTyped.Unstage(cellDeleteIconImpl.playground.stageOfInterest)
+		instancesTyped.Unstage(cellDeleteIconImpl.probe.stageOfInterest)
 	case *models.GongsimStatus:
-		instancesTyped.Unstage(cellDeleteIconImpl.playground.stageOfInterest)
+		instancesTyped.Unstage(cellDeleteIconImpl.probe.stageOfInterest)
 	default:
 		_ = instancesTyped
 	}
-	cellDeleteIconImpl.playground.stageOfInterest.Commit()
+	cellDeleteIconImpl.probe.stageOfInterest.Commit()
 
-	fillUpTable[T](cellDeleteIconImpl.playground)
-	fillUpTree(cellDeleteIconImpl.playground)
-	cellDeleteIconImpl.playground.tableStage.Commit()
+	fillUpTable[T](cellDeleteIconImpl.probe)
+	fillUpTree(cellDeleteIconImpl.probe)
+	cellDeleteIconImpl.probe.tableStage.Commit()
 }
 

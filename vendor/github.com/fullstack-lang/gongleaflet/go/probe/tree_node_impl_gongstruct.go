@@ -12,17 +12,17 @@ import (
 
 type TreeNodeImplGongstruct struct {
 	gongStruct *gong_models.GongStruct
-	playground *Playground
+	probe *Probe
 }
 
 func NewTreeNodeImplGongstruct(
 	gongStruct *gong_models.GongStruct,
-	playground *Playground,
+	probe *Probe,
 ) (nodeImplGongstruct *TreeNodeImplGongstruct) {
 
 	nodeImplGongstruct = new(TreeNodeImplGongstruct)
 	nodeImplGongstruct.gongStruct = gongStruct
-	nodeImplGongstruct.playground = playground
+	nodeImplGongstruct.probe = probe
 	return
 }
 
@@ -53,31 +53,31 @@ func (nodeImplGongstruct *TreeNodeImplGongstruct) OnAfterUpdate(
 
 	// insertion point
 	if nodeImplGongstruct.gongStruct.GetName() == "Circle" {
-		fillUpTable[models.Circle](nodeImplGongstruct.playground)
+		fillUpTable[models.Circle](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "DivIcon" {
-		fillUpTable[models.DivIcon](nodeImplGongstruct.playground)
+		fillUpTable[models.DivIcon](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "LayerGroup" {
-		fillUpTable[models.LayerGroup](nodeImplGongstruct.playground)
+		fillUpTable[models.LayerGroup](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "LayerGroupUse" {
-		fillUpTable[models.LayerGroupUse](nodeImplGongstruct.playground)
+		fillUpTable[models.LayerGroupUse](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "MapOptions" {
-		fillUpTable[models.MapOptions](nodeImplGongstruct.playground)
+		fillUpTable[models.MapOptions](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "Marker" {
-		fillUpTable[models.Marker](nodeImplGongstruct.playground)
+		fillUpTable[models.Marker](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "UserClick" {
-		fillUpTable[models.UserClick](nodeImplGongstruct.playground)
+		fillUpTable[models.UserClick](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "VLine" {
-		fillUpTable[models.VLine](nodeImplGongstruct.playground)
+		fillUpTable[models.VLine](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "VisualTrack" {
-		fillUpTable[models.VisualTrack](nodeImplGongstruct.playground)
+		fillUpTable[models.VisualTrack](nodeImplGongstruct.probe)
 	}
 
 	// set color for node and reset all other nodes color
@@ -87,5 +87,5 @@ func (nodeImplGongstruct *TreeNodeImplGongstruct) OnAfterUpdate(
 	stagedNode.BackgroundColor = "lightgrey"
 	gongtreeStage.Commit()
 
-	nodeImplGongstruct.playground.tableStage.Commit()
+	nodeImplGongstruct.probe.tableStage.Commit()
 }

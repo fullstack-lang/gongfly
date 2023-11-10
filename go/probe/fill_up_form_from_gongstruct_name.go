@@ -8,11 +8,11 @@ import (
 )
 
 func FillUpFormFromGongstructName(
-	playground *Playground,
+	probe *Probe,
 	gongstructName string,
 	isNewInstance bool,
 ) {
-	formStage := playground.formStage
+	formStage := probe.formStage
 	formStage.Reset()
 	formStage.Commit()
 
@@ -32,77 +32,77 @@ func FillUpFormFromGongstructName(
 			Label: prefix + " CivilianAirport Form",
 			OnSave: __gong__New__CivilianAirportFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		civilianairport := new(models.CivilianAirport)
-		FillUpForm(civilianairport, formGroup, playground)
+		FillUpForm(civilianairport, formGroup, probe)
 	case "Liner":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " Liner Form",
 			OnSave: __gong__New__LinerFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		liner := new(models.Liner)
-		FillUpForm(liner, formGroup, playground)
+		FillUpForm(liner, formGroup, probe)
 	case "Message":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " Message Form",
 			OnSave: __gong__New__MessageFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		message := new(models.Message)
-		FillUpForm(message, formGroup, playground)
+		FillUpForm(message, formGroup, probe)
 	case "OpsLine":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " OpsLine Form",
 			OnSave: __gong__New__OpsLineFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		opsline := new(models.OpsLine)
-		FillUpForm(opsline, formGroup, playground)
+		FillUpForm(opsline, formGroup, probe)
 	case "Radar":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " Radar Form",
 			OnSave: __gong__New__RadarFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		radar := new(models.Radar)
-		FillUpForm(radar, formGroup, playground)
+		FillUpForm(radar, formGroup, probe)
 	case "Satellite":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " Satellite Form",
 			OnSave: __gong__New__SatelliteFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		satellite := new(models.Satellite)
-		FillUpForm(satellite, formGroup, playground)
+		FillUpForm(satellite, formGroup, probe)
 	case "Scenario":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " Scenario Form",
 			OnSave: __gong__New__ScenarioFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		scenario := new(models.Scenario)
-		FillUpForm(scenario, formGroup, playground)
+		FillUpForm(scenario, formGroup, probe)
 	}
 	formStage.Commit()
 }

@@ -20,6 +20,7 @@ require (
 	github.com/kellydunn/golang-geo v0.7.0
 	github.com/tealeg/xlsx/v3 v3.3.4
 	github.com/xuri/excelize/v2 v2.8.0
+	golang.org/x/exp v0.0.0-20231108232855-2478ac86f678
 	gorm.io/gorm v1.25.5
 )
 
@@ -71,7 +72,6 @@ require (
 	github.com/ziutek/mymysql v1.5.4 // indirect
 	golang.org/x/arch v0.6.0 // indirect
 	golang.org/x/crypto v0.15.0 // indirect
-	golang.org/x/exp v0.0.0-20231108232855-2478ac86f678 // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.18.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect

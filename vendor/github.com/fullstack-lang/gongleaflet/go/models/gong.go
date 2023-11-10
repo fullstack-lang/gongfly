@@ -160,6 +160,10 @@ type StageStruct struct {
 	// the to be removed stops here
 }
 
+func (stage *StageStruct) GetType() string {
+	return "github.com/fullstack-lang/gongleaflet/go/models"
+}
+
 type GONG__Identifier struct {
 	Ident string
 	Type  GONG__ExpressionType
