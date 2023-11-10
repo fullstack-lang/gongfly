@@ -5,11 +5,8 @@ import (
 	"log"
 	"strconv"
 
-	gongfly_go "github.com/fullstack-lang/gongfly/go"
-	gongfly_fullstack "github.com/fullstack-lang/gongfly/go/fullstack"
 	gongfly_models "github.com/fullstack-lang/gongfly/go/models"
-	gongfly_orm "github.com/fullstack-lang/gongfly/go/orm"
-	gongfly_probe "github.com/fullstack-lang/gongfly/go/probe"
+	gongfly_stack "github.com/fullstack-lang/gongfly/go/stack"
 	gongfly_static "github.com/fullstack-lang/gongfly/go/static"
 
 	"github.com/fullstack-lang/gongfly/go/visuals"
@@ -20,19 +17,18 @@ import (
 
 	gongfly_visuals "github.com/fullstack-lang/gongfly/go/visuals"
 
-	gongleaflet_go "github.com/fullstack-lang/gongleaflet/go"
-	gongleaflet_fullstack "github.com/fullstack-lang/gongleaflet/go/fullstack"
 	gongleaflet_models "github.com/fullstack-lang/gongleaflet/go/models"
-	gongleaflet_probe "github.com/fullstack-lang/gongleaflet/go/probe"
+	gongleaflet_stack "github.com/fullstack-lang/gongleaflet/go/stack"
 
-	gongsim_go "github.com/fullstack-lang/gongsim/go"
-	gongsim_fullstack "github.com/fullstack-lang/gongsim/go/fullstack"
 	gongsim_models "github.com/fullstack-lang/gongsim/go/models"
-	gongsim_probe "github.com/fullstack-lang/gongsim/go/probe"
+	gongsim_stack "github.com/fullstack-lang/gongsim/go/stack"
 )
 
 var (
 	logGINFlag = flag.Bool("logGIN", false, "log mode for gin")
+
+	unmarshallFromCode = flag.String("unmarshallFromCode", "", "unmarshall data from go file and '.go' (must be lowercased without spaces), If unmarshallFromCode arg is '', no unmarshalling")
+	marshallOnCommit   = flag.String("marshallOnCommit", "", "on all commits, marshall staged data to a go file with the marshall name and '.go' (must be lowercased without spaces). If marshall arg is '', no marshalling")
 
 	diagrams         = flag.Bool("diagrams", true, "parse/analysis go/models and go/diagrams")
 	embeddedDiagrams = flag.Bool("embeddedDiagrams", false, "parse/analysis go/models and go/embeddedDiagrams")
@@ -52,54 +48,42 @@ func main() {
 	r := gongfly_static.ServeStaticFiles(*logGINFlag)
 
 	// setup stack
-	var stage *gongfly_models.StageStruct
-	var backRepo *gongfly_orm.BackRepoStruct
+	stack := gongfly_stack.NewStack(r, gongfly_models.GongflyStackName.ToString(), *unmarshallFromCode, *marshallOnCommit, "", *embeddedDiagrams, true)
+	stack.Probe.Refresh()
+	stage := stack.Stage
+	gongleafletStack := gongleaflet_stack.NewStack(r, gongfly_models.GongLeafleatStackName.ToString(), "", "", "", true, true)
+	gongsimStack := gongsim_stack.NewStack(r, gongfly_models.GongsimStackName.ToString(), "", "", "", true, true)
 
-	// persistence in a SQLite file on disk in memory
-	stage, backRepo = gongfly_fullstack.NewStackInstance(r, gongfly_models.GongflyStackName.ToString())
-
-	gongleafletStage, gongleafletBackrepo := gongleaflet_fullstack.NewStackInstance(r, gongfly_models.GongLeafleatStackName.ToString())
-	gongsimStage, gongsimBackrepo := gongsim_fullstack.NewStackInstance(r, gongfly_models.GongsimStackName.ToString())
-
-	simulation := simulation.NewSimulation(stage, gongsimStage, gongleafletStage)
+	simulation := simulation.NewSimulation(stage, gongsimStack.Stage, gongleafletStack.Stage)
 
 	// the gongsim command orchestrates the simulation engine regarding to the
 	// the rest of the stack. It manages when the stage has to be commited to the
 	// back repo or when the back repo has to be checked out to the stage
-	gongsimCommand := gongsim_models.NewGongSimCommand(gongsimStage, simulation.GetEngine())
+	gongsimCommand := gongsim_models.NewGongSimCommand(gongsimStack.Stage, simulation.GetEngine())
 	_ = gongsimCommand
 
 	// load all elments
-	gongfly_icons.LoadIcons(gongleafletStage)
+	gongfly_icons.LoadIcons(gongleafletStack.Stage)
 
 	// reference.LoadSatellites(stage, simulation.GetEngine())
 	reference.LoadCenters(stage, simulation.GetEngine())
 	reference.LoadLiners(stage, simulation.GetEngine())
 
-	defaultLayer := new(gongleaflet_models.LayerGroup).Stage(gongleafletStage)
+	defaultLayer := new(gongleaflet_models.LayerGroup).Stage(gongleafletStack.Stage)
 	defaultLayer.Name = "default"
 	defaultLayer.DisplayName = "default"
-	visuals.LoadLayerGroups(gongleafletStage)
-	visuals.LoadLayerGroupsUse(gongleafletStage)
-	visuals.LoadMapOptions(gongleafletStage)
+	visuals.LoadLayerGroups(gongleafletStack.Stage)
+	visuals.LoadLayerGroupsUse(gongleafletStack.Stage)
+	visuals.LoadMapOptions(gongleafletStack.Stage)
 
 	gongfly_visuals.AttachVisualElementsToModelElements(
 		stage,
-		gongleafletStage, defaultLayer)
+		gongleafletStack.Stage, defaultLayer)
 
 	// commits stages
 	stage.Commit()
-	gongsimStage.Commit()
-	gongleafletStage.Commit()
-
-	gongfly_probe.NewProbe(r, gongfly_go.GoModelsDir, gongfly_go.GoDiagramsDir,
-		*embeddedDiagrams, gongfly_models.GongflyProbeStacksPrefix.ToString(), stage, backRepo)
-
-	gongleaflet_probe.NewProbe(r, gongleaflet_go.GoModelsDir, gongleaflet_go.GoDiagramsDir,
-		true, gongfly_models.GongleafletProbeStacksPrefix.ToString(), gongleafletStage, gongleafletBackrepo)
-
-	gongsim_probe.NewProbe(r, gongsim_go.GoModelsDir, gongsim_go.GoDiagramsDir,
-		true, gongfly_models.GongsimProbeStacksPrefix.ToString(), gongsimStage, gongsimBackrepo)
+	gongsimStack.Stage.Commit()
+	gongleafletStack.Stage.Commit()
 
 	log.Printf("Server ready serve on localhost:" + strconv.Itoa(*port))
 	err := r.Run(":" + strconv.Itoa(*port))
