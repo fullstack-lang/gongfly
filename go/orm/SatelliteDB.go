@@ -366,7 +366,13 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseTwo(backRepo *Bac
 func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, satelliteDB *SatelliteDB) (Error error) {
 
 	satellite := backRepoSatellite.Map_SatelliteDBID_SatellitePtr[satelliteDB.ID]
-	_ = satellite // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	satelliteDB.DecodePointers(backRepo, satellite)
+
+	return
+}
+
+func (satelliteDB *SatelliteDB) DecodePointers(backRepo *BackRepoStruct, satellite *models.Satellite) {
 
 	// insertion point for checkout of pointer encoding
 	return
@@ -725,7 +731,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) ResetReversePointers(backRepo 
 	return
 }
 
-func (backRepoSatellite *BackRepoSatelliteStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Satellite) (Error error) {
+func (backRepoSatellite *BackRepoSatelliteStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, satellite *models.Satellite) (Error error) {
 
 	// fetch matching satelliteDB
 	if satelliteDB, ok := backRepoSatellite.Map_SatelliteDBID_SatelliteDB[idx]; ok {

@@ -293,6 +293,9 @@ func (controller *Controller) UpdateOpsLine(c *gin.Context) {
 	opslineNew := new(models.OpsLine)
 	opslineDB.CopyBasicFieldsToOpsLine(opslineNew)
 
+	// redeem pointers
+	opslineDB.DecodePointers(backRepo, opslineNew)
+
 	// get stage instance from DB instance, and call callback function
 	opslineOld := backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[opslineDB.ID]
 	if opslineOld != nil {

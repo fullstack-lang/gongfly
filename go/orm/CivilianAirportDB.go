@@ -324,7 +324,13 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseTwo(b
 func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, civilianairportDB *CivilianAirportDB) (Error error) {
 
 	civilianairport := backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr[civilianairportDB.ID]
-	_ = civilianairport // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	civilianairportDB.DecodePointers(backRepo, civilianairport)
+
+	return
+}
+
+func (civilianairportDB *CivilianAirportDB) DecodePointers(backRepo *BackRepoStruct, civilianairport *models.CivilianAirport) {
 
 	// insertion point for checkout of pointer encoding
 	return
@@ -599,7 +605,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) ResetReversePointe
 	return
 }
 
-func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.CivilianAirport) (Error error) {
+func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, civilianairport *models.CivilianAirport) (Error error) {
 
 	// fetch matching civilianairportDB
 	if civilianairportDB, ok := backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[idx]; ok {

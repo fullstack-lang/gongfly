@@ -293,6 +293,9 @@ func (controller *Controller) UpdateSatellite(c *gin.Context) {
 	satelliteNew := new(models.Satellite)
 	satelliteDB.CopyBasicFieldsToSatellite(satelliteNew)
 
+	// redeem pointers
+	satelliteDB.DecodePointers(backRepo, satelliteNew)
+
 	// get stage instance from DB instance, and call callback function
 	satelliteOld := backRepo.BackRepoSatellite.Map_SatelliteDBID_SatellitePtr[satelliteDB.ID]
 	if satelliteOld != nil {

@@ -415,7 +415,13 @@ func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseTwo(backRepo *BackRep
 func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, messageDB *MessageDB) (Error error) {
 
 	message := backRepoMessage.Map_MessageDBID_MessagePtr[messageDB.ID]
-	_ = message // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	messageDB.DecodePointers(backRepo, message)
+
+	return
+}
+
+func (messageDB *MessageDB) DecodePointers(backRepo *BackRepoStruct, message *models.Message) {
 
 	// insertion point for checkout of pointer encoding
 	return
@@ -870,7 +876,7 @@ func (backRepoMessage *BackRepoMessageStruct) ResetReversePointers(backRepo *Bac
 	return
 }
 
-func (backRepoMessage *BackRepoMessageStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Message) (Error error) {
+func (backRepoMessage *BackRepoMessageStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, message *models.Message) (Error error) {
 
 	// fetch matching messageDB
 	if messageDB, ok := backRepoMessage.Map_MessageDBID_MessageDB[idx]; ok {

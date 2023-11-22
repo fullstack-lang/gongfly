@@ -336,7 +336,13 @@ func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseTwo(backRepo *BackR
 func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, scenarioDB *ScenarioDB) (Error error) {
 
 	scenario := backRepoScenario.Map_ScenarioDBID_ScenarioPtr[scenarioDB.ID]
-	_ = scenario // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	scenarioDB.DecodePointers(backRepo, scenario)
+
+	return
+}
+
+func (scenarioDB *ScenarioDB) DecodePointers(backRepo *BackRepoStruct, scenario *models.Scenario) {
 
 	// insertion point for checkout of pointer encoding
 	return
@@ -635,7 +641,7 @@ func (backRepoScenario *BackRepoScenarioStruct) ResetReversePointers(backRepo *B
 	return
 }
 
-func (backRepoScenario *BackRepoScenarioStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Scenario) (Error error) {
+func (backRepoScenario *BackRepoScenarioStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, scenario *models.Scenario) (Error error) {
 
 	// fetch matching scenarioDB
 	if scenarioDB, ok := backRepoScenario.Map_ScenarioDBID_ScenarioDB[idx]; ok {

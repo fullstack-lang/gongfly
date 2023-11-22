@@ -293,6 +293,9 @@ func (controller *Controller) UpdateCivilianAirport(c *gin.Context) {
 	civilianairportNew := new(models.CivilianAirport)
 	civilianairportDB.CopyBasicFieldsToCivilianAirport(civilianairportNew)
 
+	// redeem pointers
+	civilianairportDB.DecodePointers(backRepo, civilianairportNew)
+
 	// get stage instance from DB instance, and call callback function
 	civilianairportOld := backRepo.BackRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportPtr[civilianairportDB.ID]
 	if civilianairportOld != nil {

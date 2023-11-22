@@ -293,6 +293,9 @@ func (controller *Controller) UpdateRadar(c *gin.Context) {
 	radarNew := new(models.Radar)
 	radarDB.CopyBasicFieldsToRadar(radarNew)
 
+	// redeem pointers
+	radarDB.DecodePointers(backRepo, radarNew)
+
 	// get stage instance from DB instance, and call callback function
 	radarOld := backRepo.BackRepoRadar.Map_RadarDBID_RadarPtr[radarDB.ID]
 	if radarOld != nil {

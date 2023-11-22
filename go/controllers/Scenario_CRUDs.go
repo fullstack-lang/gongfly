@@ -293,6 +293,9 @@ func (controller *Controller) UpdateScenario(c *gin.Context) {
 	scenarioNew := new(models.Scenario)
 	scenarioDB.CopyBasicFieldsToScenario(scenarioNew)
 
+	// redeem pointers
+	scenarioDB.DecodePointers(backRepo, scenarioNew)
+
 	// get stage instance from DB instance, and call callback function
 	scenarioOld := backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr[scenarioDB.ID]
 	if scenarioOld != nil {

@@ -360,7 +360,13 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseTwo(backRepo *BackRep
 func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, opslineDB *OpsLineDB) (Error error) {
 
 	opsline := backRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[opslineDB.ID]
-	_ = opsline // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	opslineDB.DecodePointers(backRepo, opsline)
+
+	return
+}
+
+func (opslineDB *OpsLineDB) DecodePointers(backRepo *BackRepoStruct, opsline *models.OpsLine) {
 
 	// insertion point for checkout of pointer encoding
 	// Scenario field
@@ -682,7 +688,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) ResetReversePointers(backRepo *Bac
 	return
 }
 
-func (backRepoOpsLine *BackRepoOpsLineStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.OpsLine) (Error error) {
+func (backRepoOpsLine *BackRepoOpsLineStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, opsline *models.OpsLine) (Error error) {
 
 	// fetch matching opslineDB
 	if opslineDB, ok := backRepoOpsLine.Map_OpsLineDBID_OpsLineDB[idx]; ok {

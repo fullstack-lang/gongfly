@@ -406,7 +406,13 @@ func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseTwo(backRepo *BackRepoStr
 func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, linerDB *LinerDB) (Error error) {
 
 	liner := backRepoLiner.Map_LinerDBID_LinerPtr[linerDB.ID]
-	_ = liner // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	linerDB.DecodePointers(backRepo, liner)
+
+	return
+}
+
+func (linerDB *LinerDB) DecodePointers(backRepo *BackRepoStruct, liner *models.Liner) {
 
 	// insertion point for checkout of pointer encoding
 	// ReporingLine field
@@ -824,7 +830,7 @@ func (backRepoLiner *BackRepoLinerStruct) ResetReversePointers(backRepo *BackRep
 	return
 }
 
-func (backRepoLiner *BackRepoLinerStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Liner) (Error error) {
+func (backRepoLiner *BackRepoLinerStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, liner *models.Liner) (Error error) {
 
 	// fetch matching linerDB
 	if linerDB, ok := backRepoLiner.Map_LinerDBID_LinerDB[idx]; ok {

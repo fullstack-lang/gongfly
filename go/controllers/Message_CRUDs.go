@@ -293,6 +293,9 @@ func (controller *Controller) UpdateMessage(c *gin.Context) {
 	messageNew := new(models.Message)
 	messageDB.CopyBasicFieldsToMessage(messageNew)
 
+	// redeem pointers
+	messageDB.DecodePointers(backRepo, messageNew)
+
 	// get stage instance from DB instance, and call callback function
 	messageOld := backRepo.BackRepoMessage.Map_MessageDBID_MessagePtr[messageDB.ID]
 	if messageOld != nil {

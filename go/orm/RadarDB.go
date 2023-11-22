@@ -336,7 +336,13 @@ func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseTwo(backRepo *BackRepoStr
 func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, radarDB *RadarDB) (Error error) {
 
 	radar := backRepoRadar.Map_RadarDBID_RadarPtr[radarDB.ID]
-	_ = radar // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	radarDB.DecodePointers(backRepo, radar)
+
+	return
+}
+
+func (radarDB *RadarDB) DecodePointers(backRepo *BackRepoStruct, radar *models.Radar) {
 
 	// insertion point for checkout of pointer encoding
 	return
@@ -635,7 +641,7 @@ func (backRepoRadar *BackRepoRadarStruct) ResetReversePointers(backRepo *BackRep
 	return
 }
 
-func (backRepoRadar *BackRepoRadarStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Radar) (Error error) {
+func (backRepoRadar *BackRepoRadarStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, radar *models.Radar) (Error error) {
 
 	// fetch matching radarDB
 	if radarDB, ok := backRepoRadar.Map_RadarDBID_RadarDB[idx]; ok {
