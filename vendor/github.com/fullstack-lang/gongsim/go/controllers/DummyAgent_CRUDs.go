@@ -293,6 +293,9 @@ func (controller *Controller) UpdateDummyAgent(c *gin.Context) {
 	dummyagentNew := new(models.DummyAgent)
 	dummyagentDB.CopyBasicFieldsToDummyAgent(dummyagentNew)
 
+	// redeem pointers
+	dummyagentDB.DecodePointers(backRepo, dummyagentNew)
+
 	// get stage instance from DB instance, and call callback function
 	dummyagentOld := backRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr[dummyagentDB.ID]
 	if dummyagentOld != nil {

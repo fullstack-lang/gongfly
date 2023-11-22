@@ -388,7 +388,13 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseTwo(backRepo *BackRepoStr
 func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, vlineDB *VLineDB) (Error error) {
 
 	vline := backRepoVLine.Map_VLineDBID_VLinePtr[vlineDB.ID]
-	_ = vline // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	vlineDB.DecodePointers(backRepo, vline)
+
+	return
+}
+
+func (vlineDB *VLineDB) DecodePointers(backRepo *BackRepoStruct, vline *models.VLine) {
 
 	// insertion point for checkout of pointer encoding
 	// LayerGroup field
@@ -770,7 +776,7 @@ func (backRepoVLine *BackRepoVLineStruct) ResetReversePointers(backRepo *BackRep
 	return
 }
 
-func (backRepoVLine *BackRepoVLineStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.VLine) (Error error) {
+func (backRepoVLine *BackRepoVLineStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, vline *models.VLine) (Error error) {
 
 	// fetch matching vlineDB
 	if vlineDB, ok := backRepoVLine.Map_VLineDBID_VLineDB[idx]; ok {

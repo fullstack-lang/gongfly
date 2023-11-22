@@ -293,6 +293,9 @@ func (controller *Controller) UpdateMarker(c *gin.Context) {
 	markerNew := new(models.Marker)
 	markerDB.CopyBasicFieldsToMarker(markerNew)
 
+	// redeem pointers
+	markerDB.DecodePointers(backRepo, markerNew)
+
 	// get stage instance from DB instance, and call callback function
 	markerOld := backRepo.BackRepoMarker.Map_MarkerDBID_MarkerPtr[markerDB.ID]
 	if markerOld != nil {

@@ -293,6 +293,9 @@ func (controller *Controller) UpdateMapOptions(c *gin.Context) {
 	mapoptionsNew := new(models.MapOptions)
 	mapoptionsDB.CopyBasicFieldsToMapOptions(mapoptionsNew)
 
+	// redeem pointers
+	mapoptionsDB.DecodePointers(backRepo, mapoptionsNew)
+
 	// get stage instance from DB instance, and call callback function
 	mapoptionsOld := backRepo.BackRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr[mapoptionsDB.ID]
 	if mapoptionsOld != nil {

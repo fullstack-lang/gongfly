@@ -335,7 +335,13 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CheckoutPhaseTwo(backR
 func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, layergroupuseDB *LayerGroupUseDB) (Error error) {
 
 	layergroupuse := backRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUsePtr[layergroupuseDB.ID]
-	_ = layergroupuse // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	layergroupuseDB.DecodePointers(backRepo, layergroupuse)
+
+	return
+}
+
+func (layergroupuseDB *LayerGroupUseDB) DecodePointers(backRepo *BackRepoStruct, layergroupuse *models.LayerGroupUse) {
 
 	// insertion point for checkout of pointer encoding
 	// LayerGroup field
@@ -609,7 +615,7 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) ResetReversePointers(b
 	return
 }
 
-func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.LayerGroupUse) (Error error) {
+func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, layergroupuse *models.LayerGroupUse) (Error error) {
 
 	// fetch matching layergroupuseDB
 	if layergroupuseDB, ok := backRepoLayerGroupUse.Map_LayerGroupUseDBID_LayerGroupUseDB[idx]; ok {

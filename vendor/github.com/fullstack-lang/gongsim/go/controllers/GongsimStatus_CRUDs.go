@@ -293,6 +293,9 @@ func (controller *Controller) UpdateGongsimStatus(c *gin.Context) {
 	gongsimstatusNew := new(models.GongsimStatus)
 	gongsimstatusDB.CopyBasicFieldsToGongsimStatus(gongsimstatusNew)
 
+	// redeem pointers
+	gongsimstatusDB.DecodePointers(backRepo, gongsimstatusNew)
+
 	// get stage instance from DB instance, and call callback function
 	gongsimstatusOld := backRepo.BackRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr[gongsimstatusDB.ID]
 	if gongsimstatusOld != nil {

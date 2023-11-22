@@ -362,7 +362,13 @@ func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseTwo(backRepo *BackRepoS
 func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, markerDB *MarkerDB) (Error error) {
 
 	marker := backRepoMarker.Map_MarkerDBID_MarkerPtr[markerDB.ID]
-	_ = marker // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	markerDB.DecodePointers(backRepo, marker)
+
+	return
+}
+
+func (markerDB *MarkerDB) DecodePointers(backRepo *BackRepoStruct, marker *models.Marker) {
 
 	// insertion point for checkout of pointer encoding
 	// LayerGroup field
@@ -671,7 +677,7 @@ func (backRepoMarker *BackRepoMarkerStruct) ResetReversePointers(backRepo *BackR
 	return
 }
 
-func (backRepoMarker *BackRepoMarkerStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Marker) (Error error) {
+func (backRepoMarker *BackRepoMarkerStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, marker *models.Marker) (Error error) {
 
 	// fetch matching markerDB
 	if markerDB, ok := backRepoMarker.Map_MarkerDBID_MarkerDB[idx]; ok {

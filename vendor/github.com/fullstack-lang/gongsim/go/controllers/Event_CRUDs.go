@@ -293,6 +293,9 @@ func (controller *Controller) UpdateEvent(c *gin.Context) {
 	eventNew := new(models.Event)
 	eventDB.CopyBasicFieldsToEvent(eventNew)
 
+	// redeem pointers
+	eventDB.DecodePointers(backRepo, eventNew)
+
 	// get stage instance from DB instance, and call callback function
 	eventOld := backRepo.BackRepoEvent.Map_EventDBID_EventPtr[eventDB.ID]
 	if eventOld != nil {

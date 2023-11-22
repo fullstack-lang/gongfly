@@ -293,6 +293,9 @@ func (controller *Controller) UpdateUserClick(c *gin.Context) {
 	userclickNew := new(models.UserClick)
 	userclickDB.CopyBasicFieldsToUserClick(userclickNew)
 
+	// redeem pointers
+	userclickDB.DecodePointers(backRepo, userclickNew)
+
 	// get stage instance from DB instance, and call callback function
 	userclickOld := backRepo.BackRepoUserClick.Map_UserClickDBID_UserClickPtr[userclickDB.ID]
 	if userclickOld != nil {

@@ -576,6 +576,8 @@ func (userclickFormCallback *UserClickFormCallback) OnSave() {
 			FormDivBasicFieldToField(&(userclick_.Lat), formDiv)
 		case "Lng":
 			FormDivBasicFieldToField(&(userclick_.Lng), formDiv)
+		case "TimeOfClick":
+			FormDivBasicFieldToField(&(userclick_.TimeOfClick), formDiv)
 		}
 	}
 

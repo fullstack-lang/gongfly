@@ -293,6 +293,9 @@ func (controller *Controller) UpdateVisualTrack(c *gin.Context) {
 	visualtrackNew := new(models.VisualTrack)
 	visualtrackDB.CopyBasicFieldsToVisualTrack(visualtrackNew)
 
+	// redeem pointers
+	visualtrackDB.DecodePointers(backRepo, visualtrackNew)
+
 	// get stage instance from DB instance, and call callback function
 	visualtrackOld := backRepo.BackRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr[visualtrackDB.ID]
 	if visualtrackOld != nil {

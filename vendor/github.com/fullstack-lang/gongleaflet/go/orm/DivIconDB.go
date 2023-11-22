@@ -318,7 +318,13 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseTwo(backRepo *BackRep
 func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, diviconDB *DivIconDB) (Error error) {
 
 	divicon := backRepoDivIcon.Map_DivIconDBID_DivIconPtr[diviconDB.ID]
-	_ = divicon // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	diviconDB.DecodePointers(backRepo, divicon)
+
+	return
+}
+
+func (diviconDB *DivIconDB) DecodePointers(backRepo *BackRepoStruct, divicon *models.DivIcon) {
 
 	// insertion point for checkout of pointer encoding
 	return
@@ -581,7 +587,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) ResetReversePointers(backRepo *Bac
 	return
 }
 
-func (backRepoDivIcon *BackRepoDivIconStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.DivIcon) (Error error) {
+func (backRepoDivIcon *BackRepoDivIconStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, divicon *models.DivIcon) (Error error) {
 
 	// fetch matching diviconDB
 	if diviconDB, ok := backRepoDivIcon.Map_DivIconDBID_DivIconDB[idx]; ok {

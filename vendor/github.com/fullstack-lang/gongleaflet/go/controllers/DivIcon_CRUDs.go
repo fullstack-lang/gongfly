@@ -293,6 +293,9 @@ func (controller *Controller) UpdateDivIcon(c *gin.Context) {
 	diviconNew := new(models.DivIcon)
 	diviconDB.CopyBasicFieldsToDivIcon(diviconNew)
 
+	// redeem pointers
+	diviconDB.DecodePointers(backRepo, diviconNew)
+
 	// get stage instance from DB instance, and call callback function
 	diviconOld := backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[diviconDB.ID]
 	if diviconOld != nil {

@@ -318,7 +318,13 @@ func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseTwo(backRepo *BackRepoStr
 func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, eventDB *EventDB) (Error error) {
 
 	event := backRepoEvent.Map_EventDBID_EventPtr[eventDB.ID]
-	_ = event // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	eventDB.DecodePointers(backRepo, event)
+
+	return
+}
+
+func (eventDB *EventDB) DecodePointers(backRepo *BackRepoStruct, event *models.Event) {
 
 	// insertion point for checkout of pointer encoding
 	return
@@ -581,7 +587,7 @@ func (backRepoEvent *BackRepoEventStruct) ResetReversePointers(backRepo *BackRep
 	return
 }
 
-func (backRepoEvent *BackRepoEventStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Event) (Error error) {
+func (backRepoEvent *BackRepoEventStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, event *models.Event) (Error error) {
 
 	// fetch matching eventDB
 	if eventDB, ok := backRepoEvent.Map_EventDBID_EventDB[idx]; ok {

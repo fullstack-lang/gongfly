@@ -354,7 +354,13 @@ func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseTwo(backRepo *BackRepoS
 func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, engineDB *EngineDB) (Error error) {
 
 	engine := backRepoEngine.Map_EngineDBID_EnginePtr[engineDB.ID]
-	_ = engine // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	engineDB.DecodePointers(backRepo, engine)
+
+	return
+}
+
+func (engineDB *EngineDB) DecodePointers(backRepo *BackRepoStruct, engine *models.Engine) {
 
 	// insertion point for checkout of pointer encoding
 	return
@@ -689,7 +695,7 @@ func (backRepoEngine *BackRepoEngineStruct) ResetReversePointers(backRepo *BackR
 	return
 }
 
-func (backRepoEngine *BackRepoEngineStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.Engine) (Error error) {
+func (backRepoEngine *BackRepoEngineStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, engine *models.Engine) (Error error) {
 
 	// fetch matching engineDB
 	if engineDB, ok := backRepoEngine.Map_EngineDBID_EngineDB[idx]; ok {

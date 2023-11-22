@@ -106,23 +106,23 @@ export class FrontRepo { // insertion point sub template
     switch (gongStructName) {
       // insertion point
       case 'Circle':
-        return this.Circles_array as unknown as Map<number, Type>
+        return this.Circles as unknown as Map<number, Type>
       case 'DivIcon':
-        return this.DivIcons_array as unknown as Map<number, Type>
+        return this.DivIcons as unknown as Map<number, Type>
       case 'LayerGroup':
-        return this.LayerGroups_array as unknown as Map<number, Type>
+        return this.LayerGroups as unknown as Map<number, Type>
       case 'LayerGroupUse':
-        return this.LayerGroupUses_array as unknown as Map<number, Type>
+        return this.LayerGroupUses as unknown as Map<number, Type>
       case 'MapOptions':
-        return this.MapOptionss_array as unknown as Map<number, Type>
+        return this.MapOptionss as unknown as Map<number, Type>
       case 'Marker':
-        return this.Markers_array as unknown as Map<number, Type>
+        return this.Markers as unknown as Map<number, Type>
       case 'UserClick':
-        return this.UserClicks_array as unknown as Map<number, Type>
+        return this.UserClicks as unknown as Map<number, Type>
       case 'VLine':
-        return this.VLines_array as unknown as Map<number, Type>
+        return this.VLines as unknown as Map<number, Type>
       case 'VisualTrack':
-        return this.VisualTracks_array as unknown as Map<number, Type>
+        return this.VisualTracks as unknown as Map<number, Type>
       default:
         throw new Error("Type not recognized");
     }

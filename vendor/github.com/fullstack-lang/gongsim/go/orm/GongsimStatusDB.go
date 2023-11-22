@@ -336,7 +336,13 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseTwo(backR
 func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, gongsimstatusDB *GongsimStatusDB) (Error error) {
 
 	gongsimstatus := backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr[gongsimstatusDB.ID]
-	_ = gongsimstatus // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	gongsimstatusDB.DecodePointers(backRepo, gongsimstatus)
+
+	return
+}
+
+func (gongsimstatusDB *GongsimStatusDB) DecodePointers(backRepo *BackRepoStruct, gongsimstatus *models.GongsimStatus) {
 
 	// insertion point for checkout of pointer encoding
 	return
@@ -635,7 +641,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) ResetReversePointers(b
 	return
 }
 
-func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.GongsimStatus) (Error error) {
+func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, gongsimstatus *models.GongsimStatus) (Error error) {
 
 	// fetch matching gongsimstatusDB
 	if gongsimstatusDB, ok := backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[idx]; ok {

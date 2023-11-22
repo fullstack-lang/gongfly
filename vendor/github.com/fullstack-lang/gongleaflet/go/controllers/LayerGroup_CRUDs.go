@@ -293,6 +293,9 @@ func (controller *Controller) UpdateLayerGroup(c *gin.Context) {
 	layergroupNew := new(models.LayerGroup)
 	layergroupDB.CopyBasicFieldsToLayerGroup(layergroupNew)
 
+	// redeem pointers
+	layergroupDB.DecodePointers(backRepo, layergroupNew)
+
 	// get stage instance from DB instance, and call callback function
 	layergroupOld := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[layergroupDB.ID]
 	if layergroupOld != nil {

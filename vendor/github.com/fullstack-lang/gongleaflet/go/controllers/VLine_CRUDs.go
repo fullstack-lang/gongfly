@@ -293,6 +293,9 @@ func (controller *Controller) UpdateVLine(c *gin.Context) {
 	vlineNew := new(models.VLine)
 	vlineDB.CopyBasicFieldsToVLine(vlineNew)
 
+	// redeem pointers
+	vlineDB.DecodePointers(backRepo, vlineNew)
+
 	// get stage instance from DB instance, and call callback function
 	vlineOld := backRepo.BackRepoVLine.Map_VLineDBID_VLinePtr[vlineDB.ID]
 	if vlineOld != nil {

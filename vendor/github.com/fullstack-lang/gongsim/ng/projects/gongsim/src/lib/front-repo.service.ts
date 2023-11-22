@@ -70,15 +70,15 @@ export class FrontRepo { // insertion point sub template
     switch (gongStructName) {
       // insertion point
       case 'DummyAgent':
-        return this.DummyAgents_array as unknown as Map<number, Type>
+        return this.DummyAgents as unknown as Map<number, Type>
       case 'Engine':
-        return this.Engines_array as unknown as Map<number, Type>
+        return this.Engines as unknown as Map<number, Type>
       case 'Event':
-        return this.Events_array as unknown as Map<number, Type>
+        return this.Events as unknown as Map<number, Type>
       case 'GongsimCommand':
-        return this.GongsimCommands_array as unknown as Map<number, Type>
+        return this.GongsimCommands as unknown as Map<number, Type>
       case 'GongsimStatus':
-        return this.GongsimStatuss_array as unknown as Map<number, Type>
+        return this.GongsimStatuss as unknown as Map<number, Type>
       default:
         throw new Error("Type not recognized");
     }

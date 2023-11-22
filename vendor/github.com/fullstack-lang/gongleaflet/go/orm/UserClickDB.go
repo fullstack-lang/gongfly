@@ -330,7 +330,13 @@ func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseTwo(backRepo *Bac
 func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, userclickDB *UserClickDB) (Error error) {
 
 	userclick := backRepoUserClick.Map_UserClickDBID_UserClickPtr[userclickDB.ID]
-	_ = userclick // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	userclickDB.DecodePointers(backRepo, userclick)
+
+	return
+}
+
+func (userclickDB *UserClickDB) DecodePointers(backRepo *BackRepoStruct, userclick *models.UserClick) {
 
 	// insertion point for checkout of pointer encoding
 	return
@@ -617,7 +623,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) ResetReversePointers(backRepo 
 	return
 }
 
-func (backRepoUserClick *BackRepoUserClickStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.UserClick) (Error error) {
+func (backRepoUserClick *BackRepoUserClickStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, userclick *models.UserClick) (Error error) {
 
 	// fetch matching userclickDB
 	if userclickDB, ok := backRepoUserClick.Map_UserClickDBID_UserClickDB[idx]; ok {

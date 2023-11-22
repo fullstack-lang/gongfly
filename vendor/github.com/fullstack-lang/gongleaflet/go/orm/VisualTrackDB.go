@@ -400,7 +400,13 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseTwo(backRepo 
 func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, visualtrackDB *VisualTrackDB) (Error error) {
 
 	visualtrack := backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackPtr[visualtrackDB.ID]
-	_ = visualtrack // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	visualtrackDB.DecodePointers(backRepo, visualtrack)
+
+	return
+}
+
+func (visualtrackDB *VisualTrackDB) DecodePointers(backRepo *BackRepoStruct, visualtrack *models.VisualTrack) {
 
 	// insertion point for checkout of pointer encoding
 	// LayerGroup field
@@ -781,7 +787,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) ResetReversePointers(backR
 	return
 }
 
-func (backRepoVisualTrack *BackRepoVisualTrackStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.VisualTrack) (Error error) {
+func (backRepoVisualTrack *BackRepoVisualTrackStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, visualtrack *models.VisualTrack) (Error error) {
 
 	// fetch matching visualtrackDB
 	if visualtrackDB, ok := backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[idx]; ok {

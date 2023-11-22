@@ -1027,7 +1027,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.ConceptEnum]
 	__GongEnumShape__000000_NewDiagram_ConceptEnum.Identifier = `ref_models.ConceptEnum`
 	__GongEnumShape__000000_NewDiagram_ConceptEnum.Width = 240.000000
-	__GongEnumShape__000000_NewDiagram_ConceptEnum.Heigth = 63.000000
+	__GongEnumShape__000000_NewDiagram_ConceptEnum.Height = 63.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000001_NewDiagram_LinerStateEnum.Name = `NewDiagram-LinerStateEnum`
@@ -1037,7 +1037,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.LinerStateEnum]
 	__GongEnumShape__000001_NewDiagram_LinerStateEnum.Identifier = `ref_models.LinerStateEnum`
 	__GongEnumShape__000001_NewDiagram_LinerStateEnum.Width = 240.000000
-	__GongEnumShape__000001_NewDiagram_LinerStateEnum.Heigth = 63.000000
+	__GongEnumShape__000001_NewDiagram_LinerStateEnum.Height = 63.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000002_NewDiagram_MessageStateEnum.Name = `NewDiagram-MessageStateEnum`
@@ -1047,7 +1047,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.MessageStateEnum]
 	__GongEnumShape__000002_NewDiagram_MessageStateEnum.Identifier = `ref_models.MessageStateEnum`
 	__GongEnumShape__000002_NewDiagram_MessageStateEnum.Width = 240.000000
-	__GongEnumShape__000002_NewDiagram_MessageStateEnum.Heigth = 63.000000
+	__GongEnumShape__000002_NewDiagram_MessageStateEnum.Height = 63.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000003_NewDiagram_OperationalLineStateEnum.Name = `NewDiagram-OperationalLineStateEnum`
@@ -1057,7 +1057,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.OperationalLineStateEnum]
 	__GongEnumShape__000003_NewDiagram_OperationalLineStateEnum.Identifier = `ref_models.OperationalLineStateEnum`
 	__GongEnumShape__000003_NewDiagram_OperationalLineStateEnum.Width = 240.000000
-	__GongEnumShape__000003_NewDiagram_OperationalLineStateEnum.Heigth = 63.000000
+	__GongEnumShape__000003_NewDiagram_OperationalLineStateEnum.Height = 63.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000004_NewDiagram_OrderEnum.Name = `NewDiagram-OrderEnum`
@@ -1067,7 +1067,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.OrderEnum]
 	__GongEnumShape__000004_NewDiagram_OrderEnum.Identifier = `ref_models.OrderEnum`
 	__GongEnumShape__000004_NewDiagram_OrderEnum.Width = 240.000000
-	__GongEnumShape__000004_NewDiagram_OrderEnum.Heigth = 63.000000
+	__GongEnumShape__000004_NewDiagram_OrderEnum.Height = 63.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000005_NewDiagram_RadarStateEnum.Name = `NewDiagram-RadarStateEnum`
@@ -1077,7 +1077,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.RadarStateEnum]
 	__GongEnumShape__000005_NewDiagram_RadarStateEnum.Identifier = `ref_models.RadarStateEnum`
 	__GongEnumShape__000005_NewDiagram_RadarStateEnum.Width = 240.000000
-	__GongEnumShape__000005_NewDiagram_RadarStateEnum.Heigth = 63.000000
+	__GongEnumShape__000005_NewDiagram_RadarStateEnum.Height = 63.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000006_NewDiagram_ReportEnum.Name = `NewDiagram-ReportEnum`
@@ -1087,7 +1087,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.ReportEnum]
 	__GongEnumShape__000006_NewDiagram_ReportEnum.Identifier = `ref_models.ReportEnum`
 	__GongEnumShape__000006_NewDiagram_ReportEnum.Width = 240.000000
-	__GongEnumShape__000006_NewDiagram_ReportEnum.Heigth = 63.000000
+	__GongEnumShape__000006_NewDiagram_ReportEnum.Height = 63.000000
 
 	// GongStructShape values setup
 	__GongStructShape__000000_NewDiagram_CivilianAirport.Name = `NewDiagram-CivilianAirport`
@@ -1099,7 +1099,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000000_NewDiagram_CivilianAirport.ShowNbInstances = true
 	__GongStructShape__000000_NewDiagram_CivilianAirport.NbInstances = 2
 	__GongStructShape__000000_NewDiagram_CivilianAirport.Width = 240.000000
-	__GongStructShape__000000_NewDiagram_CivilianAirport.Heigth = 108.000000
+	__GongStructShape__000000_NewDiagram_CivilianAirport.Height = 108.000000
 	__GongStructShape__000000_NewDiagram_CivilianAirport.IsSelected = false
 
 	// GongStructShape values setup
@@ -1112,7 +1112,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000001_NewDiagram_Liner.ShowNbInstances = true
 	__GongStructShape__000001_NewDiagram_Liner.NbInstances = 1
 	__GongStructShape__000001_NewDiagram_Liner.Width = 240.000000
-	__GongStructShape__000001_NewDiagram_Liner.Heigth = 273.000000
+	__GongStructShape__000001_NewDiagram_Liner.Height = 273.000000
 	__GongStructShape__000001_NewDiagram_Liner.IsSelected = false
 
 	// GongStructShape values setup
@@ -1125,7 +1125,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000002_NewDiagram_Message.ShowNbInstances = true
 	__GongStructShape__000002_NewDiagram_Message.NbInstances = 0
 	__GongStructShape__000002_NewDiagram_Message.Width = 377.000000
-	__GongStructShape__000002_NewDiagram_Message.Heigth = 333.000000
+	__GongStructShape__000002_NewDiagram_Message.Height = 333.000000
 	__GongStructShape__000002_NewDiagram_Message.IsSelected = false
 
 	// GongStructShape values setup
@@ -1138,7 +1138,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000003_NewDiagram_OpsLine.ShowNbInstances = true
 	__GongStructShape__000003_NewDiagram_OpsLine.NbInstances = 0
 	__GongStructShape__000003_NewDiagram_OpsLine.Width = 329.000000
-	__GongStructShape__000003_NewDiagram_OpsLine.Heigth = 245.000000
+	__GongStructShape__000003_NewDiagram_OpsLine.Height = 245.000000
 	__GongStructShape__000003_NewDiagram_OpsLine.IsSelected = false
 
 	// GongStructShape values setup
@@ -1151,7 +1151,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000004_NewDiagram_Radar.ShowNbInstances = true
 	__GongStructShape__000004_NewDiagram_Radar.NbInstances = 0
 	__GongStructShape__000004_NewDiagram_Radar.Width = 240.000000
-	__GongStructShape__000004_NewDiagram_Radar.Heigth = 138.000000
+	__GongStructShape__000004_NewDiagram_Radar.Height = 138.000000
 	__GongStructShape__000004_NewDiagram_Radar.IsSelected = false
 
 	// GongStructShape values setup
@@ -1164,7 +1164,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000005_NewDiagram_Satellite.ShowNbInstances = true
 	__GongStructShape__000005_NewDiagram_Satellite.NbInstances = 0
 	__GongStructShape__000005_NewDiagram_Satellite.Width = 240.000000
-	__GongStructShape__000005_NewDiagram_Satellite.Heigth = 213.000000
+	__GongStructShape__000005_NewDiagram_Satellite.Height = 213.000000
 	__GongStructShape__000005_NewDiagram_Satellite.IsSelected = false
 
 	// GongStructShape values setup
@@ -1177,7 +1177,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000006_NewDiagram_Scenario.ShowNbInstances = true
 	__GongStructShape__000006_NewDiagram_Scenario.NbInstances = 1
 	__GongStructShape__000006_NewDiagram_Scenario.Width = 240.000000
-	__GongStructShape__000006_NewDiagram_Scenario.Heigth = 138.000000
+	__GongStructShape__000006_NewDiagram_Scenario.Height = 138.000000
 	__GongStructShape__000006_NewDiagram_Scenario.IsSelected = false
 
 	// Link values setup
@@ -1407,5 +1407,3 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__Link__000000_ReporingLine.Middlevertice = __Vertice__000000_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_Liner_and_NewDiagram_OpsLine
 	__Link__000001_Scenario.Middlevertice = __Vertice__000001_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_OpsLine_and_NewDiagram_Scenario
 }
-
-

@@ -352,7 +352,13 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) CheckoutPhaseTwo(bac
 func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, gongsimcommandDB *GongsimCommandDB) (Error error) {
 
 	gongsimcommand := backRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandPtr[gongsimcommandDB.ID]
-	_ = gongsimcommand // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	gongsimcommandDB.DecodePointers(backRepo, gongsimcommand)
+
+	return
+}
+
+func (gongsimcommandDB *GongsimCommandDB) DecodePointers(backRepo *BackRepoStruct, gongsimcommand *models.GongsimCommand) {
 
 	// insertion point for checkout of pointer encoding
 	// Engine field
@@ -662,7 +668,7 @@ func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) ResetReversePointers
 	return
 }
 
-func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.GongsimCommand) (Error error) {
+func (backRepoGongsimCommand *BackRepoGongsimCommandStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, gongsimcommand *models.GongsimCommand) (Error error) {
 
 	// fetch matching gongsimcommandDB
 	if gongsimcommandDB, ok := backRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandDB[idx]; ok {

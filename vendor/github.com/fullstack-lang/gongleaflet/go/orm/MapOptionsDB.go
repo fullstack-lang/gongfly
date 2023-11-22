@@ -381,7 +381,13 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseTwo(backRepo *B
 func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, mapoptionsDB *MapOptionsDB) (Error error) {
 
 	mapoptions := backRepoMapOptions.Map_MapOptionsDBID_MapOptionsPtr[mapoptionsDB.ID]
-	_ = mapoptions // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	mapoptionsDB.DecodePointers(backRepo, mapoptions)
+
+	return
+}
+
+func (mapoptionsDB *MapOptionsDB) DecodePointers(backRepo *BackRepoStruct, mapoptions *models.MapOptions) {
 
 	// insertion point for checkout of pointer encoding
 	// This loop redeem mapoptions.LayerGroupUses in the stage from the encode in the back repo
@@ -749,7 +755,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) ResetReversePointers(backRep
 	return
 }
 
-func (backRepoMapOptions *BackRepoMapOptionsStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.MapOptions) (Error error) {
+func (backRepoMapOptions *BackRepoMapOptionsStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, mapoptions *models.MapOptions) (Error error) {
 
 	// fetch matching mapoptionsDB
 	if mapoptionsDB, ok := backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB[idx]; ok {

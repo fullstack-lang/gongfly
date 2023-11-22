@@ -293,6 +293,9 @@ func (controller *Controller) UpdateEngine(c *gin.Context) {
 	engineNew := new(models.Engine)
 	engineDB.CopyBasicFieldsToEngine(engineNew)
 
+	// redeem pointers
+	engineDB.DecodePointers(backRepo, engineNew)
+
 	// get stage instance from DB instance, and call callback function
 	engineOld := backRepo.BackRepoEngine.Map_EngineDBID_EnginePtr[engineDB.ID]
 	if engineOld != nil {

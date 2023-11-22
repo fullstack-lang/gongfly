@@ -318,7 +318,13 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseTwo(backRepo *B
 func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseTwoInstance(backRepo *BackRepoStruct, dummyagentDB *DummyAgentDB) (Error error) {
 
 	dummyagent := backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentPtr[dummyagentDB.ID]
-	_ = dummyagent // sometimes, there is no code generated. This lines voids the "unused variable" compilation error
+
+	dummyagentDB.DecodePointers(backRepo, dummyagent)
+
+	return
+}
+
+func (dummyagentDB *DummyAgentDB) DecodePointers(backRepo *BackRepoStruct, dummyagent *models.DummyAgent) {
 
 	// insertion point for checkout of pointer encoding
 	return
@@ -581,7 +587,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) ResetReversePointers(backRep
 	return
 }
 
-func (backRepoDummyAgent *BackRepoDummyAgentStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, astruct *models.DummyAgent) (Error error) {
+func (backRepoDummyAgent *BackRepoDummyAgentStruct) ResetReversePointersInstance(backRepo *BackRepoStruct, idx uint, dummyagent *models.DummyAgent) (Error error) {
 
 	// fetch matching dummyagentDB
 	if dummyagentDB, ok := backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[idx]; ok {

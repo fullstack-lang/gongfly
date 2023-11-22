@@ -293,6 +293,9 @@ func (controller *Controller) UpdateGongsimCommand(c *gin.Context) {
 	gongsimcommandNew := new(models.GongsimCommand)
 	gongsimcommandDB.CopyBasicFieldsToGongsimCommand(gongsimcommandNew)
 
+	// redeem pointers
+	gongsimcommandDB.DecodePointers(backRepo, gongsimcommandNew)
+
 	// get stage instance from DB instance, and call callback function
 	gongsimcommandOld := backRepo.BackRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandPtr[gongsimcommandDB.ID]
 	if gongsimcommandOld != nil {
