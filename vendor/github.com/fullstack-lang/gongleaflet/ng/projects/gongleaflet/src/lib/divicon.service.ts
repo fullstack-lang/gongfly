@@ -76,6 +76,25 @@ export class DivIconService {
     );
   }
 
+  // postFront copy divicon to a version with encoded pointers and post to the back
+  postFront(divicon: DivIcon, GONG__StackPath: string): Observable<DivIconDB> {
+    let diviconDB = new DivIconDB
+    CopyDivIconToDivIconDB(divicon, diviconDB)
+    const id = typeof diviconDB === 'number' ? diviconDB : diviconDB.ID
+    const url = `${this.diviconsUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.post<DivIconDB>(url, diviconDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<DivIconDB>('postDivIcon'))
+    );
+  }
+  
   /** POST: add a new divicon to the server */
   post(divicondb: DivIconDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
     return this.postDivIcon(divicondb, GONG__StackPath, frontRepo)

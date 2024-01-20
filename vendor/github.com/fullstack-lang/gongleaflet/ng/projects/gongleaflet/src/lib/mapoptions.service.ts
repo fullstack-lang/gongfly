@@ -77,6 +77,25 @@ export class MapOptionsService {
     );
   }
 
+  // postFront copy mapoptions to a version with encoded pointers and post to the back
+  postFront(mapoptions: MapOptions, GONG__StackPath: string): Observable<MapOptionsDB> {
+    let mapoptionsDB = new MapOptionsDB
+    CopyMapOptionsToMapOptionsDB(mapoptions, mapoptionsDB)
+    const id = typeof mapoptionsDB === 'number' ? mapoptionsDB : mapoptionsDB.ID
+    const url = `${this.mapoptionssUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.post<MapOptionsDB>(url, mapoptionsDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<MapOptionsDB>('postMapOptions'))
+    );
+  }
+  
   /** POST: add a new mapoptions to the server */
   post(mapoptionsdb: MapOptionsDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
     return this.postMapOptions(mapoptionsdb, GONG__StackPath, frontRepo)

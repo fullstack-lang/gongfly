@@ -78,6 +78,25 @@ export class MarkerService {
     );
   }
 
+  // postFront copy marker to a version with encoded pointers and post to the back
+  postFront(marker: Marker, GONG__StackPath: string): Observable<MarkerDB> {
+    let markerDB = new MarkerDB
+    CopyMarkerToMarkerDB(marker, markerDB)
+    const id = typeof markerDB === 'number' ? markerDB : markerDB.ID
+    const url = `${this.markersUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.post<MarkerDB>(url, markerDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<MarkerDB>('postMarker'))
+    );
+  }
+  
   /** POST: add a new marker to the server */
   post(markerdb: MarkerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
     return this.postMarker(markerdb, GONG__StackPath, frontRepo)

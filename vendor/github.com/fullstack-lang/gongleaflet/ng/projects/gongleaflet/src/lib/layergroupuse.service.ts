@@ -77,6 +77,25 @@ export class LayerGroupUseService {
     );
   }
 
+  // postFront copy layergroupuse to a version with encoded pointers and post to the back
+  postFront(layergroupuse: LayerGroupUse, GONG__StackPath: string): Observable<LayerGroupUseDB> {
+    let layergroupuseDB = new LayerGroupUseDB
+    CopyLayerGroupUseToLayerGroupUseDB(layergroupuse, layergroupuseDB)
+    const id = typeof layergroupuseDB === 'number' ? layergroupuseDB : layergroupuseDB.ID
+    const url = `${this.layergroupusesUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.post<LayerGroupUseDB>(url, layergroupuseDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<LayerGroupUseDB>('postLayerGroupUse'))
+    );
+  }
+  
   /** POST: add a new layergroupuse to the server */
   post(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupUseDB> {
     return this.postLayerGroupUse(layergroupusedb, GONG__StackPath, frontRepo)

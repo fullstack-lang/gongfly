@@ -78,6 +78,25 @@ export class VisualTrackService {
     );
   }
 
+  // postFront copy visualtrack to a version with encoded pointers and post to the back
+  postFront(visualtrack: VisualTrack, GONG__StackPath: string): Observable<VisualTrackDB> {
+    let visualtrackDB = new VisualTrackDB
+    CopyVisualTrackToVisualTrackDB(visualtrack, visualtrackDB)
+    const id = typeof visualtrackDB === 'number' ? visualtrackDB : visualtrackDB.ID
+    const url = `${this.visualtracksUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.post<VisualTrackDB>(url, visualtrackDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<VisualTrackDB>('postVisualTrack'))
+    );
+  }
+  
   /** POST: add a new visualtrack to the server */
   post(visualtrackdb: VisualTrackDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
     return this.postVisualTrack(visualtrackdb, GONG__StackPath, frontRepo)

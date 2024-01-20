@@ -77,6 +77,25 @@ export class VLineService {
     );
   }
 
+  // postFront copy vline to a version with encoded pointers and post to the back
+  postFront(vline: VLine, GONG__StackPath: string): Observable<VLineDB> {
+    let vlineDB = new VLineDB
+    CopyVLineToVLineDB(vline, vlineDB)
+    const id = typeof vlineDB === 'number' ? vlineDB : vlineDB.ID
+    const url = `${this.vlinesUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.post<VLineDB>(url, vlineDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<VLineDB>('postVLine'))
+    );
+  }
+  
   /** POST: add a new vline to the server */
   post(vlinedb: VLineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineDB> {
     return this.postVLine(vlinedb, GONG__StackPath, frontRepo)

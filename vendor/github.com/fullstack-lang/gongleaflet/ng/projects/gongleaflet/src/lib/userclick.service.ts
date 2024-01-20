@@ -76,7 +76,7 @@ export class UserClickService {
     );
   }
 
-  /** POST: add a new userclick to the server */
+  // postFront copy userclick to a version with encoded pointers and post to the back
   postFront(userclick: UserClick, GONG__StackPath: string): Observable<UserClickDB> {
     let userclickDB = new UserClickDB
     CopyUserClickToUserClickDB(userclick, userclickDB)
@@ -91,9 +91,11 @@ export class UserClickService {
     return this.http.post<UserClickDB>(url, userclickDB, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<UserClickDB>('updateUserClick'))
+      catchError(this.handleError<UserClickDB>('postUserClick'))
     );
   }
+  
+  /** POST: add a new userclick to the server */
   post(userclickdb: UserClickDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
     return this.postUserClick(userclickdb, GONG__StackPath, frontRepo)
   }
