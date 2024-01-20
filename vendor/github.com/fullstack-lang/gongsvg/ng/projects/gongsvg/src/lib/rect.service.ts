@@ -7,17 +7,20 @@ import { DOCUMENT, Location } from '@angular/common'
 /*
  * Behavior subject
  */
-import { BehaviorSubject } from 'rxjs';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { catchError, map, tap } from 'rxjs/operators'
 
-import { RectDB } from './rect-db';
+import { RectDB } from './rect-db'
+import { Rect, CopyRectToRectDB } from './rect'
+
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 import { AnimateDB } from './animate-db'
 import { RectAnchoredTextDB } from './rectanchoredtext-db'
 import { RectAnchoredRectDB } from './rectanchoredrect-db'
+import { RectAnchoredPathDB } from './rectanchoredpath-db'
 
 @Injectable({
   providedIn: 'root'
@@ -99,6 +102,11 @@ export class RectService {
       rectdb.RectPointersEncoding.RectAnchoredRects.push(_rectanchoredrect.ID)
     }
     rectdb.RectAnchoredRects = []
+    rectdb.RectPointersEncoding.RectAnchoredPaths = []
+    for (let _rectanchoredpath of rectdb.RectAnchoredPaths) {
+      rectdb.RectPointersEncoding.RectAnchoredPaths.push(_rectanchoredpath.ID)
+    }
+    rectdb.RectAnchoredPaths = []
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -130,6 +138,13 @@ export class RectService {
             rectdb.RectAnchoredRects.push(_rectanchoredrect!)
           }
         }
+        rectdb.RectAnchoredPaths = new Array<RectAnchoredPathDB>()
+        for (let _id of rectdb.RectPointersEncoding.RectAnchoredPaths) {
+          let _rectanchoredpath = frontRepo.RectAnchoredPaths.get(_id)
+          if (_rectanchoredpath != undefined) {
+            rectdb.RectAnchoredPaths.push(_rectanchoredpath!)
+          }
+        }
         // this.log(`posted rectdb id=${rectdb.ID}`)
       }),
       catchError(this.handleError<RectDB>('postRect'))
@@ -153,6 +168,25 @@ export class RectService {
     return this.http.delete<RectDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted rectdb id=${id}`)),
       catchError(this.handleError<RectDB>('deleteRect'))
+    );
+  }
+
+  // updateFront copy rect to a version with encoded pointers and update to the back
+  updateFront(rect: Rect, GONG__StackPath: string): Observable<RectDB> {
+    let rectDB = new RectDB
+    CopyRectToRectDB(rect, rectDB)
+    const id = typeof rectDB === 'number' ? rectDB : rectDB.ID
+    const url = `${this.rectsUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.put<RectDB>(url, rectDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<RectDB>('updateRect'))
     );
   }
 
@@ -181,6 +215,11 @@ export class RectService {
       rectdb.RectPointersEncoding.RectAnchoredRects.push(_rectanchoredrect.ID)
     }
     rectdb.RectAnchoredRects = []
+    rectdb.RectPointersEncoding.RectAnchoredPaths = []
+    for (let _rectanchoredpath of rectdb.RectAnchoredPaths) {
+      rectdb.RectPointersEncoding.RectAnchoredPaths.push(_rectanchoredpath.ID)
+    }
+    rectdb.RectAnchoredPaths = []
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -210,6 +249,13 @@ export class RectService {
           let _rectanchoredrect = frontRepo.RectAnchoredRects.get(_id)
           if (_rectanchoredrect != undefined) {
             rectdb.RectAnchoredRects.push(_rectanchoredrect!)
+          }
+        }
+        rectdb.RectAnchoredPaths = new Array<RectAnchoredPathDB>()
+        for (let _id of rectdb.RectPointersEncoding.RectAnchoredPaths) {
+          let _rectanchoredpath = frontRepo.RectAnchoredPaths.get(_id)
+          if (_rectanchoredpath != undefined) {
+            rectdb.RectAnchoredPaths.push(_rectanchoredpath!)
           }
         }
         // this.log(`updated rectdb id=${rectdb.ID}`)

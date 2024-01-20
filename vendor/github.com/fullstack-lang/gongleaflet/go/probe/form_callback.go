@@ -21,10 +21,12 @@ var __dummy_orm = orm.BackRepoStruct{}
 func __gong__New__CircleFormCallback(
 	circle *models.Circle,
 	probe *Probe,
+	formGroup *table.FormGroup,
 ) (circleFormCallback *CircleFormCallback) {
 	circleFormCallback = new(CircleFormCallback)
 	circleFormCallback.probe = probe
 	circleFormCallback.circle = circle
+	circleFormCallback.formGroup = formGroup
 
 	circleFormCallback.CreationMode = (circle == nil)
 
@@ -38,6 +40,8 @@ type CircleFormCallback struct {
 	CreationMode bool
 
 	probe *Probe
+
+	formGroup *table.FormGroup
 }
 
 func (circleFormCallback *CircleFormCallback) OnSave() {
@@ -54,10 +58,7 @@ func (circleFormCallback *CircleFormCallback) OnSave() {
 	circle_ := circleFormCallback.circle
 	_ = circle_
 
-	// get the formGroup
-	formGroup := circleFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
-
-	for _, formDiv := range formGroup.FormDivs {
+	for _, formDiv := range circleFormCallback.formGroup.FormDivs {
 		switch formDiv.Name {
 		// insertion point per field
 		case "Lat":
@@ -77,6 +78,11 @@ func (circleFormCallback *CircleFormCallback) OnSave() {
 		}
 	}
 
+	// manage the suppress operation
+	if circleFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		circle_.Unstage(circleFormCallback.probe.stageOfInterest)
+	}
+
 	circleFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.Circle](
 		circleFormCallback.probe,
@@ -84,15 +90,16 @@ func (circleFormCallback *CircleFormCallback) OnSave() {
 	circleFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
-	if circleFormCallback.CreationMode {
+	if circleFormCallback.CreationMode || circleFormCallback.formGroup.HasSuppressButtonBeenPressed {
 		circleFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
-			OnSave: __gong__New__CircleFormCallback(
-				nil,
-				circleFormCallback.probe,
-			),
 		}).Stage(circleFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__CircleFormCallback(
+			nil,
+			circleFormCallback.probe,
+			newFormGroup,
+		)
 		circle := new(models.Circle)
 		FillUpForm(circle, newFormGroup, circleFormCallback.probe)
 		circleFormCallback.probe.formStage.Commit()
@@ -103,10 +110,12 @@ func (circleFormCallback *CircleFormCallback) OnSave() {
 func __gong__New__DivIconFormCallback(
 	divicon *models.DivIcon,
 	probe *Probe,
+	formGroup *table.FormGroup,
 ) (diviconFormCallback *DivIconFormCallback) {
 	diviconFormCallback = new(DivIconFormCallback)
 	diviconFormCallback.probe = probe
 	diviconFormCallback.divicon = divicon
+	diviconFormCallback.formGroup = formGroup
 
 	diviconFormCallback.CreationMode = (divicon == nil)
 
@@ -120,6 +129,8 @@ type DivIconFormCallback struct {
 	CreationMode bool
 
 	probe *Probe
+
+	formGroup *table.FormGroup
 }
 
 func (diviconFormCallback *DivIconFormCallback) OnSave() {
@@ -136,10 +147,7 @@ func (diviconFormCallback *DivIconFormCallback) OnSave() {
 	divicon_ := diviconFormCallback.divicon
 	_ = divicon_
 
-	// get the formGroup
-	formGroup := diviconFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
-
-	for _, formDiv := range formGroup.FormDivs {
+	for _, formDiv := range diviconFormCallback.formGroup.FormDivs {
 		switch formDiv.Name {
 		// insertion point per field
 		case "Name":
@@ -149,6 +157,11 @@ func (diviconFormCallback *DivIconFormCallback) OnSave() {
 		}
 	}
 
+	// manage the suppress operation
+	if diviconFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		divicon_.Unstage(diviconFormCallback.probe.stageOfInterest)
+	}
+
 	diviconFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.DivIcon](
 		diviconFormCallback.probe,
@@ -156,15 +169,16 @@ func (diviconFormCallback *DivIconFormCallback) OnSave() {
 	diviconFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
-	if diviconFormCallback.CreationMode {
+	if diviconFormCallback.CreationMode || diviconFormCallback.formGroup.HasSuppressButtonBeenPressed {
 		diviconFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
-			OnSave: __gong__New__DivIconFormCallback(
-				nil,
-				diviconFormCallback.probe,
-			),
 		}).Stage(diviconFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__DivIconFormCallback(
+			nil,
+			diviconFormCallback.probe,
+			newFormGroup,
+		)
 		divicon := new(models.DivIcon)
 		FillUpForm(divicon, newFormGroup, diviconFormCallback.probe)
 		diviconFormCallback.probe.formStage.Commit()
@@ -175,10 +189,12 @@ func (diviconFormCallback *DivIconFormCallback) OnSave() {
 func __gong__New__LayerGroupFormCallback(
 	layergroup *models.LayerGroup,
 	probe *Probe,
+	formGroup *table.FormGroup,
 ) (layergroupFormCallback *LayerGroupFormCallback) {
 	layergroupFormCallback = new(LayerGroupFormCallback)
 	layergroupFormCallback.probe = probe
 	layergroupFormCallback.layergroup = layergroup
+	layergroupFormCallback.formGroup = formGroup
 
 	layergroupFormCallback.CreationMode = (layergroup == nil)
 
@@ -192,6 +208,8 @@ type LayerGroupFormCallback struct {
 	CreationMode bool
 
 	probe *Probe
+
+	formGroup *table.FormGroup
 }
 
 func (layergroupFormCallback *LayerGroupFormCallback) OnSave() {
@@ -208,10 +226,7 @@ func (layergroupFormCallback *LayerGroupFormCallback) OnSave() {
 	layergroup_ := layergroupFormCallback.layergroup
 	_ = layergroup_
 
-	// get the formGroup
-	formGroup := layergroupFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
-
-	for _, formDiv := range formGroup.FormDivs {
+	for _, formDiv := range layergroupFormCallback.formGroup.FormDivs {
 		switch formDiv.Name {
 		// insertion point per field
 		case "Name":
@@ -221,6 +236,11 @@ func (layergroupFormCallback *LayerGroupFormCallback) OnSave() {
 		}
 	}
 
+	// manage the suppress operation
+	if layergroupFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		layergroup_.Unstage(layergroupFormCallback.probe.stageOfInterest)
+	}
+
 	layergroupFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.LayerGroup](
 		layergroupFormCallback.probe,
@@ -228,15 +248,16 @@ func (layergroupFormCallback *LayerGroupFormCallback) OnSave() {
 	layergroupFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
-	if layergroupFormCallback.CreationMode {
+	if layergroupFormCallback.CreationMode || layergroupFormCallback.formGroup.HasSuppressButtonBeenPressed {
 		layergroupFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
-			OnSave: __gong__New__LayerGroupFormCallback(
-				nil,
-				layergroupFormCallback.probe,
-			),
 		}).Stage(layergroupFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__LayerGroupFormCallback(
+			nil,
+			layergroupFormCallback.probe,
+			newFormGroup,
+		)
 		layergroup := new(models.LayerGroup)
 		FillUpForm(layergroup, newFormGroup, layergroupFormCallback.probe)
 		layergroupFormCallback.probe.formStage.Commit()
@@ -247,10 +268,12 @@ func (layergroupFormCallback *LayerGroupFormCallback) OnSave() {
 func __gong__New__LayerGroupUseFormCallback(
 	layergroupuse *models.LayerGroupUse,
 	probe *Probe,
+	formGroup *table.FormGroup,
 ) (layergroupuseFormCallback *LayerGroupUseFormCallback) {
 	layergroupuseFormCallback = new(LayerGroupUseFormCallback)
 	layergroupuseFormCallback.probe = probe
 	layergroupuseFormCallback.layergroupuse = layergroupuse
+	layergroupuseFormCallback.formGroup = formGroup
 
 	layergroupuseFormCallback.CreationMode = (layergroupuse == nil)
 
@@ -264,6 +287,8 @@ type LayerGroupUseFormCallback struct {
 	CreationMode bool
 
 	probe *Probe
+
+	formGroup *table.FormGroup
 }
 
 func (layergroupuseFormCallback *LayerGroupUseFormCallback) OnSave() {
@@ -280,10 +305,7 @@ func (layergroupuseFormCallback *LayerGroupUseFormCallback) OnSave() {
 	layergroupuse_ := layergroupuseFormCallback.layergroupuse
 	_ = layergroupuse_
 
-	// get the formGroup
-	formGroup := layergroupuseFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
-
-	for _, formDiv := range formGroup.FormDivs {
+	for _, formDiv := range layergroupuseFormCallback.formGroup.FormDivs {
 		switch formDiv.Name {
 		// insertion point per field
 		case "Name":
@@ -337,6 +359,11 @@ func (layergroupuseFormCallback *LayerGroupUseFormCallback) OnSave() {
 		}
 	}
 
+	// manage the suppress operation
+	if layergroupuseFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		layergroupuse_.Unstage(layergroupuseFormCallback.probe.stageOfInterest)
+	}
+
 	layergroupuseFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.LayerGroupUse](
 		layergroupuseFormCallback.probe,
@@ -344,15 +371,16 @@ func (layergroupuseFormCallback *LayerGroupUseFormCallback) OnSave() {
 	layergroupuseFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
-	if layergroupuseFormCallback.CreationMode {
+	if layergroupuseFormCallback.CreationMode || layergroupuseFormCallback.formGroup.HasSuppressButtonBeenPressed {
 		layergroupuseFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
-			OnSave: __gong__New__LayerGroupUseFormCallback(
-				nil,
-				layergroupuseFormCallback.probe,
-			),
 		}).Stage(layergroupuseFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__LayerGroupUseFormCallback(
+			nil,
+			layergroupuseFormCallback.probe,
+			newFormGroup,
+		)
 		layergroupuse := new(models.LayerGroupUse)
 		FillUpForm(layergroupuse, newFormGroup, layergroupuseFormCallback.probe)
 		layergroupuseFormCallback.probe.formStage.Commit()
@@ -363,10 +391,12 @@ func (layergroupuseFormCallback *LayerGroupUseFormCallback) OnSave() {
 func __gong__New__MapOptionsFormCallback(
 	mapoptions *models.MapOptions,
 	probe *Probe,
+	formGroup *table.FormGroup,
 ) (mapoptionsFormCallback *MapOptionsFormCallback) {
 	mapoptionsFormCallback = new(MapOptionsFormCallback)
 	mapoptionsFormCallback.probe = probe
 	mapoptionsFormCallback.mapoptions = mapoptions
+	mapoptionsFormCallback.formGroup = formGroup
 
 	mapoptionsFormCallback.CreationMode = (mapoptions == nil)
 
@@ -380,6 +410,8 @@ type MapOptionsFormCallback struct {
 	CreationMode bool
 
 	probe *Probe
+
+	formGroup *table.FormGroup
 }
 
 func (mapoptionsFormCallback *MapOptionsFormCallback) OnSave() {
@@ -396,10 +428,7 @@ func (mapoptionsFormCallback *MapOptionsFormCallback) OnSave() {
 	mapoptions_ := mapoptionsFormCallback.mapoptions
 	_ = mapoptions_
 
-	// get the formGroup
-	formGroup := mapoptionsFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
-
-	for _, formDiv := range formGroup.FormDivs {
+	for _, formDiv := range mapoptionsFormCallback.formGroup.FormDivs {
 		switch formDiv.Name {
 		// insertion point per field
 		case "Lat":
@@ -425,6 +454,11 @@ func (mapoptionsFormCallback *MapOptionsFormCallback) OnSave() {
 		}
 	}
 
+	// manage the suppress operation
+	if mapoptionsFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		mapoptions_.Unstage(mapoptionsFormCallback.probe.stageOfInterest)
+	}
+
 	mapoptionsFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.MapOptions](
 		mapoptionsFormCallback.probe,
@@ -432,15 +466,16 @@ func (mapoptionsFormCallback *MapOptionsFormCallback) OnSave() {
 	mapoptionsFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
-	if mapoptionsFormCallback.CreationMode {
+	if mapoptionsFormCallback.CreationMode || mapoptionsFormCallback.formGroup.HasSuppressButtonBeenPressed {
 		mapoptionsFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
-			OnSave: __gong__New__MapOptionsFormCallback(
-				nil,
-				mapoptionsFormCallback.probe,
-			),
 		}).Stage(mapoptionsFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__MapOptionsFormCallback(
+			nil,
+			mapoptionsFormCallback.probe,
+			newFormGroup,
+		)
 		mapoptions := new(models.MapOptions)
 		FillUpForm(mapoptions, newFormGroup, mapoptionsFormCallback.probe)
 		mapoptionsFormCallback.probe.formStage.Commit()
@@ -451,10 +486,12 @@ func (mapoptionsFormCallback *MapOptionsFormCallback) OnSave() {
 func __gong__New__MarkerFormCallback(
 	marker *models.Marker,
 	probe *Probe,
+	formGroup *table.FormGroup,
 ) (markerFormCallback *MarkerFormCallback) {
 	markerFormCallback = new(MarkerFormCallback)
 	markerFormCallback.probe = probe
 	markerFormCallback.marker = marker
+	markerFormCallback.formGroup = formGroup
 
 	markerFormCallback.CreationMode = (marker == nil)
 
@@ -468,6 +505,8 @@ type MarkerFormCallback struct {
 	CreationMode bool
 
 	probe *Probe
+
+	formGroup *table.FormGroup
 }
 
 func (markerFormCallback *MarkerFormCallback) OnSave() {
@@ -484,10 +523,7 @@ func (markerFormCallback *MarkerFormCallback) OnSave() {
 	marker_ := markerFormCallback.marker
 	_ = marker_
 
-	// get the formGroup
-	formGroup := markerFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
-
-	for _, formDiv := range formGroup.FormDivs {
+	for _, formDiv := range markerFormCallback.formGroup.FormDivs {
 		switch formDiv.Name {
 		// insertion point per field
 		case "Lat":
@@ -505,6 +541,11 @@ func (markerFormCallback *MarkerFormCallback) OnSave() {
 		}
 	}
 
+	// manage the suppress operation
+	if markerFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		marker_.Unstage(markerFormCallback.probe.stageOfInterest)
+	}
+
 	markerFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.Marker](
 		markerFormCallback.probe,
@@ -512,15 +553,16 @@ func (markerFormCallback *MarkerFormCallback) OnSave() {
 	markerFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
-	if markerFormCallback.CreationMode {
+	if markerFormCallback.CreationMode || markerFormCallback.formGroup.HasSuppressButtonBeenPressed {
 		markerFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
-			OnSave: __gong__New__MarkerFormCallback(
-				nil,
-				markerFormCallback.probe,
-			),
 		}).Stage(markerFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__MarkerFormCallback(
+			nil,
+			markerFormCallback.probe,
+			newFormGroup,
+		)
 		marker := new(models.Marker)
 		FillUpForm(marker, newFormGroup, markerFormCallback.probe)
 		markerFormCallback.probe.formStage.Commit()
@@ -531,10 +573,12 @@ func (markerFormCallback *MarkerFormCallback) OnSave() {
 func __gong__New__UserClickFormCallback(
 	userclick *models.UserClick,
 	probe *Probe,
+	formGroup *table.FormGroup,
 ) (userclickFormCallback *UserClickFormCallback) {
 	userclickFormCallback = new(UserClickFormCallback)
 	userclickFormCallback.probe = probe
 	userclickFormCallback.userclick = userclick
+	userclickFormCallback.formGroup = formGroup
 
 	userclickFormCallback.CreationMode = (userclick == nil)
 
@@ -548,6 +592,8 @@ type UserClickFormCallback struct {
 	CreationMode bool
 
 	probe *Probe
+
+	formGroup *table.FormGroup
 }
 
 func (userclickFormCallback *UserClickFormCallback) OnSave() {
@@ -564,10 +610,7 @@ func (userclickFormCallback *UserClickFormCallback) OnSave() {
 	userclick_ := userclickFormCallback.userclick
 	_ = userclick_
 
-	// get the formGroup
-	formGroup := userclickFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
-
-	for _, formDiv := range formGroup.FormDivs {
+	for _, formDiv := range userclickFormCallback.formGroup.FormDivs {
 		switch formDiv.Name {
 		// insertion point per field
 		case "Name":
@@ -581,6 +624,11 @@ func (userclickFormCallback *UserClickFormCallback) OnSave() {
 		}
 	}
 
+	// manage the suppress operation
+	if userclickFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		userclick_.Unstage(userclickFormCallback.probe.stageOfInterest)
+	}
+
 	userclickFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.UserClick](
 		userclickFormCallback.probe,
@@ -588,15 +636,16 @@ func (userclickFormCallback *UserClickFormCallback) OnSave() {
 	userclickFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
-	if userclickFormCallback.CreationMode {
+	if userclickFormCallback.CreationMode || userclickFormCallback.formGroup.HasSuppressButtonBeenPressed {
 		userclickFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
-			OnSave: __gong__New__UserClickFormCallback(
-				nil,
-				userclickFormCallback.probe,
-			),
 		}).Stage(userclickFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__UserClickFormCallback(
+			nil,
+			userclickFormCallback.probe,
+			newFormGroup,
+		)
 		userclick := new(models.UserClick)
 		FillUpForm(userclick, newFormGroup, userclickFormCallback.probe)
 		userclickFormCallback.probe.formStage.Commit()
@@ -607,10 +656,12 @@ func (userclickFormCallback *UserClickFormCallback) OnSave() {
 func __gong__New__VLineFormCallback(
 	vline *models.VLine,
 	probe *Probe,
+	formGroup *table.FormGroup,
 ) (vlineFormCallback *VLineFormCallback) {
 	vlineFormCallback = new(VLineFormCallback)
 	vlineFormCallback.probe = probe
 	vlineFormCallback.vline = vline
+	vlineFormCallback.formGroup = formGroup
 
 	vlineFormCallback.CreationMode = (vline == nil)
 
@@ -624,6 +675,8 @@ type VLineFormCallback struct {
 	CreationMode bool
 
 	probe *Probe
+
+	formGroup *table.FormGroup
 }
 
 func (vlineFormCallback *VLineFormCallback) OnSave() {
@@ -640,10 +693,7 @@ func (vlineFormCallback *VLineFormCallback) OnSave() {
 	vline_ := vlineFormCallback.vline
 	_ = vline_
 
-	// get the formGroup
-	formGroup := vlineFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
-
-	for _, formDiv := range formGroup.FormDivs {
+	for _, formDiv := range vlineFormCallback.formGroup.FormDivs {
 		switch formDiv.Name {
 		// insertion point per field
 		case "StartLat":
@@ -673,6 +723,11 @@ func (vlineFormCallback *VLineFormCallback) OnSave() {
 		}
 	}
 
+	// manage the suppress operation
+	if vlineFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		vline_.Unstage(vlineFormCallback.probe.stageOfInterest)
+	}
+
 	vlineFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.VLine](
 		vlineFormCallback.probe,
@@ -680,15 +735,16 @@ func (vlineFormCallback *VLineFormCallback) OnSave() {
 	vlineFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
-	if vlineFormCallback.CreationMode {
+	if vlineFormCallback.CreationMode || vlineFormCallback.formGroup.HasSuppressButtonBeenPressed {
 		vlineFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
-			OnSave: __gong__New__VLineFormCallback(
-				nil,
-				vlineFormCallback.probe,
-			),
 		}).Stage(vlineFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__VLineFormCallback(
+			nil,
+			vlineFormCallback.probe,
+			newFormGroup,
+		)
 		vline := new(models.VLine)
 		FillUpForm(vline, newFormGroup, vlineFormCallback.probe)
 		vlineFormCallback.probe.formStage.Commit()
@@ -699,10 +755,12 @@ func (vlineFormCallback *VLineFormCallback) OnSave() {
 func __gong__New__VisualTrackFormCallback(
 	visualtrack *models.VisualTrack,
 	probe *Probe,
+	formGroup *table.FormGroup,
 ) (visualtrackFormCallback *VisualTrackFormCallback) {
 	visualtrackFormCallback = new(VisualTrackFormCallback)
 	visualtrackFormCallback.probe = probe
 	visualtrackFormCallback.visualtrack = visualtrack
+	visualtrackFormCallback.formGroup = formGroup
 
 	visualtrackFormCallback.CreationMode = (visualtrack == nil)
 
@@ -716,6 +774,8 @@ type VisualTrackFormCallback struct {
 	CreationMode bool
 
 	probe *Probe
+
+	formGroup *table.FormGroup
 }
 
 func (visualtrackFormCallback *VisualTrackFormCallback) OnSave() {
@@ -732,10 +792,7 @@ func (visualtrackFormCallback *VisualTrackFormCallback) OnSave() {
 	visualtrack_ := visualtrackFormCallback.visualtrack
 	_ = visualtrack_
 
-	// get the formGroup
-	formGroup := visualtrackFormCallback.probe.formStage.FormGroups_mapString[table.FormGroupDefaultName.ToString()]
-
-	for _, formDiv := range formGroup.FormDivs {
+	for _, formDiv := range visualtrackFormCallback.formGroup.FormDivs {
 		switch formDiv.Name {
 		// insertion point per field
 		case "Lat":
@@ -765,6 +822,11 @@ func (visualtrackFormCallback *VisualTrackFormCallback) OnSave() {
 		}
 	}
 
+	// manage the suppress operation
+	if visualtrackFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		visualtrack_.Unstage(visualtrackFormCallback.probe.stageOfInterest)
+	}
+
 	visualtrackFormCallback.probe.stageOfInterest.Commit()
 	fillUpTable[models.VisualTrack](
 		visualtrackFormCallback.probe,
@@ -772,15 +834,16 @@ func (visualtrackFormCallback *VisualTrackFormCallback) OnSave() {
 	visualtrackFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
-	if visualtrackFormCallback.CreationMode {
+	if visualtrackFormCallback.CreationMode || visualtrackFormCallback.formGroup.HasSuppressButtonBeenPressed {
 		visualtrackFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
-			OnSave: __gong__New__VisualTrackFormCallback(
-				nil,
-				visualtrackFormCallback.probe,
-			),
 		}).Stage(visualtrackFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__VisualTrackFormCallback(
+			nil,
+			visualtrackFormCallback.probe,
+			newFormGroup,
+		)
 		visualtrack := new(models.VisualTrack)
 		FillUpForm(visualtrack, newFormGroup, visualtrackFormCallback.probe)
 		visualtrackFormCallback.probe.formStage.Commit()

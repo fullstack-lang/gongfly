@@ -519,7 +519,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.ControlMode]
 	__GongEnumShape__000000_NewDiagram_ControlMode.Identifier = `ref_models.ControlMode`
 	__GongEnumShape__000000_NewDiagram_ControlMode.Width = 240.000000
-	__GongEnumShape__000000_NewDiagram_ControlMode.Heigth = 93.000000
+	__GongEnumShape__000000_NewDiagram_ControlMode.Height = 93.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000001_NewDiagram_EngineDriverState.Name = `NewDiagram-EngineDriverState`
@@ -529,7 +529,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.EngineDriverState]
 	__GongEnumShape__000001_NewDiagram_EngineDriverState.Identifier = `ref_models.EngineDriverState`
 	__GongEnumShape__000001_NewDiagram_EngineDriverState.Width = 240.000000
-	__GongEnumShape__000001_NewDiagram_EngineDriverState.Heigth = 153.000000
+	__GongEnumShape__000001_NewDiagram_EngineDriverState.Height = 153.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000002_NewDiagram_EngineRunMode.Name = `NewDiagram-EngineRunMode`
@@ -539,7 +539,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.EngineRunMode]
 	__GongEnumShape__000002_NewDiagram_EngineRunMode.Identifier = `ref_models.EngineRunMode`
 	__GongEnumShape__000002_NewDiagram_EngineRunMode.Width = 240.000000
-	__GongEnumShape__000002_NewDiagram_EngineRunMode.Heigth = 93.000000
+	__GongEnumShape__000002_NewDiagram_EngineRunMode.Height = 93.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000003_NewDiagram_EngineState.Name = `NewDiagram-EngineState`
@@ -549,7 +549,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.EngineState]
 	__GongEnumShape__000003_NewDiagram_EngineState.Identifier = `ref_models.EngineState`
 	__GongEnumShape__000003_NewDiagram_EngineState.Width = 240.000000
-	__GongEnumShape__000003_NewDiagram_EngineState.Heigth = 108.000000
+	__GongEnumShape__000003_NewDiagram_EngineState.Height = 108.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000004_NewDiagram_EngineStopMode.Name = `NewDiagram-EngineStopMode`
@@ -559,7 +559,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.EngineStopMode]
 	__GongEnumShape__000004_NewDiagram_EngineStopMode.Identifier = `ref_models.EngineStopMode`
 	__GongEnumShape__000004_NewDiagram_EngineStopMode.Width = 451.999939
-	__GongEnumShape__000004_NewDiagram_EngineStopMode.Heigth = 93.000000
+	__GongEnumShape__000004_NewDiagram_EngineStopMode.Height = 93.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000005_NewDiagram_GongsimCommandType.Name = `NewDiagram-GongsimCommandType`
@@ -569,7 +569,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.GongsimCommandType]
 	__GongEnumShape__000005_NewDiagram_GongsimCommandType.Identifier = `ref_models.GongsimCommandType`
 	__GongEnumShape__000005_NewDiagram_GongsimCommandType.Width = 450.999939
-	__GongEnumShape__000005_NewDiagram_GongsimCommandType.Heigth = 153.000000
+	__GongEnumShape__000005_NewDiagram_GongsimCommandType.Height = 153.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000006_NewDiagram_SpeedCommandType.Name = `NewDiagram-SpeedCommandType`
@@ -579,7 +579,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.SpeedCommandType]
 	__GongEnumShape__000006_NewDiagram_SpeedCommandType.Identifier = `ref_models.SpeedCommandType`
 	__GongEnumShape__000006_NewDiagram_SpeedCommandType.Width = 435.999939
-	__GongEnumShape__000006_NewDiagram_SpeedCommandType.Heigth = 108.000000
+	__GongEnumShape__000006_NewDiagram_SpeedCommandType.Height = 108.000000
 
 	// GongEnumValueEntry values setup
 	__GongEnumValueEntry__000000_AUTONOMOUS.Name = `AUTONOMOUS`
@@ -783,7 +783,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000000_NewDiagram_DummyAgent.ShowNbInstances = true
 	__GongStructShape__000000_NewDiagram_DummyAgent.NbInstances = 0
 	__GongStructShape__000000_NewDiagram_DummyAgent.Width = 240.000000
-	__GongStructShape__000000_NewDiagram_DummyAgent.Heigth = 93.000000
+	__GongStructShape__000000_NewDiagram_DummyAgent.Height = 93.000000
 	__GongStructShape__000000_NewDiagram_DummyAgent.IsSelected = false
 
 	// GongStructShape values setup
@@ -796,7 +796,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000001_NewDiagram_Engine.ShowNbInstances = true
 	__GongStructShape__000001_NewDiagram_Engine.NbInstances = 0
 	__GongStructShape__000001_NewDiagram_Engine.Width = 240.000000
-	__GongStructShape__000001_NewDiagram_Engine.Heigth = 183.000000
+	__GongStructShape__000001_NewDiagram_Engine.Height = 183.000000
 	__GongStructShape__000001_NewDiagram_Engine.IsSelected = false
 
 	// GongStructShape values setup
@@ -809,7 +809,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000002_NewDiagram_Event.ShowNbInstances = true
 	__GongStructShape__000002_NewDiagram_Event.NbInstances = 0
 	__GongStructShape__000002_NewDiagram_Event.Width = 240.000000
-	__GongStructShape__000002_NewDiagram_Event.Heigth = 93.000000
+	__GongStructShape__000002_NewDiagram_Event.Height = 93.000000
 	__GongStructShape__000002_NewDiagram_Event.IsSelected = false
 
 	// GongStructShape values setup
@@ -822,7 +822,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000003_NewDiagram_GongsimCommand.ShowNbInstances = true
 	__GongStructShape__000003_NewDiagram_GongsimCommand.NbInstances = 0
 	__GongStructShape__000003_NewDiagram_GongsimCommand.Width = 389.000000
-	__GongStructShape__000003_NewDiagram_GongsimCommand.Heigth = 138.000000
+	__GongStructShape__000003_NewDiagram_GongsimCommand.Height = 138.000000
 	__GongStructShape__000003_NewDiagram_GongsimCommand.IsSelected = false
 
 	// GongStructShape values setup
@@ -835,7 +835,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000004_NewDiagram_GongsimStatus.ShowNbInstances = true
 	__GongStructShape__000004_NewDiagram_GongsimStatus.NbInstances = 0
 	__GongStructShape__000004_NewDiagram_GongsimStatus.Width = 365.000000
-	__GongStructShape__000004_NewDiagram_GongsimStatus.Heigth = 138.000000
+	__GongStructShape__000004_NewDiagram_GongsimStatus.Height = 138.000000
 	__GongStructShape__000004_NewDiagram_GongsimStatus.IsSelected = false
 
 	// Link values setup
@@ -1003,5 +1003,3 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000004_NewDiagram_GongsimStatus.Fields = append(__GongStructShape__000004_NewDiagram_GongsimStatus.Fields, __Field__000018_SpeedCommandCompletionDate)
 	__Link__000000_Engine.Middlevertice = __Vertice__000000_Verticle_in_class_diagram_NewDiagram_in_middle_between_NewDiagram_GongsimCommand_and_NewDiagram_Engine
 }
-
-

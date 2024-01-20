@@ -7,11 +7,13 @@ import { DOCUMENT, Location } from '@angular/common'
 /*
  * Behavior subject
  */
-import { BehaviorSubject } from 'rxjs';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { catchError, map, tap } from 'rxjs/operators'
 
-import { LayerGroupDB } from './layergroup-db';
+import { LayerGroupDB } from './layergroup-db'
+import { LayerGroup, CopyLayerGroupToLayerGroupDB } from './layergroup'
+
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
@@ -114,6 +116,25 @@ export class LayerGroupService {
     return this.http.delete<LayerGroupDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted layergroupdb id=${id}`)),
       catchError(this.handleError<LayerGroupDB>('deleteLayerGroup'))
+    );
+  }
+
+  // updateFront copy layergroup to a version with encoded pointers and update to the back
+  updateFront(layergroup: LayerGroup, GONG__StackPath: string): Observable<LayerGroupDB> {
+    let layergroupDB = new LayerGroupDB
+    CopyLayerGroupToLayerGroupDB(layergroup, layergroupDB)
+    const id = typeof layergroupDB === 'number' ? layergroupDB : layergroupDB.ID
+    const url = `${this.layergroupsUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.put<LayerGroupDB>(url, layergroupDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<LayerGroupDB>('updateLayerGroup'))
     );
   }
 

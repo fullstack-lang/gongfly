@@ -12,18 +12,23 @@ export * from './lib/push_from_front_nb.service'
 
 
 export * from './lib/dummyagent-db'
+export * from './lib/dummyagent'
 export * from './lib/dummyagent.service'
 
 export * from './lib/engine-db'
+export * from './lib/engine'
 export * from './lib/engine.service'
 
 export * from './lib/event-db'
+export * from './lib/event'
 export * from './lib/event.service'
 
 export * from './lib/gongsimcommand-db'
+export * from './lib/gongsimcommand'
 export * from './lib/gongsimcommand.service'
 
 export * from './lib/gongsimstatus-db'
+export * from './lib/gongsimstatus'
 export * from './lib/gongsimstatus.service'
 
 

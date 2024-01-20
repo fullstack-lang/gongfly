@@ -12,97 +12,121 @@ func FillUpFormFromGongstruct[T models.Gongstruct](instance *T, probe *Probe) {
 	formStage.Reset()
 	formStage.Commit()
 
+	FillUpNamedFormFromGongstruct[T](instance, probe, formStage, gongtable.FormGroupDefaultName.ToString())
+
+}
+
+func FillUpNamedFormFromGongstruct[T models.Gongstruct](instance *T, probe *Probe, formStage *gongtable.StageStruct, formName string) {
+
 	switch instancesTyped := any(instance).(type) {
 	// insertion point
 	case *models.Circle:
 		formGroup := (&gongtable.FormGroup{
-			Name:  gongtable.FormGroupDefaultName.ToString(),
-			Label: "Update Circle Form",
-			OnSave: __gong__New__CircleFormCallback(
-				instancesTyped,
-				probe,
-			),
+			Name:  formName,
+			Label: "Circle Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__CircleFormCallback(
+			instancesTyped,
+			probe,
+			formGroup,
+		)
+		formGroup.HasSuppressButton = true
 		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.DivIcon:
 		formGroup := (&gongtable.FormGroup{
-			Name:  gongtable.FormGroupDefaultName.ToString(),
-			Label: "Update DivIcon Form",
-			OnSave: __gong__New__DivIconFormCallback(
-				instancesTyped,
-				probe,
-			),
+			Name:  formName,
+			Label: "DivIcon Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__DivIconFormCallback(
+			instancesTyped,
+			probe,
+			formGroup,
+		)
+		formGroup.HasSuppressButton = true
 		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.LayerGroup:
 		formGroup := (&gongtable.FormGroup{
-			Name:  gongtable.FormGroupDefaultName.ToString(),
-			Label: "Update LayerGroup Form",
-			OnSave: __gong__New__LayerGroupFormCallback(
-				instancesTyped,
-				probe,
-			),
+			Name:  formName,
+			Label: "LayerGroup Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__LayerGroupFormCallback(
+			instancesTyped,
+			probe,
+			formGroup,
+		)
+		formGroup.HasSuppressButton = true
 		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.LayerGroupUse:
 		formGroup := (&gongtable.FormGroup{
-			Name:  gongtable.FormGroupDefaultName.ToString(),
-			Label: "Update LayerGroupUse Form",
-			OnSave: __gong__New__LayerGroupUseFormCallback(
-				instancesTyped,
-				probe,
-			),
+			Name:  formName,
+			Label: "LayerGroupUse Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__LayerGroupUseFormCallback(
+			instancesTyped,
+			probe,
+			formGroup,
+		)
+		formGroup.HasSuppressButton = true
 		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.MapOptions:
 		formGroup := (&gongtable.FormGroup{
-			Name:  gongtable.FormGroupDefaultName.ToString(),
-			Label: "Update MapOptions Form",
-			OnSave: __gong__New__MapOptionsFormCallback(
-				instancesTyped,
-				probe,
-			),
+			Name:  formName,
+			Label: "MapOptions Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__MapOptionsFormCallback(
+			instancesTyped,
+			probe,
+			formGroup,
+		)
+		formGroup.HasSuppressButton = true
 		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.Marker:
 		formGroup := (&gongtable.FormGroup{
-			Name:  gongtable.FormGroupDefaultName.ToString(),
-			Label: "Update Marker Form",
-			OnSave: __gong__New__MarkerFormCallback(
-				instancesTyped,
-				probe,
-			),
+			Name:  formName,
+			Label: "Marker Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__MarkerFormCallback(
+			instancesTyped,
+			probe,
+			formGroup,
+		)
+		formGroup.HasSuppressButton = true
 		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.UserClick:
 		formGroup := (&gongtable.FormGroup{
-			Name:  gongtable.FormGroupDefaultName.ToString(),
-			Label: "Update UserClick Form",
-			OnSave: __gong__New__UserClickFormCallback(
-				instancesTyped,
-				probe,
-			),
+			Name:  formName,
+			Label: "UserClick Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__UserClickFormCallback(
+			instancesTyped,
+			probe,
+			formGroup,
+		)
+		formGroup.HasSuppressButton = true
 		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.VLine:
 		formGroup := (&gongtable.FormGroup{
-			Name:  gongtable.FormGroupDefaultName.ToString(),
-			Label: "Update VLine Form",
-			OnSave: __gong__New__VLineFormCallback(
-				instancesTyped,
-				probe,
-			),
+			Name:  formName,
+			Label: "VLine Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__VLineFormCallback(
+			instancesTyped,
+			probe,
+			formGroup,
+		)
+		formGroup.HasSuppressButton = true
 		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.VisualTrack:
 		formGroup := (&gongtable.FormGroup{
-			Name:  gongtable.FormGroupDefaultName.ToString(),
-			Label: "Update VisualTrack Form",
-			OnSave: __gong__New__VisualTrackFormCallback(
-				instancesTyped,
-				probe,
-			),
+			Name:  formName,
+			Label: "VisualTrack Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__VisualTrackFormCallback(
+			instancesTyped,
+			probe,
+			formGroup,
+		)
+		formGroup.HasSuppressButton = true
 		FillUpForm(instancesTyped, formGroup, probe)
 	default:
 		_ = instancesTyped

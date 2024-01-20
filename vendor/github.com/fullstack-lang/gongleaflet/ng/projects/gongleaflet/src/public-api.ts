@@ -12,30 +12,39 @@ export * from './lib/push_from_front_nb.service'
 
 
 export * from './lib/circle-db'
+export * from './lib/circle'
 export * from './lib/circle.service'
 
 export * from './lib/divicon-db'
+export * from './lib/divicon'
 export * from './lib/divicon.service'
 
 export * from './lib/layergroup-db'
+export * from './lib/layergroup'
 export * from './lib/layergroup.service'
 
 export * from './lib/layergroupuse-db'
+export * from './lib/layergroupuse'
 export * from './lib/layergroupuse.service'
 
 export * from './lib/mapoptions-db'
+export * from './lib/mapoptions'
 export * from './lib/mapoptions.service'
 
 export * from './lib/marker-db'
+export * from './lib/marker'
 export * from './lib/marker.service'
 
 export * from './lib/userclick-db'
+export * from './lib/userclick'
 export * from './lib/userclick.service'
 
 export * from './lib/vline-db'
+export * from './lib/vline'
 export * from './lib/vline.service'
 
 export * from './lib/visualtrack-db'
+export * from './lib/visualtrack'
 export * from './lib/visualtrack.service'
 
 

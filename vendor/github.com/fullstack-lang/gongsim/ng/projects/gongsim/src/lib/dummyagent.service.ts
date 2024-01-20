@@ -7,11 +7,13 @@ import { DOCUMENT, Location } from '@angular/common'
 /*
  * Behavior subject
  */
-import { BehaviorSubject } from 'rxjs';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { catchError, map, tap } from 'rxjs/operators'
 
-import { DummyAgentDB } from './dummyagent-db';
+import { DummyAgentDB } from './dummyagent-db'
+import { DummyAgent, CopyDummyAgentToDummyAgentDB } from './dummyagent'
+
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
@@ -114,6 +116,25 @@ export class DummyAgentService {
     return this.http.delete<DummyAgentDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted dummyagentdb id=${id}`)),
       catchError(this.handleError<DummyAgentDB>('deleteDummyAgent'))
+    );
+  }
+
+  // updateFront copy dummyagent to a version with encoded pointers and update to the back
+  updateFront(dummyagent: DummyAgent, GONG__StackPath: string): Observable<DummyAgentDB> {
+    let dummyagentDB = new DummyAgentDB
+    CopyDummyAgentToDummyAgentDB(dummyagent, dummyagentDB)
+    const id = typeof dummyagentDB === 'number' ? dummyagentDB : dummyagentDB.ID
+    const url = `${this.dummyagentsUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.put<DummyAgentDB>(url, dummyagentDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<DummyAgentDB>('updateDummyAgent'))
     );
   }
 

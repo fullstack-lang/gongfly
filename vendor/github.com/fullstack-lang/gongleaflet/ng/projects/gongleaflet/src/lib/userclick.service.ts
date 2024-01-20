@@ -7,11 +7,13 @@ import { DOCUMENT, Location } from '@angular/common'
 /*
  * Behavior subject
  */
-import { BehaviorSubject } from 'rxjs';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { catchError, map, tap } from 'rxjs/operators'
 
-import { UserClickDB } from './userclick-db';
+import { UserClickDB } from './userclick-db'
+import { UserClick, CopyUserClickToUserClickDB } from './userclick'
+
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
@@ -75,6 +77,23 @@ export class UserClickService {
   }
 
   /** POST: add a new userclick to the server */
+  postFront(userclick: UserClick, GONG__StackPath: string): Observable<UserClickDB> {
+    let userclickDB = new UserClickDB
+    CopyUserClickToUserClickDB(userclick, userclickDB)
+    const id = typeof userclickDB === 'number' ? userclickDB : userclickDB.ID
+    const url = `${this.userclicksUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.post<UserClickDB>(url, userclickDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<UserClickDB>('updateUserClick'))
+    );
+  }
   post(userclickdb: UserClickDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
     return this.postUserClick(userclickdb, GONG__StackPath, frontRepo)
   }
@@ -114,6 +133,25 @@ export class UserClickService {
     return this.http.delete<UserClickDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted userclickdb id=${id}`)),
       catchError(this.handleError<UserClickDB>('deleteUserClick'))
+    );
+  }
+
+  // updateFront copy userclick to a version with encoded pointers and update to the back
+  updateFront(userclick: UserClick, GONG__StackPath: string): Observable<UserClickDB> {
+    let userclickDB = new UserClickDB
+    CopyUserClickToUserClickDB(userclick, userclickDB)
+    const id = typeof userclickDB === 'number' ? userclickDB : userclickDB.ID
+    const url = `${this.userclicksUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.put<UserClickDB>(url, userclickDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<UserClickDB>('updateUserClick'))
     );
   }
 

@@ -273,6 +273,14 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitPhaseTwoInstance(backR
 		for _, layergroupuseAssocEnd := range mapoptions.LayerGroupUses {
 			layergroupuseAssocEnd_DB :=
 				backRepo.BackRepoLayerGroupUse.GetLayerGroupUseDBFromLayerGroupUsePtr(layergroupuseAssocEnd)
+			
+			// the stage might be inconsistant, meaning that the layergroupuseAssocEnd_DB might
+			// be missing from the stage. In this case, the commit operation is robust
+			// An alternative would be to crash here to reveal the missing element.
+			if layergroupuseAssocEnd_DB == nil {
+				continue
+			}
+			
 			mapoptionsDB.MapOptionsPointersEncoding.LayerGroupUses =
 				append(mapoptionsDB.MapOptionsPointersEncoding.LayerGroupUses, int(layergroupuseAssocEnd_DB.ID))
 		}

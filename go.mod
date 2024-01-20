@@ -5,10 +5,10 @@ go 1.21.0
 toolchain go1.21.1
 
 require (
-	github.com/fullstack-lang/gong v0.0.0-20240119193124-df4673612207
-	github.com/fullstack-lang/gongdoc v0.0.0-20240119193542-bc4c69682c98
-	github.com/fullstack-lang/gongleaflet v0.0.0-20240116071919-7b15003fa8e5
-	github.com/fullstack-lang/gongsim v0.0.0-20240116071920-32d70dc1ea11
+	github.com/fullstack-lang/gong v0.0.0-20240120011625-d341a024e5f0
+	github.com/fullstack-lang/gongdoc v0.0.0-20240120011626-430a039d3446
+	github.com/fullstack-lang/gongleaflet v0.0.0-20240120022805-7ca0071f624d
+	github.com/fullstack-lang/gongsim v0.0.0-20240120021406-57df909ef9b4
 	github.com/fullstack-lang/gongtable v0.0.0-20240116071922-e1b1151bc9e6
 	github.com/fullstack-lang/gongtree v0.0.0-20240116071923-14f8e843a4a7
 	github.com/fullstack-lang/maticons v0.0.0-20230823061653-70c364fbdd00
@@ -63,7 +63,6 @@ require (
 	github.com/richardlehane/msoleps v1.0.3 // indirect
 	github.com/rogpeppe/fastuuid v1.2.0 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
-	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect
 	github.com/shabbyrobe/xmlwriter v0.0.0-20230525083848-85336ec334fa // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect

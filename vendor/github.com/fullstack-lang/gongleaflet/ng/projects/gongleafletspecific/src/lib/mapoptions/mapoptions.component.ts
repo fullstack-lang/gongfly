@@ -8,7 +8,7 @@ import 'leaflet-rotatedmarker'
 import * as gongleaflet from 'gongleaflet';
 import * as manageLeafletItems from './manage-leaflet-items'
 import { dotBlur } from '../../assets/icons/dot_blur'
-import { UserClickDB } from 'gongleaflet'
+import { UserClick } from 'gongleaflet'
 
 export const DEFAULT_ICON_SIZE = 60
 
@@ -68,7 +68,7 @@ export class MapoptionsComponent implements OnInit {
 
   // map that allows direct access from the Gong LayerGroupID to the LayerGroupUse of the map
   // if a gong layerGroup is present, it means the layer is is to be displayed on this map
-  mapGongLayerGroupID_LayerGroupUse = new Map<number, gongleaflet.LayerGroupUseDB>()
+  mapGongLayerGroupID_LayerGroupUse = new Map<number, gongleaflet.LayerGroupUse>()
 
   // the gong front repo
   frontRepo?: gongleaflet.FrontRepo
@@ -137,13 +137,13 @@ export class MapoptionsComponent implements OnInit {
         this.userInterfactionCallbackFunction(e.latlng.lat, e.latlng.lng)
       }
 
-      let userClick = new UserClickDB
+      let userClick = new UserClick
       userClick.Name = "Click !" + this.clickNumber
       this.clickNumber = this.clickNumber + 1
       userClick.Lat = e.latlng.lat
       userClick.Lng = e.latlng.lng
 
-      this.userClickService.postUserClick(userClick, this.GONG__StackPath, this.frontRepoService.frontRepo).subscribe(
+      this.userClickService.postFront(userClick, this.GONG__StackPath).subscribe(
         (userClick) => {
           console.log("user clicked")
           this.userClickService.UserClickServiceChanged.next("post")
@@ -190,7 +190,7 @@ export class MapoptionsComponent implements OnInit {
   }
 
   // generate a new leaflet marker and store it in the mapVisualTrackID_VisualMarker
-  newVisualTrackMarker(visualTrack: gongleaflet.VisualTrackDB) {
+  newVisualTrackMarker(visualTrack: gongleaflet.VisualTrack) {
     var color = manageLeafletItems.getColor(visualTrack.ColorEnum);
 
     if (visualTrack.DivIcon) {
@@ -242,7 +242,7 @@ export class MapoptionsComponent implements OnInit {
   // - heading
   // - track history
   updateVisualTrackMarker(
-    visualTrack: gongleaflet.VisualTrackDB,
+    visualTrack: gongleaflet.VisualTrack,
     marker: L.Marker<any>
   ) {
     marker.setLatLng([visualTrack.Lat, visualTrack.Lng]);
@@ -261,7 +261,7 @@ export class MapoptionsComponent implements OnInit {
   }
 
   // generateVisualTracksHistory adds dots to the track
-  generateVisualTracksHistory(visualTrack: gongleaflet.VisualTrackDB): L.LatLng[] {
+  generateVisualTracksHistory(visualTrack: gongleaflet.VisualTrack): L.LatLng[] {
     let trackHistory: L.LatLng[] = []
 
     let coordinates: L.LatLng = new L.LatLng(visualTrack.Lat, visualTrack.Lng)
@@ -295,11 +295,11 @@ export class MapoptionsComponent implements OnInit {
   // with dots along the track history
   //
   // remove the former dot history
-  renderTrackHistory(visualTrack: gongleaflet.VisualTrackDB, trackHistory: L.LatLng[]) {
+  renderTrackHistory(visualTrack: gongleaflet.VisualTrack, trackHistory: L.LatLng[]) {
 
     // get the leaflet layer of the visual track
     let leafletGroupLayer: L.LayerGroup<L.Layer> | undefined
-    let groupLayerUse: gongleaflet.LayerGroupUseDB | undefined
+    let groupLayerUse: gongleaflet.LayerGroupUse | undefined
     if (visualTrack.LayerGroup) {
       leafletGroupLayer = this.mapGongLayerGroupID_LeafletLayerGroup.get(visualTrack.LayerGroup.ID)
       groupLayerUse = this.mapGongLayerGroupID_LayerGroupUse.get(visualTrack.LayerGroup.ID)
@@ -339,7 +339,7 @@ export class MapoptionsComponent implements OnInit {
     this.mapVisualTrackID_LeafletHistoryTrackMarker.set(visualTrack.ID, arrayOfDotMarkers)
   }
 
-  formatTrackLabel = (track: gongleaflet.VisualTrackDB): string => {
+  formatTrackLabel = (track: gongleaflet.VisualTrack): string => {
     let label: string = track.Name;
     if (track.DisplayLevelAndSpeed) {
       label += `</br>

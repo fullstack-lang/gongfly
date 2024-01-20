@@ -5,7 +5,7 @@ import * as L from 'leaflet';
 
 // return the mapOptions that is passed to the 
 // creation of the map
-export function visualMapToLeafletMapOptions(vMap: gongleaflet.MapOptionsDB): L.MapOptions {
+export function visualMapToLeafletMapOptions(vMap: gongleaflet.MapOptions): L.MapOptions {
 
   let mapOptions: L.MapOptions = {}
 
@@ -94,7 +94,7 @@ export function newMarkerWithIcon(lat: number, lng: number, icon: L.DivIcon): L.
   return L.marker([lat, lng], { icon });
 };
 
-export function newCircle(circle: gongleaflet.CircleDB): L.Circle {
+export function newCircle(circle: gongleaflet.Circle): L.Circle {
   return L.circle([circle.Lat, circle.Lng], {
     className: 'layer-',
     radius: circle.Radius * 1000,
@@ -106,7 +106,7 @@ export function newCircle(circle: gongleaflet.CircleDB): L.Circle {
   });
 };
 
-export function newLine(newLineData: gongleaflet.VLineDB): L.Polyline {
+export function newLine(newLineData: gongleaflet.VLine): L.Polyline {
   return new L.Polyline([])
     .setLatLngs([
       L.latLng(newLineData.StartLat, newLineData.StartLng),

@@ -7,11 +7,13 @@ import { DOCUMENT, Location } from '@angular/common'
 /*
  * Behavior subject
  */
-import { BehaviorSubject } from 'rxjs';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { catchError, map, tap } from 'rxjs/operators'
 
-import { DivIconDB } from './divicon-db';
+import { DivIconDB } from './divicon-db'
+import { DivIcon, CopyDivIconToDivIconDB } from './divicon'
+
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
@@ -114,6 +116,25 @@ export class DivIconService {
     return this.http.delete<DivIconDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted divicondb id=${id}`)),
       catchError(this.handleError<DivIconDB>('deleteDivIcon'))
+    );
+  }
+
+  // updateFront copy divicon to a version with encoded pointers and update to the back
+  updateFront(divicon: DivIcon, GONG__StackPath: string): Observable<DivIconDB> {
+    let diviconDB = new DivIconDB
+    CopyDivIconToDivIconDB(divicon, diviconDB)
+    const id = typeof diviconDB === 'number' ? diviconDB : diviconDB.ID
+    const url = `${this.diviconsUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.put<DivIconDB>(url, diviconDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<DivIconDB>('updateDivIcon'))
     );
   }
 

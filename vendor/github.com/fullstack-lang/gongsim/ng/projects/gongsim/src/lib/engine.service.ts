@@ -7,11 +7,13 @@ import { DOCUMENT, Location } from '@angular/common'
 /*
  * Behavior subject
  */
-import { BehaviorSubject } from 'rxjs';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { catchError, map, tap } from 'rxjs/operators'
 
-import { EngineDB } from './engine-db';
+import { EngineDB } from './engine-db'
+import { Engine, CopyEngineToEngineDB } from './engine'
+
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
@@ -114,6 +116,25 @@ export class EngineService {
     return this.http.delete<EngineDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted enginedb id=${id}`)),
       catchError(this.handleError<EngineDB>('deleteEngine'))
+    );
+  }
+
+  // updateFront copy engine to a version with encoded pointers and update to the back
+  updateFront(engine: Engine, GONG__StackPath: string): Observable<EngineDB> {
+    let engineDB = new EngineDB
+    CopyEngineToEngineDB(engine, engineDB)
+    const id = typeof engineDB === 'number' ? engineDB : engineDB.ID
+    const url = `${this.enginesUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.put<EngineDB>(url, engineDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<EngineDB>('updateEngine'))
     );
   }
 

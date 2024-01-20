@@ -19,9 +19,9 @@ func FillUpFormFromGongstructName(
 	var prefix string
 
 	if isNewInstance {
-		prefix = "New"
+		prefix = ""
 	} else {
-		prefix = "Update"
+		prefix = ""
 	}
 
 	switch gongstructName {
@@ -29,101 +29,119 @@ func FillUpFormFromGongstructName(
 	case "Circle":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
-			Label: prefix + " Circle Form",
-			OnSave: __gong__New__CircleFormCallback(
-				nil,
-				probe,
-			),
+			Label: prefix + "Circle Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__CircleFormCallback(
+			nil,
+			probe,
+			formGroup,
+		)
 		circle := new(models.Circle)
+		formGroup.HasSuppressButton = !isNewInstance
 		FillUpForm(circle, formGroup, probe)
 	case "DivIcon":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
-			Label: prefix + " DivIcon Form",
-			OnSave: __gong__New__DivIconFormCallback(
-				nil,
-				probe,
-			),
+			Label: prefix + "DivIcon Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__DivIconFormCallback(
+			nil,
+			probe,
+			formGroup,
+		)
 		divicon := new(models.DivIcon)
+		formGroup.HasSuppressButton = !isNewInstance
 		FillUpForm(divicon, formGroup, probe)
 	case "LayerGroup":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
-			Label: prefix + " LayerGroup Form",
-			OnSave: __gong__New__LayerGroupFormCallback(
-				nil,
-				probe,
-			),
+			Label: prefix + "LayerGroup Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__LayerGroupFormCallback(
+			nil,
+			probe,
+			formGroup,
+		)
 		layergroup := new(models.LayerGroup)
+		formGroup.HasSuppressButton = !isNewInstance
 		FillUpForm(layergroup, formGroup, probe)
 	case "LayerGroupUse":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
-			Label: prefix + " LayerGroupUse Form",
-			OnSave: __gong__New__LayerGroupUseFormCallback(
-				nil,
-				probe,
-			),
+			Label: prefix + "LayerGroupUse Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__LayerGroupUseFormCallback(
+			nil,
+			probe,
+			formGroup,
+		)
 		layergroupuse := new(models.LayerGroupUse)
+		formGroup.HasSuppressButton = !isNewInstance
 		FillUpForm(layergroupuse, formGroup, probe)
 	case "MapOptions":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
-			Label: prefix + " MapOptions Form",
-			OnSave: __gong__New__MapOptionsFormCallback(
-				nil,
-				probe,
-			),
+			Label: prefix + "MapOptions Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__MapOptionsFormCallback(
+			nil,
+			probe,
+			formGroup,
+		)
 		mapoptions := new(models.MapOptions)
+		formGroup.HasSuppressButton = !isNewInstance
 		FillUpForm(mapoptions, formGroup, probe)
 	case "Marker":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
-			Label: prefix + " Marker Form",
-			OnSave: __gong__New__MarkerFormCallback(
-				nil,
-				probe,
-			),
+			Label: prefix + "Marker Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__MarkerFormCallback(
+			nil,
+			probe,
+			formGroup,
+		)
 		marker := new(models.Marker)
+		formGroup.HasSuppressButton = !isNewInstance
 		FillUpForm(marker, formGroup, probe)
 	case "UserClick":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
-			Label: prefix + " UserClick Form",
-			OnSave: __gong__New__UserClickFormCallback(
-				nil,
-				probe,
-			),
+			Label: prefix + "UserClick Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__UserClickFormCallback(
+			nil,
+			probe,
+			formGroup,
+		)
 		userclick := new(models.UserClick)
+		formGroup.HasSuppressButton = !isNewInstance
 		FillUpForm(userclick, formGroup, probe)
 	case "VLine":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
-			Label: prefix + " VLine Form",
-			OnSave: __gong__New__VLineFormCallback(
-				nil,
-				probe,
-			),
+			Label: prefix + "VLine Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__VLineFormCallback(
+			nil,
+			probe,
+			formGroup,
+		)
 		vline := new(models.VLine)
+		formGroup.HasSuppressButton = !isNewInstance
 		FillUpForm(vline, formGroup, probe)
 	case "VisualTrack":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
-			Label: prefix + " VisualTrack Form",
-			OnSave: __gong__New__VisualTrackFormCallback(
-				nil,
-				probe,
-			),
+			Label: prefix + "VisualTrack Form",
 		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__VisualTrackFormCallback(
+			nil,
+			probe,
+			formGroup,
+		)
 		visualtrack := new(models.VisualTrack)
+		formGroup.HasSuppressButton = !isNewInstance
 		FillUpForm(visualtrack, formGroup, probe)
 	}
 	formStage.Commit()

@@ -2,10 +2,12 @@
 import * as gongsvg from 'gongsvg'
 
 
-export function compareRectGeometries(instance1: gongsvg.RectDB, instance2: gongsvg.RectDB): boolean {
+export function compareRectGeometries(instance1: gongsvg.Rect, instance2: gongsvg.Rect): boolean {
 
+    // during initialization phases, some arguments might be undefined
     if (instance1 == undefined || instance2 == undefined) {
         console.log("comparing undefined rect")
+        return true
     }
 
     if (
@@ -16,5 +18,5 @@ export function compareRectGeometries(instance1: gongsvg.RectDB, instance2: gong
     ) {
         return false
     }
-    return true;
+    return true
 }

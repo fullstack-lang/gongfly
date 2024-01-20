@@ -7,11 +7,13 @@ import { DOCUMENT, Location } from '@angular/common'
 /*
  * Behavior subject
  */
-import { BehaviorSubject } from 'rxjs';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { catchError, map, tap } from 'rxjs/operators'
 
-import { VLineDB } from './vline-db';
+import { VLineDB } from './vline-db'
+import { VLine, CopyVLineToVLineDB } from './vline'
+
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
@@ -121,6 +123,25 @@ export class VLineService {
     return this.http.delete<VLineDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted vlinedb id=${id}`)),
       catchError(this.handleError<VLineDB>('deleteVLine'))
+    );
+  }
+
+  // updateFront copy vline to a version with encoded pointers and update to the back
+  updateFront(vline: VLine, GONG__StackPath: string): Observable<VLineDB> {
+    let vlineDB = new VLineDB
+    CopyVLineToVLineDB(vline, vlineDB)
+    const id = typeof vlineDB === 'number' ? vlineDB : vlineDB.ID
+    const url = `${this.vlinesUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.put<VLineDB>(url, vlineDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<VLineDB>('updateVLine'))
     );
   }
 

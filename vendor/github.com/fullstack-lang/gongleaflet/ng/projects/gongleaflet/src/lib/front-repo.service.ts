@@ -5,30 +5,39 @@ import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs'
 
 // insertion point sub template for services imports
 import { CircleDB } from './circle-db'
+import { Circle, CopyCircleDBToCircle } from './circle'
 import { CircleService } from './circle.service'
 
 import { DivIconDB } from './divicon-db'
+import { DivIcon, CopyDivIconDBToDivIcon } from './divicon'
 import { DivIconService } from './divicon.service'
 
 import { LayerGroupDB } from './layergroup-db'
+import { LayerGroup, CopyLayerGroupDBToLayerGroup } from './layergroup'
 import { LayerGroupService } from './layergroup.service'
 
 import { LayerGroupUseDB } from './layergroupuse-db'
+import { LayerGroupUse, CopyLayerGroupUseDBToLayerGroupUse } from './layergroupuse'
 import { LayerGroupUseService } from './layergroupuse.service'
 
 import { MapOptionsDB } from './mapoptions-db'
+import { MapOptions, CopyMapOptionsDBToMapOptions } from './mapoptions'
 import { MapOptionsService } from './mapoptions.service'
 
 import { MarkerDB } from './marker-db'
+import { Marker, CopyMarkerDBToMarker } from './marker'
 import { MarkerService } from './marker.service'
 
 import { UserClickDB } from './userclick-db'
+import { UserClick, CopyUserClickDBToUserClick } from './userclick'
 import { UserClickService } from './userclick.service'
 
 import { VLineDB } from './vline-db'
+import { VLine, CopyVLineDBToVLine } from './vline'
 import { VLineService } from './vline.service'
 
 import { VisualTrackDB } from './visualtrack-db'
+import { VisualTrack, CopyVisualTrackDBToVisualTrack } from './visualtrack'
 import { VisualTrackService } from './visualtrack.service'
 
 export const StackType = "github.com/fullstack-lang/gongleaflet/go/models"
@@ -39,44 +48,71 @@ export class FrontRepo { // insertion point sub template
   Circles = new Map<number, CircleDB>() // map of repo instances
   Circles_batch = new Map<number, CircleDB>() // same but only in last GET (for finding repo instances to delete)
 
+  array_Circles = new Array<Circle>() // array of front instances
+  map_ID_Circle = new Map<number, Circle>() // map of front instances
+
   DivIcons_array = new Array<DivIconDB>() // array of repo instances
   DivIcons = new Map<number, DivIconDB>() // map of repo instances
   DivIcons_batch = new Map<number, DivIconDB>() // same but only in last GET (for finding repo instances to delete)
+
+  array_DivIcons = new Array<DivIcon>() // array of front instances
+  map_ID_DivIcon = new Map<number, DivIcon>() // map of front instances
 
   LayerGroups_array = new Array<LayerGroupDB>() // array of repo instances
   LayerGroups = new Map<number, LayerGroupDB>() // map of repo instances
   LayerGroups_batch = new Map<number, LayerGroupDB>() // same but only in last GET (for finding repo instances to delete)
 
+  array_LayerGroups = new Array<LayerGroup>() // array of front instances
+  map_ID_LayerGroup = new Map<number, LayerGroup>() // map of front instances
+
   LayerGroupUses_array = new Array<LayerGroupUseDB>() // array of repo instances
   LayerGroupUses = new Map<number, LayerGroupUseDB>() // map of repo instances
   LayerGroupUses_batch = new Map<number, LayerGroupUseDB>() // same but only in last GET (for finding repo instances to delete)
+
+  array_LayerGroupUses = new Array<LayerGroupUse>() // array of front instances
+  map_ID_LayerGroupUse = new Map<number, LayerGroupUse>() // map of front instances
 
   MapOptionss_array = new Array<MapOptionsDB>() // array of repo instances
   MapOptionss = new Map<number, MapOptionsDB>() // map of repo instances
   MapOptionss_batch = new Map<number, MapOptionsDB>() // same but only in last GET (for finding repo instances to delete)
 
+  array_MapOptionss = new Array<MapOptions>() // array of front instances
+  map_ID_MapOptions = new Map<number, MapOptions>() // map of front instances
+
   Markers_array = new Array<MarkerDB>() // array of repo instances
   Markers = new Map<number, MarkerDB>() // map of repo instances
   Markers_batch = new Map<number, MarkerDB>() // same but only in last GET (for finding repo instances to delete)
+
+  array_Markers = new Array<Marker>() // array of front instances
+  map_ID_Marker = new Map<number, Marker>() // map of front instances
 
   UserClicks_array = new Array<UserClickDB>() // array of repo instances
   UserClicks = new Map<number, UserClickDB>() // map of repo instances
   UserClicks_batch = new Map<number, UserClickDB>() // same but only in last GET (for finding repo instances to delete)
 
+  array_UserClicks = new Array<UserClick>() // array of front instances
+  map_ID_UserClick = new Map<number, UserClick>() // map of front instances
+
   VLines_array = new Array<VLineDB>() // array of repo instances
   VLines = new Map<number, VLineDB>() // map of repo instances
   VLines_batch = new Map<number, VLineDB>() // same but only in last GET (for finding repo instances to delete)
 
+  array_VLines = new Array<VLine>() // array of front instances
+  map_ID_VLine = new Map<number, VLine>() // map of front instances
+
   VisualTracks_array = new Array<VisualTrackDB>() // array of repo instances
   VisualTracks = new Map<number, VisualTrackDB>() // map of repo instances
   VisualTracks_batch = new Map<number, VisualTrackDB>() // same but only in last GET (for finding repo instances to delete)
+
+  array_VisualTracks = new Array<VisualTrack>() // array of front instances
+  map_ID_VisualTrack = new Map<number, VisualTrack>() // map of front instances
 
 
   // getArray allows for a get function that is robust to refactoring of the named struct name
   // for instance frontRepo.getArray<Astruct>( Astruct.GONGSTRUCT_NAME), is robust to a refactoring of Astruct identifier
   // contrary to frontRepo.Astructs_array which is not refactored when Astruct identifier is modified
   getArray<Type>(gongStructName: string): Array<Type> {
-    switch (gongStructName) {
+    switch (gongStructName) { // deprecated
       // insertion point
       case 'Circle':
         return this.Circles_array as unknown as Array<Type>
@@ -101,8 +137,34 @@ export class FrontRepo { // insertion point sub template
     }
   }
 
+  getFrontArray<Type>(gongStructName: string): Array<Type> {
+    switch (gongStructName) {
+      // insertion point
+      case 'Circle':
+        return this.array_Circles as unknown as Array<Type>
+      case 'DivIcon':
+        return this.array_DivIcons as unknown as Array<Type>
+      case 'LayerGroup':
+        return this.array_LayerGroups as unknown as Array<Type>
+      case 'LayerGroupUse':
+        return this.array_LayerGroupUses as unknown as Array<Type>
+      case 'MapOptions':
+        return this.array_MapOptionss as unknown as Array<Type>
+      case 'Marker':
+        return this.array_Markers as unknown as Array<Type>
+      case 'UserClick':
+        return this.array_UserClicks as unknown as Array<Type>
+      case 'VLine':
+        return this.array_VLines as unknown as Array<Type>
+      case 'VisualTrack':
+        return this.array_VisualTracks as unknown as Array<Type>
+      default:
+        throw new Error("Type not recognized");
+    }
+  }
+
   // getMap allows for a get function that is robust to refactoring of the named struct name
-  getMap<Type>(gongStructName: string): Map<number, Type> {
+  getMap<Type>(gongStructName: string): Map<number, Type> { // deprecated
     switch (gongStructName) {
       // insertion point
       case 'Circle':
@@ -123,6 +185,32 @@ export class FrontRepo { // insertion point sub template
         return this.VLines as unknown as Map<number, Type>
       case 'VisualTrack':
         return this.VisualTracks as unknown as Map<number, Type>
+      default:
+        throw new Error("Type not recognized");
+    }
+  }
+  
+  getFrontMap<Type>(gongStructName: string): Map<number, Type> {
+    switch (gongStructName) {
+      // insertion point
+      case 'Circle':
+        return this.map_ID_Circle as unknown as Map<number, Type>
+      case 'DivIcon':
+        return this.map_ID_DivIcon as unknown as Map<number, Type>
+      case 'LayerGroup':
+        return this.map_ID_LayerGroup as unknown as Map<number, Type>
+      case 'LayerGroupUse':
+        return this.map_ID_LayerGroupUse as unknown as Map<number, Type>
+      case 'MapOptions':
+        return this.map_ID_MapOptions as unknown as Map<number, Type>
+      case 'Marker':
+        return this.map_ID_Marker as unknown as Map<number, Type>
+      case 'UserClick':
+        return this.map_ID_UserClick as unknown as Map<number, Type>
+      case 'VLine':
+        return this.map_ID_VLine as unknown as Map<number, Type>
+      case 'VisualTrack':
+        return this.map_ID_VisualTrack as unknown as Map<number, Type>
       default:
         throw new Error("Type not recognized");
     }
@@ -333,17 +421,17 @@ export class FrontRepoService {
             this.frontRepo.Circles_batch.clear()
 
             circles.forEach(
-              circle => {
-                this.frontRepo.Circles.set(circle.ID, circle)
-                this.frontRepo.Circles_batch.set(circle.ID, circle)
+              circleDB => {
+                this.frontRepo.Circles.set(circleDB.ID, circleDB)
+                this.frontRepo.Circles_batch.set(circleDB.ID, circleDB)
               }
             )
 
             // clear circles that are absent from the batch
             this.frontRepo.Circles.forEach(
-              circle => {
-                if (this.frontRepo.Circles_batch.get(circle.ID) == undefined) {
-                  this.frontRepo.Circles.delete(circle.ID)
+              circleDB => {
+                if (this.frontRepo.Circles_batch.get(circleDB.ID) == undefined) {
+                  this.frontRepo.Circles.delete(circleDB.ID)
                 }
               }
             )
@@ -366,17 +454,17 @@ export class FrontRepoService {
             this.frontRepo.DivIcons_batch.clear()
 
             divicons.forEach(
-              divicon => {
-                this.frontRepo.DivIcons.set(divicon.ID, divicon)
-                this.frontRepo.DivIcons_batch.set(divicon.ID, divicon)
+              diviconDB => {
+                this.frontRepo.DivIcons.set(diviconDB.ID, diviconDB)
+                this.frontRepo.DivIcons_batch.set(diviconDB.ID, diviconDB)
               }
             )
 
             // clear divicons that are absent from the batch
             this.frontRepo.DivIcons.forEach(
-              divicon => {
-                if (this.frontRepo.DivIcons_batch.get(divicon.ID) == undefined) {
-                  this.frontRepo.DivIcons.delete(divicon.ID)
+              diviconDB => {
+                if (this.frontRepo.DivIcons_batch.get(diviconDB.ID) == undefined) {
+                  this.frontRepo.DivIcons.delete(diviconDB.ID)
                 }
               }
             )
@@ -399,17 +487,17 @@ export class FrontRepoService {
             this.frontRepo.LayerGroups_batch.clear()
 
             layergroups.forEach(
-              layergroup => {
-                this.frontRepo.LayerGroups.set(layergroup.ID, layergroup)
-                this.frontRepo.LayerGroups_batch.set(layergroup.ID, layergroup)
+              layergroupDB => {
+                this.frontRepo.LayerGroups.set(layergroupDB.ID, layergroupDB)
+                this.frontRepo.LayerGroups_batch.set(layergroupDB.ID, layergroupDB)
               }
             )
 
             // clear layergroups that are absent from the batch
             this.frontRepo.LayerGroups.forEach(
-              layergroup => {
-                if (this.frontRepo.LayerGroups_batch.get(layergroup.ID) == undefined) {
-                  this.frontRepo.LayerGroups.delete(layergroup.ID)
+              layergroupDB => {
+                if (this.frontRepo.LayerGroups_batch.get(layergroupDB.ID) == undefined) {
+                  this.frontRepo.LayerGroups.delete(layergroupDB.ID)
                 }
               }
             )
@@ -432,17 +520,17 @@ export class FrontRepoService {
             this.frontRepo.LayerGroupUses_batch.clear()
 
             layergroupuses.forEach(
-              layergroupuse => {
-                this.frontRepo.LayerGroupUses.set(layergroupuse.ID, layergroupuse)
-                this.frontRepo.LayerGroupUses_batch.set(layergroupuse.ID, layergroupuse)
+              layergroupuseDB => {
+                this.frontRepo.LayerGroupUses.set(layergroupuseDB.ID, layergroupuseDB)
+                this.frontRepo.LayerGroupUses_batch.set(layergroupuseDB.ID, layergroupuseDB)
               }
             )
 
             // clear layergroupuses that are absent from the batch
             this.frontRepo.LayerGroupUses.forEach(
-              layergroupuse => {
-                if (this.frontRepo.LayerGroupUses_batch.get(layergroupuse.ID) == undefined) {
-                  this.frontRepo.LayerGroupUses.delete(layergroupuse.ID)
+              layergroupuseDB => {
+                if (this.frontRepo.LayerGroupUses_batch.get(layergroupuseDB.ID) == undefined) {
+                  this.frontRepo.LayerGroupUses.delete(layergroupuseDB.ID)
                 }
               }
             )
@@ -465,17 +553,17 @@ export class FrontRepoService {
             this.frontRepo.MapOptionss_batch.clear()
 
             mapoptionss.forEach(
-              mapoptions => {
-                this.frontRepo.MapOptionss.set(mapoptions.ID, mapoptions)
-                this.frontRepo.MapOptionss_batch.set(mapoptions.ID, mapoptions)
+              mapoptionsDB => {
+                this.frontRepo.MapOptionss.set(mapoptionsDB.ID, mapoptionsDB)
+                this.frontRepo.MapOptionss_batch.set(mapoptionsDB.ID, mapoptionsDB)
               }
             )
 
             // clear mapoptionss that are absent from the batch
             this.frontRepo.MapOptionss.forEach(
-              mapoptions => {
-                if (this.frontRepo.MapOptionss_batch.get(mapoptions.ID) == undefined) {
-                  this.frontRepo.MapOptionss.delete(mapoptions.ID)
+              mapoptionsDB => {
+                if (this.frontRepo.MapOptionss_batch.get(mapoptionsDB.ID) == undefined) {
+                  this.frontRepo.MapOptionss.delete(mapoptionsDB.ID)
                 }
               }
             )
@@ -498,17 +586,17 @@ export class FrontRepoService {
             this.frontRepo.Markers_batch.clear()
 
             markers.forEach(
-              marker => {
-                this.frontRepo.Markers.set(marker.ID, marker)
-                this.frontRepo.Markers_batch.set(marker.ID, marker)
+              markerDB => {
+                this.frontRepo.Markers.set(markerDB.ID, markerDB)
+                this.frontRepo.Markers_batch.set(markerDB.ID, markerDB)
               }
             )
 
             // clear markers that are absent from the batch
             this.frontRepo.Markers.forEach(
-              marker => {
-                if (this.frontRepo.Markers_batch.get(marker.ID) == undefined) {
-                  this.frontRepo.Markers.delete(marker.ID)
+              markerDB => {
+                if (this.frontRepo.Markers_batch.get(markerDB.ID) == undefined) {
+                  this.frontRepo.Markers.delete(markerDB.ID)
                 }
               }
             )
@@ -531,17 +619,17 @@ export class FrontRepoService {
             this.frontRepo.UserClicks_batch.clear()
 
             userclicks.forEach(
-              userclick => {
-                this.frontRepo.UserClicks.set(userclick.ID, userclick)
-                this.frontRepo.UserClicks_batch.set(userclick.ID, userclick)
+              userclickDB => {
+                this.frontRepo.UserClicks.set(userclickDB.ID, userclickDB)
+                this.frontRepo.UserClicks_batch.set(userclickDB.ID, userclickDB)
               }
             )
 
             // clear userclicks that are absent from the batch
             this.frontRepo.UserClicks.forEach(
-              userclick => {
-                if (this.frontRepo.UserClicks_batch.get(userclick.ID) == undefined) {
-                  this.frontRepo.UserClicks.delete(userclick.ID)
+              userclickDB => {
+                if (this.frontRepo.UserClicks_batch.get(userclickDB.ID) == undefined) {
+                  this.frontRepo.UserClicks.delete(userclickDB.ID)
                 }
               }
             )
@@ -564,17 +652,17 @@ export class FrontRepoService {
             this.frontRepo.VLines_batch.clear()
 
             vlines.forEach(
-              vline => {
-                this.frontRepo.VLines.set(vline.ID, vline)
-                this.frontRepo.VLines_batch.set(vline.ID, vline)
+              vlineDB => {
+                this.frontRepo.VLines.set(vlineDB.ID, vlineDB)
+                this.frontRepo.VLines_batch.set(vlineDB.ID, vlineDB)
               }
             )
 
             // clear vlines that are absent from the batch
             this.frontRepo.VLines.forEach(
-              vline => {
-                if (this.frontRepo.VLines_batch.get(vline.ID) == undefined) {
-                  this.frontRepo.VLines.delete(vline.ID)
+              vlineDB => {
+                if (this.frontRepo.VLines_batch.get(vlineDB.ID) == undefined) {
+                  this.frontRepo.VLines.delete(vlineDB.ID)
                 }
               }
             )
@@ -597,17 +685,17 @@ export class FrontRepoService {
             this.frontRepo.VisualTracks_batch.clear()
 
             visualtracks.forEach(
-              visualtrack => {
-                this.frontRepo.VisualTracks.set(visualtrack.ID, visualtrack)
-                this.frontRepo.VisualTracks_batch.set(visualtrack.ID, visualtrack)
+              visualtrackDB => {
+                this.frontRepo.VisualTracks.set(visualtrackDB.ID, visualtrackDB)
+                this.frontRepo.VisualTracks_batch.set(visualtrackDB.ID, visualtrackDB)
               }
             )
 
             // clear visualtracks that are absent from the batch
             this.frontRepo.VisualTracks.forEach(
-              visualtrack => {
-                if (this.frontRepo.VisualTracks_batch.get(visualtrack.ID) == undefined) {
-                  this.frontRepo.VisualTracks.delete(visualtrack.ID)
+              visualtrackDB => {
+                if (this.frontRepo.VisualTracks_batch.get(visualtrackDB.ID) == undefined) {
+                  this.frontRepo.VisualTracks.delete(visualtrackDB.ID)
                 }
               }
             )
@@ -737,6 +825,128 @@ export class FrontRepoService {
                 // insertion point for pointers decoding
               }
             )
+
+            // 
+            // Third Step: reddeem front objects
+            // insertion point sub template for redeem 
+            
+            // init front objects
+            this.frontRepo.array_Circles = []
+            this.frontRepo.map_ID_Circle.clear()
+            this.frontRepo.Circles_array.forEach(
+              circleDB => {
+                let circle = new Circle
+                CopyCircleDBToCircle(circleDB, circle, this.frontRepo)
+                this.frontRepo.array_Circles.push(circle)
+                this.frontRepo.map_ID_Circle.set(circle.ID, circle)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_DivIcons = []
+            this.frontRepo.map_ID_DivIcon.clear()
+            this.frontRepo.DivIcons_array.forEach(
+              diviconDB => {
+                let divicon = new DivIcon
+                CopyDivIconDBToDivIcon(diviconDB, divicon, this.frontRepo)
+                this.frontRepo.array_DivIcons.push(divicon)
+                this.frontRepo.map_ID_DivIcon.set(divicon.ID, divicon)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_LayerGroups = []
+            this.frontRepo.map_ID_LayerGroup.clear()
+            this.frontRepo.LayerGroups_array.forEach(
+              layergroupDB => {
+                let layergroup = new LayerGroup
+                CopyLayerGroupDBToLayerGroup(layergroupDB, layergroup, this.frontRepo)
+                this.frontRepo.array_LayerGroups.push(layergroup)
+                this.frontRepo.map_ID_LayerGroup.set(layergroup.ID, layergroup)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_LayerGroupUses = []
+            this.frontRepo.map_ID_LayerGroupUse.clear()
+            this.frontRepo.LayerGroupUses_array.forEach(
+              layergroupuseDB => {
+                let layergroupuse = new LayerGroupUse
+                CopyLayerGroupUseDBToLayerGroupUse(layergroupuseDB, layergroupuse, this.frontRepo)
+                this.frontRepo.array_LayerGroupUses.push(layergroupuse)
+                this.frontRepo.map_ID_LayerGroupUse.set(layergroupuse.ID, layergroupuse)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_MapOptionss = []
+            this.frontRepo.map_ID_MapOptions.clear()
+            this.frontRepo.MapOptionss_array.forEach(
+              mapoptionsDB => {
+                let mapoptions = new MapOptions
+                CopyMapOptionsDBToMapOptions(mapoptionsDB, mapoptions, this.frontRepo)
+                this.frontRepo.array_MapOptionss.push(mapoptions)
+                this.frontRepo.map_ID_MapOptions.set(mapoptions.ID, mapoptions)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_Markers = []
+            this.frontRepo.map_ID_Marker.clear()
+            this.frontRepo.Markers_array.forEach(
+              markerDB => {
+                let marker = new Marker
+                CopyMarkerDBToMarker(markerDB, marker, this.frontRepo)
+                this.frontRepo.array_Markers.push(marker)
+                this.frontRepo.map_ID_Marker.set(marker.ID, marker)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_UserClicks = []
+            this.frontRepo.map_ID_UserClick.clear()
+            this.frontRepo.UserClicks_array.forEach(
+              userclickDB => {
+                let userclick = new UserClick
+                CopyUserClickDBToUserClick(userclickDB, userclick, this.frontRepo)
+                this.frontRepo.array_UserClicks.push(userclick)
+                this.frontRepo.map_ID_UserClick.set(userclick.ID, userclick)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_VLines = []
+            this.frontRepo.map_ID_VLine.clear()
+            this.frontRepo.VLines_array.forEach(
+              vlineDB => {
+                let vline = new VLine
+                CopyVLineDBToVLine(vlineDB, vline, this.frontRepo)
+                this.frontRepo.array_VLines.push(vline)
+                this.frontRepo.map_ID_VLine.set(vline.ID, vline)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_VisualTracks = []
+            this.frontRepo.map_ID_VisualTrack.clear()
+            this.frontRepo.VisualTracks_array.forEach(
+              visualtrackDB => {
+                let visualtrack = new VisualTrack
+                CopyVisualTrackDBToVisualTrack(visualtrackDB, visualtrack, this.frontRepo)
+                this.frontRepo.array_VisualTracks.push(visualtrack)
+                this.frontRepo.map_ID_VisualTrack.set(visualtrack.ID, visualtrack)
+              }
+            )
+
+
 
             // hand over control flow to observer
             observer.next(this.frontRepo)

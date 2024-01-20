@@ -7,11 +7,13 @@ import { DOCUMENT, Location } from '@angular/common'
 /*
  * Behavior subject
  */
-import { BehaviorSubject } from 'rxjs';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { catchError, map, tap } from 'rxjs/operators'
 
-import { GongsimStatusDB } from './gongsimstatus-db';
+import { GongsimStatusDB } from './gongsimstatus-db'
+import { GongsimStatus, CopyGongsimStatusToGongsimStatusDB } from './gongsimstatus'
+
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
@@ -114,6 +116,25 @@ export class GongsimStatusService {
     return this.http.delete<GongsimStatusDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted gongsimstatusdb id=${id}`)),
       catchError(this.handleError<GongsimStatusDB>('deleteGongsimStatus'))
+    );
+  }
+
+  // updateFront copy gongsimstatus to a version with encoded pointers and update to the back
+  updateFront(gongsimstatus: GongsimStatus, GONG__StackPath: string): Observable<GongsimStatusDB> {
+    let gongsimstatusDB = new GongsimStatusDB
+    CopyGongsimStatusToGongsimStatusDB(gongsimstatus, gongsimstatusDB)
+    const id = typeof gongsimstatusDB === 'number' ? gongsimstatusDB : gongsimstatusDB.ID
+    const url = `${this.gongsimstatussUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.put<GongsimStatusDB>(url, gongsimstatusDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<GongsimStatusDB>('updateGongsimStatus'))
     );
   }
 

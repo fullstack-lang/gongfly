@@ -20,41 +20,57 @@ func FillUpForm[T models.Gongstruct](
 	// insertion point
 	case *models.DummyAgent:
 		// insertion point
-		BasicFieldtoForm("TechName", instanceWithInferedType.TechName, instanceWithInferedType, probe.formStage, formGroup, false)
-		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup, false)
+		BasicFieldtoForm("TechName", instanceWithInferedType.TechName, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
+		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
 
 	case *models.Engine:
 		// insertion point
-		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup, false)
-		BasicFieldtoForm("EndTime", instanceWithInferedType.EndTime, instanceWithInferedType, probe.formStage, formGroup, false)
-		BasicFieldtoForm("CurrentTime", instanceWithInferedType.CurrentTime, instanceWithInferedType, probe.formStage, formGroup, false)
-		BasicFieldtoForm("SecondsSinceStart", instanceWithInferedType.SecondsSinceStart, instanceWithInferedType, probe.formStage, formGroup, false)
-		BasicFieldtoForm("Fired", instanceWithInferedType.Fired, instanceWithInferedType, probe.formStage, formGroup, false)
+		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
+		BasicFieldtoForm("EndTime", instanceWithInferedType.EndTime, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
+		BasicFieldtoForm("CurrentTime", instanceWithInferedType.CurrentTime, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
+		BasicFieldtoForm("SecondsSinceStart", instanceWithInferedType.SecondsSinceStart, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
+		BasicFieldtoForm("Fired", instanceWithInferedType.Fired, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
 		EnumTypeStringToForm("ControlMode", instanceWithInferedType.ControlMode, instanceWithInferedType, probe.formStage, formGroup)
 		EnumTypeStringToForm("State", instanceWithInferedType.State, instanceWithInferedType, probe.formStage, formGroup)
-		BasicFieldtoForm("Speed", instanceWithInferedType.Speed, instanceWithInferedType, probe.formStage, formGroup, false)
+		BasicFieldtoForm("Speed", instanceWithInferedType.Speed, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
 
 	case *models.Event:
 		// insertion point
-		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup, false)
-		BasicFieldtoForm("Duration", instanceWithInferedType.Duration, instanceWithInferedType, probe.formStage, formGroup, false)
+		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
+		BasicFieldtoForm("Duration", instanceWithInferedType.Duration, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
 
 	case *models.GongsimCommand:
 		// insertion point
-		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup, false)
+		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
 		EnumTypeStringToForm("Command", instanceWithInferedType.Command, instanceWithInferedType, probe.formStage, formGroup)
-		BasicFieldtoForm("CommandDate", instanceWithInferedType.CommandDate, instanceWithInferedType, probe.formStage, formGroup, false)
+		BasicFieldtoForm("CommandDate", instanceWithInferedType.CommandDate, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
 		EnumTypeStringToForm("SpeedCommandType", instanceWithInferedType.SpeedCommandType, instanceWithInferedType, probe.formStage, formGroup)
-		BasicFieldtoForm("DateSpeedCommand", instanceWithInferedType.DateSpeedCommand, instanceWithInferedType, probe.formStage, formGroup, false)
+		BasicFieldtoForm("DateSpeedCommand", instanceWithInferedType.DateSpeedCommand, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
 		AssociationFieldToForm("Engine", instanceWithInferedType.Engine, formGroup, probe)
 
 	case *models.GongsimStatus:
 		// insertion point
-		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup, false)
+		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
 		EnumTypeStringToForm("CurrentCommand", instanceWithInferedType.CurrentCommand, instanceWithInferedType, probe.formStage, formGroup)
-		BasicFieldtoForm("CompletionDate", instanceWithInferedType.CompletionDate, instanceWithInferedType, probe.formStage, formGroup, false)
+		BasicFieldtoForm("CompletionDate", instanceWithInferedType.CompletionDate, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
 		EnumTypeStringToForm("CurrentSpeedCommand", instanceWithInferedType.CurrentSpeedCommand, instanceWithInferedType, probe.formStage, formGroup)
-		BasicFieldtoForm("SpeedCommandCompletionDate", instanceWithInferedType.SpeedCommandCompletionDate, instanceWithInferedType, probe.formStage, formGroup, false)
+		BasicFieldtoForm("SpeedCommandCompletionDate", instanceWithInferedType.SpeedCommandCompletionDate, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
 
 	default:
 		_ = instanceWithInferedType

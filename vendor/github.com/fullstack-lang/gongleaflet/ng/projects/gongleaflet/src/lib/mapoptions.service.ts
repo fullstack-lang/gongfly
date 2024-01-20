@@ -7,11 +7,13 @@ import { DOCUMENT, Location } from '@angular/common'
 /*
  * Behavior subject
  */
-import { BehaviorSubject } from 'rxjs';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { catchError, map, tap } from 'rxjs/operators'
 
-import { MapOptionsDB } from './mapoptions-db';
+import { MapOptionsDB } from './mapoptions-db'
+import { MapOptions, CopyMapOptionsToMapOptionsDB } from './mapoptions'
+
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
@@ -127,6 +129,25 @@ export class MapOptionsService {
     return this.http.delete<MapOptionsDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted mapoptionsdb id=${id}`)),
       catchError(this.handleError<MapOptionsDB>('deleteMapOptions'))
+    );
+  }
+
+  // updateFront copy mapoptions to a version with encoded pointers and update to the back
+  updateFront(mapoptions: MapOptions, GONG__StackPath: string): Observable<MapOptionsDB> {
+    let mapoptionsDB = new MapOptionsDB
+    CopyMapOptionsToMapOptionsDB(mapoptions, mapoptionsDB)
+    const id = typeof mapoptionsDB === 'number' ? mapoptionsDB : mapoptionsDB.ID
+    const url = `${this.mapoptionssUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.put<MapOptionsDB>(url, mapoptionsDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<MapOptionsDB>('updateMapOptions'))
     );
   }
 

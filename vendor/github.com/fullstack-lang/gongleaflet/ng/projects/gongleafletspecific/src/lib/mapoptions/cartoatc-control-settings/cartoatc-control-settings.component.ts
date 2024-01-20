@@ -26,14 +26,14 @@ export class CartoatcControlSettingsComponent implements OnInit {
 
   // the gong front repo
   frontRepo?: gongleaflet.FrontRepo
-  gongleafletMapOptions?: gongleaflet.MapOptionsDB
+  gongleafletMapOptions?: gongleaflet.MapOptions
 
   list: Array<LayerItem> = [];
   open: boolean = false;
 
   // map between the layerGroup ID and the LayerGroupUse
   // this is used to toggle the Display field of LayerGroupUse
-  mapLayerGroupID_gongLayerGroupUse = new Map<number, gongleaflet.LayerGroupUseDB>()
+  mapLayerGroupID_gongLayerGroupUse = new Map<number, gongleaflet.LayerGroupUse>()
 
   constructor(
     private frontRepoService: gongleaflet.FrontRepoService,
@@ -91,7 +91,7 @@ export class CartoatcControlSettingsComponent implements OnInit {
     if (layerGroupUse) {
       layerGroupUse.IsDisplayed = !layerGroupUse.IsDisplayed
 
-      this.layerGroupUseService.updateLayerGroupUse(layerGroupUse, this.GONG__StackPath, this.frontRepoService.frontRepo).subscribe(
+      this.layerGroupUseService.updateFront(layerGroupUse, this.GONG__StackPath).subscribe(
         () => {
           console.log("layer group use " + layerGroupUse?.Name + " display value updated to " + layerGroupUse?.IsDisplayed)
 

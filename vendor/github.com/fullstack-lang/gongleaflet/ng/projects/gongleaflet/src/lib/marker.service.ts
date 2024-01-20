@@ -7,11 +7,13 @@ import { DOCUMENT, Location } from '@angular/common'
 /*
  * Behavior subject
  */
-import { BehaviorSubject } from 'rxjs';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { catchError, map, tap } from 'rxjs/operators'
 
-import { MarkerDB } from './marker-db';
+import { MarkerDB } from './marker-db'
+import { Marker, CopyMarkerToMarkerDB } from './marker'
+
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
@@ -128,6 +130,25 @@ export class MarkerService {
     return this.http.delete<MarkerDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted markerdb id=${id}`)),
       catchError(this.handleError<MarkerDB>('deleteMarker'))
+    );
+  }
+
+  // updateFront copy marker to a version with encoded pointers and update to the back
+  updateFront(marker: Marker, GONG__StackPath: string): Observable<MarkerDB> {
+    let markerDB = new MarkerDB
+    CopyMarkerToMarkerDB(marker, markerDB)
+    const id = typeof markerDB === 'number' ? markerDB : markerDB.ID
+    const url = `${this.markersUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.put<MarkerDB>(url, markerDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<MarkerDB>('updateMarker'))
     );
   }
 

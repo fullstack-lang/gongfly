@@ -7,11 +7,13 @@ import { DOCUMENT, Location } from '@angular/common'
 /*
  * Behavior subject
  */
-import { BehaviorSubject } from 'rxjs';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { catchError, map, tap } from 'rxjs/operators'
 
-import { EventDB } from './event-db';
+import { EventDB } from './event-db'
+import { Event, CopyEventToEventDB } from './event'
+
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
@@ -114,6 +116,25 @@ export class EventService {
     return this.http.delete<EventDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted eventdb id=${id}`)),
       catchError(this.handleError<EventDB>('deleteEvent'))
+    );
+  }
+
+  // updateFront copy event to a version with encoded pointers and update to the back
+  updateFront(event: Event, GONG__StackPath: string): Observable<EventDB> {
+    let eventDB = new EventDB
+    CopyEventToEventDB(event, eventDB)
+    const id = typeof eventDB === 'number' ? eventDB : eventDB.ID
+    const url = `${this.eventsUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.put<EventDB>(url, eventDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<EventDB>('updateEvent'))
     );
   }
 

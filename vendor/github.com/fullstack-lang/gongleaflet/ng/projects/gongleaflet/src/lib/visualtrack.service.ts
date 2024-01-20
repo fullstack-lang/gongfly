@@ -7,11 +7,13 @@ import { DOCUMENT, Location } from '@angular/common'
 /*
  * Behavior subject
  */
-import { BehaviorSubject } from 'rxjs';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { catchError, map, tap } from 'rxjs/operators'
 
-import { VisualTrackDB } from './visualtrack-db';
+import { VisualTrackDB } from './visualtrack-db'
+import { VisualTrack, CopyVisualTrackToVisualTrackDB } from './visualtrack'
+
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
@@ -128,6 +130,25 @@ export class VisualTrackService {
     return this.http.delete<VisualTrackDB>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted visualtrackdb id=${id}`)),
       catchError(this.handleError<VisualTrackDB>('deleteVisualTrack'))
+    );
+  }
+
+  // updateFront copy visualtrack to a version with encoded pointers and update to the back
+  updateFront(visualtrack: VisualTrack, GONG__StackPath: string): Observable<VisualTrackDB> {
+    let visualtrackDB = new VisualTrackDB
+    CopyVisualTrackToVisualTrackDB(visualtrack, visualtrackDB)
+    const id = typeof visualtrackDB === 'number' ? visualtrackDB : visualtrackDB.ID
+    const url = `${this.visualtracksUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.put<VisualTrackDB>(url, visualtrackDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<VisualTrackDB>('updateVisualTrack'))
     );
   }
 

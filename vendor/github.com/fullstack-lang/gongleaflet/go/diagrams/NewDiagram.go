@@ -915,7 +915,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.ColorEnum]
 	__GongEnumShape__000000_NewDiagram_ColorEnum.Identifier = `ref_models.ColorEnum`
 	__GongEnumShape__000000_NewDiagram_ColorEnum.Width = 240.000000
-	__GongEnumShape__000000_NewDiagram_ColorEnum.Heigth = 153.000000
+	__GongEnumShape__000000_NewDiagram_ColorEnum.Height = 153.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000001_NewDiagram_DashStyleEnum.Name = `NewDiagram-DashStyleEnum`
@@ -925,7 +925,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.DashStyleEnum]
 	__GongEnumShape__000001_NewDiagram_DashStyleEnum.Identifier = `ref_models.DashStyleEnum`
 	__GongEnumShape__000001_NewDiagram_DashStyleEnum.Width = 240.000000
-	__GongEnumShape__000001_NewDiagram_DashStyleEnum.Heigth = 93.000000
+	__GongEnumShape__000001_NewDiagram_DashStyleEnum.Height = 93.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000002_NewDiagram_Start_To_End_Enum.Name = `NewDiagram-Start_To_End_Enum`
@@ -935,7 +935,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.Start_To_End_Enum]
 	__GongEnumShape__000002_NewDiagram_Start_To_End_Enum.Identifier = `ref_models.Start_To_End_Enum`
 	__GongEnumShape__000002_NewDiagram_Start_To_End_Enum.Width = 240.000000
-	__GongEnumShape__000002_NewDiagram_Start_To_End_Enum.Heigth = 93.000000
+	__GongEnumShape__000002_NewDiagram_Start_To_End_Enum.Height = 93.000000
 
 	// GongEnumShape values setup
 	__GongEnumShape__000003_NewDiagram_TransmittingEnum.Name = `NewDiagram-TransmittingEnum`
@@ -945,7 +945,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	//gong:ident [ref_models.TransmittingEnum]
 	__GongEnumShape__000003_NewDiagram_TransmittingEnum.Identifier = `ref_models.TransmittingEnum`
 	__GongEnumShape__000003_NewDiagram_TransmittingEnum.Width = 240.000000
-	__GongEnumShape__000003_NewDiagram_TransmittingEnum.Heigth = 93.000000
+	__GongEnumShape__000003_NewDiagram_TransmittingEnum.Height = 93.000000
 
 	// GongEnumValueEntry values setup
 	__GongEnumValueEntry__000000_BACKWARD_END_TO_START.Name = `BACKWARD_END_TO_START`
@@ -1053,7 +1053,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000000_NewDiagram_Circle.ShowNbInstances = true
 	__GongStructShape__000000_NewDiagram_Circle.NbInstances = 1
 	__GongStructShape__000000_NewDiagram_Circle.Width = 240.000000
-	__GongStructShape__000000_NewDiagram_Circle.Heigth = 153.000000
+	__GongStructShape__000000_NewDiagram_Circle.Height = 153.000000
 	__GongStructShape__000000_NewDiagram_Circle.IsSelected = false
 
 	// GongStructShape values setup
@@ -1066,7 +1066,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000001_NewDiagram_DivIcon.ShowNbInstances = true
 	__GongStructShape__000001_NewDiagram_DivIcon.NbInstances = 11
 	__GongStructShape__000001_NewDiagram_DivIcon.Width = 240.000000
-	__GongStructShape__000001_NewDiagram_DivIcon.Heigth = 93.000000
+	__GongStructShape__000001_NewDiagram_DivIcon.Height = 93.000000
 	__GongStructShape__000001_NewDiagram_DivIcon.IsSelected = false
 
 	// GongStructShape values setup
@@ -1079,7 +1079,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000002_NewDiagram_LayerGroup.ShowNbInstances = true
 	__GongStructShape__000002_NewDiagram_LayerGroup.NbInstances = 4
 	__GongStructShape__000002_NewDiagram_LayerGroup.Width = 240.000000
-	__GongStructShape__000002_NewDiagram_LayerGroup.Heigth = 93.000000
+	__GongStructShape__000002_NewDiagram_LayerGroup.Height = 93.000000
 	__GongStructShape__000002_NewDiagram_LayerGroup.IsSelected = false
 
 	// GongStructShape values setup
@@ -1092,7 +1092,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000003_NewDiagram_LayerGroupUse.ShowNbInstances = true
 	__GongStructShape__000003_NewDiagram_LayerGroupUse.NbInstances = 6
 	__GongStructShape__000003_NewDiagram_LayerGroupUse.Width = 240.000000
-	__GongStructShape__000003_NewDiagram_LayerGroupUse.Heigth = 93.000000
+	__GongStructShape__000003_NewDiagram_LayerGroupUse.Height = 93.000000
 	__GongStructShape__000003_NewDiagram_LayerGroupUse.IsSelected = false
 
 	// GongStructShape values setup
@@ -1105,7 +1105,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000004_NewDiagram_MapOptions.ShowNbInstances = true
 	__GongStructShape__000004_NewDiagram_MapOptions.NbInstances = 2
 	__GongStructShape__000004_NewDiagram_MapOptions.Width = 240.000000
-	__GongStructShape__000004_NewDiagram_MapOptions.Heigth = 213.000000
+	__GongStructShape__000004_NewDiagram_MapOptions.Height = 213.000000
 	__GongStructShape__000004_NewDiagram_MapOptions.IsSelected = false
 
 	// GongStructShape values setup
@@ -1118,7 +1118,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000005_NewDiagram_Marker.ShowNbInstances = true
 	__GongStructShape__000005_NewDiagram_Marker.NbInstances = 3
 	__GongStructShape__000005_NewDiagram_Marker.Width = 240.000000
-	__GongStructShape__000005_NewDiagram_Marker.Heigth = 123.000000
+	__GongStructShape__000005_NewDiagram_Marker.Height = 123.000000
 	__GongStructShape__000005_NewDiagram_Marker.IsSelected = false
 
 	// GongStructShape values setup
@@ -1131,7 +1131,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000006_NewDiagram_UserClick.ShowNbInstances = true
 	__GongStructShape__000006_NewDiagram_UserClick.NbInstances = 0
 	__GongStructShape__000006_NewDiagram_UserClick.Width = 240.000000
-	__GongStructShape__000006_NewDiagram_UserClick.Heigth = 123.000000
+	__GongStructShape__000006_NewDiagram_UserClick.Height = 123.000000
 	__GongStructShape__000006_NewDiagram_UserClick.IsSelected = false
 
 	// GongStructShape values setup
@@ -1144,7 +1144,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000007_NewDiagram_VLine.ShowNbInstances = true
 	__GongStructShape__000007_NewDiagram_VLine.NbInstances = 1
 	__GongStructShape__000007_NewDiagram_VLine.Width = 240.000000
-	__GongStructShape__000007_NewDiagram_VLine.Heigth = 228.000000
+	__GongStructShape__000007_NewDiagram_VLine.Height = 228.000000
 	__GongStructShape__000007_NewDiagram_VLine.IsSelected = false
 
 	// GongStructShape values setup
@@ -1157,7 +1157,7 @@ func NewDiagramInjection(stage *models.StageStruct) {
 	__GongStructShape__000008_NewDiagram_VisualTrack.ShowNbInstances = true
 	__GongStructShape__000008_NewDiagram_VisualTrack.NbInstances = 2
 	__GongStructShape__000008_NewDiagram_VisualTrack.Width = 240.000000
-	__GongStructShape__000008_NewDiagram_VisualTrack.Heigth = 213.000000
+	__GongStructShape__000008_NewDiagram_VisualTrack.Height = 213.000000
 	__GongStructShape__000008_NewDiagram_VisualTrack.IsSelected = false
 
 	// Link values setup
