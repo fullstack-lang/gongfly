@@ -76,6 +76,25 @@ export class GongsimStatusService {
     );
   }
 
+  // postFront copy gongsimstatus to a version with encoded pointers and post to the back
+  postFront(gongsimstatus: GongsimStatus, GONG__StackPath: string): Observable<GongsimStatusDB> {
+    let gongsimstatusDB = new GongsimStatusDB
+    CopyGongsimStatusToGongsimStatusDB(gongsimstatus, gongsimstatusDB)
+    const id = typeof gongsimstatusDB === 'number' ? gongsimstatusDB : gongsimstatusDB.ID
+    const url = `${this.gongsimstatussUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.post<GongsimStatusDB>(url, gongsimstatusDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<GongsimStatusDB>('postGongsimStatus'))
+    );
+  }
+  
   /** POST: add a new gongsimstatus to the server */
   post(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
     return this.postGongsimStatus(gongsimstatusdb, GONG__StackPath, frontRepo)

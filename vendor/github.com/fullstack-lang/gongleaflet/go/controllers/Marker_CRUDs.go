@@ -116,6 +116,7 @@ func (controller *Controller) GetMarkers(c *gin.Context) {
 func (controller *Controller) PostMarker(c *gin.Context) {
 
 	mutexMarker.Lock()
+	defer mutexMarker.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostMarker(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, markerDB)
-
-	mutexMarker.Unlock()
 }
 
 // GetMarker
@@ -236,6 +235,7 @@ func (controller *Controller) GetMarker(c *gin.Context) {
 func (controller *Controller) UpdateMarker(c *gin.Context) {
 
 	mutexMarker.Lock()
+	defer mutexMarker.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateMarker(c *gin.Context) {
 
 	// return status OK with the marshalling of the the markerDB
 	c.JSON(http.StatusOK, markerDB)
-
-	mutexMarker.Unlock()
 }
 
 // DeleteMarker
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateMarker(c *gin.Context) {
 func (controller *Controller) DeleteMarker(c *gin.Context) {
 
 	mutexMarker.Lock()
+	defer mutexMarker.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteMarker(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexMarker.Unlock()
 }

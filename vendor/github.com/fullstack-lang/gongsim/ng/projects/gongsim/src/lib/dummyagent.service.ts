@@ -76,6 +76,25 @@ export class DummyAgentService {
     );
   }
 
+  // postFront copy dummyagent to a version with encoded pointers and post to the back
+  postFront(dummyagent: DummyAgent, GONG__StackPath: string): Observable<DummyAgentDB> {
+    let dummyagentDB = new DummyAgentDB
+    CopyDummyAgentToDummyAgentDB(dummyagent, dummyagentDB)
+    const id = typeof dummyagentDB === 'number' ? dummyagentDB : dummyagentDB.ID
+    const url = `${this.dummyagentsUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.post<DummyAgentDB>(url, dummyagentDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<DummyAgentDB>('postDummyAgent'))
+    );
+  }
+  
   /** POST: add a new dummyagent to the server */
   post(dummyagentdb: DummyAgentDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
     return this.postDummyAgent(dummyagentdb, GONG__StackPath, frontRepo)

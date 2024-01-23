@@ -116,6 +116,7 @@ func (controller *Controller) GetVisualTracks(c *gin.Context) {
 func (controller *Controller) PostVisualTrack(c *gin.Context) {
 
 	mutexVisualTrack.Lock()
+	defer mutexVisualTrack.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostVisualTrack(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, visualtrackDB)
-
-	mutexVisualTrack.Unlock()
 }
 
 // GetVisualTrack
@@ -236,6 +235,7 @@ func (controller *Controller) GetVisualTrack(c *gin.Context) {
 func (controller *Controller) UpdateVisualTrack(c *gin.Context) {
 
 	mutexVisualTrack.Lock()
+	defer mutexVisualTrack.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateVisualTrack(c *gin.Context) {
 
 	// return status OK with the marshalling of the the visualtrackDB
 	c.JSON(http.StatusOK, visualtrackDB)
-
-	mutexVisualTrack.Unlock()
 }
 
 // DeleteVisualTrack
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateVisualTrack(c *gin.Context) {
 func (controller *Controller) DeleteVisualTrack(c *gin.Context) {
 
 	mutexVisualTrack.Lock()
+	defer mutexVisualTrack.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteVisualTrack(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexVisualTrack.Unlock()
 }

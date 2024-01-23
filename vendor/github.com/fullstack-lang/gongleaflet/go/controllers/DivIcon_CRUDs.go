@@ -116,6 +116,7 @@ func (controller *Controller) GetDivIcons(c *gin.Context) {
 func (controller *Controller) PostDivIcon(c *gin.Context) {
 
 	mutexDivIcon.Lock()
+	defer mutexDivIcon.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostDivIcon(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, diviconDB)
-
-	mutexDivIcon.Unlock()
 }
 
 // GetDivIcon
@@ -236,6 +235,7 @@ func (controller *Controller) GetDivIcon(c *gin.Context) {
 func (controller *Controller) UpdateDivIcon(c *gin.Context) {
 
 	mutexDivIcon.Lock()
+	defer mutexDivIcon.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateDivIcon(c *gin.Context) {
 
 	// return status OK with the marshalling of the the diviconDB
 	c.JSON(http.StatusOK, diviconDB)
-
-	mutexDivIcon.Unlock()
 }
 
 // DeleteDivIcon
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateDivIcon(c *gin.Context) {
 func (controller *Controller) DeleteDivIcon(c *gin.Context) {
 
 	mutexDivIcon.Lock()
+	defer mutexDivIcon.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteDivIcon(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexDivIcon.Unlock()
 }

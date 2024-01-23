@@ -116,6 +116,7 @@ func (controller *Controller) GetEngines(c *gin.Context) {
 func (controller *Controller) PostEngine(c *gin.Context) {
 
 	mutexEngine.Lock()
+	defer mutexEngine.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostEngine(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, engineDB)
-
-	mutexEngine.Unlock()
 }
 
 // GetEngine
@@ -236,6 +235,7 @@ func (controller *Controller) GetEngine(c *gin.Context) {
 func (controller *Controller) UpdateEngine(c *gin.Context) {
 
 	mutexEngine.Lock()
+	defer mutexEngine.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateEngine(c *gin.Context) {
 
 	// return status OK with the marshalling of the the engineDB
 	c.JSON(http.StatusOK, engineDB)
-
-	mutexEngine.Unlock()
 }
 
 // DeleteEngine
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateEngine(c *gin.Context) {
 func (controller *Controller) DeleteEngine(c *gin.Context) {
 
 	mutexEngine.Lock()
+	defer mutexEngine.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteEngine(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexEngine.Unlock()
 }

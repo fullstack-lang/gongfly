@@ -34,7 +34,7 @@ export function CopyEngineToEngineDB(engine: Engine, engineDB: EngineDB) {
 	engineDB.CreatedAt = engine.CreatedAt
 	engineDB.DeletedAt = engine.DeletedAt
 	engineDB.ID = engine.ID
-
+	
 	// insertion point for basic fields copy operations
 	engineDB.Name = engine.Name
 	engineDB.EndTime = engine.EndTime
@@ -55,7 +55,7 @@ export function CopyEngineDBToEngine(engineDB: EngineDB, engine: Engine, frontRe
 	engine.CreatedAt = engineDB.CreatedAt
 	engine.DeletedAt = engineDB.DeletedAt
 	engine.ID = engineDB.ID
-
+	
 	// insertion point for basic fields copy operations
 	engine.Name = engineDB.Name
 	engine.EndTime = engineDB.EndTime

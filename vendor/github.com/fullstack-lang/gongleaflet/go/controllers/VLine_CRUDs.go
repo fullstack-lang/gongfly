@@ -116,6 +116,7 @@ func (controller *Controller) GetVLines(c *gin.Context) {
 func (controller *Controller) PostVLine(c *gin.Context) {
 
 	mutexVLine.Lock()
+	defer mutexVLine.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostVLine(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, vlineDB)
-
-	mutexVLine.Unlock()
 }
 
 // GetVLine
@@ -236,6 +235,7 @@ func (controller *Controller) GetVLine(c *gin.Context) {
 func (controller *Controller) UpdateVLine(c *gin.Context) {
 
 	mutexVLine.Lock()
+	defer mutexVLine.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateVLine(c *gin.Context) {
 
 	// return status OK with the marshalling of the the vlineDB
 	c.JSON(http.StatusOK, vlineDB)
-
-	mutexVLine.Unlock()
 }
 
 // DeleteVLine
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateVLine(c *gin.Context) {
 func (controller *Controller) DeleteVLine(c *gin.Context) {
 
 	mutexVLine.Lock()
+	defer mutexVLine.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteVLine(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexVLine.Unlock()
 }

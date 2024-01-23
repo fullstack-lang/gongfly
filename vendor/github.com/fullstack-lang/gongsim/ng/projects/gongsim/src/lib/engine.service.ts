@@ -76,6 +76,25 @@ export class EngineService {
     );
   }
 
+  // postFront copy engine to a version with encoded pointers and post to the back
+  postFront(engine: Engine, GONG__StackPath: string): Observable<EngineDB> {
+    let engineDB = new EngineDB
+    CopyEngineToEngineDB(engine, engineDB)
+    const id = typeof engineDB === 'number' ? engineDB : engineDB.ID
+    const url = `${this.enginesUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.post<EngineDB>(url, engineDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<EngineDB>('postEngine'))
+    );
+  }
+  
   /** POST: add a new engine to the server */
   post(enginedb: EngineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
     return this.postEngine(enginedb, GONG__StackPath, frontRepo)

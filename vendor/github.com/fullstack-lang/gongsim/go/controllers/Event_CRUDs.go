@@ -116,6 +116,7 @@ func (controller *Controller) GetEvents(c *gin.Context) {
 func (controller *Controller) PostEvent(c *gin.Context) {
 
 	mutexEvent.Lock()
+	defer mutexEvent.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostEvent(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, eventDB)
-
-	mutexEvent.Unlock()
 }
 
 // GetEvent
@@ -236,6 +235,7 @@ func (controller *Controller) GetEvent(c *gin.Context) {
 func (controller *Controller) UpdateEvent(c *gin.Context) {
 
 	mutexEvent.Lock()
+	defer mutexEvent.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateEvent(c *gin.Context) {
 
 	// return status OK with the marshalling of the the eventDB
 	c.JSON(http.StatusOK, eventDB)
-
-	mutexEvent.Unlock()
 }
 
 // DeleteEvent
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateEvent(c *gin.Context) {
 func (controller *Controller) DeleteEvent(c *gin.Context) {
 
 	mutexEvent.Lock()
+	defer mutexEvent.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteEvent(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexEvent.Unlock()
 }

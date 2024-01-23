@@ -116,6 +116,7 @@ func (controller *Controller) GetLayerGroupUses(c *gin.Context) {
 func (controller *Controller) PostLayerGroupUse(c *gin.Context) {
 
 	mutexLayerGroupUse.Lock()
+	defer mutexLayerGroupUse.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostLayerGroupUse(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, layergroupuseDB)
-
-	mutexLayerGroupUse.Unlock()
 }
 
 // GetLayerGroupUse
@@ -236,6 +235,7 @@ func (controller *Controller) GetLayerGroupUse(c *gin.Context) {
 func (controller *Controller) UpdateLayerGroupUse(c *gin.Context) {
 
 	mutexLayerGroupUse.Lock()
+	defer mutexLayerGroupUse.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateLayerGroupUse(c *gin.Context) {
 
 	// return status OK with the marshalling of the the layergroupuseDB
 	c.JSON(http.StatusOK, layergroupuseDB)
-
-	mutexLayerGroupUse.Unlock()
 }
 
 // DeleteLayerGroupUse
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateLayerGroupUse(c *gin.Context) {
 func (controller *Controller) DeleteLayerGroupUse(c *gin.Context) {
 
 	mutexLayerGroupUse.Lock()
+	defer mutexLayerGroupUse.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteLayerGroupUse(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexLayerGroupUse.Unlock()
 }

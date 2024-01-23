@@ -116,6 +116,7 @@ func (controller *Controller) GetDummyAgents(c *gin.Context) {
 func (controller *Controller) PostDummyAgent(c *gin.Context) {
 
 	mutexDummyAgent.Lock()
+	defer mutexDummyAgent.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostDummyAgent(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, dummyagentDB)
-
-	mutexDummyAgent.Unlock()
 }
 
 // GetDummyAgent
@@ -236,6 +235,7 @@ func (controller *Controller) GetDummyAgent(c *gin.Context) {
 func (controller *Controller) UpdateDummyAgent(c *gin.Context) {
 
 	mutexDummyAgent.Lock()
+	defer mutexDummyAgent.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateDummyAgent(c *gin.Context) {
 
 	// return status OK with the marshalling of the the dummyagentDB
 	c.JSON(http.StatusOK, dummyagentDB)
-
-	mutexDummyAgent.Unlock()
 }
 
 // DeleteDummyAgent
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateDummyAgent(c *gin.Context) {
 func (controller *Controller) DeleteDummyAgent(c *gin.Context) {
 
 	mutexDummyAgent.Lock()
+	defer mutexDummyAgent.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteDummyAgent(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexDummyAgent.Unlock()
 }

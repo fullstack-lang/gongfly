@@ -116,6 +116,7 @@ func (controller *Controller) GetGongsimCommands(c *gin.Context) {
 func (controller *Controller) PostGongsimCommand(c *gin.Context) {
 
 	mutexGongsimCommand.Lock()
+	defer mutexGongsimCommand.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostGongsimCommand(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gongsimcommandDB)
-
-	mutexGongsimCommand.Unlock()
 }
 
 // GetGongsimCommand
@@ -236,6 +235,7 @@ func (controller *Controller) GetGongsimCommand(c *gin.Context) {
 func (controller *Controller) UpdateGongsimCommand(c *gin.Context) {
 
 	mutexGongsimCommand.Lock()
+	defer mutexGongsimCommand.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateGongsimCommand(c *gin.Context) {
 
 	// return status OK with the marshalling of the the gongsimcommandDB
 	c.JSON(http.StatusOK, gongsimcommandDB)
-
-	mutexGongsimCommand.Unlock()
 }
 
 // DeleteGongsimCommand
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateGongsimCommand(c *gin.Context) {
 func (controller *Controller) DeleteGongsimCommand(c *gin.Context) {
 
 	mutexGongsimCommand.Lock()
+	defer mutexGongsimCommand.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteGongsimCommand(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexGongsimCommand.Unlock()
 }

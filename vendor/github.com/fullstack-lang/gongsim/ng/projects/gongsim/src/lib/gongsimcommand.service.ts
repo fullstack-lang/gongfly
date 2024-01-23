@@ -77,6 +77,25 @@ export class GongsimCommandService {
     );
   }
 
+  // postFront copy gongsimcommand to a version with encoded pointers and post to the back
+  postFront(gongsimcommand: GongsimCommand, GONG__StackPath: string): Observable<GongsimCommandDB> {
+    let gongsimcommandDB = new GongsimCommandDB
+    CopyGongsimCommandToGongsimCommandDB(gongsimcommand, gongsimcommandDB)
+    const id = typeof gongsimcommandDB === 'number' ? gongsimcommandDB : gongsimcommandDB.ID
+    const url = `${this.gongsimcommandsUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.post<GongsimCommandDB>(url, gongsimcommandDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<GongsimCommandDB>('postGongsimCommand'))
+    );
+  }
+  
   /** POST: add a new gongsimcommand to the server */
   post(gongsimcommanddb: GongsimCommandDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimCommandDB> {
     return this.postGongsimCommand(gongsimcommanddb, GONG__StackPath, frontRepo)

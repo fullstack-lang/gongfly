@@ -116,6 +116,7 @@ func (controller *Controller) GetMapOptionss(c *gin.Context) {
 func (controller *Controller) PostMapOptions(c *gin.Context) {
 
 	mutexMapOptions.Lock()
+	defer mutexMapOptions.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostMapOptions(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, mapoptionsDB)
-
-	mutexMapOptions.Unlock()
 }
 
 // GetMapOptions
@@ -236,6 +235,7 @@ func (controller *Controller) GetMapOptions(c *gin.Context) {
 func (controller *Controller) UpdateMapOptions(c *gin.Context) {
 
 	mutexMapOptions.Lock()
+	defer mutexMapOptions.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateMapOptions(c *gin.Context) {
 
 	// return status OK with the marshalling of the the mapoptionsDB
 	c.JSON(http.StatusOK, mapoptionsDB)
-
-	mutexMapOptions.Unlock()
 }
 
 // DeleteMapOptions
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateMapOptions(c *gin.Context) {
 func (controller *Controller) DeleteMapOptions(c *gin.Context) {
 
 	mutexMapOptions.Lock()
+	defer mutexMapOptions.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteMapOptions(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexMapOptions.Unlock()
 }

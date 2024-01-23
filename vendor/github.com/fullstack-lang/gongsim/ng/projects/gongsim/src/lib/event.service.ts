@@ -76,6 +76,25 @@ export class EventService {
     );
   }
 
+  // postFront copy event to a version with encoded pointers and post to the back
+  postFront(event: Event, GONG__StackPath: string): Observable<EventDB> {
+    let eventDB = new EventDB
+    CopyEventToEventDB(event, eventDB)
+    const id = typeof eventDB === 'number' ? eventDB : eventDB.ID
+    const url = `${this.eventsUrl}/${id}`;
+    let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
+    let httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: params
+    }
+
+    return this.http.post<EventDB>(url, eventDB, httpOptions).pipe(
+      tap(_ => {
+      }),
+      catchError(this.handleError<EventDB>('postEvent'))
+    );
+  }
+  
   /** POST: add a new event to the server */
   post(eventdb: EventDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
     return this.postEvent(eventdb, GONG__StackPath, frontRepo)

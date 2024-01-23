@@ -116,6 +116,7 @@ func (controller *Controller) GetUserClicks(c *gin.Context) {
 func (controller *Controller) PostUserClick(c *gin.Context) {
 
 	mutexUserClick.Lock()
+	defer mutexUserClick.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostUserClick(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, userclickDB)
-
-	mutexUserClick.Unlock()
 }
 
 // GetUserClick
@@ -236,6 +235,7 @@ func (controller *Controller) GetUserClick(c *gin.Context) {
 func (controller *Controller) UpdateUserClick(c *gin.Context) {
 
 	mutexUserClick.Lock()
+	defer mutexUserClick.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateUserClick(c *gin.Context) {
 
 	// return status OK with the marshalling of the the userclickDB
 	c.JSON(http.StatusOK, userclickDB)
-
-	mutexUserClick.Unlock()
 }
 
 // DeleteUserClick
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateUserClick(c *gin.Context) {
 func (controller *Controller) DeleteUserClick(c *gin.Context) {
 
 	mutexUserClick.Lock()
+	defer mutexUserClick.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteUserClick(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexUserClick.Unlock()
 }
