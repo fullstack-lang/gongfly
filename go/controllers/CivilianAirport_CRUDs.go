@@ -116,6 +116,7 @@ func (controller *Controller) GetCivilianAirports(c *gin.Context) {
 func (controller *Controller) PostCivilianAirport(c *gin.Context) {
 
 	mutexCivilianAirport.Lock()
+	defer mutexCivilianAirport.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostCivilianAirport(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, civilianairportDB)
-
-	mutexCivilianAirport.Unlock()
 }
 
 // GetCivilianAirport
@@ -236,6 +235,7 @@ func (controller *Controller) GetCivilianAirport(c *gin.Context) {
 func (controller *Controller) UpdateCivilianAirport(c *gin.Context) {
 
 	mutexCivilianAirport.Lock()
+	defer mutexCivilianAirport.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateCivilianAirport(c *gin.Context) {
 
 	// return status OK with the marshalling of the the civilianairportDB
 	c.JSON(http.StatusOK, civilianairportDB)
-
-	mutexCivilianAirport.Unlock()
 }
 
 // DeleteCivilianAirport
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateCivilianAirport(c *gin.Context) {
 func (controller *Controller) DeleteCivilianAirport(c *gin.Context) {
 
 	mutexCivilianAirport.Lock()
+	defer mutexCivilianAirport.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteCivilianAirport(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexCivilianAirport.Unlock()
 }

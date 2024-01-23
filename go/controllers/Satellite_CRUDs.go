@@ -116,6 +116,7 @@ func (controller *Controller) GetSatellites(c *gin.Context) {
 func (controller *Controller) PostSatellite(c *gin.Context) {
 
 	mutexSatellite.Lock()
+	defer mutexSatellite.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostSatellite(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, satelliteDB)
-
-	mutexSatellite.Unlock()
 }
 
 // GetSatellite
@@ -236,6 +235,7 @@ func (controller *Controller) GetSatellite(c *gin.Context) {
 func (controller *Controller) UpdateSatellite(c *gin.Context) {
 
 	mutexSatellite.Lock()
+	defer mutexSatellite.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateSatellite(c *gin.Context) {
 
 	// return status OK with the marshalling of the the satelliteDB
 	c.JSON(http.StatusOK, satelliteDB)
-
-	mutexSatellite.Unlock()
 }
 
 // DeleteSatellite
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateSatellite(c *gin.Context) {
 func (controller *Controller) DeleteSatellite(c *gin.Context) {
 
 	mutexSatellite.Lock()
+	defer mutexSatellite.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteSatellite(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexSatellite.Unlock()
 }

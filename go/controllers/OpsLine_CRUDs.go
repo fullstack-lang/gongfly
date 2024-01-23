@@ -116,6 +116,7 @@ func (controller *Controller) GetOpsLines(c *gin.Context) {
 func (controller *Controller) PostOpsLine(c *gin.Context) {
 
 	mutexOpsLine.Lock()
+	defer mutexOpsLine.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostOpsLine(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, opslineDB)
-
-	mutexOpsLine.Unlock()
 }
 
 // GetOpsLine
@@ -236,6 +235,7 @@ func (controller *Controller) GetOpsLine(c *gin.Context) {
 func (controller *Controller) UpdateOpsLine(c *gin.Context) {
 
 	mutexOpsLine.Lock()
+	defer mutexOpsLine.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateOpsLine(c *gin.Context) {
 
 	// return status OK with the marshalling of the the opslineDB
 	c.JSON(http.StatusOK, opslineDB)
-
-	mutexOpsLine.Unlock()
 }
 
 // DeleteOpsLine
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateOpsLine(c *gin.Context) {
 func (controller *Controller) DeleteOpsLine(c *gin.Context) {
 
 	mutexOpsLine.Lock()
+	defer mutexOpsLine.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteOpsLine(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexOpsLine.Unlock()
 }

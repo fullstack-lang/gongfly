@@ -116,6 +116,7 @@ func (controller *Controller) GetScenarios(c *gin.Context) {
 func (controller *Controller) PostScenario(c *gin.Context) {
 
 	mutexScenario.Lock()
+	defer mutexScenario.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostScenario(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, scenarioDB)
-
-	mutexScenario.Unlock()
 }
 
 // GetScenario
@@ -236,6 +235,7 @@ func (controller *Controller) GetScenario(c *gin.Context) {
 func (controller *Controller) UpdateScenario(c *gin.Context) {
 
 	mutexScenario.Lock()
+	defer mutexScenario.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateScenario(c *gin.Context) {
 
 	// return status OK with the marshalling of the the scenarioDB
 	c.JSON(http.StatusOK, scenarioDB)
-
-	mutexScenario.Unlock()
 }
 
 // DeleteScenario
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateScenario(c *gin.Context) {
 func (controller *Controller) DeleteScenario(c *gin.Context) {
 
 	mutexScenario.Lock()
+	defer mutexScenario.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteScenario(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexScenario.Unlock()
 }

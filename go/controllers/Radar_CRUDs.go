@@ -116,6 +116,7 @@ func (controller *Controller) GetRadars(c *gin.Context) {
 func (controller *Controller) PostRadar(c *gin.Context) {
 
 	mutexRadar.Lock()
+	defer mutexRadar.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostRadar(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, radarDB)
-
-	mutexRadar.Unlock()
 }
 
 // GetRadar
@@ -236,6 +235,7 @@ func (controller *Controller) GetRadar(c *gin.Context) {
 func (controller *Controller) UpdateRadar(c *gin.Context) {
 
 	mutexRadar.Lock()
+	defer mutexRadar.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateRadar(c *gin.Context) {
 
 	// return status OK with the marshalling of the the radarDB
 	c.JSON(http.StatusOK, radarDB)
-
-	mutexRadar.Unlock()
 }
 
 // DeleteRadar
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateRadar(c *gin.Context) {
 func (controller *Controller) DeleteRadar(c *gin.Context) {
 
 	mutexRadar.Lock()
+	defer mutexRadar.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteRadar(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexRadar.Unlock()
 }

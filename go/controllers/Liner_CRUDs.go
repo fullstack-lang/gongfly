@@ -116,6 +116,7 @@ func (controller *Controller) GetLiners(c *gin.Context) {
 func (controller *Controller) PostLiner(c *gin.Context) {
 
 	mutexLiner.Lock()
+	defer mutexLiner.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostLiner(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, linerDB)
-
-	mutexLiner.Unlock()
 }
 
 // GetLiner
@@ -236,6 +235,7 @@ func (controller *Controller) GetLiner(c *gin.Context) {
 func (controller *Controller) UpdateLiner(c *gin.Context) {
 
 	mutexLiner.Lock()
+	defer mutexLiner.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateLiner(c *gin.Context) {
 
 	// return status OK with the marshalling of the the linerDB
 	c.JSON(http.StatusOK, linerDB)
-
-	mutexLiner.Unlock()
 }
 
 // DeleteLiner
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateLiner(c *gin.Context) {
 func (controller *Controller) DeleteLiner(c *gin.Context) {
 
 	mutexLiner.Lock()
+	defer mutexLiner.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteLiner(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexLiner.Unlock()
 }

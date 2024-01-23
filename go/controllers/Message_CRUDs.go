@@ -116,6 +116,7 @@ func (controller *Controller) GetMessages(c *gin.Context) {
 func (controller *Controller) PostMessage(c *gin.Context) {
 
 	mutexMessage.Lock()
+	defer mutexMessage.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -173,8 +174,6 @@ func (controller *Controller) PostMessage(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, messageDB)
-
-	mutexMessage.Unlock()
 }
 
 // GetMessage
@@ -236,6 +235,7 @@ func (controller *Controller) GetMessage(c *gin.Context) {
 func (controller *Controller) UpdateMessage(c *gin.Context) {
 
 	mutexMessage.Lock()
+	defer mutexMessage.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -310,8 +310,6 @@ func (controller *Controller) UpdateMessage(c *gin.Context) {
 
 	// return status OK with the marshalling of the the messageDB
 	c.JSON(http.StatusOK, messageDB)
-
-	mutexMessage.Unlock()
 }
 
 // DeleteMessage
@@ -326,6 +324,7 @@ func (controller *Controller) UpdateMessage(c *gin.Context) {
 func (controller *Controller) DeleteMessage(c *gin.Context) {
 
 	mutexMessage.Lock()
+	defer mutexMessage.Unlock()
 
 	values := c.Request.URL.Query()
 	stackPath := ""
@@ -371,6 +370,4 @@ func (controller *Controller) DeleteMessage(c *gin.Context) {
 	backRepo.IncrementPushFromFrontNb()
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
-
-	mutexMessage.Unlock()
 }
