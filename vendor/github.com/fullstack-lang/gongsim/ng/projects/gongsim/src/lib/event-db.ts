@@ -15,7 +15,7 @@ export class EventDB {
 	Name: string = ""
 	Duration: number = 0
 
-	// insertion point for pointers and slices of pointers declarations
+	// insertion point for other decls
 	Duration_string?: string
 
 	EventPointersEncoding: EventPointersEncoding = new EventPointersEncoding

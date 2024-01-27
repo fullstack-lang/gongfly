@@ -101,8 +101,6 @@ export class GongsimStatusService {
   }
   postGongsimStatus(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -111,7 +109,6 @@ export class GongsimStatusService {
 
     return this.http.post<GongsimStatusDB>(this.gongsimstatussUrl, gongsimstatusdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
         // this.log(`posted gongsimstatusdb id=${gongsimstatusdb.ID}`)
       }),
       catchError(this.handleError<GongsimStatusDB>('postGongsimStatus'))
@@ -165,8 +162,6 @@ export class GongsimStatusService {
     const id = typeof gongsimstatusdb === 'number' ? gongsimstatusdb : gongsimstatusdb.ID;
     const url = `${this.gongsimstatussUrl}/${id}`;
 
-    // insertion point for reset of pointers (to avoid circular JSON)
-    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -176,7 +171,6 @@ export class GongsimStatusService {
 
     return this.http.put<GongsimStatusDB>(url, gongsimstatusdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
         // this.log(`updated gongsimstatusdb id=${gongsimstatusdb.ID}`)
       }),
       catchError(this.handleError<GongsimStatusDB>('updateGongsimStatus'))

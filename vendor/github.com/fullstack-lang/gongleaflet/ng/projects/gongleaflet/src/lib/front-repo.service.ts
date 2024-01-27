@@ -44,177 +44,88 @@ export const StackType = "github.com/fullstack-lang/gongleaflet/go/models"
 
 // FrontRepo stores all instances in a front repository (design pattern repository)
 export class FrontRepo { // insertion point sub template
-  Circles_array = new Array<CircleDB>() // array of repo instances
-  Circles = new Map<number, CircleDB>() // map of repo instances
-  Circles_batch = new Map<number, CircleDB>() // same but only in last GET (for finding repo instances to delete)
+	array_Circles = new Array<Circle>() // array of front instances
+	map_ID_Circle = new Map<number, Circle>() // map of front instances
 
-  array_Circles = new Array<Circle>() // array of front instances
-  map_ID_Circle = new Map<number, Circle>() // map of front instances
+	array_DivIcons = new Array<DivIcon>() // array of front instances
+	map_ID_DivIcon = new Map<number, DivIcon>() // map of front instances
 
-  DivIcons_array = new Array<DivIconDB>() // array of repo instances
-  DivIcons = new Map<number, DivIconDB>() // map of repo instances
-  DivIcons_batch = new Map<number, DivIconDB>() // same but only in last GET (for finding repo instances to delete)
+	array_LayerGroups = new Array<LayerGroup>() // array of front instances
+	map_ID_LayerGroup = new Map<number, LayerGroup>() // map of front instances
 
-  array_DivIcons = new Array<DivIcon>() // array of front instances
-  map_ID_DivIcon = new Map<number, DivIcon>() // map of front instances
+	array_LayerGroupUses = new Array<LayerGroupUse>() // array of front instances
+	map_ID_LayerGroupUse = new Map<number, LayerGroupUse>() // map of front instances
 
-  LayerGroups_array = new Array<LayerGroupDB>() // array of repo instances
-  LayerGroups = new Map<number, LayerGroupDB>() // map of repo instances
-  LayerGroups_batch = new Map<number, LayerGroupDB>() // same but only in last GET (for finding repo instances to delete)
+	array_MapOptionss = new Array<MapOptions>() // array of front instances
+	map_ID_MapOptions = new Map<number, MapOptions>() // map of front instances
 
-  array_LayerGroups = new Array<LayerGroup>() // array of front instances
-  map_ID_LayerGroup = new Map<number, LayerGroup>() // map of front instances
+	array_Markers = new Array<Marker>() // array of front instances
+	map_ID_Marker = new Map<number, Marker>() // map of front instances
 
-  LayerGroupUses_array = new Array<LayerGroupUseDB>() // array of repo instances
-  LayerGroupUses = new Map<number, LayerGroupUseDB>() // map of repo instances
-  LayerGroupUses_batch = new Map<number, LayerGroupUseDB>() // same but only in last GET (for finding repo instances to delete)
+	array_UserClicks = new Array<UserClick>() // array of front instances
+	map_ID_UserClick = new Map<number, UserClick>() // map of front instances
 
-  array_LayerGroupUses = new Array<LayerGroupUse>() // array of front instances
-  map_ID_LayerGroupUse = new Map<number, LayerGroupUse>() // map of front instances
+	array_VLines = new Array<VLine>() // array of front instances
+	map_ID_VLine = new Map<number, VLine>() // map of front instances
 
-  MapOptionss_array = new Array<MapOptionsDB>() // array of repo instances
-  MapOptionss = new Map<number, MapOptionsDB>() // map of repo instances
-  MapOptionss_batch = new Map<number, MapOptionsDB>() // same but only in last GET (for finding repo instances to delete)
-
-  array_MapOptionss = new Array<MapOptions>() // array of front instances
-  map_ID_MapOptions = new Map<number, MapOptions>() // map of front instances
-
-  Markers_array = new Array<MarkerDB>() // array of repo instances
-  Markers = new Map<number, MarkerDB>() // map of repo instances
-  Markers_batch = new Map<number, MarkerDB>() // same but only in last GET (for finding repo instances to delete)
-
-  array_Markers = new Array<Marker>() // array of front instances
-  map_ID_Marker = new Map<number, Marker>() // map of front instances
-
-  UserClicks_array = new Array<UserClickDB>() // array of repo instances
-  UserClicks = new Map<number, UserClickDB>() // map of repo instances
-  UserClicks_batch = new Map<number, UserClickDB>() // same but only in last GET (for finding repo instances to delete)
-
-  array_UserClicks = new Array<UserClick>() // array of front instances
-  map_ID_UserClick = new Map<number, UserClick>() // map of front instances
-
-  VLines_array = new Array<VLineDB>() // array of repo instances
-  VLines = new Map<number, VLineDB>() // map of repo instances
-  VLines_batch = new Map<number, VLineDB>() // same but only in last GET (for finding repo instances to delete)
-
-  array_VLines = new Array<VLine>() // array of front instances
-  map_ID_VLine = new Map<number, VLine>() // map of front instances
-
-  VisualTracks_array = new Array<VisualTrackDB>() // array of repo instances
-  VisualTracks = new Map<number, VisualTrackDB>() // map of repo instances
-  VisualTracks_batch = new Map<number, VisualTrackDB>() // same but only in last GET (for finding repo instances to delete)
-
-  array_VisualTracks = new Array<VisualTrack>() // array of front instances
-  map_ID_VisualTrack = new Map<number, VisualTrack>() // map of front instances
+	array_VisualTracks = new Array<VisualTrack>() // array of front instances
+	map_ID_VisualTrack = new Map<number, VisualTrack>() // map of front instances
 
 
-  // getArray allows for a get function that is robust to refactoring of the named struct name
-  // for instance frontRepo.getArray<Astruct>( Astruct.GONGSTRUCT_NAME), is robust to a refactoring of Astruct identifier
-  // contrary to frontRepo.Astructs_array which is not refactored when Astruct identifier is modified
-  getArray<Type>(gongStructName: string): Array<Type> {
-    switch (gongStructName) { // deprecated
-      // insertion point
-      case 'Circle':
-        return this.Circles_array as unknown as Array<Type>
-      case 'DivIcon':
-        return this.DivIcons_array as unknown as Array<Type>
-      case 'LayerGroup':
-        return this.LayerGroups_array as unknown as Array<Type>
-      case 'LayerGroupUse':
-        return this.LayerGroupUses_array as unknown as Array<Type>
-      case 'MapOptions':
-        return this.MapOptionss_array as unknown as Array<Type>
-      case 'Marker':
-        return this.Markers_array as unknown as Array<Type>
-      case 'UserClick':
-        return this.UserClicks_array as unknown as Array<Type>
-      case 'VLine':
-        return this.VLines_array as unknown as Array<Type>
-      case 'VisualTrack':
-        return this.VisualTracks_array as unknown as Array<Type>
-      default:
-        throw new Error("Type not recognized");
-    }
-  }
-
-  getFrontArray<Type>(gongStructName: string): Array<Type> {
-    switch (gongStructName) {
-      // insertion point
-      case 'Circle':
-        return this.array_Circles as unknown as Array<Type>
-      case 'DivIcon':
-        return this.array_DivIcons as unknown as Array<Type>
-      case 'LayerGroup':
-        return this.array_LayerGroups as unknown as Array<Type>
-      case 'LayerGroupUse':
-        return this.array_LayerGroupUses as unknown as Array<Type>
-      case 'MapOptions':
-        return this.array_MapOptionss as unknown as Array<Type>
-      case 'Marker':
-        return this.array_Markers as unknown as Array<Type>
-      case 'UserClick':
-        return this.array_UserClicks as unknown as Array<Type>
-      case 'VLine':
-        return this.array_VLines as unknown as Array<Type>
-      case 'VisualTrack':
-        return this.array_VisualTracks as unknown as Array<Type>
-      default:
-        throw new Error("Type not recognized");
-    }
-  }
-
-  // getMap allows for a get function that is robust to refactoring of the named struct name
-  getMap<Type>(gongStructName: string): Map<number, Type> { // deprecated
-    switch (gongStructName) {
-      // insertion point
-      case 'Circle':
-        return this.Circles as unknown as Map<number, Type>
-      case 'DivIcon':
-        return this.DivIcons as unknown as Map<number, Type>
-      case 'LayerGroup':
-        return this.LayerGroups as unknown as Map<number, Type>
-      case 'LayerGroupUse':
-        return this.LayerGroupUses as unknown as Map<number, Type>
-      case 'MapOptions':
-        return this.MapOptionss as unknown as Map<number, Type>
-      case 'Marker':
-        return this.Markers as unknown as Map<number, Type>
-      case 'UserClick':
-        return this.UserClicks as unknown as Map<number, Type>
-      case 'VLine':
-        return this.VLines as unknown as Map<number, Type>
-      case 'VisualTrack':
-        return this.VisualTracks as unknown as Map<number, Type>
-      default:
-        throw new Error("Type not recognized");
-    }
-  }
-  
-  getFrontMap<Type>(gongStructName: string): Map<number, Type> {
-    switch (gongStructName) {
-      // insertion point
-      case 'Circle':
-        return this.map_ID_Circle as unknown as Map<number, Type>
-      case 'DivIcon':
-        return this.map_ID_DivIcon as unknown as Map<number, Type>
-      case 'LayerGroup':
-        return this.map_ID_LayerGroup as unknown as Map<number, Type>
-      case 'LayerGroupUse':
-        return this.map_ID_LayerGroupUse as unknown as Map<number, Type>
-      case 'MapOptions':
-        return this.map_ID_MapOptions as unknown as Map<number, Type>
-      case 'Marker':
-        return this.map_ID_Marker as unknown as Map<number, Type>
-      case 'UserClick':
-        return this.map_ID_UserClick as unknown as Map<number, Type>
-      case 'VLine':
-        return this.map_ID_VLine as unknown as Map<number, Type>
-      case 'VisualTrack':
-        return this.map_ID_VisualTrack as unknown as Map<number, Type>
-      default:
-        throw new Error("Type not recognized");
-    }
-  }
+	// getFrontArray allows for a get function that is robust to refactoring of the named struct name
+	// for instance frontRepo.getArray<Astruct>( Astruct.GONGSTRUCT_NAME), is robust to a refactoring of Astruct identifier
+	// contrary to frontRepo.Astructs_array which is not refactored when Astruct identifier is modified
+	getFrontArray<Type>(gongStructName: string): Array<Type> {
+		switch (gongStructName) {
+			// insertion point
+			case 'Circle':
+				return this.array_Circles as unknown as Array<Type>
+			case 'DivIcon':
+				return this.array_DivIcons as unknown as Array<Type>
+			case 'LayerGroup':
+				return this.array_LayerGroups as unknown as Array<Type>
+			case 'LayerGroupUse':
+				return this.array_LayerGroupUses as unknown as Array<Type>
+			case 'MapOptions':
+				return this.array_MapOptionss as unknown as Array<Type>
+			case 'Marker':
+				return this.array_Markers as unknown as Array<Type>
+			case 'UserClick':
+				return this.array_UserClicks as unknown as Array<Type>
+			case 'VLine':
+				return this.array_VLines as unknown as Array<Type>
+			case 'VisualTrack':
+				return this.array_VisualTracks as unknown as Array<Type>
+			default:
+				throw new Error("Type not recognized");
+		}
+	}
+	
+	getFrontMap<Type>(gongStructName: string): Map<number, Type> {
+		switch (gongStructName) {
+			// insertion point
+			case 'Circle':
+				return this.map_ID_Circle as unknown as Map<number, Type>
+			case 'DivIcon':
+				return this.map_ID_DivIcon as unknown as Map<number, Type>
+			case 'LayerGroup':
+				return this.map_ID_LayerGroup as unknown as Map<number, Type>
+			case 'LayerGroupUse':
+				return this.map_ID_LayerGroupUse as unknown as Map<number, Type>
+			case 'MapOptions':
+				return this.map_ID_MapOptions as unknown as Map<number, Type>
+			case 'Marker':
+				return this.map_ID_Marker as unknown as Map<number, Type>
+			case 'UserClick':
+				return this.map_ID_UserClick as unknown as Map<number, Type>
+			case 'VLine':
+				return this.map_ID_VLine as unknown as Map<number, Type>
+			case 'VisualTrack':
+				return this.map_ID_VisualTrack as unknown as Map<number, Type>
+			default:
+				throw new Error("Type not recognized");
+		}
+	}
 }
 
 // the table component is called in different ways
@@ -226,1254 +137,414 @@ export class FrontRepo { // insertion point sub template
 // DialogData define the interface for information that is forwarded from the calling instance to 
 // the select table
 export class DialogData {
-  ID: number = 0 // ID of the calling instance
+	ID: number = 0 // ID of the calling instance
 
-  // the reverse pointer is the name of the generated field on the destination
-  // struct of the ONE-MANY association
-  ReversePointer: string = "" // field of {{Structname}} that serve as reverse pointer
-  OrderingMode: boolean = false // if true, this is for ordering items
+	// the reverse pointer is the name of the generated field on the destination
+	// struct of the ONE-MANY association
+	ReversePointer: string = "" // field of {{Structname}} that serve as reverse pointer
+	OrderingMode: boolean = false // if true, this is for ordering items
 
-  // there are different selection mode : ONE_MANY or MANY_MANY
-  SelectionMode: SelectionMode = SelectionMode.ONE_MANY_ASSOCIATION_MODE
+	// there are different selection mode : ONE_MANY or MANY_MANY
+	SelectionMode: SelectionMode = SelectionMode.ONE_MANY_ASSOCIATION_MODE
 
-  // used if SelectionMode is MANY_MANY_ASSOCIATION_MODE
-  //
-  // In Gong, a MANY-MANY association is implemented as a ONE-ZERO/ONE followed by a ONE_MANY association
-  // 
-  // in the MANY_MANY_ASSOCIATION_MODE case, we need also the Struct and the FieldName that are
-  // at the end of the ONE-MANY association
-  SourceStruct: string = ""  // The "Aclass"
-  SourceField: string = "" // the "AnarrayofbUse"
-  IntermediateStruct: string = "" // the "AclassBclassUse" 
-  IntermediateStructField: string = "" // the "Bclass" as field
-  NextAssociationStruct: string = "" // the "Bclass"
+	// used if SelectionMode is MANY_MANY_ASSOCIATION_MODE
+	//
+	// In Gong, a MANY-MANY association is implemented as a ONE-ZERO/ONE followed by a ONE_MANY association
+	// 
+	// in the MANY_MANY_ASSOCIATION_MODE case, we need also the Struct and the FieldName that are
+	// at the end of the ONE-MANY association
+	SourceStruct: string = ""	// The "Aclass"
+	SourceField: string = "" // the "AnarrayofbUse"
+	IntermediateStruct: string = "" // the "AclassBclassUse" 
+	IntermediateStructField: string = "" // the "Bclass" as field
+	NextAssociationStruct: string = "" // the "Bclass"
 
-  GONG__StackPath: string = ""
+	GONG__StackPath: string = ""
 }
 
 export enum SelectionMode {
-  ONE_MANY_ASSOCIATION_MODE = "ONE_MANY_ASSOCIATION_MODE",
-  MANY_MANY_ASSOCIATION_MODE = "MANY_MANY_ASSOCIATION_MODE",
+	ONE_MANY_ASSOCIATION_MODE = "ONE_MANY_ASSOCIATION_MODE",
+	MANY_MANY_ASSOCIATION_MODE = "MANY_MANY_ASSOCIATION_MODE",
 }
 
 //
 // observable that fetch all elements of the stack and store them in the FrontRepo
 //
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class FrontRepoService {
 
-  GONG__StackPath: string = ""
-
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-  };
-
-  //
-  // Store of all instances of the stack
-  //
-  frontRepo = new (FrontRepo)
-
-  constructor(
-    private http: HttpClient, // insertion point sub template 
-    private circleService: CircleService,
-    private diviconService: DivIconService,
-    private layergroupService: LayerGroupService,
-    private layergroupuseService: LayerGroupUseService,
-    private mapoptionsService: MapOptionsService,
-    private markerService: MarkerService,
-    private userclickService: UserClickService,
-    private vlineService: VLineService,
-    private visualtrackService: VisualTrackService,
-  ) { }
-
-  // postService provides a post function for each struct name
-  postService(structName: string, instanceToBePosted: any) {
-    let service = this[structName.toLowerCase() + "Service" + "Service" as keyof FrontRepoService]
-    let servicePostFunction = service[("post" + structName) as keyof typeof service] as (instance: typeof instanceToBePosted) => Observable<typeof instanceToBePosted>
-
-    servicePostFunction(instanceToBePosted).subscribe(
-      instance => {
-        let behaviorSubject = instanceToBePosted[(structName + "ServiceChanged") as keyof typeof instanceToBePosted] as unknown as BehaviorSubject<string>
-        behaviorSubject.next("post")
-      }
-    );
-  }
-
-  // deleteService provides a delete function for each struct name
-  deleteService(structName: string, instanceToBeDeleted: any) {
-    let service = this[structName.toLowerCase() + "Service" as keyof FrontRepoService]
-    let serviceDeleteFunction = service["delete" + structName as keyof typeof service] as (instance: typeof instanceToBeDeleted) => Observable<typeof instanceToBeDeleted>
-
-    serviceDeleteFunction(instanceToBeDeleted).subscribe(
-      instance => {
-        let behaviorSubject = instanceToBeDeleted[(structName + "ServiceChanged") as keyof typeof instanceToBeDeleted] as unknown as BehaviorSubject<string>
-        behaviorSubject.next("delete")
-      }
-    );
-  }
-
-  // typing of observable can be messy in typescript. Therefore, one force the type
-  observableFrontRepo: [
-    Observable<null>, // see below for the of(null) observable
-    // insertion point sub template 
-    Observable<CircleDB[]>,
-    Observable<DivIconDB[]>,
-    Observable<LayerGroupDB[]>,
-    Observable<LayerGroupUseDB[]>,
-    Observable<MapOptionsDB[]>,
-    Observable<MarkerDB[]>,
-    Observable<UserClickDB[]>,
-    Observable<VLineDB[]>,
-    Observable<VisualTrackDB[]>,
-  ] = [
-      // Using "combineLatest" with a placeholder observable.
-      //
-      // This allows the typescript compiler to pass when no GongStruct is present in the front API
-      //
-      // The "of(null)" is a "meaningless" observable that emits a single value (null) and completes.
-      // This is used as a workaround to satisfy TypeScript requirements and the "combineLatest" 
-      // expectation for a non-empty array of observables.
-      of(null), // 
-      // insertion point sub template
-      this.circleService.getCircles(this.GONG__StackPath, this.frontRepo),
-      this.diviconService.getDivIcons(this.GONG__StackPath, this.frontRepo),
-      this.layergroupService.getLayerGroups(this.GONG__StackPath, this.frontRepo),
-      this.layergroupuseService.getLayerGroupUses(this.GONG__StackPath, this.frontRepo),
-      this.mapoptionsService.getMapOptionss(this.GONG__StackPath, this.frontRepo),
-      this.markerService.getMarkers(this.GONG__StackPath, this.frontRepo),
-      this.userclickService.getUserClicks(this.GONG__StackPath, this.frontRepo),
-      this.vlineService.getVLines(this.GONG__StackPath, this.frontRepo),
-      this.visualtrackService.getVisualTracks(this.GONG__StackPath, this.frontRepo),
-    ];
-
-  //
-  // pull performs a GET on all struct of the stack and redeem association pointers 
-  //
-  // This is an observable. Therefore, the control flow forks with
-  // - pull() return immediatly the observable
-  // - the observable observer, if it subscribe, is called when all GET calls are performs
-  pull(GONG__StackPath: string = ""): Observable<FrontRepo> {
-
-    this.GONG__StackPath = GONG__StackPath
-
-    this.observableFrontRepo = [
-      of(null), // see above for justification
-      // insertion point sub template
-      this.circleService.getCircles(this.GONG__StackPath, this.frontRepo),
-      this.diviconService.getDivIcons(this.GONG__StackPath, this.frontRepo),
-      this.layergroupService.getLayerGroups(this.GONG__StackPath, this.frontRepo),
-      this.layergroupuseService.getLayerGroupUses(this.GONG__StackPath, this.frontRepo),
-      this.mapoptionsService.getMapOptionss(this.GONG__StackPath, this.frontRepo),
-      this.markerService.getMarkers(this.GONG__StackPath, this.frontRepo),
-      this.userclickService.getUserClicks(this.GONG__StackPath, this.frontRepo),
-      this.vlineService.getVLines(this.GONG__StackPath, this.frontRepo),
-      this.visualtrackService.getVisualTracks(this.GONG__StackPath, this.frontRepo),
-    ]
-
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest(
-          this.observableFrontRepo
-        ).subscribe(
-          ([
-            ___of_null, // see above for the explanation about of
-            // insertion point sub template for declarations 
-            circles_,
-            divicons_,
-            layergroups_,
-            layergroupuses_,
-            mapoptionss_,
-            markers_,
-            userclicks_,
-            vlines_,
-            visualtracks_,
-          ]) => {
-            // Typing can be messy with many items. Therefore, type casting is necessary here
-            // insertion point sub template for type casting 
-            var circles: CircleDB[]
-            circles = circles_ as CircleDB[]
-            var divicons: DivIconDB[]
-            divicons = divicons_ as DivIconDB[]
-            var layergroups: LayerGroupDB[]
-            layergroups = layergroups_ as LayerGroupDB[]
-            var layergroupuses: LayerGroupUseDB[]
-            layergroupuses = layergroupuses_ as LayerGroupUseDB[]
-            var mapoptionss: MapOptionsDB[]
-            mapoptionss = mapoptionss_ as MapOptionsDB[]
-            var markers: MarkerDB[]
-            markers = markers_ as MarkerDB[]
-            var userclicks: UserClickDB[]
-            userclicks = userclicks_ as UserClickDB[]
-            var vlines: VLineDB[]
-            vlines = vlines_ as VLineDB[]
-            var visualtracks: VisualTrackDB[]
-            visualtracks = visualtracks_ as VisualTrackDB[]
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template for init 
-            // init the array
-            this.frontRepo.Circles_array = circles
-
-            // clear the map that counts Circle in the GET
-            this.frontRepo.Circles_batch.clear()
-
-            circles.forEach(
-              circleDB => {
-                this.frontRepo.Circles.set(circleDB.ID, circleDB)
-                this.frontRepo.Circles_batch.set(circleDB.ID, circleDB)
-              }
-            )
-
-            // clear circles that are absent from the batch
-            this.frontRepo.Circles.forEach(
-              circleDB => {
-                if (this.frontRepo.Circles_batch.get(circleDB.ID) == undefined) {
-                  this.frontRepo.Circles.delete(circleDB.ID)
-                }
-              }
-            )
-
-            // sort Circles_array array
-            this.frontRepo.Circles_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
-            this.frontRepo.DivIcons_array = divicons
-
-            // clear the map that counts DivIcon in the GET
-            this.frontRepo.DivIcons_batch.clear()
-
-            divicons.forEach(
-              diviconDB => {
-                this.frontRepo.DivIcons.set(diviconDB.ID, diviconDB)
-                this.frontRepo.DivIcons_batch.set(diviconDB.ID, diviconDB)
-              }
-            )
-
-            // clear divicons that are absent from the batch
-            this.frontRepo.DivIcons.forEach(
-              diviconDB => {
-                if (this.frontRepo.DivIcons_batch.get(diviconDB.ID) == undefined) {
-                  this.frontRepo.DivIcons.delete(diviconDB.ID)
-                }
-              }
-            )
-
-            // sort DivIcons_array array
-            this.frontRepo.DivIcons_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
-            this.frontRepo.LayerGroups_array = layergroups
-
-            // clear the map that counts LayerGroup in the GET
-            this.frontRepo.LayerGroups_batch.clear()
-
-            layergroups.forEach(
-              layergroupDB => {
-                this.frontRepo.LayerGroups.set(layergroupDB.ID, layergroupDB)
-                this.frontRepo.LayerGroups_batch.set(layergroupDB.ID, layergroupDB)
-              }
-            )
-
-            // clear layergroups that are absent from the batch
-            this.frontRepo.LayerGroups.forEach(
-              layergroupDB => {
-                if (this.frontRepo.LayerGroups_batch.get(layergroupDB.ID) == undefined) {
-                  this.frontRepo.LayerGroups.delete(layergroupDB.ID)
-                }
-              }
-            )
-
-            // sort LayerGroups_array array
-            this.frontRepo.LayerGroups_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
-            this.frontRepo.LayerGroupUses_array = layergroupuses
-
-            // clear the map that counts LayerGroupUse in the GET
-            this.frontRepo.LayerGroupUses_batch.clear()
-
-            layergroupuses.forEach(
-              layergroupuseDB => {
-                this.frontRepo.LayerGroupUses.set(layergroupuseDB.ID, layergroupuseDB)
-                this.frontRepo.LayerGroupUses_batch.set(layergroupuseDB.ID, layergroupuseDB)
-              }
-            )
-
-            // clear layergroupuses that are absent from the batch
-            this.frontRepo.LayerGroupUses.forEach(
-              layergroupuseDB => {
-                if (this.frontRepo.LayerGroupUses_batch.get(layergroupuseDB.ID) == undefined) {
-                  this.frontRepo.LayerGroupUses.delete(layergroupuseDB.ID)
-                }
-              }
-            )
-
-            // sort LayerGroupUses_array array
-            this.frontRepo.LayerGroupUses_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
-            this.frontRepo.MapOptionss_array = mapoptionss
-
-            // clear the map that counts MapOptions in the GET
-            this.frontRepo.MapOptionss_batch.clear()
-
-            mapoptionss.forEach(
-              mapoptionsDB => {
-                this.frontRepo.MapOptionss.set(mapoptionsDB.ID, mapoptionsDB)
-                this.frontRepo.MapOptionss_batch.set(mapoptionsDB.ID, mapoptionsDB)
-              }
-            )
-
-            // clear mapoptionss that are absent from the batch
-            this.frontRepo.MapOptionss.forEach(
-              mapoptionsDB => {
-                if (this.frontRepo.MapOptionss_batch.get(mapoptionsDB.ID) == undefined) {
-                  this.frontRepo.MapOptionss.delete(mapoptionsDB.ID)
-                }
-              }
-            )
-
-            // sort MapOptionss_array array
-            this.frontRepo.MapOptionss_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
-            this.frontRepo.Markers_array = markers
-
-            // clear the map that counts Marker in the GET
-            this.frontRepo.Markers_batch.clear()
-
-            markers.forEach(
-              markerDB => {
-                this.frontRepo.Markers.set(markerDB.ID, markerDB)
-                this.frontRepo.Markers_batch.set(markerDB.ID, markerDB)
-              }
-            )
-
-            // clear markers that are absent from the batch
-            this.frontRepo.Markers.forEach(
-              markerDB => {
-                if (this.frontRepo.Markers_batch.get(markerDB.ID) == undefined) {
-                  this.frontRepo.Markers.delete(markerDB.ID)
-                }
-              }
-            )
-
-            // sort Markers_array array
-            this.frontRepo.Markers_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
-            this.frontRepo.UserClicks_array = userclicks
-
-            // clear the map that counts UserClick in the GET
-            this.frontRepo.UserClicks_batch.clear()
-
-            userclicks.forEach(
-              userclickDB => {
-                this.frontRepo.UserClicks.set(userclickDB.ID, userclickDB)
-                this.frontRepo.UserClicks_batch.set(userclickDB.ID, userclickDB)
-              }
-            )
-
-            // clear userclicks that are absent from the batch
-            this.frontRepo.UserClicks.forEach(
-              userclickDB => {
-                if (this.frontRepo.UserClicks_batch.get(userclickDB.ID) == undefined) {
-                  this.frontRepo.UserClicks.delete(userclickDB.ID)
-                }
-              }
-            )
-
-            // sort UserClicks_array array
-            this.frontRepo.UserClicks_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
-            this.frontRepo.VLines_array = vlines
-
-            // clear the map that counts VLine in the GET
-            this.frontRepo.VLines_batch.clear()
-
-            vlines.forEach(
-              vlineDB => {
-                this.frontRepo.VLines.set(vlineDB.ID, vlineDB)
-                this.frontRepo.VLines_batch.set(vlineDB.ID, vlineDB)
-              }
-            )
-
-            // clear vlines that are absent from the batch
-            this.frontRepo.VLines.forEach(
-              vlineDB => {
-                if (this.frontRepo.VLines_batch.get(vlineDB.ID) == undefined) {
-                  this.frontRepo.VLines.delete(vlineDB.ID)
-                }
-              }
-            )
-
-            // sort VLines_array array
-            this.frontRepo.VLines_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
-            this.frontRepo.VisualTracks_array = visualtracks
-
-            // clear the map that counts VisualTrack in the GET
-            this.frontRepo.VisualTracks_batch.clear()
-
-            visualtracks.forEach(
-              visualtrackDB => {
-                this.frontRepo.VisualTracks.set(visualtrackDB.ID, visualtrackDB)
-                this.frontRepo.VisualTracks_batch.set(visualtrackDB.ID, visualtrackDB)
-              }
-            )
-
-            // clear visualtracks that are absent from the batch
-            this.frontRepo.VisualTracks.forEach(
-              visualtrackDB => {
-                if (this.frontRepo.VisualTracks_batch.get(visualtrackDB.ID) == undefined) {
-                  this.frontRepo.VisualTracks.delete(visualtrackDB.ID)
-                }
-              }
-            )
-
-            // sort VisualTracks_array array
-            this.frontRepo.VisualTracks_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-
-            // 
-            // Second Step: reddeem slice of pointers fields
-            // insertion point sub template for redeem 
-            circles.forEach(
-              circle => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointer field LayerGroup redeeming
-                {
-                  let _layergroup = this.frontRepo.LayerGroups.get(circle.CirclePointersEncoding.LayerGroupID.Int64)
-                  if (_layergroup) {
-                    circle.LayerGroup = _layergroup
-                  }
-                }
-                // insertion point for pointers decoding
-              }
-            )
-            divicons.forEach(
-              divicon => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointers decoding
-              }
-            )
-            layergroups.forEach(
-              layergroup => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointers decoding
-              }
-            )
-            layergroupuses.forEach(
-              layergroupuse => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointer field LayerGroup redeeming
-                {
-                  let _layergroup = this.frontRepo.LayerGroups.get(layergroupuse.LayerGroupUsePointersEncoding.LayerGroupID.Int64)
-                  if (_layergroup) {
-                    layergroupuse.LayerGroup = _layergroup
-                  }
-                }
-                // insertion point for pointers decoding
-              }
-            )
-            mapoptionss.forEach(
-              mapoptions => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointers decoding
-                mapoptions.LayerGroupUses = new Array<LayerGroupUseDB>()
-                for (let _id of mapoptions.MapOptionsPointersEncoding.LayerGroupUses) {
-                  let _layergroupuse = this.frontRepo.LayerGroupUses.get(_id)
-                  if (_layergroupuse != undefined) {
-                    mapoptions.LayerGroupUses.push(_layergroupuse!)
-                  }
-                }
-              }
-            )
-            markers.forEach(
-              marker => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointer field LayerGroup redeeming
-                {
-                  let _layergroup = this.frontRepo.LayerGroups.get(marker.MarkerPointersEncoding.LayerGroupID.Int64)
-                  if (_layergroup) {
-                    marker.LayerGroup = _layergroup
-                  }
-                }
-                // insertion point for pointer field DivIcon redeeming
-                {
-                  let _divicon = this.frontRepo.DivIcons.get(marker.MarkerPointersEncoding.DivIconID.Int64)
-                  if (_divicon) {
-                    marker.DivIcon = _divicon
-                  }
-                }
-                // insertion point for pointers decoding
-              }
-            )
-            userclicks.forEach(
-              userclick => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointers decoding
-              }
-            )
-            vlines.forEach(
-              vline => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointer field LayerGroup redeeming
-                {
-                  let _layergroup = this.frontRepo.LayerGroups.get(vline.VLinePointersEncoding.LayerGroupID.Int64)
-                  if (_layergroup) {
-                    vline.LayerGroup = _layergroup
-                  }
-                }
-                // insertion point for pointers decoding
-              }
-            )
-            visualtracks.forEach(
-              visualtrack => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointer field LayerGroup redeeming
-                {
-                  let _layergroup = this.frontRepo.LayerGroups.get(visualtrack.VisualTrackPointersEncoding.LayerGroupID.Int64)
-                  if (_layergroup) {
-                    visualtrack.LayerGroup = _layergroup
-                  }
-                }
-                // insertion point for pointer field DivIcon redeeming
-                {
-                  let _divicon = this.frontRepo.DivIcons.get(visualtrack.VisualTrackPointersEncoding.DivIconID.Int64)
-                  if (_divicon) {
-                    visualtrack.DivIcon = _divicon
-                  }
-                }
-                // insertion point for pointers decoding
-              }
-            )
-
-            // 
-            // Third Step: reddeem front objects
-            // insertion point sub template for redeem 
-            
-            // init front objects
-            this.frontRepo.array_Circles = []
-            this.frontRepo.map_ID_Circle.clear()
-            this.frontRepo.Circles_array.forEach(
-              circleDB => {
-                let circle = new Circle
-                CopyCircleDBToCircle(circleDB, circle, this.frontRepo)
-                this.frontRepo.array_Circles.push(circle)
-                this.frontRepo.map_ID_Circle.set(circle.ID, circle)
-              }
-            )
-
-            
-            // init front objects
-            this.frontRepo.array_DivIcons = []
-            this.frontRepo.map_ID_DivIcon.clear()
-            this.frontRepo.DivIcons_array.forEach(
-              diviconDB => {
-                let divicon = new DivIcon
-                CopyDivIconDBToDivIcon(diviconDB, divicon, this.frontRepo)
-                this.frontRepo.array_DivIcons.push(divicon)
-                this.frontRepo.map_ID_DivIcon.set(divicon.ID, divicon)
-              }
-            )
-
-            
-            // init front objects
-            this.frontRepo.array_LayerGroups = []
-            this.frontRepo.map_ID_LayerGroup.clear()
-            this.frontRepo.LayerGroups_array.forEach(
-              layergroupDB => {
-                let layergroup = new LayerGroup
-                CopyLayerGroupDBToLayerGroup(layergroupDB, layergroup, this.frontRepo)
-                this.frontRepo.array_LayerGroups.push(layergroup)
-                this.frontRepo.map_ID_LayerGroup.set(layergroup.ID, layergroup)
-              }
-            )
-
-            
-            // init front objects
-            this.frontRepo.array_LayerGroupUses = []
-            this.frontRepo.map_ID_LayerGroupUse.clear()
-            this.frontRepo.LayerGroupUses_array.forEach(
-              layergroupuseDB => {
-                let layergroupuse = new LayerGroupUse
-                CopyLayerGroupUseDBToLayerGroupUse(layergroupuseDB, layergroupuse, this.frontRepo)
-                this.frontRepo.array_LayerGroupUses.push(layergroupuse)
-                this.frontRepo.map_ID_LayerGroupUse.set(layergroupuse.ID, layergroupuse)
-              }
-            )
-
-            
-            // init front objects
-            this.frontRepo.array_MapOptionss = []
-            this.frontRepo.map_ID_MapOptions.clear()
-            this.frontRepo.MapOptionss_array.forEach(
-              mapoptionsDB => {
-                let mapoptions = new MapOptions
-                CopyMapOptionsDBToMapOptions(mapoptionsDB, mapoptions, this.frontRepo)
-                this.frontRepo.array_MapOptionss.push(mapoptions)
-                this.frontRepo.map_ID_MapOptions.set(mapoptions.ID, mapoptions)
-              }
-            )
-
-            
-            // init front objects
-            this.frontRepo.array_Markers = []
-            this.frontRepo.map_ID_Marker.clear()
-            this.frontRepo.Markers_array.forEach(
-              markerDB => {
-                let marker = new Marker
-                CopyMarkerDBToMarker(markerDB, marker, this.frontRepo)
-                this.frontRepo.array_Markers.push(marker)
-                this.frontRepo.map_ID_Marker.set(marker.ID, marker)
-              }
-            )
-
-            
-            // init front objects
-            this.frontRepo.array_UserClicks = []
-            this.frontRepo.map_ID_UserClick.clear()
-            this.frontRepo.UserClicks_array.forEach(
-              userclickDB => {
-                let userclick = new UserClick
-                CopyUserClickDBToUserClick(userclickDB, userclick, this.frontRepo)
-                this.frontRepo.array_UserClicks.push(userclick)
-                this.frontRepo.map_ID_UserClick.set(userclick.ID, userclick)
-              }
-            )
-
-            
-            // init front objects
-            this.frontRepo.array_VLines = []
-            this.frontRepo.map_ID_VLine.clear()
-            this.frontRepo.VLines_array.forEach(
-              vlineDB => {
-                let vline = new VLine
-                CopyVLineDBToVLine(vlineDB, vline, this.frontRepo)
-                this.frontRepo.array_VLines.push(vline)
-                this.frontRepo.map_ID_VLine.set(vline.ID, vline)
-              }
-            )
-
-            
-            // init front objects
-            this.frontRepo.array_VisualTracks = []
-            this.frontRepo.map_ID_VisualTrack.clear()
-            this.frontRepo.VisualTracks_array.forEach(
-              visualtrackDB => {
-                let visualtrack = new VisualTrack
-                CopyVisualTrackDBToVisualTrack(visualtrackDB, visualtrack, this.frontRepo)
-                this.frontRepo.array_VisualTracks.push(visualtrack)
-                this.frontRepo.map_ID_VisualTrack.set(visualtrack.ID, visualtrack)
-              }
-            )
-
-
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // insertion point for pull per struct 
-
-  // CirclePull performs a GET on Circle of the stack and redeem association pointers 
-  CirclePull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.circleService.getCircles(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            circles,
-          ]) => {
-            // init the array
-            this.frontRepo.Circles_array = circles
-
-            // clear the map that counts Circle in the GET
-            this.frontRepo.Circles_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            circles.forEach(
-              circle => {
-                this.frontRepo.Circles.set(circle.ID, circle)
-                this.frontRepo.Circles_batch.set(circle.ID, circle)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-                // insertion point for pointer field LayerGroup redeeming
-                {
-                  let _layergroup = this.frontRepo.LayerGroups.get(circle.CirclePointersEncoding.LayerGroupID.Int64)
-                  if (_layergroup) {
-                    circle.LayerGroup = _layergroup
-                  }
-                }
-              }
-            )
-
-            // clear circles that are absent from the GET
-            this.frontRepo.Circles.forEach(
-              circle => {
-                if (this.frontRepo.Circles_batch.get(circle.ID) == undefined) {
-                  this.frontRepo.Circles.delete(circle.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // DivIconPull performs a GET on DivIcon of the stack and redeem association pointers 
-  DivIconPull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.diviconService.getDivIcons(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            divicons,
-          ]) => {
-            // init the array
-            this.frontRepo.DivIcons_array = divicons
-
-            // clear the map that counts DivIcon in the GET
-            this.frontRepo.DivIcons_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            divicons.forEach(
-              divicon => {
-                this.frontRepo.DivIcons.set(divicon.ID, divicon)
-                this.frontRepo.DivIcons_batch.set(divicon.ID, divicon)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-              }
-            )
-
-            // clear divicons that are absent from the GET
-            this.frontRepo.DivIcons.forEach(
-              divicon => {
-                if (this.frontRepo.DivIcons_batch.get(divicon.ID) == undefined) {
-                  this.frontRepo.DivIcons.delete(divicon.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // LayerGroupPull performs a GET on LayerGroup of the stack and redeem association pointers 
-  LayerGroupPull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.layergroupService.getLayerGroups(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            layergroups,
-          ]) => {
-            // init the array
-            this.frontRepo.LayerGroups_array = layergroups
-
-            // clear the map that counts LayerGroup in the GET
-            this.frontRepo.LayerGroups_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            layergroups.forEach(
-              layergroup => {
-                this.frontRepo.LayerGroups.set(layergroup.ID, layergroup)
-                this.frontRepo.LayerGroups_batch.set(layergroup.ID, layergroup)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-              }
-            )
-
-            // clear layergroups that are absent from the GET
-            this.frontRepo.LayerGroups.forEach(
-              layergroup => {
-                if (this.frontRepo.LayerGroups_batch.get(layergroup.ID) == undefined) {
-                  this.frontRepo.LayerGroups.delete(layergroup.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // LayerGroupUsePull performs a GET on LayerGroupUse of the stack and redeem association pointers 
-  LayerGroupUsePull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.layergroupuseService.getLayerGroupUses(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            layergroupuses,
-          ]) => {
-            // init the array
-            this.frontRepo.LayerGroupUses_array = layergroupuses
-
-            // clear the map that counts LayerGroupUse in the GET
-            this.frontRepo.LayerGroupUses_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            layergroupuses.forEach(
-              layergroupuse => {
-                this.frontRepo.LayerGroupUses.set(layergroupuse.ID, layergroupuse)
-                this.frontRepo.LayerGroupUses_batch.set(layergroupuse.ID, layergroupuse)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-                // insertion point for pointer field LayerGroup redeeming
-                {
-                  let _layergroup = this.frontRepo.LayerGroups.get(layergroupuse.LayerGroupUsePointersEncoding.LayerGroupID.Int64)
-                  if (_layergroup) {
-                    layergroupuse.LayerGroup = _layergroup
-                  }
-                }
-              }
-            )
-
-            // clear layergroupuses that are absent from the GET
-            this.frontRepo.LayerGroupUses.forEach(
-              layergroupuse => {
-                if (this.frontRepo.LayerGroupUses_batch.get(layergroupuse.ID) == undefined) {
-                  this.frontRepo.LayerGroupUses.delete(layergroupuse.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // MapOptionsPull performs a GET on MapOptions of the stack and redeem association pointers 
-  MapOptionsPull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.mapoptionsService.getMapOptionss(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            mapoptionss,
-          ]) => {
-            // init the array
-            this.frontRepo.MapOptionss_array = mapoptionss
-
-            // clear the map that counts MapOptions in the GET
-            this.frontRepo.MapOptionss_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            mapoptionss.forEach(
-              mapoptions => {
-                this.frontRepo.MapOptionss.set(mapoptions.ID, mapoptions)
-                this.frontRepo.MapOptionss_batch.set(mapoptions.ID, mapoptions)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-              }
-            )
-
-            // clear mapoptionss that are absent from the GET
-            this.frontRepo.MapOptionss.forEach(
-              mapoptions => {
-                if (this.frontRepo.MapOptionss_batch.get(mapoptions.ID) == undefined) {
-                  this.frontRepo.MapOptionss.delete(mapoptions.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // MarkerPull performs a GET on Marker of the stack and redeem association pointers 
-  MarkerPull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.markerService.getMarkers(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            markers,
-          ]) => {
-            // init the array
-            this.frontRepo.Markers_array = markers
-
-            // clear the map that counts Marker in the GET
-            this.frontRepo.Markers_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            markers.forEach(
-              marker => {
-                this.frontRepo.Markers.set(marker.ID, marker)
-                this.frontRepo.Markers_batch.set(marker.ID, marker)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-                // insertion point for pointer field LayerGroup redeeming
-                {
-                  let _layergroup = this.frontRepo.LayerGroups.get(marker.MarkerPointersEncoding.LayerGroupID.Int64)
-                  if (_layergroup) {
-                    marker.LayerGroup = _layergroup
-                  }
-                }
-                // insertion point for pointer field DivIcon redeeming
-                {
-                  let _divicon = this.frontRepo.DivIcons.get(marker.MarkerPointersEncoding.DivIconID.Int64)
-                  if (_divicon) {
-                    marker.DivIcon = _divicon
-                  }
-                }
-              }
-            )
-
-            // clear markers that are absent from the GET
-            this.frontRepo.Markers.forEach(
-              marker => {
-                if (this.frontRepo.Markers_batch.get(marker.ID) == undefined) {
-                  this.frontRepo.Markers.delete(marker.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // UserClickPull performs a GET on UserClick of the stack and redeem association pointers 
-  UserClickPull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.userclickService.getUserClicks(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            userclicks,
-          ]) => {
-            // init the array
-            this.frontRepo.UserClicks_array = userclicks
-
-            // clear the map that counts UserClick in the GET
-            this.frontRepo.UserClicks_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            userclicks.forEach(
-              userclick => {
-                this.frontRepo.UserClicks.set(userclick.ID, userclick)
-                this.frontRepo.UserClicks_batch.set(userclick.ID, userclick)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-              }
-            )
-
-            // clear userclicks that are absent from the GET
-            this.frontRepo.UserClicks.forEach(
-              userclick => {
-                if (this.frontRepo.UserClicks_batch.get(userclick.ID) == undefined) {
-                  this.frontRepo.UserClicks.delete(userclick.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // VLinePull performs a GET on VLine of the stack and redeem association pointers 
-  VLinePull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.vlineService.getVLines(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            vlines,
-          ]) => {
-            // init the array
-            this.frontRepo.VLines_array = vlines
-
-            // clear the map that counts VLine in the GET
-            this.frontRepo.VLines_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            vlines.forEach(
-              vline => {
-                this.frontRepo.VLines.set(vline.ID, vline)
-                this.frontRepo.VLines_batch.set(vline.ID, vline)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-                // insertion point for pointer field LayerGroup redeeming
-                {
-                  let _layergroup = this.frontRepo.LayerGroups.get(vline.VLinePointersEncoding.LayerGroupID.Int64)
-                  if (_layergroup) {
-                    vline.LayerGroup = _layergroup
-                  }
-                }
-              }
-            )
-
-            // clear vlines that are absent from the GET
-            this.frontRepo.VLines.forEach(
-              vline => {
-                if (this.frontRepo.VLines_batch.get(vline.ID) == undefined) {
-                  this.frontRepo.VLines.delete(vline.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // VisualTrackPull performs a GET on VisualTrack of the stack and redeem association pointers 
-  VisualTrackPull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.visualtrackService.getVisualTracks(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            visualtracks,
-          ]) => {
-            // init the array
-            this.frontRepo.VisualTracks_array = visualtracks
-
-            // clear the map that counts VisualTrack in the GET
-            this.frontRepo.VisualTracks_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            visualtracks.forEach(
-              visualtrack => {
-                this.frontRepo.VisualTracks.set(visualtrack.ID, visualtrack)
-                this.frontRepo.VisualTracks_batch.set(visualtrack.ID, visualtrack)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-                // insertion point for pointer field LayerGroup redeeming
-                {
-                  let _layergroup = this.frontRepo.LayerGroups.get(visualtrack.VisualTrackPointersEncoding.LayerGroupID.Int64)
-                  if (_layergroup) {
-                    visualtrack.LayerGroup = _layergroup
-                  }
-                }
-                // insertion point for pointer field DivIcon redeeming
-                {
-                  let _divicon = this.frontRepo.DivIcons.get(visualtrack.VisualTrackPointersEncoding.DivIconID.Int64)
-                  if (_divicon) {
-                    visualtrack.DivIcon = _divicon
-                  }
-                }
-              }
-            )
-
-            // clear visualtracks that are absent from the GET
-            this.frontRepo.VisualTracks.forEach(
-              visualtrack => {
-                if (this.frontRepo.VisualTracks_batch.get(visualtrack.ID) == undefined) {
-                  this.frontRepo.VisualTracks.delete(visualtrack.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
+	GONG__StackPath: string = ""
+
+	httpOptions = {
+		headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+	};
+
+	//
+	// Store of all instances of the stack
+	//
+	frontRepo = new (FrontRepo)
+
+	constructor(
+		private http: HttpClient, // insertion point sub template 
+		private circleService: CircleService,
+		private diviconService: DivIconService,
+		private layergroupService: LayerGroupService,
+		private layergroupuseService: LayerGroupUseService,
+		private mapoptionsService: MapOptionsService,
+		private markerService: MarkerService,
+		private userclickService: UserClickService,
+		private vlineService: VLineService,
+		private visualtrackService: VisualTrackService,
+	) { }
+
+	// postService provides a post function for each struct name
+	postService(structName: string, instanceToBePosted: any) {
+		let service = this[structName.toLowerCase() + "Service" + "Service" as keyof FrontRepoService]
+		let servicePostFunction = service[("post" + structName) as keyof typeof service] as (instance: typeof instanceToBePosted) => Observable<typeof instanceToBePosted>
+
+		servicePostFunction(instanceToBePosted).subscribe(
+			instance => {
+				let behaviorSubject = instanceToBePosted[(structName + "ServiceChanged") as keyof typeof instanceToBePosted] as unknown as BehaviorSubject<string>
+				behaviorSubject.next("post")
+			}
+		);
+	}
+
+	// deleteService provides a delete function for each struct name
+	deleteService(structName: string, instanceToBeDeleted: any) {
+		let service = this[structName.toLowerCase() + "Service" as keyof FrontRepoService]
+		let serviceDeleteFunction = service["delete" + structName as keyof typeof service] as (instance: typeof instanceToBeDeleted) => Observable<typeof instanceToBeDeleted>
+
+		serviceDeleteFunction(instanceToBeDeleted).subscribe(
+			instance => {
+				let behaviorSubject = instanceToBeDeleted[(structName + "ServiceChanged") as keyof typeof instanceToBeDeleted] as unknown as BehaviorSubject<string>
+				behaviorSubject.next("delete")
+			}
+		);
+	}
+
+	// typing of observable can be messy in typescript. Therefore, one force the type
+	observableFrontRepo: [
+		Observable<null>, // see below for the of(null) observable
+		// insertion point sub template 
+		Observable<CircleDB[]>,
+		Observable<DivIconDB[]>,
+		Observable<LayerGroupDB[]>,
+		Observable<LayerGroupUseDB[]>,
+		Observable<MapOptionsDB[]>,
+		Observable<MarkerDB[]>,
+		Observable<UserClickDB[]>,
+		Observable<VLineDB[]>,
+		Observable<VisualTrackDB[]>,
+	] = [
+			// Using "combineLatest" with a placeholder observable.
+			//
+			// This allows the typescript compiler to pass when no GongStruct is present in the front API
+			//
+			// The "of(null)" is a "meaningless" observable that emits a single value (null) and completes.
+			// This is used as a workaround to satisfy TypeScript requirements and the "combineLatest" 
+			// expectation for a non-empty array of observables.
+			of(null), // 
+			// insertion point sub template
+			this.circleService.getCircles(this.GONG__StackPath, this.frontRepo),
+			this.diviconService.getDivIcons(this.GONG__StackPath, this.frontRepo),
+			this.layergroupService.getLayerGroups(this.GONG__StackPath, this.frontRepo),
+			this.layergroupuseService.getLayerGroupUses(this.GONG__StackPath, this.frontRepo),
+			this.mapoptionsService.getMapOptionss(this.GONG__StackPath, this.frontRepo),
+			this.markerService.getMarkers(this.GONG__StackPath, this.frontRepo),
+			this.userclickService.getUserClicks(this.GONG__StackPath, this.frontRepo),
+			this.vlineService.getVLines(this.GONG__StackPath, this.frontRepo),
+			this.visualtrackService.getVisualTracks(this.GONG__StackPath, this.frontRepo),
+		];
+
+	//
+	// pull performs a GET on all struct of the stack and redeem association pointers 
+	//
+	// This is an observable. Therefore, the control flow forks with
+	// - pull() return immediatly the observable
+	// - the observable observer, if it subscribe, is called when all GET calls are performs
+	pull(GONG__StackPath: string = ""): Observable<FrontRepo> {
+
+		this.GONG__StackPath = GONG__StackPath
+
+		this.observableFrontRepo = [
+			of(null), // see above for justification
+			// insertion point sub template
+			this.circleService.getCircles(this.GONG__StackPath, this.frontRepo),
+			this.diviconService.getDivIcons(this.GONG__StackPath, this.frontRepo),
+			this.layergroupService.getLayerGroups(this.GONG__StackPath, this.frontRepo),
+			this.layergroupuseService.getLayerGroupUses(this.GONG__StackPath, this.frontRepo),
+			this.mapoptionsService.getMapOptionss(this.GONG__StackPath, this.frontRepo),
+			this.markerService.getMarkers(this.GONG__StackPath, this.frontRepo),
+			this.userclickService.getUserClicks(this.GONG__StackPath, this.frontRepo),
+			this.vlineService.getVLines(this.GONG__StackPath, this.frontRepo),
+			this.visualtrackService.getVisualTracks(this.GONG__StackPath, this.frontRepo),
+		]
+
+		return new Observable<FrontRepo>(
+			(observer) => {
+				combineLatest(
+					this.observableFrontRepo
+				).subscribe(
+					([
+						___of_null, // see above for the explanation about of
+						// insertion point sub template for declarations 
+						circles_,
+						divicons_,
+						layergroups_,
+						layergroupuses_,
+						mapoptionss_,
+						markers_,
+						userclicks_,
+						vlines_,
+						visualtracks_,
+					]) => {
+						let _this = this
+						// Typing can be messy with many items. Therefore, type casting is necessary here
+						// insertion point sub template for type casting 
+						var circles: CircleDB[]
+						circles = circles_ as CircleDB[]
+						var divicons: DivIconDB[]
+						divicons = divicons_ as DivIconDB[]
+						var layergroups: LayerGroupDB[]
+						layergroups = layergroups_ as LayerGroupDB[]
+						var layergroupuses: LayerGroupUseDB[]
+						layergroupuses = layergroupuses_ as LayerGroupUseDB[]
+						var mapoptionss: MapOptionsDB[]
+						mapoptionss = mapoptionss_ as MapOptionsDB[]
+						var markers: MarkerDB[]
+						markers = markers_ as MarkerDB[]
+						var userclicks: UserClickDB[]
+						userclicks = userclicks_ as UserClickDB[]
+						var vlines: VLineDB[]
+						vlines = vlines_ as VLineDB[]
+						var visualtracks: VisualTrackDB[]
+						visualtracks = visualtracks_ as VisualTrackDB[]
+
+						// 
+						// First Step: init map of instances
+						// insertion point sub template for init 
+						// init the arrays
+						this.frontRepo.array_Circles = []
+						this.frontRepo.map_ID_Circle.clear()
+
+						circles.forEach(
+							circleDB => {
+								let circle = new Circle
+								this.frontRepo.array_Circles.push(circle)
+								this.frontRepo.map_ID_Circle.set(circleDB.ID, circle)
+							}
+						)
+
+						// init the arrays
+						this.frontRepo.array_DivIcons = []
+						this.frontRepo.map_ID_DivIcon.clear()
+
+						divicons.forEach(
+							diviconDB => {
+								let divicon = new DivIcon
+								this.frontRepo.array_DivIcons.push(divicon)
+								this.frontRepo.map_ID_DivIcon.set(diviconDB.ID, divicon)
+							}
+						)
+
+						// init the arrays
+						this.frontRepo.array_LayerGroups = []
+						this.frontRepo.map_ID_LayerGroup.clear()
+
+						layergroups.forEach(
+							layergroupDB => {
+								let layergroup = new LayerGroup
+								this.frontRepo.array_LayerGroups.push(layergroup)
+								this.frontRepo.map_ID_LayerGroup.set(layergroupDB.ID, layergroup)
+							}
+						)
+
+						// init the arrays
+						this.frontRepo.array_LayerGroupUses = []
+						this.frontRepo.map_ID_LayerGroupUse.clear()
+
+						layergroupuses.forEach(
+							layergroupuseDB => {
+								let layergroupuse = new LayerGroupUse
+								this.frontRepo.array_LayerGroupUses.push(layergroupuse)
+								this.frontRepo.map_ID_LayerGroupUse.set(layergroupuseDB.ID, layergroupuse)
+							}
+						)
+
+						// init the arrays
+						this.frontRepo.array_MapOptionss = []
+						this.frontRepo.map_ID_MapOptions.clear()
+
+						mapoptionss.forEach(
+							mapoptionsDB => {
+								let mapoptions = new MapOptions
+								this.frontRepo.array_MapOptionss.push(mapoptions)
+								this.frontRepo.map_ID_MapOptions.set(mapoptionsDB.ID, mapoptions)
+							}
+						)
+
+						// init the arrays
+						this.frontRepo.array_Markers = []
+						this.frontRepo.map_ID_Marker.clear()
+
+						markers.forEach(
+							markerDB => {
+								let marker = new Marker
+								this.frontRepo.array_Markers.push(marker)
+								this.frontRepo.map_ID_Marker.set(markerDB.ID, marker)
+							}
+						)
+
+						// init the arrays
+						this.frontRepo.array_UserClicks = []
+						this.frontRepo.map_ID_UserClick.clear()
+
+						userclicks.forEach(
+							userclickDB => {
+								let userclick = new UserClick
+								this.frontRepo.array_UserClicks.push(userclick)
+								this.frontRepo.map_ID_UserClick.set(userclickDB.ID, userclick)
+							}
+						)
+
+						// init the arrays
+						this.frontRepo.array_VLines = []
+						this.frontRepo.map_ID_VLine.clear()
+
+						vlines.forEach(
+							vlineDB => {
+								let vline = new VLine
+								this.frontRepo.array_VLines.push(vline)
+								this.frontRepo.map_ID_VLine.set(vlineDB.ID, vline)
+							}
+						)
+
+						// init the arrays
+						this.frontRepo.array_VisualTracks = []
+						this.frontRepo.map_ID_VisualTrack.clear()
+
+						visualtracks.forEach(
+							visualtrackDB => {
+								let visualtrack = new VisualTrack
+								this.frontRepo.array_VisualTracks.push(visualtrack)
+								this.frontRepo.map_ID_VisualTrack.set(visualtrackDB.ID, visualtrack)
+							}
+						)
+
+
+						// 
+						// Second Step: reddeem front objects
+						// insertion point sub template for redeem 
+						// fill up front objects
+						circles.forEach(
+							circleDB => {
+								let circle = this.frontRepo.map_ID_Circle.get(circleDB.ID)
+								CopyCircleDBToCircle(circleDB, circle!, this.frontRepo)
+							}
+						)
+
+						// fill up front objects
+						divicons.forEach(
+							diviconDB => {
+								let divicon = this.frontRepo.map_ID_DivIcon.get(diviconDB.ID)
+								CopyDivIconDBToDivIcon(diviconDB, divicon!, this.frontRepo)
+							}
+						)
+
+						// fill up front objects
+						layergroups.forEach(
+							layergroupDB => {
+								let layergroup = this.frontRepo.map_ID_LayerGroup.get(layergroupDB.ID)
+								CopyLayerGroupDBToLayerGroup(layergroupDB, layergroup!, this.frontRepo)
+							}
+						)
+
+						// fill up front objects
+						layergroupuses.forEach(
+							layergroupuseDB => {
+								let layergroupuse = this.frontRepo.map_ID_LayerGroupUse.get(layergroupuseDB.ID)
+								CopyLayerGroupUseDBToLayerGroupUse(layergroupuseDB, layergroupuse!, this.frontRepo)
+							}
+						)
+
+						// fill up front objects
+						mapoptionss.forEach(
+							mapoptionsDB => {
+								let mapoptions = this.frontRepo.map_ID_MapOptions.get(mapoptionsDB.ID)
+								CopyMapOptionsDBToMapOptions(mapoptionsDB, mapoptions!, this.frontRepo)
+							}
+						)
+
+						// fill up front objects
+						markers.forEach(
+							markerDB => {
+								let marker = this.frontRepo.map_ID_Marker.get(markerDB.ID)
+								CopyMarkerDBToMarker(markerDB, marker!, this.frontRepo)
+							}
+						)
+
+						// fill up front objects
+						userclicks.forEach(
+							userclickDB => {
+								let userclick = this.frontRepo.map_ID_UserClick.get(userclickDB.ID)
+								CopyUserClickDBToUserClick(userclickDB, userclick!, this.frontRepo)
+							}
+						)
+
+						// fill up front objects
+						vlines.forEach(
+							vlineDB => {
+								let vline = this.frontRepo.map_ID_VLine.get(vlineDB.ID)
+								CopyVLineDBToVLine(vlineDB, vline!, this.frontRepo)
+							}
+						)
+
+						// fill up front objects
+						visualtracks.forEach(
+							visualtrackDB => {
+								let visualtrack = this.frontRepo.map_ID_VisualTrack.get(visualtrackDB.ID)
+								CopyVisualTrackDBToVisualTrack(visualtrackDB, visualtrack!, this.frontRepo)
+							}
+						)
+
+
+						// hand over control flow to observer
+						observer.next(this.frontRepo)
+					}
+				)
+			}
+		)
+	}
 }
 
 // insertion point for get unique ID per struct 
 export function getCircleUniqueID(id: number): number {
-  return 31 * id
+	return 31 * id
 }
 export function getDivIconUniqueID(id: number): number {
-  return 37 * id
+	return 37 * id
 }
 export function getLayerGroupUniqueID(id: number): number {
-  return 41 * id
+	return 41 * id
 }
 export function getLayerGroupUseUniqueID(id: number): number {
-  return 43 * id
+	return 43 * id
 }
 export function getMapOptionsUniqueID(id: number): number {
-  return 47 * id
+	return 47 * id
 }
 export function getMarkerUniqueID(id: number): number {
-  return 53 * id
+	return 53 * id
 }
 export function getUserClickUniqueID(id: number): number {
-  return 59 * id
+	return 59 * id
 }
 export function getVLineUniqueID(id: number): number {
-  return 61 * id
+	return 61 * id
 }
 export function getVisualTrackUniqueID(id: number): number {
-  return 67 * id
+	return 67 * id
 }

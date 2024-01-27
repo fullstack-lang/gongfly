@@ -30,7 +30,7 @@ export function CopyUserClickToUserClickDB(userclick: UserClick, userclickDB: Us
 	userclickDB.CreatedAt = userclick.CreatedAt
 	userclickDB.DeletedAt = userclick.DeletedAt
 	userclickDB.ID = userclick.ID
-	
+
 	// insertion point for basic fields copy operations
 	userclickDB.Name = userclick.Name
 	userclickDB.Lat = userclick.Lat
@@ -41,12 +41,16 @@ export function CopyUserClickToUserClickDB(userclick: UserClick, userclickDB: Us
 	// insertion point for slice of pointers fields encoding
 }
 
+// CopyUserClickDBToUserClick update basic, pointers and slice of pointers fields of userclick
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of userclickDB
+// this function uses frontRepo.map_ID_<structname> to decode the encoded fields
+// a condition is that those maps has to be initialized before
 export function CopyUserClickDBToUserClick(userclickDB: UserClickDB, userclick: UserClick, frontRepo: FrontRepo) {
 
 	userclick.CreatedAt = userclickDB.CreatedAt
 	userclick.DeletedAt = userclickDB.DeletedAt
 	userclick.ID = userclickDB.ID
-	
+
 	// insertion point for basic fields copy operations
 	userclick.Name = userclickDB.Name
 	userclick.Lat = userclickDB.Lat

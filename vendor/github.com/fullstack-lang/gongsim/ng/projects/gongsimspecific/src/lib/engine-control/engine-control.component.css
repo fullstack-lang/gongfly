@@ -18,3 +18,17 @@
 .green {
     color: green;
 }
+
+.status-indicator {
+    display: inline-block;
+    font-family: 'Courier New', monospace;
+    /* Use a monospace font */
+    text-align: left;
+    /* Center the text */
+    overflow: hidden;
+    /* Optional: to handle text longer than 10 characters */
+    white-space: nowrap;
+    /* Avoid line breaks in the text */
+    text-overflow: ellipsis;
+    /* Optional: to indicate text overflow */
+}

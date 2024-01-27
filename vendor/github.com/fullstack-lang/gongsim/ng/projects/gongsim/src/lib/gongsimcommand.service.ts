@@ -102,13 +102,6 @@ export class GongsimCommandService {
   }
   postGongsimCommand(gongsimcommanddb: GongsimCommandDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimCommandDB> {
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    if (gongsimcommanddb.Engine != undefined) {
-      gongsimcommanddb.GongsimCommandPointersEncoding.EngineID.Int64 = gongsimcommanddb.Engine.ID
-      gongsimcommanddb.GongsimCommandPointersEncoding.EngineID.Valid = true
-    }
-    gongsimcommanddb.Engine = undefined
-
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -117,8 +110,6 @@ export class GongsimCommandService {
 
     return this.http.post<GongsimCommandDB>(this.gongsimcommandsUrl, gongsimcommanddb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
-        gongsimcommanddb.Engine = frontRepo.Engines.get(gongsimcommanddb.GongsimCommandPointersEncoding.EngineID.Int64)
         // this.log(`posted gongsimcommanddb id=${gongsimcommanddb.ID}`)
       }),
       catchError(this.handleError<GongsimCommandDB>('postGongsimCommand'))
@@ -172,13 +163,6 @@ export class GongsimCommandService {
     const id = typeof gongsimcommanddb === 'number' ? gongsimcommanddb : gongsimcommanddb.ID;
     const url = `${this.gongsimcommandsUrl}/${id}`;
 
-    // insertion point for reset of pointers (to avoid circular JSON)
-    // and encoding of pointers
-    if (gongsimcommanddb.Engine != undefined) {
-      gongsimcommanddb.GongsimCommandPointersEncoding.EngineID.Int64 = gongsimcommanddb.Engine.ID
-      gongsimcommanddb.GongsimCommandPointersEncoding.EngineID.Valid = true
-    }
-    gongsimcommanddb.Engine = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -188,8 +172,6 @@ export class GongsimCommandService {
 
     return this.http.put<GongsimCommandDB>(url, gongsimcommanddb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
-        gongsimcommanddb.Engine = frontRepo.Engines.get(gongsimcommanddb.GongsimCommandPointersEncoding.EngineID.Int64)
         // this.log(`updated gongsimcommanddb id=${gongsimcommanddb.ID}`)
       }),
       catchError(this.handleError<GongsimCommandDB>('updateGongsimCommand'))

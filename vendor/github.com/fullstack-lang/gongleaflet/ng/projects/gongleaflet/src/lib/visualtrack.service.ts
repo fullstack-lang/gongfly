@@ -103,18 +103,6 @@ export class VisualTrackService {
   }
   postVisualTrack(visualtrackdb: VisualTrackDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    if (visualtrackdb.LayerGroup != undefined) {
-      visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Int64 = visualtrackdb.LayerGroup.ID
-      visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Valid = true
-    }
-    visualtrackdb.LayerGroup = undefined
-    if (visualtrackdb.DivIcon != undefined) {
-      visualtrackdb.VisualTrackPointersEncoding.DivIconID.Int64 = visualtrackdb.DivIcon.ID
-      visualtrackdb.VisualTrackPointersEncoding.DivIconID.Valid = true
-    }
-    visualtrackdb.DivIcon = undefined
-
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -123,9 +111,6 @@ export class VisualTrackService {
 
     return this.http.post<VisualTrackDB>(this.visualtracksUrl, visualtrackdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
-        visualtrackdb.LayerGroup = frontRepo.LayerGroups.get(visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Int64)
-        visualtrackdb.DivIcon = frontRepo.DivIcons.get(visualtrackdb.VisualTrackPointersEncoding.DivIconID.Int64)
         // this.log(`posted visualtrackdb id=${visualtrackdb.ID}`)
       }),
       catchError(this.handleError<VisualTrackDB>('postVisualTrack'))
@@ -179,18 +164,6 @@ export class VisualTrackService {
     const id = typeof visualtrackdb === 'number' ? visualtrackdb : visualtrackdb.ID;
     const url = `${this.visualtracksUrl}/${id}`;
 
-    // insertion point for reset of pointers (to avoid circular JSON)
-    // and encoding of pointers
-    if (visualtrackdb.LayerGroup != undefined) {
-      visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Int64 = visualtrackdb.LayerGroup.ID
-      visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Valid = true
-    }
-    visualtrackdb.LayerGroup = undefined
-    if (visualtrackdb.DivIcon != undefined) {
-      visualtrackdb.VisualTrackPointersEncoding.DivIconID.Int64 = visualtrackdb.DivIcon.ID
-      visualtrackdb.VisualTrackPointersEncoding.DivIconID.Valid = true
-    }
-    visualtrackdb.DivIcon = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -200,9 +173,6 @@ export class VisualTrackService {
 
     return this.http.put<VisualTrackDB>(url, visualtrackdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
-        visualtrackdb.LayerGroup = frontRepo.LayerGroups.get(visualtrackdb.VisualTrackPointersEncoding.LayerGroupID.Int64)
-        visualtrackdb.DivIcon = frontRepo.DivIcons.get(visualtrackdb.VisualTrackPointersEncoding.DivIconID.Int64)
         // this.log(`updated visualtrackdb id=${visualtrackdb.ID}`)
       }),
       catchError(this.handleError<VisualTrackDB>('updateVisualTrack'))

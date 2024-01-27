@@ -17,7 +17,7 @@ export class UserClickDB {
 	Lng: number = 0
 	TimeOfClick: Date = new Date
 
-	// insertion point for pointers and slices of pointers declarations
+	// insertion point for other decls
 
 	UserClickPointersEncoding: UserClickPointersEncoding = new UserClickPointersEncoding
 }

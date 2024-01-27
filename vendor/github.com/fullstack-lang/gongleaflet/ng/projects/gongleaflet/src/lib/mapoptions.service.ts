@@ -102,13 +102,6 @@ export class MapOptionsService {
   }
   postMapOptions(mapoptionsdb: MapOptionsDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses = []
-    for (let _layergroupuse of mapoptionsdb.LayerGroupUses) {
-      mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses.push(_layergroupuse.ID)
-    }
-    mapoptionsdb.LayerGroupUses = []
-
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -117,14 +110,6 @@ export class MapOptionsService {
 
     return this.http.post<MapOptionsDB>(this.mapoptionssUrl, mapoptionsdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
-        mapoptionsdb.LayerGroupUses = new Array<LayerGroupUseDB>()
-        for (let _id of mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses) {
-          let _layergroupuse = frontRepo.LayerGroupUses.get(_id)
-          if (_layergroupuse != undefined) {
-            mapoptionsdb.LayerGroupUses.push(_layergroupuse!)
-          }
-        }
         // this.log(`posted mapoptionsdb id=${mapoptionsdb.ID}`)
       }),
       catchError(this.handleError<MapOptionsDB>('postMapOptions'))
@@ -178,13 +163,6 @@ export class MapOptionsService {
     const id = typeof mapoptionsdb === 'number' ? mapoptionsdb : mapoptionsdb.ID;
     const url = `${this.mapoptionssUrl}/${id}`;
 
-    // insertion point for reset of pointers (to avoid circular JSON)
-    // and encoding of pointers
-    mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses = []
-    for (let _layergroupuse of mapoptionsdb.LayerGroupUses) {
-      mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses.push(_layergroupuse.ID)
-    }
-    mapoptionsdb.LayerGroupUses = []
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -194,14 +172,6 @@ export class MapOptionsService {
 
     return this.http.put<MapOptionsDB>(url, mapoptionsdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
-        mapoptionsdb.LayerGroupUses = new Array<LayerGroupUseDB>()
-        for (let _id of mapoptionsdb.MapOptionsPointersEncoding.LayerGroupUses) {
-          let _layergroupuse = frontRepo.LayerGroupUses.get(_id)
-          if (_layergroupuse != undefined) {
-            mapoptionsdb.LayerGroupUses.push(_layergroupuse!)
-          }
-        }
         // this.log(`updated mapoptionsdb id=${mapoptionsdb.ID}`)
       }),
       catchError(this.handleError<MapOptionsDB>('updateMapOptions'))

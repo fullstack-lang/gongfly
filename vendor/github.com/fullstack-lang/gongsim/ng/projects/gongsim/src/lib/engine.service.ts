@@ -101,8 +101,6 @@ export class EngineService {
   }
   postEngine(enginedb: EngineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -111,7 +109,6 @@ export class EngineService {
 
     return this.http.post<EngineDB>(this.enginesUrl, enginedb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
         // this.log(`posted enginedb id=${enginedb.ID}`)
       }),
       catchError(this.handleError<EngineDB>('postEngine'))
@@ -165,8 +162,6 @@ export class EngineService {
     const id = typeof enginedb === 'number' ? enginedb : enginedb.ID;
     const url = `${this.enginesUrl}/${id}`;
 
-    // insertion point for reset of pointers (to avoid circular JSON)
-    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -176,7 +171,6 @@ export class EngineService {
 
     return this.http.put<EngineDB>(url, enginedb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
         // this.log(`updated enginedb id=${enginedb.ID}`)
       }),
       catchError(this.handleError<EngineDB>('updateEngine'))

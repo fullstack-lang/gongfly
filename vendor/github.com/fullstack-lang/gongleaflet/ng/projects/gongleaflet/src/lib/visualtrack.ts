@@ -42,7 +42,7 @@ export function CopyVisualTrackToVisualTrackDB(visualtrack: VisualTrack, visualt
 	visualtrackDB.CreatedAt = visualtrack.CreatedAt
 	visualtrackDB.DeletedAt = visualtrack.DeletedAt
 	visualtrackDB.ID = visualtrack.ID
-	
+
 	// insertion point for basic fields copy operations
 	visualtrackDB.Lat = visualtrack.Lat
 	visualtrackDB.Lng = visualtrack.Lng
@@ -56,17 +56,17 @@ export function CopyVisualTrackToVisualTrackDB(visualtrack: VisualTrack, visualt
 	visualtrackDB.DisplayLevelAndSpeed = visualtrack.DisplayLevelAndSpeed
 
 	// insertion point for pointer fields encoding
-    visualtrackDB.VisualTrackPointersEncoding.LayerGroupID.Valid = true
+	visualtrackDB.VisualTrackPointersEncoding.LayerGroupID.Valid = true
 	if (visualtrack.LayerGroup != undefined) {
 		visualtrackDB.VisualTrackPointersEncoding.LayerGroupID.Int64 = visualtrack.LayerGroup.ID  
-    } else {
+	} else {
 		visualtrackDB.VisualTrackPointersEncoding.LayerGroupID.Int64 = 0 		
 	}
 
-    visualtrackDB.VisualTrackPointersEncoding.DivIconID.Valid = true
+	visualtrackDB.VisualTrackPointersEncoding.DivIconID.Valid = true
 	if (visualtrack.DivIcon != undefined) {
 		visualtrackDB.VisualTrackPointersEncoding.DivIconID.Int64 = visualtrack.DivIcon.ID  
-    } else {
+	} else {
 		visualtrackDB.VisualTrackPointersEncoding.DivIconID.Int64 = 0 		
 	}
 
@@ -74,12 +74,16 @@ export function CopyVisualTrackToVisualTrackDB(visualtrack: VisualTrack, visualt
 	// insertion point for slice of pointers fields encoding
 }
 
+// CopyVisualTrackDBToVisualTrack update basic, pointers and slice of pointers fields of visualtrack
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of visualtrackDB
+// this function uses frontRepo.map_ID_<structname> to decode the encoded fields
+// a condition is that those maps has to be initialized before
 export function CopyVisualTrackDBToVisualTrack(visualtrackDB: VisualTrackDB, visualtrack: VisualTrack, frontRepo: FrontRepo) {
 
 	visualtrack.CreatedAt = visualtrackDB.CreatedAt
 	visualtrack.DeletedAt = visualtrackDB.DeletedAt
 	visualtrack.ID = visualtrackDB.ID
-	
+
 	// insertion point for basic fields copy operations
 	visualtrack.Lat = visualtrackDB.Lat
 	visualtrack.Lng = visualtrackDB.Lng
@@ -93,8 +97,8 @@ export function CopyVisualTrackDBToVisualTrack(visualtrackDB: VisualTrackDB, vis
 	visualtrack.DisplayLevelAndSpeed = visualtrackDB.DisplayLevelAndSpeed
 
 	// insertion point for pointer fields encoding
-	visualtrack.LayerGroup = frontRepo.LayerGroups.get(visualtrackDB.VisualTrackPointersEncoding.LayerGroupID.Int64)
-	visualtrack.DivIcon = frontRepo.DivIcons.get(visualtrackDB.VisualTrackPointersEncoding.DivIconID.Int64)
+	visualtrack.LayerGroup = frontRepo.map_ID_LayerGroup.get(visualtrackDB.VisualTrackPointersEncoding.LayerGroupID.Int64)
+	visualtrack.DivIcon = frontRepo.map_ID_DivIcon.get(visualtrackDB.VisualTrackPointersEncoding.DivIconID.Int64)
 
 	// insertion point for slice of pointers fields encoding
 }

@@ -159,11 +159,11 @@ export class MapoptionsComponent implements OnInit {
       frontRepo => {
         this.frontRepo = frontRepo
 
-        let gongMapOptions = Array.from(this.frontRepo.MapOptionss.values())[0]
+        let gongMapOptions = Array.from(this.frontRepo.getFrontArray<gongleaflet.MapOptions>(gongleaflet.MapOptions.GONGSTRUCT_NAME).values())[0]
 
         // if the map name is set, then map options might differ
         if (this.mapName != "") {
-          for (let gongleafletMapOptions of this.frontRepo.MapOptionss.values()) {
+          for (let gongleafletMapOptions of this.frontRepo.getFrontArray<gongleaflet.MapOptions>(gongleaflet.MapOptions.GONGSTRUCT_NAME).values()) {
             if (gongleafletMapOptions.Name == this.mapName) {
               this.mapOptionsID = gongleafletMapOptions.ID
               gongMapOptions = gongleafletMapOptions
@@ -362,7 +362,7 @@ export class MapoptionsComponent implements OnInit {
     this.mapGongLayerGroupID_LayerGroupUse.clear()
 
     // populate the map with information from layerGroupUse of this map
-    let gongleafletMapOptions = this.frontRepo!.MapOptionss.get(this.mapOptionsID)
+    let gongleafletMapOptions = this.frontRepo!.getFrontMap<gongleaflet.MapOptions>(gongleaflet.MapOptions.GONGSTRUCT_NAME).get(this.mapOptionsID)
     for (let gongLayerGroupUse of gongleafletMapOptions?.LayerGroupUses!) {
       let gongLayerGroup = gongLayerGroupUse.LayerGroup
       if (gongLayerGroup) {
@@ -428,7 +428,7 @@ export class MapoptionsComponent implements OnInit {
   // icons
   manageDivIcons() {
     // pair gong divIcon with leaflet divIcon
-    for (let divIcon of this.frontRepo!.DivIcons_array) {
+    for (let divIcon of this.frontRepo!.getFrontArray<gongleaflet.DivIcon>(gongleaflet.DivIcon.GONGSTRUCT_NAME)) {
       if (!this.mapGongDivIconID_divIconSVG.has(divIcon.ID)) {
         this.mapGongDivIconID_divIconSVG.set(divIcon.ID, divIcon.SVG);
       }
@@ -438,7 +438,7 @@ export class MapoptionsComponent implements OnInit {
   // markers
   manageMakers() {
 
-    for (let _marker of this.frontRepo!.Markers_array) {
+    for (let _marker of this.frontRepo!.getFrontArray<gongleaflet.Marker>(gongleaflet.Marker.GONGSTRUCT_NAME)) {
 
       // get the leaflet kin of the gong Marker
       let leafletMarker: L.Marker | undefined
@@ -486,7 +486,7 @@ export class MapoptionsComponent implements OnInit {
   manageCircles() {
 
     // display circles
-    for (let gongCircle of this.frontRepo!.Circles_array) {
+    for (let gongCircle of this.frontRepo!.getFrontArray<gongleaflet.Circle>(gongleaflet.Circle.GONGSTRUCT_NAME)) {
 
       var leafletCircle = this.mapCircleID_LeafletCircle.get(gongCircle.ID)
 
@@ -512,7 +512,7 @@ export class MapoptionsComponent implements OnInit {
 
   manageVLines() {
 
-    for (let gongVLine of this.frontRepo?.VLines_array!) {
+    for (let gongVLine of this.frontRepo?.getFrontArray<gongleaflet.VLine>(gongleaflet.VLine.GONGSTRUCT_NAME)!) {
 
       var leafletPolyline = this.mapVLineID_LeafletPolyline.get(gongVLine.ID)
 
@@ -553,7 +553,7 @@ export class MapoptionsComponent implements OnInit {
 
   manageTracks() {
     // update marker from visual track
-    for (let vTrack of this.frontRepo!.VisualTracks_array) {
+    for (let vTrack of this.frontRepo!.getFrontArray<gongleaflet.VisualTrack>(gongleaflet.VisualTrack.GONGSTRUCT_NAME)) {
       let _currentMarker: L.Marker<any> = this.mapVisualTrackID_LeafletTrackMarker.get(vTrack.ID)!
       if (!_currentMarker) {
         this.newVisualTrackMarker(vTrack);
@@ -564,7 +564,7 @@ export class MapoptionsComponent implements OnInit {
 
     // remove markers that have no visual tracks
     this.mapLeafletTrackMarker_VisualTrackID.forEach((visualTrackID) => {
-      if (this.frontRepo!.VisualTracks.get(visualTrackID) == undefined) {
+      if (this.frontRepo!.getFrontMap<gongleaflet.VisualTrack>(gongleaflet.VisualTrack.GONGSTRUCT_NAME).get(visualTrackID) == undefined) {
         var marker = this.mapVisualTrackID_LeafletTrackMarker.get(
           visualTrackID
         );

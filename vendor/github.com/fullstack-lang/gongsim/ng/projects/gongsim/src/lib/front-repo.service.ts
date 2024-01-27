@@ -28,117 +28,60 @@ export const StackType = "github.com/fullstack-lang/gongsim/go/models"
 
 // FrontRepo stores all instances in a front repository (design pattern repository)
 export class FrontRepo { // insertion point sub template
-  DummyAgents_array = new Array<DummyAgentDB>() // array of repo instances
-  DummyAgents = new Map<number, DummyAgentDB>() // map of repo instances
-  DummyAgents_batch = new Map<number, DummyAgentDB>() // same but only in last GET (for finding repo instances to delete)
+	array_DummyAgents = new Array<DummyAgent>() // array of front instances
+	map_ID_DummyAgent = new Map<number, DummyAgent>() // map of front instances
 
-  array_DummyAgents = new Array<DummyAgent>() // array of front instances
-  map_ID_DummyAgent = new Map<number, DummyAgent>() // map of front instances
+	array_Engines = new Array<Engine>() // array of front instances
+	map_ID_Engine = new Map<number, Engine>() // map of front instances
 
-  Engines_array = new Array<EngineDB>() // array of repo instances
-  Engines = new Map<number, EngineDB>() // map of repo instances
-  Engines_batch = new Map<number, EngineDB>() // same but only in last GET (for finding repo instances to delete)
+	array_Events = new Array<Event>() // array of front instances
+	map_ID_Event = new Map<number, Event>() // map of front instances
 
-  array_Engines = new Array<Engine>() // array of front instances
-  map_ID_Engine = new Map<number, Engine>() // map of front instances
+	array_GongsimCommands = new Array<GongsimCommand>() // array of front instances
+	map_ID_GongsimCommand = new Map<number, GongsimCommand>() // map of front instances
 
-  Events_array = new Array<EventDB>() // array of repo instances
-  Events = new Map<number, EventDB>() // map of repo instances
-  Events_batch = new Map<number, EventDB>() // same but only in last GET (for finding repo instances to delete)
-
-  array_Events = new Array<Event>() // array of front instances
-  map_ID_Event = new Map<number, Event>() // map of front instances
-
-  GongsimCommands_array = new Array<GongsimCommandDB>() // array of repo instances
-  GongsimCommands = new Map<number, GongsimCommandDB>() // map of repo instances
-  GongsimCommands_batch = new Map<number, GongsimCommandDB>() // same but only in last GET (for finding repo instances to delete)
-
-  array_GongsimCommands = new Array<GongsimCommand>() // array of front instances
-  map_ID_GongsimCommand = new Map<number, GongsimCommand>() // map of front instances
-
-  GongsimStatuss_array = new Array<GongsimStatusDB>() // array of repo instances
-  GongsimStatuss = new Map<number, GongsimStatusDB>() // map of repo instances
-  GongsimStatuss_batch = new Map<number, GongsimStatusDB>() // same but only in last GET (for finding repo instances to delete)
-
-  array_GongsimStatuss = new Array<GongsimStatus>() // array of front instances
-  map_ID_GongsimStatus = new Map<number, GongsimStatus>() // map of front instances
+	array_GongsimStatuss = new Array<GongsimStatus>() // array of front instances
+	map_ID_GongsimStatus = new Map<number, GongsimStatus>() // map of front instances
 
 
-  // getArray allows for a get function that is robust to refactoring of the named struct name
-  // for instance frontRepo.getArray<Astruct>( Astruct.GONGSTRUCT_NAME), is robust to a refactoring of Astruct identifier
-  // contrary to frontRepo.Astructs_array which is not refactored when Astruct identifier is modified
-  getArray<Type>(gongStructName: string): Array<Type> {
-    switch (gongStructName) { // deprecated
-      // insertion point
-      case 'DummyAgent':
-        return this.DummyAgents_array as unknown as Array<Type>
-      case 'Engine':
-        return this.Engines_array as unknown as Array<Type>
-      case 'Event':
-        return this.Events_array as unknown as Array<Type>
-      case 'GongsimCommand':
-        return this.GongsimCommands_array as unknown as Array<Type>
-      case 'GongsimStatus':
-        return this.GongsimStatuss_array as unknown as Array<Type>
-      default:
-        throw new Error("Type not recognized");
-    }
-  }
-
-  getFrontArray<Type>(gongStructName: string): Array<Type> {
-    switch (gongStructName) {
-      // insertion point
-      case 'DummyAgent':
-        return this.array_DummyAgents as unknown as Array<Type>
-      case 'Engine':
-        return this.array_Engines as unknown as Array<Type>
-      case 'Event':
-        return this.array_Events as unknown as Array<Type>
-      case 'GongsimCommand':
-        return this.array_GongsimCommands as unknown as Array<Type>
-      case 'GongsimStatus':
-        return this.array_GongsimStatuss as unknown as Array<Type>
-      default:
-        throw new Error("Type not recognized");
-    }
-  }
-
-  // getMap allows for a get function that is robust to refactoring of the named struct name
-  getMap<Type>(gongStructName: string): Map<number, Type> { // deprecated
-    switch (gongStructName) {
-      // insertion point
-      case 'DummyAgent':
-        return this.DummyAgents as unknown as Map<number, Type>
-      case 'Engine':
-        return this.Engines as unknown as Map<number, Type>
-      case 'Event':
-        return this.Events as unknown as Map<number, Type>
-      case 'GongsimCommand':
-        return this.GongsimCommands as unknown as Map<number, Type>
-      case 'GongsimStatus':
-        return this.GongsimStatuss as unknown as Map<number, Type>
-      default:
-        throw new Error("Type not recognized");
-    }
-  }
-  
-  getFrontMap<Type>(gongStructName: string): Map<number, Type> {
-    switch (gongStructName) {
-      // insertion point
-      case 'DummyAgent':
-        return this.map_ID_DummyAgent as unknown as Map<number, Type>
-      case 'Engine':
-        return this.map_ID_Engine as unknown as Map<number, Type>
-      case 'Event':
-        return this.map_ID_Event as unknown as Map<number, Type>
-      case 'GongsimCommand':
-        return this.map_ID_GongsimCommand as unknown as Map<number, Type>
-      case 'GongsimStatus':
-        return this.map_ID_GongsimStatus as unknown as Map<number, Type>
-      default:
-        throw new Error("Type not recognized");
-    }
-  }
+	// getFrontArray allows for a get function that is robust to refactoring of the named struct name
+	// for instance frontRepo.getArray<Astruct>( Astruct.GONGSTRUCT_NAME), is robust to a refactoring of Astruct identifier
+	// contrary to frontRepo.Astructs_array which is not refactored when Astruct identifier is modified
+	getFrontArray<Type>(gongStructName: string): Array<Type> {
+		switch (gongStructName) {
+			// insertion point
+			case 'DummyAgent':
+				return this.array_DummyAgents as unknown as Array<Type>
+			case 'Engine':
+				return this.array_Engines as unknown as Array<Type>
+			case 'Event':
+				return this.array_Events as unknown as Array<Type>
+			case 'GongsimCommand':
+				return this.array_GongsimCommands as unknown as Array<Type>
+			case 'GongsimStatus':
+				return this.array_GongsimStatuss as unknown as Array<Type>
+			default:
+				throw new Error("Type not recognized");
+		}
+	}
+	
+	getFrontMap<Type>(gongStructName: string): Map<number, Type> {
+		switch (gongStructName) {
+			// insertion point
+			case 'DummyAgent':
+				return this.map_ID_DummyAgent as unknown as Map<number, Type>
+			case 'Engine':
+				return this.map_ID_Engine as unknown as Map<number, Type>
+			case 'Event':
+				return this.map_ID_Event as unknown as Map<number, Type>
+			case 'GongsimCommand':
+				return this.map_ID_GongsimCommand as unknown as Map<number, Type>
+			case 'GongsimStatus':
+				return this.map_ID_GongsimStatus as unknown as Map<number, Type>
+			default:
+				throw new Error("Type not recognized");
+		}
+	}
 }
 
 // the table component is called in different ways
@@ -150,719 +93,294 @@ export class FrontRepo { // insertion point sub template
 // DialogData define the interface for information that is forwarded from the calling instance to 
 // the select table
 export class DialogData {
-  ID: number = 0 // ID of the calling instance
+	ID: number = 0 // ID of the calling instance
 
-  // the reverse pointer is the name of the generated field on the destination
-  // struct of the ONE-MANY association
-  ReversePointer: string = "" // field of {{Structname}} that serve as reverse pointer
-  OrderingMode: boolean = false // if true, this is for ordering items
+	// the reverse pointer is the name of the generated field on the destination
+	// struct of the ONE-MANY association
+	ReversePointer: string = "" // field of {{Structname}} that serve as reverse pointer
+	OrderingMode: boolean = false // if true, this is for ordering items
 
-  // there are different selection mode : ONE_MANY or MANY_MANY
-  SelectionMode: SelectionMode = SelectionMode.ONE_MANY_ASSOCIATION_MODE
+	// there are different selection mode : ONE_MANY or MANY_MANY
+	SelectionMode: SelectionMode = SelectionMode.ONE_MANY_ASSOCIATION_MODE
 
-  // used if SelectionMode is MANY_MANY_ASSOCIATION_MODE
-  //
-  // In Gong, a MANY-MANY association is implemented as a ONE-ZERO/ONE followed by a ONE_MANY association
-  // 
-  // in the MANY_MANY_ASSOCIATION_MODE case, we need also the Struct and the FieldName that are
-  // at the end of the ONE-MANY association
-  SourceStruct: string = ""  // The "Aclass"
-  SourceField: string = "" // the "AnarrayofbUse"
-  IntermediateStruct: string = "" // the "AclassBclassUse" 
-  IntermediateStructField: string = "" // the "Bclass" as field
-  NextAssociationStruct: string = "" // the "Bclass"
+	// used if SelectionMode is MANY_MANY_ASSOCIATION_MODE
+	//
+	// In Gong, a MANY-MANY association is implemented as a ONE-ZERO/ONE followed by a ONE_MANY association
+	// 
+	// in the MANY_MANY_ASSOCIATION_MODE case, we need also the Struct and the FieldName that are
+	// at the end of the ONE-MANY association
+	SourceStruct: string = ""	// The "Aclass"
+	SourceField: string = "" // the "AnarrayofbUse"
+	IntermediateStruct: string = "" // the "AclassBclassUse" 
+	IntermediateStructField: string = "" // the "Bclass" as field
+	NextAssociationStruct: string = "" // the "Bclass"
 
-  GONG__StackPath: string = ""
+	GONG__StackPath: string = ""
 }
 
 export enum SelectionMode {
-  ONE_MANY_ASSOCIATION_MODE = "ONE_MANY_ASSOCIATION_MODE",
-  MANY_MANY_ASSOCIATION_MODE = "MANY_MANY_ASSOCIATION_MODE",
+	ONE_MANY_ASSOCIATION_MODE = "ONE_MANY_ASSOCIATION_MODE",
+	MANY_MANY_ASSOCIATION_MODE = "MANY_MANY_ASSOCIATION_MODE",
 }
 
 //
 // observable that fetch all elements of the stack and store them in the FrontRepo
 //
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class FrontRepoService {
 
-  GONG__StackPath: string = ""
-
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-  };
-
-  //
-  // Store of all instances of the stack
-  //
-  frontRepo = new (FrontRepo)
-
-  constructor(
-    private http: HttpClient, // insertion point sub template 
-    private dummyagentService: DummyAgentService,
-    private engineService: EngineService,
-    private eventService: EventService,
-    private gongsimcommandService: GongsimCommandService,
-    private gongsimstatusService: GongsimStatusService,
-  ) { }
-
-  // postService provides a post function for each struct name
-  postService(structName: string, instanceToBePosted: any) {
-    let service = this[structName.toLowerCase() + "Service" + "Service" as keyof FrontRepoService]
-    let servicePostFunction = service[("post" + structName) as keyof typeof service] as (instance: typeof instanceToBePosted) => Observable<typeof instanceToBePosted>
-
-    servicePostFunction(instanceToBePosted).subscribe(
-      instance => {
-        let behaviorSubject = instanceToBePosted[(structName + "ServiceChanged") as keyof typeof instanceToBePosted] as unknown as BehaviorSubject<string>
-        behaviorSubject.next("post")
-      }
-    );
-  }
-
-  // deleteService provides a delete function for each struct name
-  deleteService(structName: string, instanceToBeDeleted: any) {
-    let service = this[structName.toLowerCase() + "Service" as keyof FrontRepoService]
-    let serviceDeleteFunction = service["delete" + structName as keyof typeof service] as (instance: typeof instanceToBeDeleted) => Observable<typeof instanceToBeDeleted>
-
-    serviceDeleteFunction(instanceToBeDeleted).subscribe(
-      instance => {
-        let behaviorSubject = instanceToBeDeleted[(structName + "ServiceChanged") as keyof typeof instanceToBeDeleted] as unknown as BehaviorSubject<string>
-        behaviorSubject.next("delete")
-      }
-    );
-  }
-
-  // typing of observable can be messy in typescript. Therefore, one force the type
-  observableFrontRepo: [
-    Observable<null>, // see below for the of(null) observable
-    // insertion point sub template 
-    Observable<DummyAgentDB[]>,
-    Observable<EngineDB[]>,
-    Observable<EventDB[]>,
-    Observable<GongsimCommandDB[]>,
-    Observable<GongsimStatusDB[]>,
-  ] = [
-      // Using "combineLatest" with a placeholder observable.
-      //
-      // This allows the typescript compiler to pass when no GongStruct is present in the front API
-      //
-      // The "of(null)" is a "meaningless" observable that emits a single value (null) and completes.
-      // This is used as a workaround to satisfy TypeScript requirements and the "combineLatest" 
-      // expectation for a non-empty array of observables.
-      of(null), // 
-      // insertion point sub template
-      this.dummyagentService.getDummyAgents(this.GONG__StackPath, this.frontRepo),
-      this.engineService.getEngines(this.GONG__StackPath, this.frontRepo),
-      this.eventService.getEvents(this.GONG__StackPath, this.frontRepo),
-      this.gongsimcommandService.getGongsimCommands(this.GONG__StackPath, this.frontRepo),
-      this.gongsimstatusService.getGongsimStatuss(this.GONG__StackPath, this.frontRepo),
-    ];
-
-  //
-  // pull performs a GET on all struct of the stack and redeem association pointers 
-  //
-  // This is an observable. Therefore, the control flow forks with
-  // - pull() return immediatly the observable
-  // - the observable observer, if it subscribe, is called when all GET calls are performs
-  pull(GONG__StackPath: string = ""): Observable<FrontRepo> {
-
-    this.GONG__StackPath = GONG__StackPath
-
-    this.observableFrontRepo = [
-      of(null), // see above for justification
-      // insertion point sub template
-      this.dummyagentService.getDummyAgents(this.GONG__StackPath, this.frontRepo),
-      this.engineService.getEngines(this.GONG__StackPath, this.frontRepo),
-      this.eventService.getEvents(this.GONG__StackPath, this.frontRepo),
-      this.gongsimcommandService.getGongsimCommands(this.GONG__StackPath, this.frontRepo),
-      this.gongsimstatusService.getGongsimStatuss(this.GONG__StackPath, this.frontRepo),
-    ]
-
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest(
-          this.observableFrontRepo
-        ).subscribe(
-          ([
-            ___of_null, // see above for the explanation about of
-            // insertion point sub template for declarations 
-            dummyagents_,
-            engines_,
-            events_,
-            gongsimcommands_,
-            gongsimstatuss_,
-          ]) => {
-            // Typing can be messy with many items. Therefore, type casting is necessary here
-            // insertion point sub template for type casting 
-            var dummyagents: DummyAgentDB[]
-            dummyagents = dummyagents_ as DummyAgentDB[]
-            var engines: EngineDB[]
-            engines = engines_ as EngineDB[]
-            var events: EventDB[]
-            events = events_ as EventDB[]
-            var gongsimcommands: GongsimCommandDB[]
-            gongsimcommands = gongsimcommands_ as GongsimCommandDB[]
-            var gongsimstatuss: GongsimStatusDB[]
-            gongsimstatuss = gongsimstatuss_ as GongsimStatusDB[]
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template for init 
-            // init the array
-            this.frontRepo.DummyAgents_array = dummyagents
-
-            // clear the map that counts DummyAgent in the GET
-            this.frontRepo.DummyAgents_batch.clear()
-
-            dummyagents.forEach(
-              dummyagentDB => {
-                this.frontRepo.DummyAgents.set(dummyagentDB.ID, dummyagentDB)
-                this.frontRepo.DummyAgents_batch.set(dummyagentDB.ID, dummyagentDB)
-              }
-            )
-
-            // clear dummyagents that are absent from the batch
-            this.frontRepo.DummyAgents.forEach(
-              dummyagentDB => {
-                if (this.frontRepo.DummyAgents_batch.get(dummyagentDB.ID) == undefined) {
-                  this.frontRepo.DummyAgents.delete(dummyagentDB.ID)
-                }
-              }
-            )
-
-            // sort DummyAgents_array array
-            this.frontRepo.DummyAgents_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
-            this.frontRepo.Engines_array = engines
-
-            // clear the map that counts Engine in the GET
-            this.frontRepo.Engines_batch.clear()
-
-            engines.forEach(
-              engineDB => {
-                this.frontRepo.Engines.set(engineDB.ID, engineDB)
-                this.frontRepo.Engines_batch.set(engineDB.ID, engineDB)
-              }
-            )
-
-            // clear engines that are absent from the batch
-            this.frontRepo.Engines.forEach(
-              engineDB => {
-                if (this.frontRepo.Engines_batch.get(engineDB.ID) == undefined) {
-                  this.frontRepo.Engines.delete(engineDB.ID)
-                }
-              }
-            )
-
-            // sort Engines_array array
-            this.frontRepo.Engines_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
-            this.frontRepo.Events_array = events
-
-            // clear the map that counts Event in the GET
-            this.frontRepo.Events_batch.clear()
-
-            events.forEach(
-              eventDB => {
-                this.frontRepo.Events.set(eventDB.ID, eventDB)
-                this.frontRepo.Events_batch.set(eventDB.ID, eventDB)
-              }
-            )
-
-            // clear events that are absent from the batch
-            this.frontRepo.Events.forEach(
-              eventDB => {
-                if (this.frontRepo.Events_batch.get(eventDB.ID) == undefined) {
-                  this.frontRepo.Events.delete(eventDB.ID)
-                }
-              }
-            )
-
-            // sort Events_array array
-            this.frontRepo.Events_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
-            this.frontRepo.GongsimCommands_array = gongsimcommands
-
-            // clear the map that counts GongsimCommand in the GET
-            this.frontRepo.GongsimCommands_batch.clear()
-
-            gongsimcommands.forEach(
-              gongsimcommandDB => {
-                this.frontRepo.GongsimCommands.set(gongsimcommandDB.ID, gongsimcommandDB)
-                this.frontRepo.GongsimCommands_batch.set(gongsimcommandDB.ID, gongsimcommandDB)
-              }
-            )
-
-            // clear gongsimcommands that are absent from the batch
-            this.frontRepo.GongsimCommands.forEach(
-              gongsimcommandDB => {
-                if (this.frontRepo.GongsimCommands_batch.get(gongsimcommandDB.ID) == undefined) {
-                  this.frontRepo.GongsimCommands.delete(gongsimcommandDB.ID)
-                }
-              }
-            )
-
-            // sort GongsimCommands_array array
-            this.frontRepo.GongsimCommands_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-            // init the array
-            this.frontRepo.GongsimStatuss_array = gongsimstatuss
-
-            // clear the map that counts GongsimStatus in the GET
-            this.frontRepo.GongsimStatuss_batch.clear()
-
-            gongsimstatuss.forEach(
-              gongsimstatusDB => {
-                this.frontRepo.GongsimStatuss.set(gongsimstatusDB.ID, gongsimstatusDB)
-                this.frontRepo.GongsimStatuss_batch.set(gongsimstatusDB.ID, gongsimstatusDB)
-              }
-            )
-
-            // clear gongsimstatuss that are absent from the batch
-            this.frontRepo.GongsimStatuss.forEach(
-              gongsimstatusDB => {
-                if (this.frontRepo.GongsimStatuss_batch.get(gongsimstatusDB.ID) == undefined) {
-                  this.frontRepo.GongsimStatuss.delete(gongsimstatusDB.ID)
-                }
-              }
-            )
-
-            // sort GongsimStatuss_array array
-            this.frontRepo.GongsimStatuss_array.sort((t1, t2) => {
-              if (t1.Name > t2.Name) {
-                return 1;
-              }
-              if (t1.Name < t2.Name) {
-                return -1;
-              }
-              return 0;
-            });
-
-
-            // 
-            // Second Step: reddeem slice of pointers fields
-            // insertion point sub template for redeem 
-            dummyagents.forEach(
-              dummyagent => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointers decoding
-              }
-            )
-            engines.forEach(
-              engine => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointers decoding
-              }
-            )
-            events.forEach(
-              event => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointers decoding
-              }
-            )
-            gongsimcommands.forEach(
-              gongsimcommand => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointer field Engine redeeming
-                {
-                  let _engine = this.frontRepo.Engines.get(gongsimcommand.GongsimCommandPointersEncoding.EngineID.Int64)
-                  if (_engine) {
-                    gongsimcommand.Engine = _engine
-                  }
-                }
-                // insertion point for pointers decoding
-              }
-            )
-            gongsimstatuss.forEach(
-              gongsimstatus => {
-                // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-                // insertion point for pointers decoding
-              }
-            )
-
-            // 
-            // Third Step: reddeem front objects
-            // insertion point sub template for redeem 
-            
-            // init front objects
-            this.frontRepo.array_DummyAgents = []
-            this.frontRepo.map_ID_DummyAgent.clear()
-            this.frontRepo.DummyAgents_array.forEach(
-              dummyagentDB => {
-                let dummyagent = new DummyAgent
-                CopyDummyAgentDBToDummyAgent(dummyagentDB, dummyagent, this.frontRepo)
-                this.frontRepo.array_DummyAgents.push(dummyagent)
-                this.frontRepo.map_ID_DummyAgent.set(dummyagent.ID, dummyagent)
-              }
-            )
-
-            
-            // init front objects
-            this.frontRepo.array_Engines = []
-            this.frontRepo.map_ID_Engine.clear()
-            this.frontRepo.Engines_array.forEach(
-              engineDB => {
-                let engine = new Engine
-                CopyEngineDBToEngine(engineDB, engine, this.frontRepo)
-                this.frontRepo.array_Engines.push(engine)
-                this.frontRepo.map_ID_Engine.set(engine.ID, engine)
-              }
-            )
-
-            
-            // init front objects
-            this.frontRepo.array_Events = []
-            this.frontRepo.map_ID_Event.clear()
-            this.frontRepo.Events_array.forEach(
-              eventDB => {
-                let event = new Event
-                CopyEventDBToEvent(eventDB, event, this.frontRepo)
-                this.frontRepo.array_Events.push(event)
-                this.frontRepo.map_ID_Event.set(event.ID, event)
-              }
-            )
-
-            
-            // init front objects
-            this.frontRepo.array_GongsimCommands = []
-            this.frontRepo.map_ID_GongsimCommand.clear()
-            this.frontRepo.GongsimCommands_array.forEach(
-              gongsimcommandDB => {
-                let gongsimcommand = new GongsimCommand
-                CopyGongsimCommandDBToGongsimCommand(gongsimcommandDB, gongsimcommand, this.frontRepo)
-                this.frontRepo.array_GongsimCommands.push(gongsimcommand)
-                this.frontRepo.map_ID_GongsimCommand.set(gongsimcommand.ID, gongsimcommand)
-              }
-            )
-
-            
-            // init front objects
-            this.frontRepo.array_GongsimStatuss = []
-            this.frontRepo.map_ID_GongsimStatus.clear()
-            this.frontRepo.GongsimStatuss_array.forEach(
-              gongsimstatusDB => {
-                let gongsimstatus = new GongsimStatus
-                CopyGongsimStatusDBToGongsimStatus(gongsimstatusDB, gongsimstatus, this.frontRepo)
-                this.frontRepo.array_GongsimStatuss.push(gongsimstatus)
-                this.frontRepo.map_ID_GongsimStatus.set(gongsimstatus.ID, gongsimstatus)
-              }
-            )
-
-
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // insertion point for pull per struct 
-
-  // DummyAgentPull performs a GET on DummyAgent of the stack and redeem association pointers 
-  DummyAgentPull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.dummyagentService.getDummyAgents(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            dummyagents,
-          ]) => {
-            // init the array
-            this.frontRepo.DummyAgents_array = dummyagents
-
-            // clear the map that counts DummyAgent in the GET
-            this.frontRepo.DummyAgents_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            dummyagents.forEach(
-              dummyagent => {
-                this.frontRepo.DummyAgents.set(dummyagent.ID, dummyagent)
-                this.frontRepo.DummyAgents_batch.set(dummyagent.ID, dummyagent)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-              }
-            )
-
-            // clear dummyagents that are absent from the GET
-            this.frontRepo.DummyAgents.forEach(
-              dummyagent => {
-                if (this.frontRepo.DummyAgents_batch.get(dummyagent.ID) == undefined) {
-                  this.frontRepo.DummyAgents.delete(dummyagent.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // EnginePull performs a GET on Engine of the stack and redeem association pointers 
-  EnginePull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.engineService.getEngines(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            engines,
-          ]) => {
-            // init the array
-            this.frontRepo.Engines_array = engines
-
-            // clear the map that counts Engine in the GET
-            this.frontRepo.Engines_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            engines.forEach(
-              engine => {
-                this.frontRepo.Engines.set(engine.ID, engine)
-                this.frontRepo.Engines_batch.set(engine.ID, engine)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-              }
-            )
-
-            // clear engines that are absent from the GET
-            this.frontRepo.Engines.forEach(
-              engine => {
-                if (this.frontRepo.Engines_batch.get(engine.ID) == undefined) {
-                  this.frontRepo.Engines.delete(engine.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // EventPull performs a GET on Event of the stack and redeem association pointers 
-  EventPull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.eventService.getEvents(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            events,
-          ]) => {
-            // init the array
-            this.frontRepo.Events_array = events
-
-            // clear the map that counts Event in the GET
-            this.frontRepo.Events_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            events.forEach(
-              event => {
-                this.frontRepo.Events.set(event.ID, event)
-                this.frontRepo.Events_batch.set(event.ID, event)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-              }
-            )
-
-            // clear events that are absent from the GET
-            this.frontRepo.Events.forEach(
-              event => {
-                if (this.frontRepo.Events_batch.get(event.ID) == undefined) {
-                  this.frontRepo.Events.delete(event.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // GongsimCommandPull performs a GET on GongsimCommand of the stack and redeem association pointers 
-  GongsimCommandPull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.gongsimcommandService.getGongsimCommands(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            gongsimcommands,
-          ]) => {
-            // init the array
-            this.frontRepo.GongsimCommands_array = gongsimcommands
-
-            // clear the map that counts GongsimCommand in the GET
-            this.frontRepo.GongsimCommands_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            gongsimcommands.forEach(
-              gongsimcommand => {
-                this.frontRepo.GongsimCommands.set(gongsimcommand.ID, gongsimcommand)
-                this.frontRepo.GongsimCommands_batch.set(gongsimcommand.ID, gongsimcommand)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-                // insertion point for pointer field Engine redeeming
-                {
-                  let _engine = this.frontRepo.Engines.get(gongsimcommand.GongsimCommandPointersEncoding.EngineID.Int64)
-                  if (_engine) {
-                    gongsimcommand.Engine = _engine
-                  }
-                }
-              }
-            )
-
-            // clear gongsimcommands that are absent from the GET
-            this.frontRepo.GongsimCommands.forEach(
-              gongsimcommand => {
-                if (this.frontRepo.GongsimCommands_batch.get(gongsimcommand.ID) == undefined) {
-                  this.frontRepo.GongsimCommands.delete(gongsimcommand.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
-
-  // GongsimStatusPull performs a GET on GongsimStatus of the stack and redeem association pointers 
-  GongsimStatusPull(): Observable<FrontRepo> {
-    return new Observable<FrontRepo>(
-      (observer) => {
-        combineLatest([
-          this.gongsimstatusService.getGongsimStatuss(this.GONG__StackPath, this.frontRepo)
-        ]).subscribe(
-          ([ // insertion point sub template 
-            gongsimstatuss,
-          ]) => {
-            // init the array
-            this.frontRepo.GongsimStatuss_array = gongsimstatuss
-
-            // clear the map that counts GongsimStatus in the GET
-            this.frontRepo.GongsimStatuss_batch.clear()
-
-            // 
-            // First Step: init map of instances
-            // insertion point sub template 
-            gongsimstatuss.forEach(
-              gongsimstatus => {
-                this.frontRepo.GongsimStatuss.set(gongsimstatus.ID, gongsimstatus)
-                this.frontRepo.GongsimStatuss_batch.set(gongsimstatus.ID, gongsimstatus)
-
-                // insertion point for redeeming ONE/ZERO-ONE associations
-              }
-            )
-
-            // clear gongsimstatuss that are absent from the GET
-            this.frontRepo.GongsimStatuss.forEach(
-              gongsimstatus => {
-                if (this.frontRepo.GongsimStatuss_batch.get(gongsimstatus.ID) == undefined) {
-                  this.frontRepo.GongsimStatuss.delete(gongsimstatus.ID)
-                }
-              }
-            )
-
-            // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
-            // insertion point sub template 
-
-            // hand over control flow to observer
-            observer.next(this.frontRepo)
-          }
-        )
-      }
-    )
-  }
+	GONG__StackPath: string = ""
+
+	httpOptions = {
+		headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+	};
+
+	//
+	// Store of all instances of the stack
+	//
+	frontRepo = new (FrontRepo)
+
+	constructor(
+		private http: HttpClient, // insertion point sub template 
+		private dummyagentService: DummyAgentService,
+		private engineService: EngineService,
+		private eventService: EventService,
+		private gongsimcommandService: GongsimCommandService,
+		private gongsimstatusService: GongsimStatusService,
+	) { }
+
+	// postService provides a post function for each struct name
+	postService(structName: string, instanceToBePosted: any) {
+		let service = this[structName.toLowerCase() + "Service" + "Service" as keyof FrontRepoService]
+		let servicePostFunction = service[("post" + structName) as keyof typeof service] as (instance: typeof instanceToBePosted) => Observable<typeof instanceToBePosted>
+
+		servicePostFunction(instanceToBePosted).subscribe(
+			instance => {
+				let behaviorSubject = instanceToBePosted[(structName + "ServiceChanged") as keyof typeof instanceToBePosted] as unknown as BehaviorSubject<string>
+				behaviorSubject.next("post")
+			}
+		);
+	}
+
+	// deleteService provides a delete function for each struct name
+	deleteService(structName: string, instanceToBeDeleted: any) {
+		let service = this[structName.toLowerCase() + "Service" as keyof FrontRepoService]
+		let serviceDeleteFunction = service["delete" + structName as keyof typeof service] as (instance: typeof instanceToBeDeleted) => Observable<typeof instanceToBeDeleted>
+
+		serviceDeleteFunction(instanceToBeDeleted).subscribe(
+			instance => {
+				let behaviorSubject = instanceToBeDeleted[(structName + "ServiceChanged") as keyof typeof instanceToBeDeleted] as unknown as BehaviorSubject<string>
+				behaviorSubject.next("delete")
+			}
+		);
+	}
+
+	// typing of observable can be messy in typescript. Therefore, one force the type
+	observableFrontRepo: [
+		Observable<null>, // see below for the of(null) observable
+		// insertion point sub template 
+		Observable<DummyAgentDB[]>,
+		Observable<EngineDB[]>,
+		Observable<EventDB[]>,
+		Observable<GongsimCommandDB[]>,
+		Observable<GongsimStatusDB[]>,
+	] = [
+			// Using "combineLatest" with a placeholder observable.
+			//
+			// This allows the typescript compiler to pass when no GongStruct is present in the front API
+			//
+			// The "of(null)" is a "meaningless" observable that emits a single value (null) and completes.
+			// This is used as a workaround to satisfy TypeScript requirements and the "combineLatest" 
+			// expectation for a non-empty array of observables.
+			of(null), // 
+			// insertion point sub template
+			this.dummyagentService.getDummyAgents(this.GONG__StackPath, this.frontRepo),
+			this.engineService.getEngines(this.GONG__StackPath, this.frontRepo),
+			this.eventService.getEvents(this.GONG__StackPath, this.frontRepo),
+			this.gongsimcommandService.getGongsimCommands(this.GONG__StackPath, this.frontRepo),
+			this.gongsimstatusService.getGongsimStatuss(this.GONG__StackPath, this.frontRepo),
+		];
+
+	//
+	// pull performs a GET on all struct of the stack and redeem association pointers 
+	//
+	// This is an observable. Therefore, the control flow forks with
+	// - pull() return immediatly the observable
+	// - the observable observer, if it subscribe, is called when all GET calls are performs
+	pull(GONG__StackPath: string = ""): Observable<FrontRepo> {
+
+		this.GONG__StackPath = GONG__StackPath
+
+		this.observableFrontRepo = [
+			of(null), // see above for justification
+			// insertion point sub template
+			this.dummyagentService.getDummyAgents(this.GONG__StackPath, this.frontRepo),
+			this.engineService.getEngines(this.GONG__StackPath, this.frontRepo),
+			this.eventService.getEvents(this.GONG__StackPath, this.frontRepo),
+			this.gongsimcommandService.getGongsimCommands(this.GONG__StackPath, this.frontRepo),
+			this.gongsimstatusService.getGongsimStatuss(this.GONG__StackPath, this.frontRepo),
+		]
+
+		return new Observable<FrontRepo>(
+			(observer) => {
+				combineLatest(
+					this.observableFrontRepo
+				).subscribe(
+					([
+						___of_null, // see above for the explanation about of
+						// insertion point sub template for declarations 
+						dummyagents_,
+						engines_,
+						events_,
+						gongsimcommands_,
+						gongsimstatuss_,
+					]) => {
+						let _this = this
+						// Typing can be messy with many items. Therefore, type casting is necessary here
+						// insertion point sub template for type casting 
+						var dummyagents: DummyAgentDB[]
+						dummyagents = dummyagents_ as DummyAgentDB[]
+						var engines: EngineDB[]
+						engines = engines_ as EngineDB[]
+						var events: EventDB[]
+						events = events_ as EventDB[]
+						var gongsimcommands: GongsimCommandDB[]
+						gongsimcommands = gongsimcommands_ as GongsimCommandDB[]
+						var gongsimstatuss: GongsimStatusDB[]
+						gongsimstatuss = gongsimstatuss_ as GongsimStatusDB[]
+
+						// 
+						// First Step: init map of instances
+						// insertion point sub template for init 
+						// init the arrays
+						this.frontRepo.array_DummyAgents = []
+						this.frontRepo.map_ID_DummyAgent.clear()
+
+						dummyagents.forEach(
+							dummyagentDB => {
+								let dummyagent = new DummyAgent
+								this.frontRepo.array_DummyAgents.push(dummyagent)
+								this.frontRepo.map_ID_DummyAgent.set(dummyagentDB.ID, dummyagent)
+							}
+						)
+
+						// init the arrays
+						this.frontRepo.array_Engines = []
+						this.frontRepo.map_ID_Engine.clear()
+
+						engines.forEach(
+							engineDB => {
+								let engine = new Engine
+								this.frontRepo.array_Engines.push(engine)
+								this.frontRepo.map_ID_Engine.set(engineDB.ID, engine)
+							}
+						)
+
+						// init the arrays
+						this.frontRepo.array_Events = []
+						this.frontRepo.map_ID_Event.clear()
+
+						events.forEach(
+							eventDB => {
+								let event = new Event
+								this.frontRepo.array_Events.push(event)
+								this.frontRepo.map_ID_Event.set(eventDB.ID, event)
+							}
+						)
+
+						// init the arrays
+						this.frontRepo.array_GongsimCommands = []
+						this.frontRepo.map_ID_GongsimCommand.clear()
+
+						gongsimcommands.forEach(
+							gongsimcommandDB => {
+								let gongsimcommand = new GongsimCommand
+								this.frontRepo.array_GongsimCommands.push(gongsimcommand)
+								this.frontRepo.map_ID_GongsimCommand.set(gongsimcommandDB.ID, gongsimcommand)
+							}
+						)
+
+						// init the arrays
+						this.frontRepo.array_GongsimStatuss = []
+						this.frontRepo.map_ID_GongsimStatus.clear()
+
+						gongsimstatuss.forEach(
+							gongsimstatusDB => {
+								let gongsimstatus = new GongsimStatus
+								this.frontRepo.array_GongsimStatuss.push(gongsimstatus)
+								this.frontRepo.map_ID_GongsimStatus.set(gongsimstatusDB.ID, gongsimstatus)
+							}
+						)
+
+
+						// 
+						// Second Step: reddeem front objects
+						// insertion point sub template for redeem 
+						// fill up front objects
+						dummyagents.forEach(
+							dummyagentDB => {
+								let dummyagent = this.frontRepo.map_ID_DummyAgent.get(dummyagentDB.ID)
+								CopyDummyAgentDBToDummyAgent(dummyagentDB, dummyagent!, this.frontRepo)
+							}
+						)
+
+						// fill up front objects
+						engines.forEach(
+							engineDB => {
+								let engine = this.frontRepo.map_ID_Engine.get(engineDB.ID)
+								CopyEngineDBToEngine(engineDB, engine!, this.frontRepo)
+							}
+						)
+
+						// fill up front objects
+						events.forEach(
+							eventDB => {
+								let event = this.frontRepo.map_ID_Event.get(eventDB.ID)
+								CopyEventDBToEvent(eventDB, event!, this.frontRepo)
+							}
+						)
+
+						// fill up front objects
+						gongsimcommands.forEach(
+							gongsimcommandDB => {
+								let gongsimcommand = this.frontRepo.map_ID_GongsimCommand.get(gongsimcommandDB.ID)
+								CopyGongsimCommandDBToGongsimCommand(gongsimcommandDB, gongsimcommand!, this.frontRepo)
+							}
+						)
+
+						// fill up front objects
+						gongsimstatuss.forEach(
+							gongsimstatusDB => {
+								let gongsimstatus = this.frontRepo.map_ID_GongsimStatus.get(gongsimstatusDB.ID)
+								CopyGongsimStatusDBToGongsimStatus(gongsimstatusDB, gongsimstatus!, this.frontRepo)
+							}
+						)
+
+
+						// hand over control flow to observer
+						observer.next(this.frontRepo)
+					}
+				)
+			}
+		)
+	}
 }
 
 // insertion point for get unique ID per struct 
 export function getDummyAgentUniqueID(id: number): number {
-  return 31 * id
+	return 31 * id
 }
 export function getEngineUniqueID(id: number): number {
-  return 37 * id
+	return 37 * id
 }
 export function getEventUniqueID(id: number): number {
-  return 41 * id
+	return 41 * id
 }
 export function getGongsimCommandUniqueID(id: number): number {
-  return 43 * id
+	return 43 * id
 }
 export function getGongsimStatusUniqueID(id: number): number {
-  return 47 * id
+	return 47 * id
 }

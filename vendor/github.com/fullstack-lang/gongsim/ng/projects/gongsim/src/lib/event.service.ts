@@ -101,8 +101,6 @@ export class EventService {
   }
   postEvent(eventdb: EventDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -111,7 +109,6 @@ export class EventService {
 
     return this.http.post<EventDB>(this.eventsUrl, eventdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
         // this.log(`posted eventdb id=${eventdb.ID}`)
       }),
       catchError(this.handleError<EventDB>('postEvent'))
@@ -165,8 +162,6 @@ export class EventService {
     const id = typeof eventdb === 'number' ? eventdb : eventdb.ID;
     const url = `${this.eventsUrl}/${id}`;
 
-    // insertion point for reset of pointers (to avoid circular JSON)
-    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -176,7 +171,6 @@ export class EventService {
 
     return this.http.put<EventDB>(url, eventdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
         // this.log(`updated eventdb id=${eventdb.ID}`)
       }),
       catchError(this.handleError<EventDB>('updateEvent'))

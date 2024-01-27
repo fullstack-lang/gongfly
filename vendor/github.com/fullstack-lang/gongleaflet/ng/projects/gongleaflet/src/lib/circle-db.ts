@@ -20,9 +20,7 @@ export class CircleDB {
 	ColorEnum: string = ""
 	DashStyleEnum: string = ""
 
-	// insertion point for pointers and slices of pointers declarations
-	LayerGroup?: LayerGroupDB
-
+	// insertion point for other decls
 
 	CirclePointersEncoding: CirclePointersEncoding = new CirclePointersEncoding
 }

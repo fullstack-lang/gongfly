@@ -31,7 +31,7 @@ export function CopyGongsimStatusToGongsimStatusDB(gongsimstatus: GongsimStatus,
 	gongsimstatusDB.CreatedAt = gongsimstatus.CreatedAt
 	gongsimstatusDB.DeletedAt = gongsimstatus.DeletedAt
 	gongsimstatusDB.ID = gongsimstatus.ID
-	
+
 	// insertion point for basic fields copy operations
 	gongsimstatusDB.Name = gongsimstatus.Name
 	gongsimstatusDB.CurrentCommand = gongsimstatus.CurrentCommand
@@ -44,12 +44,16 @@ export function CopyGongsimStatusToGongsimStatusDB(gongsimstatus: GongsimStatus,
 	// insertion point for slice of pointers fields encoding
 }
 
+// CopyGongsimStatusDBToGongsimStatus update basic, pointers and slice of pointers fields of gongsimstatus
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of gongsimstatusDB
+// this function uses frontRepo.map_ID_<structname> to decode the encoded fields
+// a condition is that those maps has to be initialized before
 export function CopyGongsimStatusDBToGongsimStatus(gongsimstatusDB: GongsimStatusDB, gongsimstatus: GongsimStatus, frontRepo: FrontRepo) {
 
 	gongsimstatus.CreatedAt = gongsimstatusDB.CreatedAt
 	gongsimstatus.DeletedAt = gongsimstatusDB.DeletedAt
 	gongsimstatus.ID = gongsimstatusDB.ID
-	
+
 	// insertion point for basic fields copy operations
 	gongsimstatus.Name = gongsimstatusDB.Name
 	gongsimstatus.CurrentCommand = gongsimstatusDB.CurrentCommand

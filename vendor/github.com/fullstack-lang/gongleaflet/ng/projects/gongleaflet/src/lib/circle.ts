@@ -35,7 +35,7 @@ export function CopyCircleToCircleDB(circle: Circle, circleDB: CircleDB) {
 	circleDB.CreatedAt = circle.CreatedAt
 	circleDB.DeletedAt = circle.DeletedAt
 	circleDB.ID = circle.ID
-	
+
 	// insertion point for basic fields copy operations
 	circleDB.Lat = circle.Lat
 	circleDB.Lng = circle.Lng
@@ -45,10 +45,10 @@ export function CopyCircleToCircleDB(circle: Circle, circleDB: CircleDB) {
 	circleDB.DashStyleEnum = circle.DashStyleEnum
 
 	// insertion point for pointer fields encoding
-    circleDB.CirclePointersEncoding.LayerGroupID.Valid = true
+	circleDB.CirclePointersEncoding.LayerGroupID.Valid = true
 	if (circle.LayerGroup != undefined) {
 		circleDB.CirclePointersEncoding.LayerGroupID.Int64 = circle.LayerGroup.ID  
-    } else {
+	} else {
 		circleDB.CirclePointersEncoding.LayerGroupID.Int64 = 0 		
 	}
 
@@ -56,12 +56,16 @@ export function CopyCircleToCircleDB(circle: Circle, circleDB: CircleDB) {
 	// insertion point for slice of pointers fields encoding
 }
 
+// CopyCircleDBToCircle update basic, pointers and slice of pointers fields of circle
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of circleDB
+// this function uses frontRepo.map_ID_<structname> to decode the encoded fields
+// a condition is that those maps has to be initialized before
 export function CopyCircleDBToCircle(circleDB: CircleDB, circle: Circle, frontRepo: FrontRepo) {
 
 	circle.CreatedAt = circleDB.CreatedAt
 	circle.DeletedAt = circleDB.DeletedAt
 	circle.ID = circleDB.ID
-	
+
 	// insertion point for basic fields copy operations
 	circle.Lat = circleDB.Lat
 	circle.Lng = circleDB.Lng
@@ -71,7 +75,7 @@ export function CopyCircleDBToCircle(circleDB: CircleDB, circle: Circle, frontRe
 	circle.DashStyleEnum = circleDB.DashStyleEnum
 
 	// insertion point for pointer fields encoding
-	circle.LayerGroup = frontRepo.LayerGroups.get(circleDB.CirclePointersEncoding.LayerGroupID.Int64)
+	circle.LayerGroup = frontRepo.map_ID_LayerGroup.get(circleDB.CirclePointersEncoding.LayerGroupID.Int64)
 
 	// insertion point for slice of pointers fields encoding
 }

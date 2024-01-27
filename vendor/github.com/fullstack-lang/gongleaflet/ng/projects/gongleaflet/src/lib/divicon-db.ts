@@ -15,7 +15,7 @@ export class DivIconDB {
 	Name: string = ""
 	SVG: string = ""
 
-	// insertion point for pointers and slices of pointers declarations
+	// insertion point for other decls
 
 	DivIconPointersEncoding: DivIconPointersEncoding = new DivIconPointersEncoding
 }

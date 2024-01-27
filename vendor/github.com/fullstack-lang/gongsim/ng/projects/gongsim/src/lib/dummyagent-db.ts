@@ -15,7 +15,7 @@ export class DummyAgentDB {
 	TechName: string = ""
 	Name: string = ""
 
-	// insertion point for pointers and slices of pointers declarations
+	// insertion point for other decls
 
 	DummyAgentPointersEncoding: DummyAgentPointersEncoding = new DummyAgentPointersEncoding
 }

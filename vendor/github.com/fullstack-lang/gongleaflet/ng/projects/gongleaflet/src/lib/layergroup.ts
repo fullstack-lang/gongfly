@@ -28,7 +28,7 @@ export function CopyLayerGroupToLayerGroupDB(layergroup: LayerGroup, layergroupD
 	layergroupDB.CreatedAt = layergroup.CreatedAt
 	layergroupDB.DeletedAt = layergroup.DeletedAt
 	layergroupDB.ID = layergroup.ID
-	
+
 	// insertion point for basic fields copy operations
 	layergroupDB.Name = layergroup.Name
 	layergroupDB.DisplayName = layergroup.DisplayName
@@ -38,12 +38,16 @@ export function CopyLayerGroupToLayerGroupDB(layergroup: LayerGroup, layergroupD
 	// insertion point for slice of pointers fields encoding
 }
 
+// CopyLayerGroupDBToLayerGroup update basic, pointers and slice of pointers fields of layergroup
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of layergroupDB
+// this function uses frontRepo.map_ID_<structname> to decode the encoded fields
+// a condition is that those maps has to be initialized before
 export function CopyLayerGroupDBToLayerGroup(layergroupDB: LayerGroupDB, layergroup: LayerGroup, frontRepo: FrontRepo) {
 
 	layergroup.CreatedAt = layergroupDB.CreatedAt
 	layergroup.DeletedAt = layergroupDB.DeletedAt
 	layergroup.ID = layergroupDB.ID
-	
+
 	// insertion point for basic fields copy operations
 	layergroup.Name = layergroupDB.Name
 	layergroup.DisplayName = layergroupDB.DisplayName

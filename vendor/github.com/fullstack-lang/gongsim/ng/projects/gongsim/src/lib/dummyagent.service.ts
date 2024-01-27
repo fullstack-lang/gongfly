@@ -101,8 +101,6 @@ export class DummyAgentService {
   }
   postDummyAgent(dummyagentdb: DummyAgentDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -111,7 +109,6 @@ export class DummyAgentService {
 
     return this.http.post<DummyAgentDB>(this.dummyagentsUrl, dummyagentdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
         // this.log(`posted dummyagentdb id=${dummyagentdb.ID}`)
       }),
       catchError(this.handleError<DummyAgentDB>('postDummyAgent'))
@@ -165,8 +162,6 @@ export class DummyAgentService {
     const id = typeof dummyagentdb === 'number' ? dummyagentdb : dummyagentdb.ID;
     const url = `${this.dummyagentsUrl}/${id}`;
 
-    // insertion point for reset of pointers (to avoid circular JSON)
-    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -176,7 +171,6 @@ export class DummyAgentService {
 
     return this.http.put<DummyAgentDB>(url, dummyagentdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
         // this.log(`updated dummyagentdb id=${dummyagentdb.ID}`)
       }),
       catchError(this.handleError<DummyAgentDB>('updateDummyAgent'))

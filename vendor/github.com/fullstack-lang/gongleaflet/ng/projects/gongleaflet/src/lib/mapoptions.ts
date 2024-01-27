@@ -38,7 +38,7 @@ export function CopyMapOptionsToMapOptionsDB(mapoptions: MapOptions, mapoptionsD
 	mapoptionsDB.CreatedAt = mapoptions.CreatedAt
 	mapoptionsDB.DeletedAt = mapoptions.DeletedAt
 	mapoptionsDB.ID = mapoptions.ID
-	
+
 	// insertion point for basic fields copy operations
 	mapoptionsDB.Lat = mapoptions.Lat
 	mapoptionsDB.Lng = mapoptions.Lng
@@ -55,18 +55,22 @@ export function CopyMapOptionsToMapOptionsDB(mapoptions: MapOptions, mapoptionsD
 
 	// insertion point for slice of pointers fields encoding
 	mapoptionsDB.MapOptionsPointersEncoding.LayerGroupUses = []
-    for (let _layergroupuse of mapoptions.LayerGroupUses) {
+	for (let _layergroupuse of mapoptions.LayerGroupUses) {
 		mapoptionsDB.MapOptionsPointersEncoding.LayerGroupUses.push(_layergroupuse.ID)
-    }
-	
+	}
+
 }
 
+// CopyMapOptionsDBToMapOptions update basic, pointers and slice of pointers fields of mapoptions
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of mapoptionsDB
+// this function uses frontRepo.map_ID_<structname> to decode the encoded fields
+// a condition is that those maps has to be initialized before
 export function CopyMapOptionsDBToMapOptions(mapoptionsDB: MapOptionsDB, mapoptions: MapOptions, frontRepo: FrontRepo) {
 
 	mapoptions.CreatedAt = mapoptionsDB.CreatedAt
 	mapoptions.DeletedAt = mapoptionsDB.DeletedAt
 	mapoptions.ID = mapoptionsDB.ID
-	
+
 	// insertion point for basic fields copy operations
 	mapoptions.Lat = mapoptionsDB.Lat
 	mapoptions.Lng = mapoptionsDB.Lng
@@ -84,9 +88,9 @@ export function CopyMapOptionsDBToMapOptions(mapoptionsDB: MapOptionsDB, mapopti
 	// insertion point for slice of pointers fields encoding
 	mapoptions.LayerGroupUses = new Array<LayerGroupUse>()
 	for (let _id of mapoptionsDB.MapOptionsPointersEncoding.LayerGroupUses) {
-	  let _layergroupuse = frontRepo.LayerGroupUses.get(_id)
-	  if (_layergroupuse != undefined) {
-		mapoptions.LayerGroupUses.push(_layergroupuse!)
-	  }
+		let _layergroupuse = frontRepo.map_ID_LayerGroupUse.get(_id)
+		if (_layergroupuse != undefined) {
+			mapoptions.LayerGroupUses.push(_layergroupuse!)
+		}
 	}
 }

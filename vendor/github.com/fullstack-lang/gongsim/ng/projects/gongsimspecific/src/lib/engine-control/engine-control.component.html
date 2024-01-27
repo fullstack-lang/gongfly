@@ -1,13 +1,15 @@
 <mat-toolbar *ngIf="engine">
     <mat-toolbar-row>
         <span>{{ simulationTitle }}</span>
+        <!-- <span class="example-spacer"></span>
         <span class="example-spacer"></span>
-        <span class="example-spacer"></span>
-        <span class="example-spacer"></span>
-        <span class="example-spacer" [ngStyle]="
+        <span class="example-spacer"></span> -->
+        <span class="example-spacer status-indicator" [ngStyle]="
             {
                 'color': engine.State === 'PAUSED' ? 
-                'grey' : ( engine.State === 'RUNNING' ? 'green': 'red')}">{{ engine.State }}</span>
+                'grey' : ( engine.State === 'RUNNING' ? 'green': 'red'),
+                'width': '5ch'
+                }">{{ engine.State }}</span>
         <button mat-button class="button" (click)='fireEventTillStateChange()' matTooltip="fire events till at least one state changes">
             <mat-icon>
                 skip_next

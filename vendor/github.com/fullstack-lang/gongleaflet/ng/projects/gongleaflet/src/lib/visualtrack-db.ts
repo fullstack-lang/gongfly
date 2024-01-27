@@ -25,11 +25,7 @@ export class VisualTrackDB {
 	DisplayTrackHistory: boolean = false
 	DisplayLevelAndSpeed: boolean = false
 
-	// insertion point for pointers and slices of pointers declarations
-	LayerGroup?: LayerGroupDB
-
-	DivIcon?: DivIconDB
-
+	// insertion point for other decls
 
 	VisualTrackPointersEncoding: VisualTrackPointersEncoding = new VisualTrackPointersEncoding
 }

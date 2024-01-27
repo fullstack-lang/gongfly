@@ -103,18 +103,6 @@ export class MarkerService {
   }
   postMarker(markerdb: MarkerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    if (markerdb.LayerGroup != undefined) {
-      markerdb.MarkerPointersEncoding.LayerGroupID.Int64 = markerdb.LayerGroup.ID
-      markerdb.MarkerPointersEncoding.LayerGroupID.Valid = true
-    }
-    markerdb.LayerGroup = undefined
-    if (markerdb.DivIcon != undefined) {
-      markerdb.MarkerPointersEncoding.DivIconID.Int64 = markerdb.DivIcon.ID
-      markerdb.MarkerPointersEncoding.DivIconID.Valid = true
-    }
-    markerdb.DivIcon = undefined
-
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -123,9 +111,6 @@ export class MarkerService {
 
     return this.http.post<MarkerDB>(this.markersUrl, markerdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
-        markerdb.LayerGroup = frontRepo.LayerGroups.get(markerdb.MarkerPointersEncoding.LayerGroupID.Int64)
-        markerdb.DivIcon = frontRepo.DivIcons.get(markerdb.MarkerPointersEncoding.DivIconID.Int64)
         // this.log(`posted markerdb id=${markerdb.ID}`)
       }),
       catchError(this.handleError<MarkerDB>('postMarker'))
@@ -179,18 +164,6 @@ export class MarkerService {
     const id = typeof markerdb === 'number' ? markerdb : markerdb.ID;
     const url = `${this.markersUrl}/${id}`;
 
-    // insertion point for reset of pointers (to avoid circular JSON)
-    // and encoding of pointers
-    if (markerdb.LayerGroup != undefined) {
-      markerdb.MarkerPointersEncoding.LayerGroupID.Int64 = markerdb.LayerGroup.ID
-      markerdb.MarkerPointersEncoding.LayerGroupID.Valid = true
-    }
-    markerdb.LayerGroup = undefined
-    if (markerdb.DivIcon != undefined) {
-      markerdb.MarkerPointersEncoding.DivIconID.Int64 = markerdb.DivIcon.ID
-      markerdb.MarkerPointersEncoding.DivIconID.Valid = true
-    }
-    markerdb.DivIcon = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -200,9 +173,6 @@ export class MarkerService {
 
     return this.http.put<MarkerDB>(url, markerdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
-        markerdb.LayerGroup = frontRepo.LayerGroups.get(markerdb.MarkerPointersEncoding.LayerGroupID.Int64)
-        markerdb.DivIcon = frontRepo.DivIcons.get(markerdb.MarkerPointersEncoding.DivIconID.Int64)
         // this.log(`updated markerdb id=${markerdb.ID}`)
       }),
       catchError(this.handleError<MarkerDB>('updateMarker'))

@@ -19,11 +19,7 @@ export class MarkerDB {
 	Name: string = ""
 	ColorEnum: string = ""
 
-	// insertion point for pointers and slices of pointers declarations
-	LayerGroup?: LayerGroupDB
-
-	DivIcon?: DivIconDB
-
+	// insertion point for other decls
 
 	MarkerPointersEncoding: MarkerPointersEncoding = new MarkerPointersEncoding
 }

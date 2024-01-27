@@ -18,7 +18,7 @@ export class GongsimStatusDB {
 	CurrentSpeedCommand: string = ""
 	SpeedCommandCompletionDate: string = ""
 
-	// insertion point for pointers and slices of pointers declarations
+	// insertion point for other decls
 
 	GongsimStatusPointersEncoding: GongsimStatusPointersEncoding = new GongsimStatusPointersEncoding
 }

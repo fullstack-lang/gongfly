@@ -25,9 +25,7 @@ export class VLineDB {
 	IsTransmittingBackward: string = ""
 	MessageBackward: string = ""
 
-	// insertion point for pointers and slices of pointers declarations
-	LayerGroup?: LayerGroupDB
-
+	// insertion point for other decls
 
 	VLinePointersEncoding: VLinePointersEncoding = new VLinePointersEncoding
 }

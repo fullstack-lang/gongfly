@@ -101,8 +101,6 @@ export class DivIconService {
   }
   postDivIcon(divicondb: DivIconDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -111,7 +109,6 @@ export class DivIconService {
 
     return this.http.post<DivIconDB>(this.diviconsUrl, divicondb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
         // this.log(`posted divicondb id=${divicondb.ID}`)
       }),
       catchError(this.handleError<DivIconDB>('postDivIcon'))
@@ -165,8 +162,6 @@ export class DivIconService {
     const id = typeof divicondb === 'number' ? divicondb : divicondb.ID;
     const url = `${this.diviconsUrl}/${id}`;
 
-    // insertion point for reset of pointers (to avoid circular JSON)
-    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -176,7 +171,6 @@ export class DivIconService {
 
     return this.http.put<DivIconDB>(url, divicondb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
         // this.log(`updated divicondb id=${divicondb.ID}`)
       }),
       catchError(this.handleError<DivIconDB>('updateDivIcon'))

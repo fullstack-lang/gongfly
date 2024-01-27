@@ -34,7 +34,7 @@ export function CopyEngineToEngineDB(engine: Engine, engineDB: EngineDB) {
 	engineDB.CreatedAt = engine.CreatedAt
 	engineDB.DeletedAt = engine.DeletedAt
 	engineDB.ID = engine.ID
-	
+
 	// insertion point for basic fields copy operations
 	engineDB.Name = engine.Name
 	engineDB.EndTime = engine.EndTime
@@ -50,12 +50,16 @@ export function CopyEngineToEngineDB(engine: Engine, engineDB: EngineDB) {
 	// insertion point for slice of pointers fields encoding
 }
 
+// CopyEngineDBToEngine update basic, pointers and slice of pointers fields of engine
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of engineDB
+// this function uses frontRepo.map_ID_<structname> to decode the encoded fields
+// a condition is that those maps has to be initialized before
 export function CopyEngineDBToEngine(engineDB: EngineDB, engine: Engine, frontRepo: FrontRepo) {
 
 	engine.CreatedAt = engineDB.CreatedAt
 	engine.DeletedAt = engineDB.DeletedAt
 	engine.ID = engineDB.ID
-	
+
 	// insertion point for basic fields copy operations
 	engine.Name = engineDB.Name
 	engine.EndTime = engineDB.EndTime

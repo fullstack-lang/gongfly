@@ -15,7 +15,7 @@ export class LayerGroupDB {
 	Name: string = ""
 	DisplayName: string = ""
 
-	// insertion point for pointers and slices of pointers declarations
+	// insertion point for other decls
 
 	LayerGroupPointersEncoding: LayerGroupPointersEncoding = new LayerGroupPointersEncoding
 }

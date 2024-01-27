@@ -101,8 +101,6 @@ export class UserClickService {
   }
   postUserClick(userclickdb: UserClickDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -111,7 +109,6 @@ export class UserClickService {
 
     return this.http.post<UserClickDB>(this.userclicksUrl, userclickdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
         // this.log(`posted userclickdb id=${userclickdb.ID}`)
       }),
       catchError(this.handleError<UserClickDB>('postUserClick'))
@@ -165,8 +162,6 @@ export class UserClickService {
     const id = typeof userclickdb === 'number' ? userclickdb : userclickdb.ID;
     const url = `${this.userclicksUrl}/${id}`;
 
-    // insertion point for reset of pointers (to avoid circular JSON)
-    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -176,7 +171,6 @@ export class UserClickService {
 
     return this.http.put<UserClickDB>(url, userclickdb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
         // this.log(`updated userclickdb id=${userclickdb.ID}`)
       }),
       catchError(this.handleError<UserClickDB>('updateUserClick'))

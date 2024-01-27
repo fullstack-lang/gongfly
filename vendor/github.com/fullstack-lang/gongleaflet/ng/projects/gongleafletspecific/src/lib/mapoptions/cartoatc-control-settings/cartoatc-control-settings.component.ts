@@ -46,12 +46,12 @@ export class CartoatcControlSettingsComponent implements OnInit {
       frontRepo => {
         this.frontRepo = frontRepo
 
-        let gongleafletMapOptions = Array.from(this.frontRepo.MapOptionss.values())[0]
+        let gongleafletMapOptions = Array.from(this.frontRepo.getFrontArray<gongleaflet.MapOptions>(gongleaflet.MapOptions.GONGSTRUCT_NAME).values())[0]
         this.gongleafletMapOptions = gongleafletMapOptions
 
         // if the map name is set, then map options might differ
         if (this.mapName != "") {
-          for (let gongleafletMapOptions of this.frontRepo.MapOptionss.values()) {
+          for (let gongleafletMapOptions of this.frontRepo.getFrontArray<gongleaflet.MapOptions>(gongleaflet.MapOptions.GONGSTRUCT_NAME).values()) {
             if (gongleafletMapOptions.Name == this.mapName) {
               this.gongleafletMapOptions = gongleafletMapOptions
             }

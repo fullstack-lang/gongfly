@@ -40,7 +40,7 @@ export function CopyVLineToVLineDB(vline: VLine, vlineDB: VLineDB) {
 	vlineDB.CreatedAt = vline.CreatedAt
 	vlineDB.DeletedAt = vline.DeletedAt
 	vlineDB.ID = vline.ID
-	
+
 	// insertion point for basic fields copy operations
 	vlineDB.StartLat = vline.StartLat
 	vlineDB.StartLng = vline.StartLng
@@ -55,10 +55,10 @@ export function CopyVLineToVLineDB(vline: VLine, vlineDB: VLineDB) {
 	vlineDB.MessageBackward = vline.MessageBackward
 
 	// insertion point for pointer fields encoding
-    vlineDB.VLinePointersEncoding.LayerGroupID.Valid = true
+	vlineDB.VLinePointersEncoding.LayerGroupID.Valid = true
 	if (vline.LayerGroup != undefined) {
 		vlineDB.VLinePointersEncoding.LayerGroupID.Int64 = vline.LayerGroup.ID  
-    } else {
+	} else {
 		vlineDB.VLinePointersEncoding.LayerGroupID.Int64 = 0 		
 	}
 
@@ -66,12 +66,16 @@ export function CopyVLineToVLineDB(vline: VLine, vlineDB: VLineDB) {
 	// insertion point for slice of pointers fields encoding
 }
 
+// CopyVLineDBToVLine update basic, pointers and slice of pointers fields of vline
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of vlineDB
+// this function uses frontRepo.map_ID_<structname> to decode the encoded fields
+// a condition is that those maps has to be initialized before
 export function CopyVLineDBToVLine(vlineDB: VLineDB, vline: VLine, frontRepo: FrontRepo) {
 
 	vline.CreatedAt = vlineDB.CreatedAt
 	vline.DeletedAt = vlineDB.DeletedAt
 	vline.ID = vlineDB.ID
-	
+
 	// insertion point for basic fields copy operations
 	vline.StartLat = vlineDB.StartLat
 	vline.StartLng = vlineDB.StartLng
@@ -86,7 +90,7 @@ export function CopyVLineDBToVLine(vlineDB: VLineDB, vline: VLine, frontRepo: Fr
 	vline.MessageBackward = vlineDB.MessageBackward
 
 	// insertion point for pointer fields encoding
-	vline.LayerGroup = frontRepo.LayerGroups.get(vlineDB.VLinePointersEncoding.LayerGroupID.Int64)
+	vline.LayerGroup = frontRepo.map_ID_LayerGroup.get(vlineDB.VLinePointersEncoding.LayerGroupID.Int64)
 
 	// insertion point for slice of pointers fields encoding
 }

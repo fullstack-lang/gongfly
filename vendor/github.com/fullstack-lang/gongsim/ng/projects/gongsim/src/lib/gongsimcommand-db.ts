@@ -19,9 +19,7 @@ export class GongsimCommandDB {
 	SpeedCommandType: string = ""
 	DateSpeedCommand: string = ""
 
-	// insertion point for pointers and slices of pointers declarations
-	Engine?: EngineDB
-
+	// insertion point for other decls
 
 	GongsimCommandPointersEncoding: GongsimCommandPointersEncoding = new GongsimCommandPointersEncoding
 }

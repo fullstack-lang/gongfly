@@ -29,7 +29,7 @@ export function CopyEventToEventDB(event: Event, eventDB: EventDB) {
 	eventDB.CreatedAt = event.CreatedAt
 	eventDB.DeletedAt = event.DeletedAt
 	eventDB.ID = event.ID
-	
+
 	// insertion point for basic fields copy operations
 	eventDB.Name = event.Name
 	eventDB.Duration = event.Duration
@@ -39,12 +39,16 @@ export function CopyEventToEventDB(event: Event, eventDB: EventDB) {
 	// insertion point for slice of pointers fields encoding
 }
 
+// CopyEventDBToEvent update basic, pointers and slice of pointers fields of event
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of eventDB
+// this function uses frontRepo.map_ID_<structname> to decode the encoded fields
+// a condition is that those maps has to be initialized before
 export function CopyEventDBToEvent(eventDB: EventDB, event: Event, frontRepo: FrontRepo) {
 
 	event.CreatedAt = eventDB.CreatedAt
 	event.DeletedAt = eventDB.DeletedAt
 	event.ID = eventDB.ID
-	
+
 	// insertion point for basic fields copy operations
 	event.Name = eventDB.Name
 	event.Duration = eventDB.Duration

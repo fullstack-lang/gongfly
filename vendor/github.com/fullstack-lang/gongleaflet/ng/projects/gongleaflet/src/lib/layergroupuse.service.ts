@@ -102,13 +102,6 @@ export class LayerGroupUseService {
   }
   postLayerGroupUse(layergroupusedb: LayerGroupUseDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupUseDB> {
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    if (layergroupusedb.LayerGroup != undefined) {
-      layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Int64 = layergroupusedb.LayerGroup.ID
-      layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Valid = true
-    }
-    layergroupusedb.LayerGroup = undefined
-
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -117,8 +110,6 @@ export class LayerGroupUseService {
 
     return this.http.post<LayerGroupUseDB>(this.layergroupusesUrl, layergroupusedb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
-        layergroupusedb.LayerGroup = frontRepo.LayerGroups.get(layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Int64)
         // this.log(`posted layergroupusedb id=${layergroupusedb.ID}`)
       }),
       catchError(this.handleError<LayerGroupUseDB>('postLayerGroupUse'))
@@ -172,13 +163,6 @@ export class LayerGroupUseService {
     const id = typeof layergroupusedb === 'number' ? layergroupusedb : layergroupusedb.ID;
     const url = `${this.layergroupusesUrl}/${id}`;
 
-    // insertion point for reset of pointers (to avoid circular JSON)
-    // and encoding of pointers
-    if (layergroupusedb.LayerGroup != undefined) {
-      layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Int64 = layergroupusedb.LayerGroup.ID
-      layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Valid = true
-    }
-    layergroupusedb.LayerGroup = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -188,8 +172,6 @@ export class LayerGroupUseService {
 
     return this.http.put<LayerGroupUseDB>(url, layergroupusedb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
-        layergroupusedb.LayerGroup = frontRepo.LayerGroups.get(layergroupusedb.LayerGroupUsePointersEncoding.LayerGroupID.Int64)
         // this.log(`updated layergroupusedb id=${layergroupusedb.ID}`)
       }),
       catchError(this.handleError<LayerGroupUseDB>('updateLayerGroupUse'))

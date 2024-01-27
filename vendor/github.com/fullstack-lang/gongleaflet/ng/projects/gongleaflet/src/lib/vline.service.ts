@@ -102,13 +102,6 @@ export class VLineService {
   }
   postVLine(vlinedb: VLineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineDB> {
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    if (vlinedb.LayerGroup != undefined) {
-      vlinedb.VLinePointersEncoding.LayerGroupID.Int64 = vlinedb.LayerGroup.ID
-      vlinedb.VLinePointersEncoding.LayerGroupID.Valid = true
-    }
-    vlinedb.LayerGroup = undefined
-
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -117,8 +110,6 @@ export class VLineService {
 
     return this.http.post<VLineDB>(this.vlinesUrl, vlinedb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
-        vlinedb.LayerGroup = frontRepo.LayerGroups.get(vlinedb.VLinePointersEncoding.LayerGroupID.Int64)
         // this.log(`posted vlinedb id=${vlinedb.ID}`)
       }),
       catchError(this.handleError<VLineDB>('postVLine'))
@@ -172,13 +163,6 @@ export class VLineService {
     const id = typeof vlinedb === 'number' ? vlinedb : vlinedb.ID;
     const url = `${this.vlinesUrl}/${id}`;
 
-    // insertion point for reset of pointers (to avoid circular JSON)
-    // and encoding of pointers
-    if (vlinedb.LayerGroup != undefined) {
-      vlinedb.VLinePointersEncoding.LayerGroupID.Int64 = vlinedb.LayerGroup.ID
-      vlinedb.VLinePointersEncoding.LayerGroupID.Valid = true
-    }
-    vlinedb.LayerGroup = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -188,8 +172,6 @@ export class VLineService {
 
     return this.http.put<VLineDB>(url, vlinedb, httpOptions).pipe(
       tap(_ => {
-        // insertion point for restoration of reverse pointers
-        vlinedb.LayerGroup = frontRepo.LayerGroups.get(vlinedb.VLinePointersEncoding.LayerGroupID.Int64)
         // this.log(`updated vlinedb id=${vlinedb.ID}`)
       }),
       catchError(this.handleError<VLineDB>('updateVLine'))
