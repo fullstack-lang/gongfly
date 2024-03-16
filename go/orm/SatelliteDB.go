@@ -38,6 +38,7 @@ type SatelliteAPI struct {
 	models.Satellite_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	SatellitePointersEncoding SatellitePointersEncoding
 }
 
@@ -87,7 +88,9 @@ type SatelliteDB struct {
 
 	// Declation for basic field satelliteDB.Timestampstring
 	Timestampstring_Data sql.NullString
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	SatellitePointersEncoding
 }
 

@@ -38,6 +38,7 @@ type LinerAPI struct {
 	models.Liner_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	LinerPointersEncoding LinerPointersEncoding
 }
 
@@ -103,7 +104,9 @@ type LinerDB struct {
 
 	// Declation for basic field linerDB.Timestampstring
 	Timestampstring_Data sql.NullString
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	LinerPointersEncoding
 }
 

@@ -14,6 +14,13 @@ type CivilianAirport_WOP struct {
 	Name string
 }
 
+func (from *CivilianAirport) CopyBasicFields(to *CivilianAirport) {
+	// insertion point
+	to.Lat = from.Lat
+	to.Lng = from.Lng
+	to.Name = from.Name
+}
+
 type Liner_WOP struct {
 	// insertion point
 	Name string
@@ -30,6 +37,24 @@ type Liner_WOP struct {
 	MaxRotationalSpeed float64
 	VerticalSpeed float64
 	Timestampstring string
+}
+
+func (from *Liner) CopyBasicFields(to *Liner) {
+	// insertion point
+	to.Name = from.Name
+	to.Lat = from.Lat
+	to.Lng = from.Lng
+	to.Heading = from.Heading
+	to.Level = from.Level
+	to.Speed = from.Speed
+	to.State = from.State
+	to.TargetHeading = from.TargetHeading
+	to.TargetLocationLat = from.TargetLocationLat
+	to.TargetLocationLng = from.TargetLocationLng
+	to.DistanceToTarget = from.DistanceToTarget
+	to.MaxRotationalSpeed = from.MaxRotationalSpeed
+	to.VerticalSpeed = from.VerticalSpeed
+	to.Timestampstring = from.Timestampstring
 }
 
 type Message_WOP struct {
@@ -54,6 +79,28 @@ type Message_WOP struct {
 	Display bool
 }
 
+func (from *Message) CopyBasicFields(to *Message) {
+	// insertion point
+	to.Lat = from.Lat
+	to.Lng = from.Lng
+	to.Heading = from.Heading
+	to.Level = from.Level
+	to.Speed = from.Speed
+	to.State = from.State
+	to.Name = from.Name
+	to.TargetLocationLat = from.TargetLocationLat
+	to.TargetLocationLng = from.TargetLocationLng
+	to.DistanceToTarget = from.DistanceToTarget
+	to.Timestampstring = from.Timestampstring
+	to.DurationSinceSimulationStart = from.DurationSinceSimulationStart
+	to.Timestampstartstring = from.Timestampstartstring
+	to.Source = from.Source
+	to.Destination = from.Destination
+	to.Content = from.Content
+	to.About_string = from.About_string
+	to.Display = from.Display
+}
+
 type OpsLine_WOP struct {
 	// insertion point
 	IsTransmitting bool
@@ -64,6 +111,16 @@ type OpsLine_WOP struct {
 	Name string
 }
 
+func (from *OpsLine) CopyBasicFields(to *OpsLine) {
+	// insertion point
+	to.IsTransmitting = from.IsTransmitting
+	to.TransmissionMessage = from.TransmissionMessage
+	to.IsTransmittingBackward = from.IsTransmittingBackward
+	to.TransmissionMessageBackward = from.TransmissionMessageBackward
+	to.State = from.State
+	to.Name = from.Name
+}
+
 type Radar_WOP struct {
 	// insertion point
 	State RadarStateEnum
@@ -71,6 +128,15 @@ type Radar_WOP struct {
 	Lat float64
 	Lng float64
 	Range float64
+}
+
+func (from *Radar) CopyBasicFields(to *Radar) {
+	// insertion point
+	to.State = from.State
+	to.Name = from.Name
+	to.Lat = from.Lat
+	to.Lng = from.Lng
+	to.Range = from.Range
 }
 
 type Satellite_WOP struct {
@@ -87,6 +153,20 @@ type Satellite_WOP struct {
 	Timestampstring string
 }
 
+func (from *Satellite) CopyBasicFields(to *Satellite) {
+	// insertion point
+	to.Name = from.Name
+	to.Line1 = from.Line1
+	to.Line2 = from.Line2
+	to.Lat = from.Lat
+	to.Lng = from.Lng
+	to.Heading = from.Heading
+	to.Level = from.Level
+	to.Speed = from.Speed
+	to.VerticalSpeed = from.VerticalSpeed
+	to.Timestampstring = from.Timestampstring
+}
+
 type Scenario_WOP struct {
 	// insertion point
 	Name string
@@ -94,5 +174,14 @@ type Scenario_WOP struct {
 	Lng float64
 	ZoomLevel float64
 	MessageVisualSpeed float64
+}
+
+func (from *Scenario) CopyBasicFields(to *Scenario) {
+	// insertion point
+	to.Name = from.Name
+	to.Lat = from.Lat
+	to.Lng = from.Lng
+	to.ZoomLevel = from.ZoomLevel
+	to.MessageVisualSpeed = from.MessageVisualSpeed
 }
 

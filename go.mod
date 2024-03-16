@@ -16,6 +16,7 @@ require (
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.9.1
 	github.com/glebarez/sqlite v1.10.0
+	github.com/gorilla/websocket v1.5.1
 	github.com/joshuaferrara/go-satellite v0.0.0-20220611180459-512638c64e5b
 	github.com/kellydunn/golang-geo v0.7.0
 	github.com/tealeg/xlsx/v3 v3.3.5

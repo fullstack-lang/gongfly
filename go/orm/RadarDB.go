@@ -38,6 +38,7 @@ type RadarAPI struct {
 	models.Radar_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	RadarPointersEncoding RadarPointersEncoding
 }
 
@@ -72,7 +73,9 @@ type RadarDB struct {
 
 	// Declation for basic field radarDB.Range
 	Range_Data sql.NullFloat64
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	RadarPointersEncoding
 }
 

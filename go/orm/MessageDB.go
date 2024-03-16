@@ -38,6 +38,7 @@ type MessageAPI struct {
 	models.Message_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	MessagePointersEncoding MessagePointersEncoding
 }
 
@@ -112,7 +113,9 @@ type MessageDB struct {
 	// Declation for basic field messageDB.Display
 	// provide the sql storage for the boolan
 	Display_Data sql.NullBool
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	MessagePointersEncoding
 }
 

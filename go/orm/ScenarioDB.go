@@ -38,6 +38,7 @@ type ScenarioAPI struct {
 	models.Scenario_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	ScenarioPointersEncoding ScenarioPointersEncoding
 }
 
@@ -72,7 +73,9 @@ type ScenarioDB struct {
 
 	// Declation for basic field scenarioDB.MessageVisualSpeed
 	MessageVisualSpeed_Data sql.NullFloat64
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	ScenarioPointersEncoding
 }
 
