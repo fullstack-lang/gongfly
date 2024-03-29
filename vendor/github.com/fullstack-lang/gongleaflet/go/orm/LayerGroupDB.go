@@ -38,6 +38,7 @@ type LayerGroupAPI struct {
 	models.LayerGroup_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	LayerGroupPointersEncoding LayerGroupPointersEncoding
 }
 
@@ -63,7 +64,9 @@ type LayerGroupDB struct {
 
 	// Declation for basic field layergroupDB.DisplayName
 	DisplayName_Data sql.NullString
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	LayerGroupPointersEncoding
 }
 

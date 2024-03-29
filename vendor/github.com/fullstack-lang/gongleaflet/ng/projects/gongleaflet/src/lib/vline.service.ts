@@ -11,13 +11,13 @@ import { BehaviorSubject } from 'rxjs'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
 
-import { VLineDB } from './vline-db'
-import { VLine, CopyVLineToVLineDB } from './vline'
+import { VLineAPI } from './vline-api'
+import { VLine, CopyVLineToVLineAPI } from './vline'
 
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
-import { LayerGroupDB } from './layergroup-db'
+import { LayerGroupAPI } from './layergroup-api'
 
 @Injectable({
   providedIn: 'root'
@@ -47,41 +47,41 @@ export class VLineService {
 
   /** GET vlines from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineDB[]> {
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineAPI[]> {
     return this.getVLines(GONG__StackPath, frontRepo)
   }
-  getVLines(GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineDB[]> {
+  getVLines(GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineAPI[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
-    return this.http.get<VLineDB[]>(this.vlinesUrl, { params: params })
+    return this.http.get<VLineAPI[]>(this.vlinesUrl, { params: params })
       .pipe(
         tap(),
-        catchError(this.handleError<VLineDB[]>('getVLines', []))
+        catchError(this.handleError<VLineAPI[]>('getVLines', []))
       );
   }
 
   /** GET vline by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineDB> {
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineAPI> {
     return this.getVLine(id, GONG__StackPath, frontRepo)
   }
-  getVLine(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineDB> {
+  getVLine(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     const url = `${this.vlinesUrl}/${id}`;
-    return this.http.get<VLineDB>(url, { params: params }).pipe(
+    return this.http.get<VLineAPI>(url, { params: params }).pipe(
       // tap(_ => this.log(`fetched vline id=${id}`)),
-      catchError(this.handleError<VLineDB>(`getVLine id=${id}`))
+      catchError(this.handleError<VLineAPI>(`getVLine id=${id}`))
     );
   }
 
   // postFront copy vline to a version with encoded pointers and post to the back
-  postFront(vline: VLine, GONG__StackPath: string): Observable<VLineDB> {
-    let vlineDB = new VLineDB
-    CopyVLineToVLineDB(vline, vlineDB)
-    const id = typeof vlineDB === 'number' ? vlineDB : vlineDB.ID
+  postFront(vline: VLine, GONG__StackPath: string): Observable<VLineAPI> {
+    let vlineAPI = new VLineAPI
+    CopyVLineToVLineAPI(vline, vlineAPI)
+    const id = typeof vlineAPI === 'number' ? vlineAPI : vlineAPI.ID
     const url = `${this.vlinesUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -89,18 +89,18 @@ export class VLineService {
       params: params
     }
 
-    return this.http.post<VLineDB>(url, vlineDB, httpOptions).pipe(
+    return this.http.post<VLineAPI>(url, vlineAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<VLineDB>('postVLine'))
+      catchError(this.handleError<VLineAPI>('postVLine'))
     );
   }
   
   /** POST: add a new vline to the server */
-  post(vlinedb: VLineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineDB> {
+  post(vlinedb: VLineAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineAPI> {
     return this.postVLine(vlinedb, GONG__StackPath, frontRepo)
   }
-  postVLine(vlinedb: VLineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineDB> {
+  postVLine(vlinedb: VLineAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -108,19 +108,19 @@ export class VLineService {
       params: params
     }
 
-    return this.http.post<VLineDB>(this.vlinesUrl, vlinedb, httpOptions).pipe(
+    return this.http.post<VLineAPI>(this.vlinesUrl, vlinedb, httpOptions).pipe(
       tap(_ => {
         // this.log(`posted vlinedb id=${vlinedb.ID}`)
       }),
-      catchError(this.handleError<VLineDB>('postVLine'))
+      catchError(this.handleError<VLineAPI>('postVLine'))
     );
   }
 
   /** DELETE: delete the vlinedb from the server */
-  delete(vlinedb: VLineDB | number, GONG__StackPath: string): Observable<VLineDB> {
+  delete(vlinedb: VLineAPI | number, GONG__StackPath: string): Observable<VLineAPI> {
     return this.deleteVLine(vlinedb, GONG__StackPath)
   }
-  deleteVLine(vlinedb: VLineDB | number, GONG__StackPath: string): Observable<VLineDB> {
+  deleteVLine(vlinedb: VLineAPI | number, GONG__StackPath: string): Observable<VLineAPI> {
     const id = typeof vlinedb === 'number' ? vlinedb : vlinedb.ID;
     const url = `${this.vlinesUrl}/${id}`;
 
@@ -130,17 +130,17 @@ export class VLineService {
       params: params
     };
 
-    return this.http.delete<VLineDB>(url, httpOptions).pipe(
+    return this.http.delete<VLineAPI>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted vlinedb id=${id}`)),
-      catchError(this.handleError<VLineDB>('deleteVLine'))
+      catchError(this.handleError<VLineAPI>('deleteVLine'))
     );
   }
 
   // updateFront copy vline to a version with encoded pointers and update to the back
-  updateFront(vline: VLine, GONG__StackPath: string): Observable<VLineDB> {
-    let vlineDB = new VLineDB
-    CopyVLineToVLineDB(vline, vlineDB)
-    const id = typeof vlineDB === 'number' ? vlineDB : vlineDB.ID
+  updateFront(vline: VLine, GONG__StackPath: string): Observable<VLineAPI> {
+    let vlineAPI = new VLineAPI
+    CopyVLineToVLineAPI(vline, vlineAPI)
+    const id = typeof vlineAPI === 'number' ? vlineAPI : vlineAPI.ID
     const url = `${this.vlinesUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -148,18 +148,18 @@ export class VLineService {
       params: params
     }
 
-    return this.http.put<VLineDB>(url, vlineDB, httpOptions).pipe(
+    return this.http.put<VLineAPI>(url, vlineAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<VLineDB>('updateVLine'))
+      catchError(this.handleError<VLineAPI>('updateVLine'))
     );
   }
 
   /** PUT: update the vlinedb on the server */
-  update(vlinedb: VLineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineDB> {
+  update(vlinedb: VLineAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineAPI> {
     return this.updateVLine(vlinedb, GONG__StackPath, frontRepo)
   }
-  updateVLine(vlinedb: VLineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineDB> {
+  updateVLine(vlinedb: VLineAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VLineAPI> {
     const id = typeof vlinedb === 'number' ? vlinedb : vlinedb.ID;
     const url = `${this.vlinesUrl}/${id}`;
 
@@ -170,11 +170,11 @@ export class VLineService {
       params: params
     };
 
-    return this.http.put<VLineDB>(url, vlinedb, httpOptions).pipe(
+    return this.http.put<VLineAPI>(url, vlinedb, httpOptions).pipe(
       tap(_ => {
         // this.log(`updated vlinedb id=${vlinedb.ID}`)
       }),
-      catchError(this.handleError<VLineDB>('updateVLine'))
+      catchError(this.handleError<VLineAPI>('updateVLine'))
     );
   }
 

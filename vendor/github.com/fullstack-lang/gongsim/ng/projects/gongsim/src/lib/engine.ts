@@ -1,6 +1,6 @@
 // generated code - do not edit
 
-import { EngineDB } from './engine-db'
+import { EngineAPI } from './engine-api'
 import { FrontRepo } from './front-repo.service';
 
 // insertion point for imports
@@ -29,46 +29,46 @@ export class Engine {
 	// insertion point for pointers and slices of pointers declarations
 }
 
-export function CopyEngineToEngineDB(engine: Engine, engineDB: EngineDB) {
+export function CopyEngineToEngineAPI(engine: Engine, engineAPI: EngineAPI) {
 
-	engineDB.CreatedAt = engine.CreatedAt
-	engineDB.DeletedAt = engine.DeletedAt
-	engineDB.ID = engine.ID
+	engineAPI.CreatedAt = engine.CreatedAt
+	engineAPI.DeletedAt = engine.DeletedAt
+	engineAPI.ID = engine.ID
 
 	// insertion point for basic fields copy operations
-	engineDB.Name = engine.Name
-	engineDB.EndTime = engine.EndTime
-	engineDB.CurrentTime = engine.CurrentTime
-	engineDB.SecondsSinceStart = engine.SecondsSinceStart
-	engineDB.Fired = engine.Fired
-	engineDB.ControlMode = engine.ControlMode
-	engineDB.State = engine.State
-	engineDB.Speed = engine.Speed
+	engineAPI.Name = engine.Name
+	engineAPI.EndTime = engine.EndTime
+	engineAPI.CurrentTime = engine.CurrentTime
+	engineAPI.SecondsSinceStart = engine.SecondsSinceStart
+	engineAPI.Fired = engine.Fired
+	engineAPI.ControlMode = engine.ControlMode
+	engineAPI.State = engine.State
+	engineAPI.Speed = engine.Speed
 
 	// insertion point for pointer fields encoding
 
 	// insertion point for slice of pointers fields encoding
 }
 
-// CopyEngineDBToEngine update basic, pointers and slice of pointers fields of engine
-// from respectively the basic fields and encoded fields of pointers and slices of pointers of engineDB
+// CopyEngineAPIToEngine update basic, pointers and slice of pointers fields of engine
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of engineAPI
 // this function uses frontRepo.map_ID_<structname> to decode the encoded fields
 // a condition is that those maps has to be initialized before
-export function CopyEngineDBToEngine(engineDB: EngineDB, engine: Engine, frontRepo: FrontRepo) {
+export function CopyEngineAPIToEngine(engineAPI: EngineAPI, engine: Engine, frontRepo: FrontRepo) {
 
-	engine.CreatedAt = engineDB.CreatedAt
-	engine.DeletedAt = engineDB.DeletedAt
-	engine.ID = engineDB.ID
+	engine.CreatedAt = engineAPI.CreatedAt
+	engine.DeletedAt = engineAPI.DeletedAt
+	engine.ID = engineAPI.ID
 
 	// insertion point for basic fields copy operations
-	engine.Name = engineDB.Name
-	engine.EndTime = engineDB.EndTime
-	engine.CurrentTime = engineDB.CurrentTime
-	engine.SecondsSinceStart = engineDB.SecondsSinceStart
-	engine.Fired = engineDB.Fired
-	engine.ControlMode = engineDB.ControlMode
-	engine.State = engineDB.State
-	engine.Speed = engineDB.Speed
+	engine.Name = engineAPI.Name
+	engine.EndTime = engineAPI.EndTime
+	engine.CurrentTime = engineAPI.CurrentTime
+	engine.SecondsSinceStart = engineAPI.SecondsSinceStart
+	engine.Fired = engineAPI.Fired
+	engine.ControlMode = engineAPI.ControlMode
+	engine.State = engineAPI.State
+	engine.Speed = engineAPI.Speed
 
 	// insertion point for pointer fields encoding
 

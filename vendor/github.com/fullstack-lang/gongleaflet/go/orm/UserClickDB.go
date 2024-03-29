@@ -38,6 +38,7 @@ type UserClickAPI struct {
 	models.UserClick_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	UserClickPointersEncoding UserClickPointersEncoding
 }
 
@@ -69,7 +70,9 @@ type UserClickDB struct {
 
 	// Declation for basic field userclickDB.TimeOfClick
 	TimeOfClick_Data sql.NullTime
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	UserClickPointersEncoding
 }
 

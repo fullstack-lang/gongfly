@@ -1,6 +1,6 @@
 // generated code - do not edit
 
-import { LayerGroupDB } from './layergroup-db'
+import { LayerGroupAPI } from './layergroup-api'
 import { FrontRepo } from './front-repo.service';
 
 // insertion point for imports
@@ -23,34 +23,34 @@ export class LayerGroup {
 	// insertion point for pointers and slices of pointers declarations
 }
 
-export function CopyLayerGroupToLayerGroupDB(layergroup: LayerGroup, layergroupDB: LayerGroupDB) {
+export function CopyLayerGroupToLayerGroupAPI(layergroup: LayerGroup, layergroupAPI: LayerGroupAPI) {
 
-	layergroupDB.CreatedAt = layergroup.CreatedAt
-	layergroupDB.DeletedAt = layergroup.DeletedAt
-	layergroupDB.ID = layergroup.ID
+	layergroupAPI.CreatedAt = layergroup.CreatedAt
+	layergroupAPI.DeletedAt = layergroup.DeletedAt
+	layergroupAPI.ID = layergroup.ID
 
 	// insertion point for basic fields copy operations
-	layergroupDB.Name = layergroup.Name
-	layergroupDB.DisplayName = layergroup.DisplayName
+	layergroupAPI.Name = layergroup.Name
+	layergroupAPI.DisplayName = layergroup.DisplayName
 
 	// insertion point for pointer fields encoding
 
 	// insertion point for slice of pointers fields encoding
 }
 
-// CopyLayerGroupDBToLayerGroup update basic, pointers and slice of pointers fields of layergroup
-// from respectively the basic fields and encoded fields of pointers and slices of pointers of layergroupDB
+// CopyLayerGroupAPIToLayerGroup update basic, pointers and slice of pointers fields of layergroup
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of layergroupAPI
 // this function uses frontRepo.map_ID_<structname> to decode the encoded fields
 // a condition is that those maps has to be initialized before
-export function CopyLayerGroupDBToLayerGroup(layergroupDB: LayerGroupDB, layergroup: LayerGroup, frontRepo: FrontRepo) {
+export function CopyLayerGroupAPIToLayerGroup(layergroupAPI: LayerGroupAPI, layergroup: LayerGroup, frontRepo: FrontRepo) {
 
-	layergroup.CreatedAt = layergroupDB.CreatedAt
-	layergroup.DeletedAt = layergroupDB.DeletedAt
-	layergroup.ID = layergroupDB.ID
+	layergroup.CreatedAt = layergroupAPI.CreatedAt
+	layergroup.DeletedAt = layergroupAPI.DeletedAt
+	layergroup.ID = layergroupAPI.ID
 
 	// insertion point for basic fields copy operations
-	layergroup.Name = layergroupDB.Name
-	layergroup.DisplayName = layergroupDB.DisplayName
+	layergroup.Name = layergroupAPI.Name
+	layergroup.DisplayName = layergroupAPI.DisplayName
 
 	// insertion point for pointer fields encoding
 

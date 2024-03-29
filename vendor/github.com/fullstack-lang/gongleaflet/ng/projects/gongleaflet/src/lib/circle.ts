@@ -1,6 +1,6 @@
 // generated code - do not edit
 
-import { CircleDB } from './circle-db'
+import { CircleAPI } from './circle-api'
 import { FrontRepo } from './front-repo.service';
 
 // insertion point for imports
@@ -30,52 +30,52 @@ export class Circle {
 
 }
 
-export function CopyCircleToCircleDB(circle: Circle, circleDB: CircleDB) {
+export function CopyCircleToCircleAPI(circle: Circle, circleAPI: CircleAPI) {
 
-	circleDB.CreatedAt = circle.CreatedAt
-	circleDB.DeletedAt = circle.DeletedAt
-	circleDB.ID = circle.ID
+	circleAPI.CreatedAt = circle.CreatedAt
+	circleAPI.DeletedAt = circle.DeletedAt
+	circleAPI.ID = circle.ID
 
 	// insertion point for basic fields copy operations
-	circleDB.Lat = circle.Lat
-	circleDB.Lng = circle.Lng
-	circleDB.Name = circle.Name
-	circleDB.Radius = circle.Radius
-	circleDB.ColorEnum = circle.ColorEnum
-	circleDB.DashStyleEnum = circle.DashStyleEnum
+	circleAPI.Lat = circle.Lat
+	circleAPI.Lng = circle.Lng
+	circleAPI.Name = circle.Name
+	circleAPI.Radius = circle.Radius
+	circleAPI.ColorEnum = circle.ColorEnum
+	circleAPI.DashStyleEnum = circle.DashStyleEnum
 
 	// insertion point for pointer fields encoding
-	circleDB.CirclePointersEncoding.LayerGroupID.Valid = true
+	circleAPI.CirclePointersEncoding.LayerGroupID.Valid = true
 	if (circle.LayerGroup != undefined) {
-		circleDB.CirclePointersEncoding.LayerGroupID.Int64 = circle.LayerGroup.ID  
+		circleAPI.CirclePointersEncoding.LayerGroupID.Int64 = circle.LayerGroup.ID  
 	} else {
-		circleDB.CirclePointersEncoding.LayerGroupID.Int64 = 0 		
+		circleAPI.CirclePointersEncoding.LayerGroupID.Int64 = 0 		
 	}
 
 
 	// insertion point for slice of pointers fields encoding
 }
 
-// CopyCircleDBToCircle update basic, pointers and slice of pointers fields of circle
-// from respectively the basic fields and encoded fields of pointers and slices of pointers of circleDB
+// CopyCircleAPIToCircle update basic, pointers and slice of pointers fields of circle
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of circleAPI
 // this function uses frontRepo.map_ID_<structname> to decode the encoded fields
 // a condition is that those maps has to be initialized before
-export function CopyCircleDBToCircle(circleDB: CircleDB, circle: Circle, frontRepo: FrontRepo) {
+export function CopyCircleAPIToCircle(circleAPI: CircleAPI, circle: Circle, frontRepo: FrontRepo) {
 
-	circle.CreatedAt = circleDB.CreatedAt
-	circle.DeletedAt = circleDB.DeletedAt
-	circle.ID = circleDB.ID
+	circle.CreatedAt = circleAPI.CreatedAt
+	circle.DeletedAt = circleAPI.DeletedAt
+	circle.ID = circleAPI.ID
 
 	// insertion point for basic fields copy operations
-	circle.Lat = circleDB.Lat
-	circle.Lng = circleDB.Lng
-	circle.Name = circleDB.Name
-	circle.Radius = circleDB.Radius
-	circle.ColorEnum = circleDB.ColorEnum
-	circle.DashStyleEnum = circleDB.DashStyleEnum
+	circle.Lat = circleAPI.Lat
+	circle.Lng = circleAPI.Lng
+	circle.Name = circleAPI.Name
+	circle.Radius = circleAPI.Radius
+	circle.ColorEnum = circleAPI.ColorEnum
+	circle.DashStyleEnum = circleAPI.DashStyleEnum
 
 	// insertion point for pointer fields encoding
-	circle.LayerGroup = frontRepo.map_ID_LayerGroup.get(circleDB.CirclePointersEncoding.LayerGroupID.Int64)
+	circle.LayerGroup = frontRepo.map_ID_LayerGroup.get(circleAPI.CirclePointersEncoding.LayerGroupID.Int64)
 
 	// insertion point for slice of pointers fields encoding
 }

@@ -11,8 +11,8 @@ import { BehaviorSubject } from 'rxjs'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
 
-import { GongsimStatusDB } from './gongsimstatus-db'
-import { GongsimStatus, CopyGongsimStatusToGongsimStatusDB } from './gongsimstatus'
+import { GongsimStatusAPI } from './gongsimstatus-api'
+import { GongsimStatus, CopyGongsimStatusToGongsimStatusAPI } from './gongsimstatus'
 
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
@@ -46,41 +46,41 @@ export class GongsimStatusService {
 
   /** GET gongsimstatuss from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB[]> {
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusAPI[]> {
     return this.getGongsimStatuss(GONG__StackPath, frontRepo)
   }
-  getGongsimStatuss(GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB[]> {
+  getGongsimStatuss(GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusAPI[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
-    return this.http.get<GongsimStatusDB[]>(this.gongsimstatussUrl, { params: params })
+    return this.http.get<GongsimStatusAPI[]>(this.gongsimstatussUrl, { params: params })
       .pipe(
         tap(),
-        catchError(this.handleError<GongsimStatusDB[]>('getGongsimStatuss', []))
+        catchError(this.handleError<GongsimStatusAPI[]>('getGongsimStatuss', []))
       );
   }
 
   /** GET gongsimstatus by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusAPI> {
     return this.getGongsimStatus(id, GONG__StackPath, frontRepo)
   }
-  getGongsimStatus(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
+  getGongsimStatus(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     const url = `${this.gongsimstatussUrl}/${id}`;
-    return this.http.get<GongsimStatusDB>(url, { params: params }).pipe(
+    return this.http.get<GongsimStatusAPI>(url, { params: params }).pipe(
       // tap(_ => this.log(`fetched gongsimstatus id=${id}`)),
-      catchError(this.handleError<GongsimStatusDB>(`getGongsimStatus id=${id}`))
+      catchError(this.handleError<GongsimStatusAPI>(`getGongsimStatus id=${id}`))
     );
   }
 
   // postFront copy gongsimstatus to a version with encoded pointers and post to the back
-  postFront(gongsimstatus: GongsimStatus, GONG__StackPath: string): Observable<GongsimStatusDB> {
-    let gongsimstatusDB = new GongsimStatusDB
-    CopyGongsimStatusToGongsimStatusDB(gongsimstatus, gongsimstatusDB)
-    const id = typeof gongsimstatusDB === 'number' ? gongsimstatusDB : gongsimstatusDB.ID
+  postFront(gongsimstatus: GongsimStatus, GONG__StackPath: string): Observable<GongsimStatusAPI> {
+    let gongsimstatusAPI = new GongsimStatusAPI
+    CopyGongsimStatusToGongsimStatusAPI(gongsimstatus, gongsimstatusAPI)
+    const id = typeof gongsimstatusAPI === 'number' ? gongsimstatusAPI : gongsimstatusAPI.ID
     const url = `${this.gongsimstatussUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -88,18 +88,18 @@ export class GongsimStatusService {
       params: params
     }
 
-    return this.http.post<GongsimStatusDB>(url, gongsimstatusDB, httpOptions).pipe(
+    return this.http.post<GongsimStatusAPI>(url, gongsimstatusAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<GongsimStatusDB>('postGongsimStatus'))
+      catchError(this.handleError<GongsimStatusAPI>('postGongsimStatus'))
     );
   }
   
   /** POST: add a new gongsimstatus to the server */
-  post(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
+  post(gongsimstatusdb: GongsimStatusAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusAPI> {
     return this.postGongsimStatus(gongsimstatusdb, GONG__StackPath, frontRepo)
   }
-  postGongsimStatus(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
+  postGongsimStatus(gongsimstatusdb: GongsimStatusAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -107,19 +107,19 @@ export class GongsimStatusService {
       params: params
     }
 
-    return this.http.post<GongsimStatusDB>(this.gongsimstatussUrl, gongsimstatusdb, httpOptions).pipe(
+    return this.http.post<GongsimStatusAPI>(this.gongsimstatussUrl, gongsimstatusdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`posted gongsimstatusdb id=${gongsimstatusdb.ID}`)
       }),
-      catchError(this.handleError<GongsimStatusDB>('postGongsimStatus'))
+      catchError(this.handleError<GongsimStatusAPI>('postGongsimStatus'))
     );
   }
 
   /** DELETE: delete the gongsimstatusdb from the server */
-  delete(gongsimstatusdb: GongsimStatusDB | number, GONG__StackPath: string): Observable<GongsimStatusDB> {
+  delete(gongsimstatusdb: GongsimStatusAPI | number, GONG__StackPath: string): Observable<GongsimStatusAPI> {
     return this.deleteGongsimStatus(gongsimstatusdb, GONG__StackPath)
   }
-  deleteGongsimStatus(gongsimstatusdb: GongsimStatusDB | number, GONG__StackPath: string): Observable<GongsimStatusDB> {
+  deleteGongsimStatus(gongsimstatusdb: GongsimStatusAPI | number, GONG__StackPath: string): Observable<GongsimStatusAPI> {
     const id = typeof gongsimstatusdb === 'number' ? gongsimstatusdb : gongsimstatusdb.ID;
     const url = `${this.gongsimstatussUrl}/${id}`;
 
@@ -129,17 +129,17 @@ export class GongsimStatusService {
       params: params
     };
 
-    return this.http.delete<GongsimStatusDB>(url, httpOptions).pipe(
+    return this.http.delete<GongsimStatusAPI>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted gongsimstatusdb id=${id}`)),
-      catchError(this.handleError<GongsimStatusDB>('deleteGongsimStatus'))
+      catchError(this.handleError<GongsimStatusAPI>('deleteGongsimStatus'))
     );
   }
 
   // updateFront copy gongsimstatus to a version with encoded pointers and update to the back
-  updateFront(gongsimstatus: GongsimStatus, GONG__StackPath: string): Observable<GongsimStatusDB> {
-    let gongsimstatusDB = new GongsimStatusDB
-    CopyGongsimStatusToGongsimStatusDB(gongsimstatus, gongsimstatusDB)
-    const id = typeof gongsimstatusDB === 'number' ? gongsimstatusDB : gongsimstatusDB.ID
+  updateFront(gongsimstatus: GongsimStatus, GONG__StackPath: string): Observable<GongsimStatusAPI> {
+    let gongsimstatusAPI = new GongsimStatusAPI
+    CopyGongsimStatusToGongsimStatusAPI(gongsimstatus, gongsimstatusAPI)
+    const id = typeof gongsimstatusAPI === 'number' ? gongsimstatusAPI : gongsimstatusAPI.ID
     const url = `${this.gongsimstatussUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -147,18 +147,18 @@ export class GongsimStatusService {
       params: params
     }
 
-    return this.http.put<GongsimStatusDB>(url, gongsimstatusDB, httpOptions).pipe(
+    return this.http.put<GongsimStatusAPI>(url, gongsimstatusAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<GongsimStatusDB>('updateGongsimStatus'))
+      catchError(this.handleError<GongsimStatusAPI>('updateGongsimStatus'))
     );
   }
 
   /** PUT: update the gongsimstatusdb on the server */
-  update(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
+  update(gongsimstatusdb: GongsimStatusAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusAPI> {
     return this.updateGongsimStatus(gongsimstatusdb, GONG__StackPath, frontRepo)
   }
-  updateGongsimStatus(gongsimstatusdb: GongsimStatusDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusDB> {
+  updateGongsimStatus(gongsimstatusdb: GongsimStatusAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongsimStatusAPI> {
     const id = typeof gongsimstatusdb === 'number' ? gongsimstatusdb : gongsimstatusdb.ID;
     const url = `${this.gongsimstatussUrl}/${id}`;
 
@@ -169,11 +169,11 @@ export class GongsimStatusService {
       params: params
     };
 
-    return this.http.put<GongsimStatusDB>(url, gongsimstatusdb, httpOptions).pipe(
+    return this.http.put<GongsimStatusAPI>(url, gongsimstatusdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`updated gongsimstatusdb id=${gongsimstatusdb.ID}`)
       }),
-      catchError(this.handleError<GongsimStatusDB>('updateGongsimStatus'))
+      catchError(this.handleError<GongsimStatusAPI>('updateGongsimStatus'))
     );
   }
 

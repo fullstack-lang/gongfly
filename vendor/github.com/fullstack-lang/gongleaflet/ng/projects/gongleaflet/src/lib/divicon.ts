@@ -1,6 +1,6 @@
 // generated code - do not edit
 
-import { DivIconDB } from './divicon-db'
+import { DivIconAPI } from './divicon-api'
 import { FrontRepo } from './front-repo.service';
 
 // insertion point for imports
@@ -23,34 +23,34 @@ export class DivIcon {
 	// insertion point for pointers and slices of pointers declarations
 }
 
-export function CopyDivIconToDivIconDB(divicon: DivIcon, diviconDB: DivIconDB) {
+export function CopyDivIconToDivIconAPI(divicon: DivIcon, diviconAPI: DivIconAPI) {
 
-	diviconDB.CreatedAt = divicon.CreatedAt
-	diviconDB.DeletedAt = divicon.DeletedAt
-	diviconDB.ID = divicon.ID
+	diviconAPI.CreatedAt = divicon.CreatedAt
+	diviconAPI.DeletedAt = divicon.DeletedAt
+	diviconAPI.ID = divicon.ID
 
 	// insertion point for basic fields copy operations
-	diviconDB.Name = divicon.Name
-	diviconDB.SVG = divicon.SVG
+	diviconAPI.Name = divicon.Name
+	diviconAPI.SVG = divicon.SVG
 
 	// insertion point for pointer fields encoding
 
 	// insertion point for slice of pointers fields encoding
 }
 
-// CopyDivIconDBToDivIcon update basic, pointers and slice of pointers fields of divicon
-// from respectively the basic fields and encoded fields of pointers and slices of pointers of diviconDB
+// CopyDivIconAPIToDivIcon update basic, pointers and slice of pointers fields of divicon
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of diviconAPI
 // this function uses frontRepo.map_ID_<structname> to decode the encoded fields
 // a condition is that those maps has to be initialized before
-export function CopyDivIconDBToDivIcon(diviconDB: DivIconDB, divicon: DivIcon, frontRepo: FrontRepo) {
+export function CopyDivIconAPIToDivIcon(diviconAPI: DivIconAPI, divicon: DivIcon, frontRepo: FrontRepo) {
 
-	divicon.CreatedAt = diviconDB.CreatedAt
-	divicon.DeletedAt = diviconDB.DeletedAt
-	divicon.ID = diviconDB.ID
+	divicon.CreatedAt = diviconAPI.CreatedAt
+	divicon.DeletedAt = diviconAPI.DeletedAt
+	divicon.ID = diviconAPI.ID
 
 	// insertion point for basic fields copy operations
-	divicon.Name = diviconDB.Name
-	divicon.SVG = diviconDB.SVG
+	divicon.Name = diviconAPI.Name
+	divicon.SVG = diviconAPI.SVG
 
 	// insertion point for pointer fields encoding
 

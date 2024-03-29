@@ -27,44 +27,44 @@ func IsStaged[Type Gongstruct](stage *StageStruct, instance *Type) (ok bool) {
 }
 
 // insertion point for stage per struct
-	func (stage *StageStruct) IsStagedDummyAgent(dummyagent *DummyAgent) (ok bool) {
+func (stage *StageStruct) IsStagedDummyAgent(dummyagent *DummyAgent) (ok bool) {
 
-		_, ok = stage.DummyAgents[dummyagent]
-	
-		return
-	}
+	_, ok = stage.DummyAgents[dummyagent]
 
-	func (stage *StageStruct) IsStagedEngine(engine *Engine) (ok bool) {
+	return
+}
 
-		_, ok = stage.Engines[engine]
-	
-		return
-	}
+func (stage *StageStruct) IsStagedEngine(engine *Engine) (ok bool) {
 
-	func (stage *StageStruct) IsStagedEvent(event *Event) (ok bool) {
+	_, ok = stage.Engines[engine]
 
-		_, ok = stage.Events[event]
-	
-		return
-	}
+	return
+}
 
-	func (stage *StageStruct) IsStagedGongsimCommand(gongsimcommand *GongsimCommand) (ok bool) {
+func (stage *StageStruct) IsStagedEvent(event *Event) (ok bool) {
 
-		_, ok = stage.GongsimCommands[gongsimcommand]
-	
-		return
-	}
+	_, ok = stage.Events[event]
 
-	func (stage *StageStruct) IsStagedGongsimStatus(gongsimstatus *GongsimStatus) (ok bool) {
+	return
+}
 
-		_, ok = stage.GongsimStatuss[gongsimstatus]
-	
-		return
-	}
+func (stage *StageStruct) IsStagedGongsimCommand(gongsimcommand *GongsimCommand) (ok bool) {
+
+	_, ok = stage.GongsimCommands[gongsimcommand]
+
+	return
+}
+
+func (stage *StageStruct) IsStagedGongsimStatus(gongsimstatus *GongsimStatus) (ok bool) {
+
+	_, ok = stage.GongsimStatuss[gongsimstatus]
+
+	return
+}
 
 
 // StageBranch stages instance and apply StageBranch on all gongstruct instances that are
-// referenced by pointers or slices of pointers of the insance
+// referenced by pointers or slices of pointers of the instance
 //
 // the algorithm stops along the course of graph if a vertex is already staged
 func StageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
@@ -168,6 +168,143 @@ func (stage *StageStruct) StageBranchGongsimStatus(gongsimstatus *GongsimStatus)
 
 	//insertion point for the staging of instances referenced by slice of pointers
 
+}
+
+
+// CopyBranch stages instance and apply CopyBranch on all gongstruct instances that are
+// referenced by pointers or slices of pointers of the instance
+//
+// the algorithm stops along the course of graph if a vertex is already staged
+func CopyBranch[Type Gongstruct](from *Type) (to *Type) {
+
+	mapOrigCopy := make(map[any]any)
+	_ = mapOrigCopy
+
+	switch fromT := any(from).(type) {
+	// insertion point for stage branch
+	case *DummyAgent:
+		toT := CopyBranchDummyAgent(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *Engine:
+		toT := CopyBranchEngine(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *Event:
+		toT := CopyBranchEvent(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *GongsimCommand:
+		toT := CopyBranchGongsimCommand(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *GongsimStatus:
+		toT := CopyBranchGongsimStatus(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	default:
+		_ = fromT // to espace compilation issue when model is empty
+	}
+	return
+}
+
+// insertion point for stage branch per struct
+func CopyBranchDummyAgent(mapOrigCopy map[any]any, dummyagentFrom *DummyAgent) (dummyagentTo  *DummyAgent){
+
+	// dummyagentFrom has already been copied
+	if _dummyagentTo, ok := mapOrigCopy[dummyagentFrom]; ok {
+		dummyagentTo = _dummyagentTo.(*DummyAgent)
+		return
+	}
+
+	dummyagentTo = new(DummyAgent)
+	mapOrigCopy[dummyagentFrom] = dummyagentTo
+	dummyagentFrom.CopyBasicFields(dummyagentTo)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
+}
+
+func CopyBranchEngine(mapOrigCopy map[any]any, engineFrom *Engine) (engineTo  *Engine){
+
+	// engineFrom has already been copied
+	if _engineTo, ok := mapOrigCopy[engineFrom]; ok {
+		engineTo = _engineTo.(*Engine)
+		return
+	}
+
+	engineTo = new(Engine)
+	mapOrigCopy[engineFrom] = engineTo
+	engineFrom.CopyBasicFields(engineTo)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
+}
+
+func CopyBranchEvent(mapOrigCopy map[any]any, eventFrom *Event) (eventTo  *Event){
+
+	// eventFrom has already been copied
+	if _eventTo, ok := mapOrigCopy[eventFrom]; ok {
+		eventTo = _eventTo.(*Event)
+		return
+	}
+
+	eventTo = new(Event)
+	mapOrigCopy[eventFrom] = eventTo
+	eventFrom.CopyBasicFields(eventTo)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
+}
+
+func CopyBranchGongsimCommand(mapOrigCopy map[any]any, gongsimcommandFrom *GongsimCommand) (gongsimcommandTo  *GongsimCommand){
+
+	// gongsimcommandFrom has already been copied
+	if _gongsimcommandTo, ok := mapOrigCopy[gongsimcommandFrom]; ok {
+		gongsimcommandTo = _gongsimcommandTo.(*GongsimCommand)
+		return
+	}
+
+	gongsimcommandTo = new(GongsimCommand)
+	mapOrigCopy[gongsimcommandFrom] = gongsimcommandTo
+	gongsimcommandFrom.CopyBasicFields(gongsimcommandTo)
+
+	//insertion point for the staging of instances referenced by pointers
+	if gongsimcommandFrom.Engine != nil {
+		gongsimcommandTo.Engine = CopyBranchEngine(mapOrigCopy, gongsimcommandFrom.Engine)
+	}
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
+}
+
+func CopyBranchGongsimStatus(mapOrigCopy map[any]any, gongsimstatusFrom *GongsimStatus) (gongsimstatusTo  *GongsimStatus){
+
+	// gongsimstatusFrom has already been copied
+	if _gongsimstatusTo, ok := mapOrigCopy[gongsimstatusFrom]; ok {
+		gongsimstatusTo = _gongsimstatusTo.(*GongsimStatus)
+		return
+	}
+
+	gongsimstatusTo = new(GongsimStatus)
+	mapOrigCopy[gongsimstatusFrom] = gongsimstatusTo
+	gongsimstatusFrom.CopyBasicFields(gongsimstatusTo)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
 }
 
 

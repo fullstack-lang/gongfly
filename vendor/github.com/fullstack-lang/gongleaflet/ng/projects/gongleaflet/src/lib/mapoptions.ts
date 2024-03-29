@@ -1,6 +1,6 @@
 // generated code - do not edit
 
-import { MapOptionsDB } from './mapoptions-db'
+import { MapOptionsAPI } from './mapoptions-api'
 import { FrontRepo } from './front-repo.service';
 
 // insertion point for imports
@@ -33,61 +33,61 @@ export class MapOptions {
 	LayerGroupUses: Array<LayerGroupUse> = []
 }
 
-export function CopyMapOptionsToMapOptionsDB(mapoptions: MapOptions, mapoptionsDB: MapOptionsDB) {
+export function CopyMapOptionsToMapOptionsAPI(mapoptions: MapOptions, mapoptionsAPI: MapOptionsAPI) {
 
-	mapoptionsDB.CreatedAt = mapoptions.CreatedAt
-	mapoptionsDB.DeletedAt = mapoptions.DeletedAt
-	mapoptionsDB.ID = mapoptions.ID
+	mapoptionsAPI.CreatedAt = mapoptions.CreatedAt
+	mapoptionsAPI.DeletedAt = mapoptions.DeletedAt
+	mapoptionsAPI.ID = mapoptions.ID
 
 	// insertion point for basic fields copy operations
-	mapoptionsDB.Lat = mapoptions.Lat
-	mapoptionsDB.Lng = mapoptions.Lng
-	mapoptionsDB.Name = mapoptions.Name
-	mapoptionsDB.ZoomLevel = mapoptions.ZoomLevel
-	mapoptionsDB.UrlTemplate = mapoptions.UrlTemplate
-	mapoptionsDB.Attribution = mapoptions.Attribution
-	mapoptionsDB.MaxZoom = mapoptions.MaxZoom
-	mapoptionsDB.ZoomControl = mapoptions.ZoomControl
-	mapoptionsDB.AttributionControl = mapoptions.AttributionControl
-	mapoptionsDB.ZoomSnap = mapoptions.ZoomSnap
+	mapoptionsAPI.Lat = mapoptions.Lat
+	mapoptionsAPI.Lng = mapoptions.Lng
+	mapoptionsAPI.Name = mapoptions.Name
+	mapoptionsAPI.ZoomLevel = mapoptions.ZoomLevel
+	mapoptionsAPI.UrlTemplate = mapoptions.UrlTemplate
+	mapoptionsAPI.Attribution = mapoptions.Attribution
+	mapoptionsAPI.MaxZoom = mapoptions.MaxZoom
+	mapoptionsAPI.ZoomControl = mapoptions.ZoomControl
+	mapoptionsAPI.AttributionControl = mapoptions.AttributionControl
+	mapoptionsAPI.ZoomSnap = mapoptions.ZoomSnap
 
 	// insertion point for pointer fields encoding
 
 	// insertion point for slice of pointers fields encoding
-	mapoptionsDB.MapOptionsPointersEncoding.LayerGroupUses = []
+	mapoptionsAPI.MapOptionsPointersEncoding.LayerGroupUses = []
 	for (let _layergroupuse of mapoptions.LayerGroupUses) {
-		mapoptionsDB.MapOptionsPointersEncoding.LayerGroupUses.push(_layergroupuse.ID)
+		mapoptionsAPI.MapOptionsPointersEncoding.LayerGroupUses.push(_layergroupuse.ID)
 	}
 
 }
 
-// CopyMapOptionsDBToMapOptions update basic, pointers and slice of pointers fields of mapoptions
-// from respectively the basic fields and encoded fields of pointers and slices of pointers of mapoptionsDB
+// CopyMapOptionsAPIToMapOptions update basic, pointers and slice of pointers fields of mapoptions
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of mapoptionsAPI
 // this function uses frontRepo.map_ID_<structname> to decode the encoded fields
 // a condition is that those maps has to be initialized before
-export function CopyMapOptionsDBToMapOptions(mapoptionsDB: MapOptionsDB, mapoptions: MapOptions, frontRepo: FrontRepo) {
+export function CopyMapOptionsAPIToMapOptions(mapoptionsAPI: MapOptionsAPI, mapoptions: MapOptions, frontRepo: FrontRepo) {
 
-	mapoptions.CreatedAt = mapoptionsDB.CreatedAt
-	mapoptions.DeletedAt = mapoptionsDB.DeletedAt
-	mapoptions.ID = mapoptionsDB.ID
+	mapoptions.CreatedAt = mapoptionsAPI.CreatedAt
+	mapoptions.DeletedAt = mapoptionsAPI.DeletedAt
+	mapoptions.ID = mapoptionsAPI.ID
 
 	// insertion point for basic fields copy operations
-	mapoptions.Lat = mapoptionsDB.Lat
-	mapoptions.Lng = mapoptionsDB.Lng
-	mapoptions.Name = mapoptionsDB.Name
-	mapoptions.ZoomLevel = mapoptionsDB.ZoomLevel
-	mapoptions.UrlTemplate = mapoptionsDB.UrlTemplate
-	mapoptions.Attribution = mapoptionsDB.Attribution
-	mapoptions.MaxZoom = mapoptionsDB.MaxZoom
-	mapoptions.ZoomControl = mapoptionsDB.ZoomControl
-	mapoptions.AttributionControl = mapoptionsDB.AttributionControl
-	mapoptions.ZoomSnap = mapoptionsDB.ZoomSnap
+	mapoptions.Lat = mapoptionsAPI.Lat
+	mapoptions.Lng = mapoptionsAPI.Lng
+	mapoptions.Name = mapoptionsAPI.Name
+	mapoptions.ZoomLevel = mapoptionsAPI.ZoomLevel
+	mapoptions.UrlTemplate = mapoptionsAPI.UrlTemplate
+	mapoptions.Attribution = mapoptionsAPI.Attribution
+	mapoptions.MaxZoom = mapoptionsAPI.MaxZoom
+	mapoptions.ZoomControl = mapoptionsAPI.ZoomControl
+	mapoptions.AttributionControl = mapoptionsAPI.AttributionControl
+	mapoptions.ZoomSnap = mapoptionsAPI.ZoomSnap
 
 	// insertion point for pointer fields encoding
 
 	// insertion point for slice of pointers fields encoding
 	mapoptions.LayerGroupUses = new Array<LayerGroupUse>()
-	for (let _id of mapoptionsDB.MapOptionsPointersEncoding.LayerGroupUses) {
+	for (let _id of mapoptionsAPI.MapOptionsPointersEncoding.LayerGroupUses) {
 		let _layergroupuse = frontRepo.map_ID_LayerGroupUse.get(_id)
 		if (_layergroupuse != undefined) {
 			mapoptions.LayerGroupUses.push(_layergroupuse!)

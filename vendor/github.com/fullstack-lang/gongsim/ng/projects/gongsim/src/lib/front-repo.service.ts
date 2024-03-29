@@ -1,28 +1,31 @@
 import { Injectable } from '@angular/core'
-import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http'
 
 import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs'
 
 // insertion point sub template for services imports
-import { DummyAgentDB } from './dummyagent-db'
-import { DummyAgent, CopyDummyAgentDBToDummyAgent } from './dummyagent'
+import { DummyAgentAPI } from './dummyagent-api'
+import { DummyAgent, CopyDummyAgentAPIToDummyAgent } from './dummyagent'
 import { DummyAgentService } from './dummyagent.service'
 
-import { EngineDB } from './engine-db'
-import { Engine, CopyEngineDBToEngine } from './engine'
+import { EngineAPI } from './engine-api'
+import { Engine, CopyEngineAPIToEngine } from './engine'
 import { EngineService } from './engine.service'
 
-import { EventDB } from './event-db'
-import { Event, CopyEventDBToEvent } from './event'
+import { EventAPI } from './event-api'
+import { Event, CopyEventAPIToEvent } from './event'
 import { EventService } from './event.service'
 
-import { GongsimCommandDB } from './gongsimcommand-db'
-import { GongsimCommand, CopyGongsimCommandDBToGongsimCommand } from './gongsimcommand'
+import { GongsimCommandAPI } from './gongsimcommand-api'
+import { GongsimCommand, CopyGongsimCommandAPIToGongsimCommand } from './gongsimcommand'
 import { GongsimCommandService } from './gongsimcommand.service'
 
-import { GongsimStatusDB } from './gongsimstatus-db'
-import { GongsimStatus, CopyGongsimStatusDBToGongsimStatus } from './gongsimstatus'
+import { GongsimStatusAPI } from './gongsimstatus-api'
+import { GongsimStatus, CopyGongsimStatusAPIToGongsimStatus } from './gongsimstatus'
 import { GongsimStatusService } from './gongsimstatus.service'
+
+
+import { BackRepoData } from './back-repo-data'
 
 export const StackType = "github.com/fullstack-lang/gongsim/go/models"
 
@@ -64,7 +67,7 @@ export class FrontRepo { // insertion point sub template
 				throw new Error("Type not recognized");
 		}
 	}
-	
+
 	getFrontMap<Type>(gongStructName: string): Map<number, Type> {
 		switch (gongStructName) {
 			// insertion point
@@ -132,6 +135,7 @@ export enum SelectionMode {
 export class FrontRepoService {
 
 	GONG__StackPath: string = ""
+	private socket: WebSocket | undefined
 
 	httpOptions = {
 		headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -181,11 +185,11 @@ export class FrontRepoService {
 	observableFrontRepo: [
 		Observable<null>, // see below for the of(null) observable
 		// insertion point sub template 
-		Observable<DummyAgentDB[]>,
-		Observable<EngineDB[]>,
-		Observable<EventDB[]>,
-		Observable<GongsimCommandDB[]>,
-		Observable<GongsimStatusDB[]>,
+		Observable<DummyAgentAPI[]>,
+		Observable<EngineAPI[]>,
+		Observable<EventAPI[]>,
+		Observable<GongsimCommandAPI[]>,
+		Observable<GongsimStatusAPI[]>,
 	] = [
 			// Using "combineLatest" with a placeholder observable.
 			//
@@ -240,16 +244,16 @@ export class FrontRepoService {
 						let _this = this
 						// Typing can be messy with many items. Therefore, type casting is necessary here
 						// insertion point sub template for type casting 
-						var dummyagents: DummyAgentDB[]
-						dummyagents = dummyagents_ as DummyAgentDB[]
-						var engines: EngineDB[]
-						engines = engines_ as EngineDB[]
-						var events: EventDB[]
-						events = events_ as EventDB[]
-						var gongsimcommands: GongsimCommandDB[]
-						gongsimcommands = gongsimcommands_ as GongsimCommandDB[]
-						var gongsimstatuss: GongsimStatusDB[]
-						gongsimstatuss = gongsimstatuss_ as GongsimStatusDB[]
+						var dummyagents: DummyAgentAPI[]
+						dummyagents = dummyagents_ as DummyAgentAPI[]
+						var engines: EngineAPI[]
+						engines = engines_ as EngineAPI[]
+						var events: EventAPI[]
+						events = events_ as EventAPI[]
+						var gongsimcommands: GongsimCommandAPI[]
+						gongsimcommands = gongsimcommands_ as GongsimCommandAPI[]
+						var gongsimstatuss: GongsimStatusAPI[]
+						gongsimstatuss = gongsimstatuss_ as GongsimStatusAPI[]
 
 						// 
 						// First Step: init map of instances
@@ -259,10 +263,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_DummyAgent.clear()
 
 						dummyagents.forEach(
-							dummyagentDB => {
+							dummyagentAPI => {
 								let dummyagent = new DummyAgent
 								this.frontRepo.array_DummyAgents.push(dummyagent)
-								this.frontRepo.map_ID_DummyAgent.set(dummyagentDB.ID, dummyagent)
+								this.frontRepo.map_ID_DummyAgent.set(dummyagentAPI.ID, dummyagent)
 							}
 						)
 
@@ -271,10 +275,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_Engine.clear()
 
 						engines.forEach(
-							engineDB => {
+							engineAPI => {
 								let engine = new Engine
 								this.frontRepo.array_Engines.push(engine)
-								this.frontRepo.map_ID_Engine.set(engineDB.ID, engine)
+								this.frontRepo.map_ID_Engine.set(engineAPI.ID, engine)
 							}
 						)
 
@@ -283,10 +287,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_Event.clear()
 
 						events.forEach(
-							eventDB => {
+							eventAPI => {
 								let event = new Event
 								this.frontRepo.array_Events.push(event)
-								this.frontRepo.map_ID_Event.set(eventDB.ID, event)
+								this.frontRepo.map_ID_Event.set(eventAPI.ID, event)
 							}
 						)
 
@@ -295,10 +299,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_GongsimCommand.clear()
 
 						gongsimcommands.forEach(
-							gongsimcommandDB => {
+							gongsimcommandAPI => {
 								let gongsimcommand = new GongsimCommand
 								this.frontRepo.array_GongsimCommands.push(gongsimcommand)
-								this.frontRepo.map_ID_GongsimCommand.set(gongsimcommandDB.ID, gongsimcommand)
+								this.frontRepo.map_ID_GongsimCommand.set(gongsimcommandAPI.ID, gongsimcommand)
 							}
 						)
 
@@ -307,10 +311,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_GongsimStatus.clear()
 
 						gongsimstatuss.forEach(
-							gongsimstatusDB => {
+							gongsimstatusAPI => {
 								let gongsimstatus = new GongsimStatus
 								this.frontRepo.array_GongsimStatuss.push(gongsimstatus)
-								this.frontRepo.map_ID_GongsimStatus.set(gongsimstatusDB.ID, gongsimstatus)
+								this.frontRepo.map_ID_GongsimStatus.set(gongsimstatusAPI.ID, gongsimstatus)
 							}
 						)
 
@@ -320,41 +324,41 @@ export class FrontRepoService {
 						// insertion point sub template for redeem 
 						// fill up front objects
 						dummyagents.forEach(
-							dummyagentDB => {
-								let dummyagent = this.frontRepo.map_ID_DummyAgent.get(dummyagentDB.ID)
-								CopyDummyAgentDBToDummyAgent(dummyagentDB, dummyagent!, this.frontRepo)
+							dummyagentAPI => {
+								let dummyagent = this.frontRepo.map_ID_DummyAgent.get(dummyagentAPI.ID)
+								CopyDummyAgentAPIToDummyAgent(dummyagentAPI, dummyagent!, this.frontRepo)
 							}
 						)
 
 						// fill up front objects
 						engines.forEach(
-							engineDB => {
-								let engine = this.frontRepo.map_ID_Engine.get(engineDB.ID)
-								CopyEngineDBToEngine(engineDB, engine!, this.frontRepo)
+							engineAPI => {
+								let engine = this.frontRepo.map_ID_Engine.get(engineAPI.ID)
+								CopyEngineAPIToEngine(engineAPI, engine!, this.frontRepo)
 							}
 						)
 
 						// fill up front objects
 						events.forEach(
-							eventDB => {
-								let event = this.frontRepo.map_ID_Event.get(eventDB.ID)
-								CopyEventDBToEvent(eventDB, event!, this.frontRepo)
+							eventAPI => {
+								let event = this.frontRepo.map_ID_Event.get(eventAPI.ID)
+								CopyEventAPIToEvent(eventAPI, event!, this.frontRepo)
 							}
 						)
 
 						// fill up front objects
 						gongsimcommands.forEach(
-							gongsimcommandDB => {
-								let gongsimcommand = this.frontRepo.map_ID_GongsimCommand.get(gongsimcommandDB.ID)
-								CopyGongsimCommandDBToGongsimCommand(gongsimcommandDB, gongsimcommand!, this.frontRepo)
+							gongsimcommandAPI => {
+								let gongsimcommand = this.frontRepo.map_ID_GongsimCommand.get(gongsimcommandAPI.ID)
+								CopyGongsimCommandAPIToGongsimCommand(gongsimcommandAPI, gongsimcommand!, this.frontRepo)
 							}
 						)
 
 						// fill up front objects
 						gongsimstatuss.forEach(
-							gongsimstatusDB => {
-								let gongsimstatus = this.frontRepo.map_ID_GongsimStatus.get(gongsimstatusDB.ID)
-								CopyGongsimStatusDBToGongsimStatus(gongsimstatusDB, gongsimstatus!, this.frontRepo)
+							gongsimstatusAPI => {
+								let gongsimstatus = this.frontRepo.map_ID_GongsimStatus.get(gongsimstatusAPI.ID)
+								CopyGongsimStatusAPIToGongsimStatus(gongsimstatusAPI, gongsimstatus!, this.frontRepo)
 							}
 						)
 
@@ -365,6 +369,151 @@ export class FrontRepoService {
 				)
 			}
 		)
+	}
+
+	public connectToWebSocket(GONG__StackPath: string): Observable<FrontRepo> {
+
+		this.GONG__StackPath = GONG__StackPath
+
+
+		let params = new HttpParams().set("GONG__StackPath", this.GONG__StackPath)
+		let basePath = 'ws://localhost:8080/api/github.com/fullstack-lang/gongsim/go/v1/ws/stage'
+		let paramString = params.toString()
+		let url = `${basePath}?${paramString}`
+		this.socket = new WebSocket(url)
+
+		return new Observable(observer => {
+			this.socket!.onmessage = event => {
+				let _this = this
+
+				const backRepoData = new BackRepoData(JSON.parse(event.data))
+
+				// 
+				// First Step: init map of instances
+				// insertion point sub template for init 
+				// init the arrays
+				// insertion point sub template for init 
+				// init the arrays
+				this.frontRepo.array_DummyAgents = []
+				this.frontRepo.map_ID_DummyAgent.clear()
+
+				backRepoData.DummyAgentAPIs.forEach(
+					dummyagentAPI => {
+						let dummyagent = new DummyAgent
+						this.frontRepo.array_DummyAgents.push(dummyagent)
+						this.frontRepo.map_ID_DummyAgent.set(dummyagentAPI.ID, dummyagent)
+					}
+				)
+
+				// init the arrays
+				this.frontRepo.array_Engines = []
+				this.frontRepo.map_ID_Engine.clear()
+
+				backRepoData.EngineAPIs.forEach(
+					engineAPI => {
+						let engine = new Engine
+						this.frontRepo.array_Engines.push(engine)
+						this.frontRepo.map_ID_Engine.set(engineAPI.ID, engine)
+					}
+				)
+
+				// init the arrays
+				this.frontRepo.array_Events = []
+				this.frontRepo.map_ID_Event.clear()
+
+				backRepoData.EventAPIs.forEach(
+					eventAPI => {
+						let event = new Event
+						this.frontRepo.array_Events.push(event)
+						this.frontRepo.map_ID_Event.set(eventAPI.ID, event)
+					}
+				)
+
+				// init the arrays
+				this.frontRepo.array_GongsimCommands = []
+				this.frontRepo.map_ID_GongsimCommand.clear()
+
+				backRepoData.GongsimCommandAPIs.forEach(
+					gongsimcommandAPI => {
+						let gongsimcommand = new GongsimCommand
+						this.frontRepo.array_GongsimCommands.push(gongsimcommand)
+						this.frontRepo.map_ID_GongsimCommand.set(gongsimcommandAPI.ID, gongsimcommand)
+					}
+				)
+
+				// init the arrays
+				this.frontRepo.array_GongsimStatuss = []
+				this.frontRepo.map_ID_GongsimStatus.clear()
+
+				backRepoData.GongsimStatusAPIs.forEach(
+					gongsimstatusAPI => {
+						let gongsimstatus = new GongsimStatus
+						this.frontRepo.array_GongsimStatuss.push(gongsimstatus)
+						this.frontRepo.map_ID_GongsimStatus.set(gongsimstatusAPI.ID, gongsimstatus)
+					}
+				)
+
+
+				// 
+				// Second Step: reddeem front objects
+				// insertion point sub template for redeem 
+				// fill up front objects
+				// insertion point sub template for redeem 
+				// fill up front objects
+				backRepoData.DummyAgentAPIs.forEach(
+					dummyagentAPI => {
+						let dummyagent = this.frontRepo.map_ID_DummyAgent.get(dummyagentAPI.ID)
+						CopyDummyAgentAPIToDummyAgent(dummyagentAPI, dummyagent!, this.frontRepo)
+					}
+				)
+
+				// fill up front objects
+				backRepoData.EngineAPIs.forEach(
+					engineAPI => {
+						let engine = this.frontRepo.map_ID_Engine.get(engineAPI.ID)
+						CopyEngineAPIToEngine(engineAPI, engine!, this.frontRepo)
+					}
+				)
+
+				// fill up front objects
+				backRepoData.EventAPIs.forEach(
+					eventAPI => {
+						let event = this.frontRepo.map_ID_Event.get(eventAPI.ID)
+						CopyEventAPIToEvent(eventAPI, event!, this.frontRepo)
+					}
+				)
+
+				// fill up front objects
+				backRepoData.GongsimCommandAPIs.forEach(
+					gongsimcommandAPI => {
+						let gongsimcommand = this.frontRepo.map_ID_GongsimCommand.get(gongsimcommandAPI.ID)
+						CopyGongsimCommandAPIToGongsimCommand(gongsimcommandAPI, gongsimcommand!, this.frontRepo)
+					}
+				)
+
+				// fill up front objects
+				backRepoData.GongsimStatusAPIs.forEach(
+					gongsimstatusAPI => {
+						let gongsimstatus = this.frontRepo.map_ID_GongsimStatus.get(gongsimstatusAPI.ID)
+						CopyGongsimStatusAPIToGongsimStatus(gongsimstatusAPI, gongsimstatus!, this.frontRepo)
+					}
+				)
+
+
+
+				observer.next(this.frontRepo)
+			}
+			this.socket!.onerror = event => {
+				observer.error(event)
+			}
+			this.socket!.onclose = event => {
+				observer.complete()
+			}
+
+			return () => {
+				this.socket!.close()
+			}
+		})
 	}
 }
 

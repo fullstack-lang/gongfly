@@ -39,72 +39,72 @@ func IsStaged[Type Gongstruct](stage *StageStruct, instance *Type) (ok bool) {
 }
 
 // insertion point for stage per struct
-	func (stage *StageStruct) IsStagedCircle(circle *Circle) (ok bool) {
+func (stage *StageStruct) IsStagedCircle(circle *Circle) (ok bool) {
 
-		_, ok = stage.Circles[circle]
-	
-		return
-	}
+	_, ok = stage.Circles[circle]
 
-	func (stage *StageStruct) IsStagedDivIcon(divicon *DivIcon) (ok bool) {
+	return
+}
 
-		_, ok = stage.DivIcons[divicon]
-	
-		return
-	}
+func (stage *StageStruct) IsStagedDivIcon(divicon *DivIcon) (ok bool) {
 
-	func (stage *StageStruct) IsStagedLayerGroup(layergroup *LayerGroup) (ok bool) {
+	_, ok = stage.DivIcons[divicon]
 
-		_, ok = stage.LayerGroups[layergroup]
-	
-		return
-	}
+	return
+}
 
-	func (stage *StageStruct) IsStagedLayerGroupUse(layergroupuse *LayerGroupUse) (ok bool) {
+func (stage *StageStruct) IsStagedLayerGroup(layergroup *LayerGroup) (ok bool) {
 
-		_, ok = stage.LayerGroupUses[layergroupuse]
-	
-		return
-	}
+	_, ok = stage.LayerGroups[layergroup]
 
-	func (stage *StageStruct) IsStagedMapOptions(mapoptions *MapOptions) (ok bool) {
+	return
+}
 
-		_, ok = stage.MapOptionss[mapoptions]
-	
-		return
-	}
+func (stage *StageStruct) IsStagedLayerGroupUse(layergroupuse *LayerGroupUse) (ok bool) {
 
-	func (stage *StageStruct) IsStagedMarker(marker *Marker) (ok bool) {
+	_, ok = stage.LayerGroupUses[layergroupuse]
 
-		_, ok = stage.Markers[marker]
-	
-		return
-	}
+	return
+}
 
-	func (stage *StageStruct) IsStagedUserClick(userclick *UserClick) (ok bool) {
+func (stage *StageStruct) IsStagedMapOptions(mapoptions *MapOptions) (ok bool) {
 
-		_, ok = stage.UserClicks[userclick]
-	
-		return
-	}
+	_, ok = stage.MapOptionss[mapoptions]
 
-	func (stage *StageStruct) IsStagedVLine(vline *VLine) (ok bool) {
+	return
+}
 
-		_, ok = stage.VLines[vline]
-	
-		return
-	}
+func (stage *StageStruct) IsStagedMarker(marker *Marker) (ok bool) {
 
-	func (stage *StageStruct) IsStagedVisualTrack(visualtrack *VisualTrack) (ok bool) {
+	_, ok = stage.Markers[marker]
 
-		_, ok = stage.VisualTracks[visualtrack]
-	
-		return
-	}
+	return
+}
+
+func (stage *StageStruct) IsStagedUserClick(userclick *UserClick) (ok bool) {
+
+	_, ok = stage.UserClicks[userclick]
+
+	return
+}
+
+func (stage *StageStruct) IsStagedVLine(vline *VLine) (ok bool) {
+
+	_, ok = stage.VLines[vline]
+
+	return
+}
+
+func (stage *StageStruct) IsStagedVisualTrack(visualtrack *VisualTrack) (ok bool) {
+
+	_, ok = stage.VisualTracks[visualtrack]
+
+	return
+}
 
 
 // StageBranch stages instance and apply StageBranch on all gongstruct instances that are
-// referenced by pointers or slices of pointers of the insance
+// referenced by pointers or slices of pointers of the instance
 //
 // the algorithm stops along the course of graph if a vertex is already staged
 func StageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
@@ -301,6 +301,256 @@ func (stage *StageStruct) StageBranchVisualTrack(visualtrack *VisualTrack) {
 
 	//insertion point for the staging of instances referenced by slice of pointers
 
+}
+
+
+// CopyBranch stages instance and apply CopyBranch on all gongstruct instances that are
+// referenced by pointers or slices of pointers of the instance
+//
+// the algorithm stops along the course of graph if a vertex is already staged
+func CopyBranch[Type Gongstruct](from *Type) (to *Type) {
+
+	mapOrigCopy := make(map[any]any)
+	_ = mapOrigCopy
+
+	switch fromT := any(from).(type) {
+	// insertion point for stage branch
+	case *Circle:
+		toT := CopyBranchCircle(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *DivIcon:
+		toT := CopyBranchDivIcon(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *LayerGroup:
+		toT := CopyBranchLayerGroup(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *LayerGroupUse:
+		toT := CopyBranchLayerGroupUse(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *MapOptions:
+		toT := CopyBranchMapOptions(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *Marker:
+		toT := CopyBranchMarker(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *UserClick:
+		toT := CopyBranchUserClick(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *VLine:
+		toT := CopyBranchVLine(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *VisualTrack:
+		toT := CopyBranchVisualTrack(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	default:
+		_ = fromT // to espace compilation issue when model is empty
+	}
+	return
+}
+
+// insertion point for stage branch per struct
+func CopyBranchCircle(mapOrigCopy map[any]any, circleFrom *Circle) (circleTo  *Circle){
+
+	// circleFrom has already been copied
+	if _circleTo, ok := mapOrigCopy[circleFrom]; ok {
+		circleTo = _circleTo.(*Circle)
+		return
+	}
+
+	circleTo = new(Circle)
+	mapOrigCopy[circleFrom] = circleTo
+	circleFrom.CopyBasicFields(circleTo)
+
+	//insertion point for the staging of instances referenced by pointers
+	if circleFrom.LayerGroup != nil {
+		circleTo.LayerGroup = CopyBranchLayerGroup(mapOrigCopy, circleFrom.LayerGroup)
+	}
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
+}
+
+func CopyBranchDivIcon(mapOrigCopy map[any]any, diviconFrom *DivIcon) (diviconTo  *DivIcon){
+
+	// diviconFrom has already been copied
+	if _diviconTo, ok := mapOrigCopy[diviconFrom]; ok {
+		diviconTo = _diviconTo.(*DivIcon)
+		return
+	}
+
+	diviconTo = new(DivIcon)
+	mapOrigCopy[diviconFrom] = diviconTo
+	diviconFrom.CopyBasicFields(diviconTo)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
+}
+
+func CopyBranchLayerGroup(mapOrigCopy map[any]any, layergroupFrom *LayerGroup) (layergroupTo  *LayerGroup){
+
+	// layergroupFrom has already been copied
+	if _layergroupTo, ok := mapOrigCopy[layergroupFrom]; ok {
+		layergroupTo = _layergroupTo.(*LayerGroup)
+		return
+	}
+
+	layergroupTo = new(LayerGroup)
+	mapOrigCopy[layergroupFrom] = layergroupTo
+	layergroupFrom.CopyBasicFields(layergroupTo)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
+}
+
+func CopyBranchLayerGroupUse(mapOrigCopy map[any]any, layergroupuseFrom *LayerGroupUse) (layergroupuseTo  *LayerGroupUse){
+
+	// layergroupuseFrom has already been copied
+	if _layergroupuseTo, ok := mapOrigCopy[layergroupuseFrom]; ok {
+		layergroupuseTo = _layergroupuseTo.(*LayerGroupUse)
+		return
+	}
+
+	layergroupuseTo = new(LayerGroupUse)
+	mapOrigCopy[layergroupuseFrom] = layergroupuseTo
+	layergroupuseFrom.CopyBasicFields(layergroupuseTo)
+
+	//insertion point for the staging of instances referenced by pointers
+	if layergroupuseFrom.LayerGroup != nil {
+		layergroupuseTo.LayerGroup = CopyBranchLayerGroup(mapOrigCopy, layergroupuseFrom.LayerGroup)
+	}
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
+}
+
+func CopyBranchMapOptions(mapOrigCopy map[any]any, mapoptionsFrom *MapOptions) (mapoptionsTo  *MapOptions){
+
+	// mapoptionsFrom has already been copied
+	if _mapoptionsTo, ok := mapOrigCopy[mapoptionsFrom]; ok {
+		mapoptionsTo = _mapoptionsTo.(*MapOptions)
+		return
+	}
+
+	mapoptionsTo = new(MapOptions)
+	mapOrigCopy[mapoptionsFrom] = mapoptionsTo
+	mapoptionsFrom.CopyBasicFields(mapoptionsTo)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+	for _, _layergroupuse := range mapoptionsFrom.LayerGroupUses {
+		mapoptionsTo.LayerGroupUses = append( mapoptionsTo.LayerGroupUses, CopyBranchLayerGroupUse(mapOrigCopy, _layergroupuse))
+	}
+
+	return
+}
+
+func CopyBranchMarker(mapOrigCopy map[any]any, markerFrom *Marker) (markerTo  *Marker){
+
+	// markerFrom has already been copied
+	if _markerTo, ok := mapOrigCopy[markerFrom]; ok {
+		markerTo = _markerTo.(*Marker)
+		return
+	}
+
+	markerTo = new(Marker)
+	mapOrigCopy[markerFrom] = markerTo
+	markerFrom.CopyBasicFields(markerTo)
+
+	//insertion point for the staging of instances referenced by pointers
+	if markerFrom.LayerGroup != nil {
+		markerTo.LayerGroup = CopyBranchLayerGroup(mapOrigCopy, markerFrom.LayerGroup)
+	}
+	if markerFrom.DivIcon != nil {
+		markerTo.DivIcon = CopyBranchDivIcon(mapOrigCopy, markerFrom.DivIcon)
+	}
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
+}
+
+func CopyBranchUserClick(mapOrigCopy map[any]any, userclickFrom *UserClick) (userclickTo  *UserClick){
+
+	// userclickFrom has already been copied
+	if _userclickTo, ok := mapOrigCopy[userclickFrom]; ok {
+		userclickTo = _userclickTo.(*UserClick)
+		return
+	}
+
+	userclickTo = new(UserClick)
+	mapOrigCopy[userclickFrom] = userclickTo
+	userclickFrom.CopyBasicFields(userclickTo)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
+}
+
+func CopyBranchVLine(mapOrigCopy map[any]any, vlineFrom *VLine) (vlineTo  *VLine){
+
+	// vlineFrom has already been copied
+	if _vlineTo, ok := mapOrigCopy[vlineFrom]; ok {
+		vlineTo = _vlineTo.(*VLine)
+		return
+	}
+
+	vlineTo = new(VLine)
+	mapOrigCopy[vlineFrom] = vlineTo
+	vlineFrom.CopyBasicFields(vlineTo)
+
+	//insertion point for the staging of instances referenced by pointers
+	if vlineFrom.LayerGroup != nil {
+		vlineTo.LayerGroup = CopyBranchLayerGroup(mapOrigCopy, vlineFrom.LayerGroup)
+	}
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
+}
+
+func CopyBranchVisualTrack(mapOrigCopy map[any]any, visualtrackFrom *VisualTrack) (visualtrackTo  *VisualTrack){
+
+	// visualtrackFrom has already been copied
+	if _visualtrackTo, ok := mapOrigCopy[visualtrackFrom]; ok {
+		visualtrackTo = _visualtrackTo.(*VisualTrack)
+		return
+	}
+
+	visualtrackTo = new(VisualTrack)
+	mapOrigCopy[visualtrackFrom] = visualtrackTo
+	visualtrackFrom.CopyBasicFields(visualtrackTo)
+
+	//insertion point for the staging of instances referenced by pointers
+	if visualtrackFrom.LayerGroup != nil {
+		visualtrackTo.LayerGroup = CopyBranchLayerGroup(mapOrigCopy, visualtrackFrom.LayerGroup)
+	}
+	if visualtrackFrom.DivIcon != nil {
+		visualtrackTo.DivIcon = CopyBranchDivIcon(mapOrigCopy, visualtrackFrom.DivIcon)
+	}
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
 }
 
 

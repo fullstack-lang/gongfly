@@ -11,14 +11,14 @@ import { BehaviorSubject } from 'rxjs'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
 
-import { MarkerDB } from './marker-db'
-import { Marker, CopyMarkerToMarkerDB } from './marker'
+import { MarkerAPI } from './marker-api'
+import { Marker, CopyMarkerToMarkerAPI } from './marker'
 
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
-import { LayerGroupDB } from './layergroup-db'
-import { DivIconDB } from './divicon-db'
+import { LayerGroupAPI } from './layergroup-api'
+import { DivIconAPI } from './divicon-api'
 
 @Injectable({
   providedIn: 'root'
@@ -48,41 +48,41 @@ export class MarkerService {
 
   /** GET markers from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB[]> {
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerAPI[]> {
     return this.getMarkers(GONG__StackPath, frontRepo)
   }
-  getMarkers(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB[]> {
+  getMarkers(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerAPI[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
-    return this.http.get<MarkerDB[]>(this.markersUrl, { params: params })
+    return this.http.get<MarkerAPI[]>(this.markersUrl, { params: params })
       .pipe(
         tap(),
-        catchError(this.handleError<MarkerDB[]>('getMarkers', []))
+        catchError(this.handleError<MarkerAPI[]>('getMarkers', []))
       );
   }
 
   /** GET marker by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerAPI> {
     return this.getMarker(id, GONG__StackPath, frontRepo)
   }
-  getMarker(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
+  getMarker(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     const url = `${this.markersUrl}/${id}`;
-    return this.http.get<MarkerDB>(url, { params: params }).pipe(
+    return this.http.get<MarkerAPI>(url, { params: params }).pipe(
       // tap(_ => this.log(`fetched marker id=${id}`)),
-      catchError(this.handleError<MarkerDB>(`getMarker id=${id}`))
+      catchError(this.handleError<MarkerAPI>(`getMarker id=${id}`))
     );
   }
 
   // postFront copy marker to a version with encoded pointers and post to the back
-  postFront(marker: Marker, GONG__StackPath: string): Observable<MarkerDB> {
-    let markerDB = new MarkerDB
-    CopyMarkerToMarkerDB(marker, markerDB)
-    const id = typeof markerDB === 'number' ? markerDB : markerDB.ID
+  postFront(marker: Marker, GONG__StackPath: string): Observable<MarkerAPI> {
+    let markerAPI = new MarkerAPI
+    CopyMarkerToMarkerAPI(marker, markerAPI)
+    const id = typeof markerAPI === 'number' ? markerAPI : markerAPI.ID
     const url = `${this.markersUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -90,18 +90,18 @@ export class MarkerService {
       params: params
     }
 
-    return this.http.post<MarkerDB>(url, markerDB, httpOptions).pipe(
+    return this.http.post<MarkerAPI>(url, markerAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<MarkerDB>('postMarker'))
+      catchError(this.handleError<MarkerAPI>('postMarker'))
     );
   }
   
   /** POST: add a new marker to the server */
-  post(markerdb: MarkerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
+  post(markerdb: MarkerAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerAPI> {
     return this.postMarker(markerdb, GONG__StackPath, frontRepo)
   }
-  postMarker(markerdb: MarkerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
+  postMarker(markerdb: MarkerAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -109,19 +109,19 @@ export class MarkerService {
       params: params
     }
 
-    return this.http.post<MarkerDB>(this.markersUrl, markerdb, httpOptions).pipe(
+    return this.http.post<MarkerAPI>(this.markersUrl, markerdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`posted markerdb id=${markerdb.ID}`)
       }),
-      catchError(this.handleError<MarkerDB>('postMarker'))
+      catchError(this.handleError<MarkerAPI>('postMarker'))
     );
   }
 
   /** DELETE: delete the markerdb from the server */
-  delete(markerdb: MarkerDB | number, GONG__StackPath: string): Observable<MarkerDB> {
+  delete(markerdb: MarkerAPI | number, GONG__StackPath: string): Observable<MarkerAPI> {
     return this.deleteMarker(markerdb, GONG__StackPath)
   }
-  deleteMarker(markerdb: MarkerDB | number, GONG__StackPath: string): Observable<MarkerDB> {
+  deleteMarker(markerdb: MarkerAPI | number, GONG__StackPath: string): Observable<MarkerAPI> {
     const id = typeof markerdb === 'number' ? markerdb : markerdb.ID;
     const url = `${this.markersUrl}/${id}`;
 
@@ -131,17 +131,17 @@ export class MarkerService {
       params: params
     };
 
-    return this.http.delete<MarkerDB>(url, httpOptions).pipe(
+    return this.http.delete<MarkerAPI>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted markerdb id=${id}`)),
-      catchError(this.handleError<MarkerDB>('deleteMarker'))
+      catchError(this.handleError<MarkerAPI>('deleteMarker'))
     );
   }
 
   // updateFront copy marker to a version with encoded pointers and update to the back
-  updateFront(marker: Marker, GONG__StackPath: string): Observable<MarkerDB> {
-    let markerDB = new MarkerDB
-    CopyMarkerToMarkerDB(marker, markerDB)
-    const id = typeof markerDB === 'number' ? markerDB : markerDB.ID
+  updateFront(marker: Marker, GONG__StackPath: string): Observable<MarkerAPI> {
+    let markerAPI = new MarkerAPI
+    CopyMarkerToMarkerAPI(marker, markerAPI)
+    const id = typeof markerAPI === 'number' ? markerAPI : markerAPI.ID
     const url = `${this.markersUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -149,18 +149,18 @@ export class MarkerService {
       params: params
     }
 
-    return this.http.put<MarkerDB>(url, markerDB, httpOptions).pipe(
+    return this.http.put<MarkerAPI>(url, markerAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<MarkerDB>('updateMarker'))
+      catchError(this.handleError<MarkerAPI>('updateMarker'))
     );
   }
 
   /** PUT: update the markerdb on the server */
-  update(markerdb: MarkerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
+  update(markerdb: MarkerAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerAPI> {
     return this.updateMarker(markerdb, GONG__StackPath, frontRepo)
   }
-  updateMarker(markerdb: MarkerDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerDB> {
+  updateMarker(markerdb: MarkerAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MarkerAPI> {
     const id = typeof markerdb === 'number' ? markerdb : markerdb.ID;
     const url = `${this.markersUrl}/${id}`;
 
@@ -171,11 +171,11 @@ export class MarkerService {
       params: params
     };
 
-    return this.http.put<MarkerDB>(url, markerdb, httpOptions).pipe(
+    return this.http.put<MarkerAPI>(url, markerdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`updated markerdb id=${markerdb.ID}`)
       }),
-      catchError(this.handleError<MarkerDB>('updateMarker'))
+      catchError(this.handleError<MarkerAPI>('updateMarker'))
     );
   }
 

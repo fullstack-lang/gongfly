@@ -11,8 +11,8 @@ import { BehaviorSubject } from 'rxjs'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
 
-import { DummyAgentDB } from './dummyagent-db'
-import { DummyAgent, CopyDummyAgentToDummyAgentDB } from './dummyagent'
+import { DummyAgentAPI } from './dummyagent-api'
+import { DummyAgent, CopyDummyAgentToDummyAgentAPI } from './dummyagent'
 
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
@@ -46,41 +46,41 @@ export class DummyAgentService {
 
   /** GET dummyagents from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB[]> {
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentAPI[]> {
     return this.getDummyAgents(GONG__StackPath, frontRepo)
   }
-  getDummyAgents(GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB[]> {
+  getDummyAgents(GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentAPI[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
-    return this.http.get<DummyAgentDB[]>(this.dummyagentsUrl, { params: params })
+    return this.http.get<DummyAgentAPI[]>(this.dummyagentsUrl, { params: params })
       .pipe(
         tap(),
-        catchError(this.handleError<DummyAgentDB[]>('getDummyAgents', []))
+        catchError(this.handleError<DummyAgentAPI[]>('getDummyAgents', []))
       );
   }
 
   /** GET dummyagent by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentAPI> {
     return this.getDummyAgent(id, GONG__StackPath, frontRepo)
   }
-  getDummyAgent(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
+  getDummyAgent(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     const url = `${this.dummyagentsUrl}/${id}`;
-    return this.http.get<DummyAgentDB>(url, { params: params }).pipe(
+    return this.http.get<DummyAgentAPI>(url, { params: params }).pipe(
       // tap(_ => this.log(`fetched dummyagent id=${id}`)),
-      catchError(this.handleError<DummyAgentDB>(`getDummyAgent id=${id}`))
+      catchError(this.handleError<DummyAgentAPI>(`getDummyAgent id=${id}`))
     );
   }
 
   // postFront copy dummyagent to a version with encoded pointers and post to the back
-  postFront(dummyagent: DummyAgent, GONG__StackPath: string): Observable<DummyAgentDB> {
-    let dummyagentDB = new DummyAgentDB
-    CopyDummyAgentToDummyAgentDB(dummyagent, dummyagentDB)
-    const id = typeof dummyagentDB === 'number' ? dummyagentDB : dummyagentDB.ID
+  postFront(dummyagent: DummyAgent, GONG__StackPath: string): Observable<DummyAgentAPI> {
+    let dummyagentAPI = new DummyAgentAPI
+    CopyDummyAgentToDummyAgentAPI(dummyagent, dummyagentAPI)
+    const id = typeof dummyagentAPI === 'number' ? dummyagentAPI : dummyagentAPI.ID
     const url = `${this.dummyagentsUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -88,18 +88,18 @@ export class DummyAgentService {
       params: params
     }
 
-    return this.http.post<DummyAgentDB>(url, dummyagentDB, httpOptions).pipe(
+    return this.http.post<DummyAgentAPI>(url, dummyagentAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<DummyAgentDB>('postDummyAgent'))
+      catchError(this.handleError<DummyAgentAPI>('postDummyAgent'))
     );
   }
   
   /** POST: add a new dummyagent to the server */
-  post(dummyagentdb: DummyAgentDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
+  post(dummyagentdb: DummyAgentAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentAPI> {
     return this.postDummyAgent(dummyagentdb, GONG__StackPath, frontRepo)
   }
-  postDummyAgent(dummyagentdb: DummyAgentDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
+  postDummyAgent(dummyagentdb: DummyAgentAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -107,19 +107,19 @@ export class DummyAgentService {
       params: params
     }
 
-    return this.http.post<DummyAgentDB>(this.dummyagentsUrl, dummyagentdb, httpOptions).pipe(
+    return this.http.post<DummyAgentAPI>(this.dummyagentsUrl, dummyagentdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`posted dummyagentdb id=${dummyagentdb.ID}`)
       }),
-      catchError(this.handleError<DummyAgentDB>('postDummyAgent'))
+      catchError(this.handleError<DummyAgentAPI>('postDummyAgent'))
     );
   }
 
   /** DELETE: delete the dummyagentdb from the server */
-  delete(dummyagentdb: DummyAgentDB | number, GONG__StackPath: string): Observable<DummyAgentDB> {
+  delete(dummyagentdb: DummyAgentAPI | number, GONG__StackPath: string): Observable<DummyAgentAPI> {
     return this.deleteDummyAgent(dummyagentdb, GONG__StackPath)
   }
-  deleteDummyAgent(dummyagentdb: DummyAgentDB | number, GONG__StackPath: string): Observable<DummyAgentDB> {
+  deleteDummyAgent(dummyagentdb: DummyAgentAPI | number, GONG__StackPath: string): Observable<DummyAgentAPI> {
     const id = typeof dummyagentdb === 'number' ? dummyagentdb : dummyagentdb.ID;
     const url = `${this.dummyagentsUrl}/${id}`;
 
@@ -129,17 +129,17 @@ export class DummyAgentService {
       params: params
     };
 
-    return this.http.delete<DummyAgentDB>(url, httpOptions).pipe(
+    return this.http.delete<DummyAgentAPI>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted dummyagentdb id=${id}`)),
-      catchError(this.handleError<DummyAgentDB>('deleteDummyAgent'))
+      catchError(this.handleError<DummyAgentAPI>('deleteDummyAgent'))
     );
   }
 
   // updateFront copy dummyagent to a version with encoded pointers and update to the back
-  updateFront(dummyagent: DummyAgent, GONG__StackPath: string): Observable<DummyAgentDB> {
-    let dummyagentDB = new DummyAgentDB
-    CopyDummyAgentToDummyAgentDB(dummyagent, dummyagentDB)
-    const id = typeof dummyagentDB === 'number' ? dummyagentDB : dummyagentDB.ID
+  updateFront(dummyagent: DummyAgent, GONG__StackPath: string): Observable<DummyAgentAPI> {
+    let dummyagentAPI = new DummyAgentAPI
+    CopyDummyAgentToDummyAgentAPI(dummyagent, dummyagentAPI)
+    const id = typeof dummyagentAPI === 'number' ? dummyagentAPI : dummyagentAPI.ID
     const url = `${this.dummyagentsUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -147,18 +147,18 @@ export class DummyAgentService {
       params: params
     }
 
-    return this.http.put<DummyAgentDB>(url, dummyagentDB, httpOptions).pipe(
+    return this.http.put<DummyAgentAPI>(url, dummyagentAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<DummyAgentDB>('updateDummyAgent'))
+      catchError(this.handleError<DummyAgentAPI>('updateDummyAgent'))
     );
   }
 
   /** PUT: update the dummyagentdb on the server */
-  update(dummyagentdb: DummyAgentDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
+  update(dummyagentdb: DummyAgentAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentAPI> {
     return this.updateDummyAgent(dummyagentdb, GONG__StackPath, frontRepo)
   }
-  updateDummyAgent(dummyagentdb: DummyAgentDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentDB> {
+  updateDummyAgent(dummyagentdb: DummyAgentAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DummyAgentAPI> {
     const id = typeof dummyagentdb === 'number' ? dummyagentdb : dummyagentdb.ID;
     const url = `${this.dummyagentsUrl}/${id}`;
 
@@ -169,11 +169,11 @@ export class DummyAgentService {
       params: params
     };
 
-    return this.http.put<DummyAgentDB>(url, dummyagentdb, httpOptions).pipe(
+    return this.http.put<DummyAgentAPI>(url, dummyagentdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`updated dummyagentdb id=${dummyagentdb.ID}`)
       }),
-      catchError(this.handleError<DummyAgentDB>('updateDummyAgent'))
+      catchError(this.handleError<DummyAgentAPI>('updateDummyAgent'))
     );
   }
 

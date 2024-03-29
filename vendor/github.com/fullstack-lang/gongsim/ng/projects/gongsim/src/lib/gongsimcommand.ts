@@ -1,6 +1,6 @@
 // generated code - do not edit
 
-import { GongsimCommandDB } from './gongsimcommand-db'
+import { GongsimCommandAPI } from './gongsimcommand-api'
 import { FrontRepo } from './front-repo.service';
 
 // insertion point for imports
@@ -29,50 +29,50 @@ export class GongsimCommand {
 
 }
 
-export function CopyGongsimCommandToGongsimCommandDB(gongsimcommand: GongsimCommand, gongsimcommandDB: GongsimCommandDB) {
+export function CopyGongsimCommandToGongsimCommandAPI(gongsimcommand: GongsimCommand, gongsimcommandAPI: GongsimCommandAPI) {
 
-	gongsimcommandDB.CreatedAt = gongsimcommand.CreatedAt
-	gongsimcommandDB.DeletedAt = gongsimcommand.DeletedAt
-	gongsimcommandDB.ID = gongsimcommand.ID
+	gongsimcommandAPI.CreatedAt = gongsimcommand.CreatedAt
+	gongsimcommandAPI.DeletedAt = gongsimcommand.DeletedAt
+	gongsimcommandAPI.ID = gongsimcommand.ID
 
 	// insertion point for basic fields copy operations
-	gongsimcommandDB.Name = gongsimcommand.Name
-	gongsimcommandDB.Command = gongsimcommand.Command
-	gongsimcommandDB.CommandDate = gongsimcommand.CommandDate
-	gongsimcommandDB.SpeedCommandType = gongsimcommand.SpeedCommandType
-	gongsimcommandDB.DateSpeedCommand = gongsimcommand.DateSpeedCommand
+	gongsimcommandAPI.Name = gongsimcommand.Name
+	gongsimcommandAPI.Command = gongsimcommand.Command
+	gongsimcommandAPI.CommandDate = gongsimcommand.CommandDate
+	gongsimcommandAPI.SpeedCommandType = gongsimcommand.SpeedCommandType
+	gongsimcommandAPI.DateSpeedCommand = gongsimcommand.DateSpeedCommand
 
 	// insertion point for pointer fields encoding
-	gongsimcommandDB.GongsimCommandPointersEncoding.EngineID.Valid = true
+	gongsimcommandAPI.GongsimCommandPointersEncoding.EngineID.Valid = true
 	if (gongsimcommand.Engine != undefined) {
-		gongsimcommandDB.GongsimCommandPointersEncoding.EngineID.Int64 = gongsimcommand.Engine.ID  
+		gongsimcommandAPI.GongsimCommandPointersEncoding.EngineID.Int64 = gongsimcommand.Engine.ID  
 	} else {
-		gongsimcommandDB.GongsimCommandPointersEncoding.EngineID.Int64 = 0 		
+		gongsimcommandAPI.GongsimCommandPointersEncoding.EngineID.Int64 = 0 		
 	}
 
 
 	// insertion point for slice of pointers fields encoding
 }
 
-// CopyGongsimCommandDBToGongsimCommand update basic, pointers and slice of pointers fields of gongsimcommand
-// from respectively the basic fields and encoded fields of pointers and slices of pointers of gongsimcommandDB
+// CopyGongsimCommandAPIToGongsimCommand update basic, pointers and slice of pointers fields of gongsimcommand
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of gongsimcommandAPI
 // this function uses frontRepo.map_ID_<structname> to decode the encoded fields
 // a condition is that those maps has to be initialized before
-export function CopyGongsimCommandDBToGongsimCommand(gongsimcommandDB: GongsimCommandDB, gongsimcommand: GongsimCommand, frontRepo: FrontRepo) {
+export function CopyGongsimCommandAPIToGongsimCommand(gongsimcommandAPI: GongsimCommandAPI, gongsimcommand: GongsimCommand, frontRepo: FrontRepo) {
 
-	gongsimcommand.CreatedAt = gongsimcommandDB.CreatedAt
-	gongsimcommand.DeletedAt = gongsimcommandDB.DeletedAt
-	gongsimcommand.ID = gongsimcommandDB.ID
+	gongsimcommand.CreatedAt = gongsimcommandAPI.CreatedAt
+	gongsimcommand.DeletedAt = gongsimcommandAPI.DeletedAt
+	gongsimcommand.ID = gongsimcommandAPI.ID
 
 	// insertion point for basic fields copy operations
-	gongsimcommand.Name = gongsimcommandDB.Name
-	gongsimcommand.Command = gongsimcommandDB.Command
-	gongsimcommand.CommandDate = gongsimcommandDB.CommandDate
-	gongsimcommand.SpeedCommandType = gongsimcommandDB.SpeedCommandType
-	gongsimcommand.DateSpeedCommand = gongsimcommandDB.DateSpeedCommand
+	gongsimcommand.Name = gongsimcommandAPI.Name
+	gongsimcommand.Command = gongsimcommandAPI.Command
+	gongsimcommand.CommandDate = gongsimcommandAPI.CommandDate
+	gongsimcommand.SpeedCommandType = gongsimcommandAPI.SpeedCommandType
+	gongsimcommand.DateSpeedCommand = gongsimcommandAPI.DateSpeedCommand
 
 	// insertion point for pointer fields encoding
-	gongsimcommand.Engine = frontRepo.map_ID_Engine.get(gongsimcommandDB.GongsimCommandPointersEncoding.EngineID.Int64)
+	gongsimcommand.Engine = frontRepo.map_ID_Engine.get(gongsimcommandAPI.GongsimCommandPointersEncoding.EngineID.Int64)
 
 	// insertion point for slice of pointers fields encoding
 }

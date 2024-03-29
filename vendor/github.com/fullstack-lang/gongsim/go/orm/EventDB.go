@@ -38,6 +38,7 @@ type EventAPI struct {
 	models.Event_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	EventPointersEncoding EventPointersEncoding
 }
 
@@ -63,7 +64,9 @@ type EventDB struct {
 
 	// Declation for basic field eventDB.Duration
 	Duration_Data sql.NullInt64
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	EventPointersEncoding
 }
 

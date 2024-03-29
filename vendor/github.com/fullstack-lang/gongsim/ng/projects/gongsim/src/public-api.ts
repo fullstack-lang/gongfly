@@ -9,25 +9,27 @@ export * from './lib/front-repo.service'
 export * from './lib/null-int64'
 export * from './lib/commitnbfromback.service'
 export * from './lib/push_from_front_nb.service'
+export * from './lib/back-repo-data'
+export * from './lib/web-socket-service'
 
 
-export * from './lib/dummyagent-db'
+export * from './lib/dummyagent-api'
 export * from './lib/dummyagent'
 export * from './lib/dummyagent.service'
 
-export * from './lib/engine-db'
+export * from './lib/engine-api'
 export * from './lib/engine'
 export * from './lib/engine.service'
 
-export * from './lib/event-db'
+export * from './lib/event-api'
 export * from './lib/event'
 export * from './lib/event.service'
 
-export * from './lib/gongsimcommand-db'
+export * from './lib/gongsimcommand-api'
 export * from './lib/gongsimcommand'
 export * from './lib/gongsimcommand.service'
 
-export * from './lib/gongsimstatus-db'
+export * from './lib/gongsimstatus-api'
 export * from './lib/gongsimstatus'
 export * from './lib/gongsimstatus.service'
 

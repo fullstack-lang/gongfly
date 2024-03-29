@@ -11,8 +11,8 @@ import { BehaviorSubject } from 'rxjs'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
 
-import { LayerGroupDB } from './layergroup-db'
-import { LayerGroup, CopyLayerGroupToLayerGroupDB } from './layergroup'
+import { LayerGroupAPI } from './layergroup-api'
+import { LayerGroup, CopyLayerGroupToLayerGroupAPI } from './layergroup'
 
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
@@ -46,41 +46,41 @@ export class LayerGroupService {
 
   /** GET layergroups from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB[]> {
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupAPI[]> {
     return this.getLayerGroups(GONG__StackPath, frontRepo)
   }
-  getLayerGroups(GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB[]> {
+  getLayerGroups(GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupAPI[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
-    return this.http.get<LayerGroupDB[]>(this.layergroupsUrl, { params: params })
+    return this.http.get<LayerGroupAPI[]>(this.layergroupsUrl, { params: params })
       .pipe(
         tap(),
-        catchError(this.handleError<LayerGroupDB[]>('getLayerGroups', []))
+        catchError(this.handleError<LayerGroupAPI[]>('getLayerGroups', []))
       );
   }
 
   /** GET layergroup by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB> {
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupAPI> {
     return this.getLayerGroup(id, GONG__StackPath, frontRepo)
   }
-  getLayerGroup(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB> {
+  getLayerGroup(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     const url = `${this.layergroupsUrl}/${id}`;
-    return this.http.get<LayerGroupDB>(url, { params: params }).pipe(
+    return this.http.get<LayerGroupAPI>(url, { params: params }).pipe(
       // tap(_ => this.log(`fetched layergroup id=${id}`)),
-      catchError(this.handleError<LayerGroupDB>(`getLayerGroup id=${id}`))
+      catchError(this.handleError<LayerGroupAPI>(`getLayerGroup id=${id}`))
     );
   }
 
   // postFront copy layergroup to a version with encoded pointers and post to the back
-  postFront(layergroup: LayerGroup, GONG__StackPath: string): Observable<LayerGroupDB> {
-    let layergroupDB = new LayerGroupDB
-    CopyLayerGroupToLayerGroupDB(layergroup, layergroupDB)
-    const id = typeof layergroupDB === 'number' ? layergroupDB : layergroupDB.ID
+  postFront(layergroup: LayerGroup, GONG__StackPath: string): Observable<LayerGroupAPI> {
+    let layergroupAPI = new LayerGroupAPI
+    CopyLayerGroupToLayerGroupAPI(layergroup, layergroupAPI)
+    const id = typeof layergroupAPI === 'number' ? layergroupAPI : layergroupAPI.ID
     const url = `${this.layergroupsUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -88,18 +88,18 @@ export class LayerGroupService {
       params: params
     }
 
-    return this.http.post<LayerGroupDB>(url, layergroupDB, httpOptions).pipe(
+    return this.http.post<LayerGroupAPI>(url, layergroupAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<LayerGroupDB>('postLayerGroup'))
+      catchError(this.handleError<LayerGroupAPI>('postLayerGroup'))
     );
   }
   
   /** POST: add a new layergroup to the server */
-  post(layergroupdb: LayerGroupDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB> {
+  post(layergroupdb: LayerGroupAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupAPI> {
     return this.postLayerGroup(layergroupdb, GONG__StackPath, frontRepo)
   }
-  postLayerGroup(layergroupdb: LayerGroupDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB> {
+  postLayerGroup(layergroupdb: LayerGroupAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -107,19 +107,19 @@ export class LayerGroupService {
       params: params
     }
 
-    return this.http.post<LayerGroupDB>(this.layergroupsUrl, layergroupdb, httpOptions).pipe(
+    return this.http.post<LayerGroupAPI>(this.layergroupsUrl, layergroupdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`posted layergroupdb id=${layergroupdb.ID}`)
       }),
-      catchError(this.handleError<LayerGroupDB>('postLayerGroup'))
+      catchError(this.handleError<LayerGroupAPI>('postLayerGroup'))
     );
   }
 
   /** DELETE: delete the layergroupdb from the server */
-  delete(layergroupdb: LayerGroupDB | number, GONG__StackPath: string): Observable<LayerGroupDB> {
+  delete(layergroupdb: LayerGroupAPI | number, GONG__StackPath: string): Observable<LayerGroupAPI> {
     return this.deleteLayerGroup(layergroupdb, GONG__StackPath)
   }
-  deleteLayerGroup(layergroupdb: LayerGroupDB | number, GONG__StackPath: string): Observable<LayerGroupDB> {
+  deleteLayerGroup(layergroupdb: LayerGroupAPI | number, GONG__StackPath: string): Observable<LayerGroupAPI> {
     const id = typeof layergroupdb === 'number' ? layergroupdb : layergroupdb.ID;
     const url = `${this.layergroupsUrl}/${id}`;
 
@@ -129,17 +129,17 @@ export class LayerGroupService {
       params: params
     };
 
-    return this.http.delete<LayerGroupDB>(url, httpOptions).pipe(
+    return this.http.delete<LayerGroupAPI>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted layergroupdb id=${id}`)),
-      catchError(this.handleError<LayerGroupDB>('deleteLayerGroup'))
+      catchError(this.handleError<LayerGroupAPI>('deleteLayerGroup'))
     );
   }
 
   // updateFront copy layergroup to a version with encoded pointers and update to the back
-  updateFront(layergroup: LayerGroup, GONG__StackPath: string): Observable<LayerGroupDB> {
-    let layergroupDB = new LayerGroupDB
-    CopyLayerGroupToLayerGroupDB(layergroup, layergroupDB)
-    const id = typeof layergroupDB === 'number' ? layergroupDB : layergroupDB.ID
+  updateFront(layergroup: LayerGroup, GONG__StackPath: string): Observable<LayerGroupAPI> {
+    let layergroupAPI = new LayerGroupAPI
+    CopyLayerGroupToLayerGroupAPI(layergroup, layergroupAPI)
+    const id = typeof layergroupAPI === 'number' ? layergroupAPI : layergroupAPI.ID
     const url = `${this.layergroupsUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -147,18 +147,18 @@ export class LayerGroupService {
       params: params
     }
 
-    return this.http.put<LayerGroupDB>(url, layergroupDB, httpOptions).pipe(
+    return this.http.put<LayerGroupAPI>(url, layergroupAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<LayerGroupDB>('updateLayerGroup'))
+      catchError(this.handleError<LayerGroupAPI>('updateLayerGroup'))
     );
   }
 
   /** PUT: update the layergroupdb on the server */
-  update(layergroupdb: LayerGroupDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB> {
+  update(layergroupdb: LayerGroupAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupAPI> {
     return this.updateLayerGroup(layergroupdb, GONG__StackPath, frontRepo)
   }
-  updateLayerGroup(layergroupdb: LayerGroupDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupDB> {
+  updateLayerGroup(layergroupdb: LayerGroupAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LayerGroupAPI> {
     const id = typeof layergroupdb === 'number' ? layergroupdb : layergroupdb.ID;
     const url = `${this.layergroupsUrl}/${id}`;
 
@@ -169,11 +169,11 @@ export class LayerGroupService {
       params: params
     };
 
-    return this.http.put<LayerGroupDB>(url, layergroupdb, httpOptions).pipe(
+    return this.http.put<LayerGroupAPI>(url, layergroupdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`updated layergroupdb id=${layergroupdb.ID}`)
       }),
-      catchError(this.handleError<LayerGroupDB>('updateLayerGroup'))
+      catchError(this.handleError<LayerGroupAPI>('updateLayerGroup'))
     );
   }
 

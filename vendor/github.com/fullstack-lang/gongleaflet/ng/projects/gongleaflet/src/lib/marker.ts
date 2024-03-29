@@ -1,6 +1,6 @@
 // generated code - do not edit
 
-import { MarkerDB } from './marker-db'
+import { MarkerAPI } from './marker-api'
 import { FrontRepo } from './front-repo.service';
 
 // insertion point for imports
@@ -31,56 +31,56 @@ export class Marker {
 
 }
 
-export function CopyMarkerToMarkerDB(marker: Marker, markerDB: MarkerDB) {
+export function CopyMarkerToMarkerAPI(marker: Marker, markerAPI: MarkerAPI) {
 
-	markerDB.CreatedAt = marker.CreatedAt
-	markerDB.DeletedAt = marker.DeletedAt
-	markerDB.ID = marker.ID
+	markerAPI.CreatedAt = marker.CreatedAt
+	markerAPI.DeletedAt = marker.DeletedAt
+	markerAPI.ID = marker.ID
 
 	// insertion point for basic fields copy operations
-	markerDB.Lat = marker.Lat
-	markerDB.Lng = marker.Lng
-	markerDB.Name = marker.Name
-	markerDB.ColorEnum = marker.ColorEnum
+	markerAPI.Lat = marker.Lat
+	markerAPI.Lng = marker.Lng
+	markerAPI.Name = marker.Name
+	markerAPI.ColorEnum = marker.ColorEnum
 
 	// insertion point for pointer fields encoding
-	markerDB.MarkerPointersEncoding.LayerGroupID.Valid = true
+	markerAPI.MarkerPointersEncoding.LayerGroupID.Valid = true
 	if (marker.LayerGroup != undefined) {
-		markerDB.MarkerPointersEncoding.LayerGroupID.Int64 = marker.LayerGroup.ID  
+		markerAPI.MarkerPointersEncoding.LayerGroupID.Int64 = marker.LayerGroup.ID  
 	} else {
-		markerDB.MarkerPointersEncoding.LayerGroupID.Int64 = 0 		
+		markerAPI.MarkerPointersEncoding.LayerGroupID.Int64 = 0 		
 	}
 
-	markerDB.MarkerPointersEncoding.DivIconID.Valid = true
+	markerAPI.MarkerPointersEncoding.DivIconID.Valid = true
 	if (marker.DivIcon != undefined) {
-		markerDB.MarkerPointersEncoding.DivIconID.Int64 = marker.DivIcon.ID  
+		markerAPI.MarkerPointersEncoding.DivIconID.Int64 = marker.DivIcon.ID  
 	} else {
-		markerDB.MarkerPointersEncoding.DivIconID.Int64 = 0 		
+		markerAPI.MarkerPointersEncoding.DivIconID.Int64 = 0 		
 	}
 
 
 	// insertion point for slice of pointers fields encoding
 }
 
-// CopyMarkerDBToMarker update basic, pointers and slice of pointers fields of marker
-// from respectively the basic fields and encoded fields of pointers and slices of pointers of markerDB
+// CopyMarkerAPIToMarker update basic, pointers and slice of pointers fields of marker
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of markerAPI
 // this function uses frontRepo.map_ID_<structname> to decode the encoded fields
 // a condition is that those maps has to be initialized before
-export function CopyMarkerDBToMarker(markerDB: MarkerDB, marker: Marker, frontRepo: FrontRepo) {
+export function CopyMarkerAPIToMarker(markerAPI: MarkerAPI, marker: Marker, frontRepo: FrontRepo) {
 
-	marker.CreatedAt = markerDB.CreatedAt
-	marker.DeletedAt = markerDB.DeletedAt
-	marker.ID = markerDB.ID
+	marker.CreatedAt = markerAPI.CreatedAt
+	marker.DeletedAt = markerAPI.DeletedAt
+	marker.ID = markerAPI.ID
 
 	// insertion point for basic fields copy operations
-	marker.Lat = markerDB.Lat
-	marker.Lng = markerDB.Lng
-	marker.Name = markerDB.Name
-	marker.ColorEnum = markerDB.ColorEnum
+	marker.Lat = markerAPI.Lat
+	marker.Lng = markerAPI.Lng
+	marker.Name = markerAPI.Name
+	marker.ColorEnum = markerAPI.ColorEnum
 
 	// insertion point for pointer fields encoding
-	marker.LayerGroup = frontRepo.map_ID_LayerGroup.get(markerDB.MarkerPointersEncoding.LayerGroupID.Int64)
-	marker.DivIcon = frontRepo.map_ID_DivIcon.get(markerDB.MarkerPointersEncoding.DivIconID.Int64)
+	marker.LayerGroup = frontRepo.map_ID_LayerGroup.get(markerAPI.MarkerPointersEncoding.LayerGroupID.Int64)
+	marker.DivIcon = frontRepo.map_ID_DivIcon.get(markerAPI.MarkerPointersEncoding.DivIconID.Int64)
 
 	// insertion point for slice of pointers fields encoding
 }

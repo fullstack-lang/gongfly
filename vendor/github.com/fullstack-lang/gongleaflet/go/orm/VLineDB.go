@@ -38,6 +38,7 @@ type VLineAPI struct {
 	models.VLine_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	VLinePointersEncoding VLinePointersEncoding
 }
 
@@ -94,7 +95,9 @@ type VLineDB struct {
 
 	// Declation for basic field vlineDB.MessageBackward
 	MessageBackward_Data sql.NullString
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	VLinePointersEncoding
 }
 

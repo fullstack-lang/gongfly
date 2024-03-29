@@ -1,6 +1,6 @@
 // generated code - do not edit
 
-import { LayerGroupUseDB } from './layergroupuse-db'
+import { LayerGroupUseAPI } from './layergroupuse-api'
 import { FrontRepo } from './front-repo.service';
 
 // insertion point for imports
@@ -26,44 +26,44 @@ export class LayerGroupUse {
 
 }
 
-export function CopyLayerGroupUseToLayerGroupUseDB(layergroupuse: LayerGroupUse, layergroupuseDB: LayerGroupUseDB) {
+export function CopyLayerGroupUseToLayerGroupUseAPI(layergroupuse: LayerGroupUse, layergroupuseAPI: LayerGroupUseAPI) {
 
-	layergroupuseDB.CreatedAt = layergroupuse.CreatedAt
-	layergroupuseDB.DeletedAt = layergroupuse.DeletedAt
-	layergroupuseDB.ID = layergroupuse.ID
+	layergroupuseAPI.CreatedAt = layergroupuse.CreatedAt
+	layergroupuseAPI.DeletedAt = layergroupuse.DeletedAt
+	layergroupuseAPI.ID = layergroupuse.ID
 
 	// insertion point for basic fields copy operations
-	layergroupuseDB.Name = layergroupuse.Name
-	layergroupuseDB.IsDisplayed = layergroupuse.IsDisplayed
+	layergroupuseAPI.Name = layergroupuse.Name
+	layergroupuseAPI.IsDisplayed = layergroupuse.IsDisplayed
 
 	// insertion point for pointer fields encoding
-	layergroupuseDB.LayerGroupUsePointersEncoding.LayerGroupID.Valid = true
+	layergroupuseAPI.LayerGroupUsePointersEncoding.LayerGroupID.Valid = true
 	if (layergroupuse.LayerGroup != undefined) {
-		layergroupuseDB.LayerGroupUsePointersEncoding.LayerGroupID.Int64 = layergroupuse.LayerGroup.ID  
+		layergroupuseAPI.LayerGroupUsePointersEncoding.LayerGroupID.Int64 = layergroupuse.LayerGroup.ID  
 	} else {
-		layergroupuseDB.LayerGroupUsePointersEncoding.LayerGroupID.Int64 = 0 		
+		layergroupuseAPI.LayerGroupUsePointersEncoding.LayerGroupID.Int64 = 0 		
 	}
 
 
 	// insertion point for slice of pointers fields encoding
 }
 
-// CopyLayerGroupUseDBToLayerGroupUse update basic, pointers and slice of pointers fields of layergroupuse
-// from respectively the basic fields and encoded fields of pointers and slices of pointers of layergroupuseDB
+// CopyLayerGroupUseAPIToLayerGroupUse update basic, pointers and slice of pointers fields of layergroupuse
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of layergroupuseAPI
 // this function uses frontRepo.map_ID_<structname> to decode the encoded fields
 // a condition is that those maps has to be initialized before
-export function CopyLayerGroupUseDBToLayerGroupUse(layergroupuseDB: LayerGroupUseDB, layergroupuse: LayerGroupUse, frontRepo: FrontRepo) {
+export function CopyLayerGroupUseAPIToLayerGroupUse(layergroupuseAPI: LayerGroupUseAPI, layergroupuse: LayerGroupUse, frontRepo: FrontRepo) {
 
-	layergroupuse.CreatedAt = layergroupuseDB.CreatedAt
-	layergroupuse.DeletedAt = layergroupuseDB.DeletedAt
-	layergroupuse.ID = layergroupuseDB.ID
+	layergroupuse.CreatedAt = layergroupuseAPI.CreatedAt
+	layergroupuse.DeletedAt = layergroupuseAPI.DeletedAt
+	layergroupuse.ID = layergroupuseAPI.ID
 
 	// insertion point for basic fields copy operations
-	layergroupuse.Name = layergroupuseDB.Name
-	layergroupuse.IsDisplayed = layergroupuseDB.IsDisplayed
+	layergroupuse.Name = layergroupuseAPI.Name
+	layergroupuse.IsDisplayed = layergroupuseAPI.IsDisplayed
 
 	// insertion point for pointer fields encoding
-	layergroupuse.LayerGroup = frontRepo.map_ID_LayerGroup.get(layergroupuseDB.LayerGroupUsePointersEncoding.LayerGroupID.Int64)
+	layergroupuse.LayerGroup = frontRepo.map_ID_LayerGroup.get(layergroupuseAPI.LayerGroupUsePointersEncoding.LayerGroupID.Int64)
 
 	// insertion point for slice of pointers fields encoding
 }

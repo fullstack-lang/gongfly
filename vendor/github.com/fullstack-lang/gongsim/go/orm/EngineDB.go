@@ -38,6 +38,7 @@ type EngineAPI struct {
 	models.Engine_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	EnginePointersEncoding EnginePointersEncoding
 }
 
@@ -81,7 +82,9 @@ type EngineDB struct {
 
 	// Declation for basic field engineDB.Speed
 	Speed_Data sql.NullFloat64
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	EnginePointersEncoding
 }
 

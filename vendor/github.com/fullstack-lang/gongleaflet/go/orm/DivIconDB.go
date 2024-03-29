@@ -38,6 +38,7 @@ type DivIconAPI struct {
 	models.DivIcon_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	DivIconPointersEncoding DivIconPointersEncoding
 }
 
@@ -63,7 +64,9 @@ type DivIconDB struct {
 
 	// Declation for basic field diviconDB.SVG
 	SVG_Data sql.NullString
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	DivIconPointersEncoding
 }
 

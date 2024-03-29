@@ -38,6 +38,7 @@ type VisualTrackAPI struct {
 	models.VisualTrack_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	VisualTrackPointersEncoding VisualTrackPointersEncoding
 }
 
@@ -97,7 +98,9 @@ type VisualTrackDB struct {
 	// Declation for basic field visualtrackDB.DisplayLevelAndSpeed
 	// provide the sql storage for the boolan
 	DisplayLevelAndSpeed_Data sql.NullBool
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	VisualTrackPointersEncoding
 }
 

@@ -11,13 +11,13 @@ import { BehaviorSubject } from 'rxjs'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
 
-import { MapOptionsDB } from './mapoptions-db'
-import { MapOptions, CopyMapOptionsToMapOptionsDB } from './mapoptions'
+import { MapOptionsAPI } from './mapoptions-api'
+import { MapOptions, CopyMapOptionsToMapOptionsAPI } from './mapoptions'
 
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
-import { LayerGroupUseDB } from './layergroupuse-db'
+import { LayerGroupUseAPI } from './layergroupuse-api'
 
 @Injectable({
   providedIn: 'root'
@@ -47,41 +47,41 @@ export class MapOptionsService {
 
   /** GET mapoptionss from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB[]> {
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsAPI[]> {
     return this.getMapOptionss(GONG__StackPath, frontRepo)
   }
-  getMapOptionss(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB[]> {
+  getMapOptionss(GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsAPI[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
-    return this.http.get<MapOptionsDB[]>(this.mapoptionssUrl, { params: params })
+    return this.http.get<MapOptionsAPI[]>(this.mapoptionssUrl, { params: params })
       .pipe(
         tap(),
-        catchError(this.handleError<MapOptionsDB[]>('getMapOptionss', []))
+        catchError(this.handleError<MapOptionsAPI[]>('getMapOptionss', []))
       );
   }
 
   /** GET mapoptions by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsAPI> {
     return this.getMapOptions(id, GONG__StackPath, frontRepo)
   }
-  getMapOptions(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
+  getMapOptions(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     const url = `${this.mapoptionssUrl}/${id}`;
-    return this.http.get<MapOptionsDB>(url, { params: params }).pipe(
+    return this.http.get<MapOptionsAPI>(url, { params: params }).pipe(
       // tap(_ => this.log(`fetched mapoptions id=${id}`)),
-      catchError(this.handleError<MapOptionsDB>(`getMapOptions id=${id}`))
+      catchError(this.handleError<MapOptionsAPI>(`getMapOptions id=${id}`))
     );
   }
 
   // postFront copy mapoptions to a version with encoded pointers and post to the back
-  postFront(mapoptions: MapOptions, GONG__StackPath: string): Observable<MapOptionsDB> {
-    let mapoptionsDB = new MapOptionsDB
-    CopyMapOptionsToMapOptionsDB(mapoptions, mapoptionsDB)
-    const id = typeof mapoptionsDB === 'number' ? mapoptionsDB : mapoptionsDB.ID
+  postFront(mapoptions: MapOptions, GONG__StackPath: string): Observable<MapOptionsAPI> {
+    let mapoptionsAPI = new MapOptionsAPI
+    CopyMapOptionsToMapOptionsAPI(mapoptions, mapoptionsAPI)
+    const id = typeof mapoptionsAPI === 'number' ? mapoptionsAPI : mapoptionsAPI.ID
     const url = `${this.mapoptionssUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -89,18 +89,18 @@ export class MapOptionsService {
       params: params
     }
 
-    return this.http.post<MapOptionsDB>(url, mapoptionsDB, httpOptions).pipe(
+    return this.http.post<MapOptionsAPI>(url, mapoptionsAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<MapOptionsDB>('postMapOptions'))
+      catchError(this.handleError<MapOptionsAPI>('postMapOptions'))
     );
   }
   
   /** POST: add a new mapoptions to the server */
-  post(mapoptionsdb: MapOptionsDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
+  post(mapoptionsdb: MapOptionsAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsAPI> {
     return this.postMapOptions(mapoptionsdb, GONG__StackPath, frontRepo)
   }
-  postMapOptions(mapoptionsdb: MapOptionsDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
+  postMapOptions(mapoptionsdb: MapOptionsAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -108,19 +108,19 @@ export class MapOptionsService {
       params: params
     }
 
-    return this.http.post<MapOptionsDB>(this.mapoptionssUrl, mapoptionsdb, httpOptions).pipe(
+    return this.http.post<MapOptionsAPI>(this.mapoptionssUrl, mapoptionsdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`posted mapoptionsdb id=${mapoptionsdb.ID}`)
       }),
-      catchError(this.handleError<MapOptionsDB>('postMapOptions'))
+      catchError(this.handleError<MapOptionsAPI>('postMapOptions'))
     );
   }
 
   /** DELETE: delete the mapoptionsdb from the server */
-  delete(mapoptionsdb: MapOptionsDB | number, GONG__StackPath: string): Observable<MapOptionsDB> {
+  delete(mapoptionsdb: MapOptionsAPI | number, GONG__StackPath: string): Observable<MapOptionsAPI> {
     return this.deleteMapOptions(mapoptionsdb, GONG__StackPath)
   }
-  deleteMapOptions(mapoptionsdb: MapOptionsDB | number, GONG__StackPath: string): Observable<MapOptionsDB> {
+  deleteMapOptions(mapoptionsdb: MapOptionsAPI | number, GONG__StackPath: string): Observable<MapOptionsAPI> {
     const id = typeof mapoptionsdb === 'number' ? mapoptionsdb : mapoptionsdb.ID;
     const url = `${this.mapoptionssUrl}/${id}`;
 
@@ -130,17 +130,17 @@ export class MapOptionsService {
       params: params
     };
 
-    return this.http.delete<MapOptionsDB>(url, httpOptions).pipe(
+    return this.http.delete<MapOptionsAPI>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted mapoptionsdb id=${id}`)),
-      catchError(this.handleError<MapOptionsDB>('deleteMapOptions'))
+      catchError(this.handleError<MapOptionsAPI>('deleteMapOptions'))
     );
   }
 
   // updateFront copy mapoptions to a version with encoded pointers and update to the back
-  updateFront(mapoptions: MapOptions, GONG__StackPath: string): Observable<MapOptionsDB> {
-    let mapoptionsDB = new MapOptionsDB
-    CopyMapOptionsToMapOptionsDB(mapoptions, mapoptionsDB)
-    const id = typeof mapoptionsDB === 'number' ? mapoptionsDB : mapoptionsDB.ID
+  updateFront(mapoptions: MapOptions, GONG__StackPath: string): Observable<MapOptionsAPI> {
+    let mapoptionsAPI = new MapOptionsAPI
+    CopyMapOptionsToMapOptionsAPI(mapoptions, mapoptionsAPI)
+    const id = typeof mapoptionsAPI === 'number' ? mapoptionsAPI : mapoptionsAPI.ID
     const url = `${this.mapoptionssUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -148,18 +148,18 @@ export class MapOptionsService {
       params: params
     }
 
-    return this.http.put<MapOptionsDB>(url, mapoptionsDB, httpOptions).pipe(
+    return this.http.put<MapOptionsAPI>(url, mapoptionsAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<MapOptionsDB>('updateMapOptions'))
+      catchError(this.handleError<MapOptionsAPI>('updateMapOptions'))
     );
   }
 
   /** PUT: update the mapoptionsdb on the server */
-  update(mapoptionsdb: MapOptionsDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
+  update(mapoptionsdb: MapOptionsAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsAPI> {
     return this.updateMapOptions(mapoptionsdb, GONG__StackPath, frontRepo)
   }
-  updateMapOptions(mapoptionsdb: MapOptionsDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsDB> {
+  updateMapOptions(mapoptionsdb: MapOptionsAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<MapOptionsAPI> {
     const id = typeof mapoptionsdb === 'number' ? mapoptionsdb : mapoptionsdb.ID;
     const url = `${this.mapoptionssUrl}/${id}`;
 
@@ -170,11 +170,11 @@ export class MapOptionsService {
       params: params
     };
 
-    return this.http.put<MapOptionsDB>(url, mapoptionsdb, httpOptions).pipe(
+    return this.http.put<MapOptionsAPI>(url, mapoptionsdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`updated mapoptionsdb id=${mapoptionsdb.ID}`)
       }),
-      catchError(this.handleError<MapOptionsDB>('updateMapOptions'))
+      catchError(this.handleError<MapOptionsAPI>('updateMapOptions'))
     );
   }
 

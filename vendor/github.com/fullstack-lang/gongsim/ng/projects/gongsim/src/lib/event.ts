@@ -1,6 +1,6 @@
 // generated code - do not edit
 
-import { EventDB } from './event-db'
+import { EventAPI } from './event-api'
 import { FrontRepo } from './front-repo.service';
 
 // insertion point for imports
@@ -24,34 +24,34 @@ export class Event {
 	Duration_string?: string
 }
 
-export function CopyEventToEventDB(event: Event, eventDB: EventDB) {
+export function CopyEventToEventAPI(event: Event, eventAPI: EventAPI) {
 
-	eventDB.CreatedAt = event.CreatedAt
-	eventDB.DeletedAt = event.DeletedAt
-	eventDB.ID = event.ID
+	eventAPI.CreatedAt = event.CreatedAt
+	eventAPI.DeletedAt = event.DeletedAt
+	eventAPI.ID = event.ID
 
 	// insertion point for basic fields copy operations
-	eventDB.Name = event.Name
-	eventDB.Duration = event.Duration
+	eventAPI.Name = event.Name
+	eventAPI.Duration = event.Duration
 
 	// insertion point for pointer fields encoding
 
 	// insertion point for slice of pointers fields encoding
 }
 
-// CopyEventDBToEvent update basic, pointers and slice of pointers fields of event
-// from respectively the basic fields and encoded fields of pointers and slices of pointers of eventDB
+// CopyEventAPIToEvent update basic, pointers and slice of pointers fields of event
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of eventAPI
 // this function uses frontRepo.map_ID_<structname> to decode the encoded fields
 // a condition is that those maps has to be initialized before
-export function CopyEventDBToEvent(eventDB: EventDB, event: Event, frontRepo: FrontRepo) {
+export function CopyEventAPIToEvent(eventAPI: EventAPI, event: Event, frontRepo: FrontRepo) {
 
-	event.CreatedAt = eventDB.CreatedAt
-	event.DeletedAt = eventDB.DeletedAt
-	event.ID = eventDB.ID
+	event.CreatedAt = eventAPI.CreatedAt
+	event.DeletedAt = eventAPI.DeletedAt
+	event.ID = eventAPI.ID
 
 	// insertion point for basic fields copy operations
-	event.Name = eventDB.Name
-	event.Duration = eventDB.Duration
+	event.Name = eventAPI.Name
+	event.Duration = eventAPI.Duration
 
 	// insertion point for pointer fields encoding
 

@@ -11,14 +11,14 @@ import { BehaviorSubject } from 'rxjs'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
 
-import { VisualTrackDB } from './visualtrack-db'
-import { VisualTrack, CopyVisualTrackToVisualTrackDB } from './visualtrack'
+import { VisualTrackAPI } from './visualtrack-api'
+import { VisualTrack, CopyVisualTrackToVisualTrackAPI } from './visualtrack'
 
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
-import { LayerGroupDB } from './layergroup-db'
-import { DivIconDB } from './divicon-db'
+import { LayerGroupAPI } from './layergroup-api'
+import { DivIconAPI } from './divicon-api'
 
 @Injectable({
   providedIn: 'root'
@@ -48,41 +48,41 @@ export class VisualTrackService {
 
   /** GET visualtracks from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB[]> {
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackAPI[]> {
     return this.getVisualTracks(GONG__StackPath, frontRepo)
   }
-  getVisualTracks(GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB[]> {
+  getVisualTracks(GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackAPI[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
-    return this.http.get<VisualTrackDB[]>(this.visualtracksUrl, { params: params })
+    return this.http.get<VisualTrackAPI[]>(this.visualtracksUrl, { params: params })
       .pipe(
         tap(),
-        catchError(this.handleError<VisualTrackDB[]>('getVisualTracks', []))
+        catchError(this.handleError<VisualTrackAPI[]>('getVisualTracks', []))
       );
   }
 
   /** GET visualtrack by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackAPI> {
     return this.getVisualTrack(id, GONG__StackPath, frontRepo)
   }
-  getVisualTrack(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
+  getVisualTrack(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     const url = `${this.visualtracksUrl}/${id}`;
-    return this.http.get<VisualTrackDB>(url, { params: params }).pipe(
+    return this.http.get<VisualTrackAPI>(url, { params: params }).pipe(
       // tap(_ => this.log(`fetched visualtrack id=${id}`)),
-      catchError(this.handleError<VisualTrackDB>(`getVisualTrack id=${id}`))
+      catchError(this.handleError<VisualTrackAPI>(`getVisualTrack id=${id}`))
     );
   }
 
   // postFront copy visualtrack to a version with encoded pointers and post to the back
-  postFront(visualtrack: VisualTrack, GONG__StackPath: string): Observable<VisualTrackDB> {
-    let visualtrackDB = new VisualTrackDB
-    CopyVisualTrackToVisualTrackDB(visualtrack, visualtrackDB)
-    const id = typeof visualtrackDB === 'number' ? visualtrackDB : visualtrackDB.ID
+  postFront(visualtrack: VisualTrack, GONG__StackPath: string): Observable<VisualTrackAPI> {
+    let visualtrackAPI = new VisualTrackAPI
+    CopyVisualTrackToVisualTrackAPI(visualtrack, visualtrackAPI)
+    const id = typeof visualtrackAPI === 'number' ? visualtrackAPI : visualtrackAPI.ID
     const url = `${this.visualtracksUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -90,18 +90,18 @@ export class VisualTrackService {
       params: params
     }
 
-    return this.http.post<VisualTrackDB>(url, visualtrackDB, httpOptions).pipe(
+    return this.http.post<VisualTrackAPI>(url, visualtrackAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<VisualTrackDB>('postVisualTrack'))
+      catchError(this.handleError<VisualTrackAPI>('postVisualTrack'))
     );
   }
   
   /** POST: add a new visualtrack to the server */
-  post(visualtrackdb: VisualTrackDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
+  post(visualtrackdb: VisualTrackAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackAPI> {
     return this.postVisualTrack(visualtrackdb, GONG__StackPath, frontRepo)
   }
-  postVisualTrack(visualtrackdb: VisualTrackDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
+  postVisualTrack(visualtrackdb: VisualTrackAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -109,19 +109,19 @@ export class VisualTrackService {
       params: params
     }
 
-    return this.http.post<VisualTrackDB>(this.visualtracksUrl, visualtrackdb, httpOptions).pipe(
+    return this.http.post<VisualTrackAPI>(this.visualtracksUrl, visualtrackdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`posted visualtrackdb id=${visualtrackdb.ID}`)
       }),
-      catchError(this.handleError<VisualTrackDB>('postVisualTrack'))
+      catchError(this.handleError<VisualTrackAPI>('postVisualTrack'))
     );
   }
 
   /** DELETE: delete the visualtrackdb from the server */
-  delete(visualtrackdb: VisualTrackDB | number, GONG__StackPath: string): Observable<VisualTrackDB> {
+  delete(visualtrackdb: VisualTrackAPI | number, GONG__StackPath: string): Observable<VisualTrackAPI> {
     return this.deleteVisualTrack(visualtrackdb, GONG__StackPath)
   }
-  deleteVisualTrack(visualtrackdb: VisualTrackDB | number, GONG__StackPath: string): Observable<VisualTrackDB> {
+  deleteVisualTrack(visualtrackdb: VisualTrackAPI | number, GONG__StackPath: string): Observable<VisualTrackAPI> {
     const id = typeof visualtrackdb === 'number' ? visualtrackdb : visualtrackdb.ID;
     const url = `${this.visualtracksUrl}/${id}`;
 
@@ -131,17 +131,17 @@ export class VisualTrackService {
       params: params
     };
 
-    return this.http.delete<VisualTrackDB>(url, httpOptions).pipe(
+    return this.http.delete<VisualTrackAPI>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted visualtrackdb id=${id}`)),
-      catchError(this.handleError<VisualTrackDB>('deleteVisualTrack'))
+      catchError(this.handleError<VisualTrackAPI>('deleteVisualTrack'))
     );
   }
 
   // updateFront copy visualtrack to a version with encoded pointers and update to the back
-  updateFront(visualtrack: VisualTrack, GONG__StackPath: string): Observable<VisualTrackDB> {
-    let visualtrackDB = new VisualTrackDB
-    CopyVisualTrackToVisualTrackDB(visualtrack, visualtrackDB)
-    const id = typeof visualtrackDB === 'number' ? visualtrackDB : visualtrackDB.ID
+  updateFront(visualtrack: VisualTrack, GONG__StackPath: string): Observable<VisualTrackAPI> {
+    let visualtrackAPI = new VisualTrackAPI
+    CopyVisualTrackToVisualTrackAPI(visualtrack, visualtrackAPI)
+    const id = typeof visualtrackAPI === 'number' ? visualtrackAPI : visualtrackAPI.ID
     const url = `${this.visualtracksUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -149,18 +149,18 @@ export class VisualTrackService {
       params: params
     }
 
-    return this.http.put<VisualTrackDB>(url, visualtrackDB, httpOptions).pipe(
+    return this.http.put<VisualTrackAPI>(url, visualtrackAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<VisualTrackDB>('updateVisualTrack'))
+      catchError(this.handleError<VisualTrackAPI>('updateVisualTrack'))
     );
   }
 
   /** PUT: update the visualtrackdb on the server */
-  update(visualtrackdb: VisualTrackDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
+  update(visualtrackdb: VisualTrackAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackAPI> {
     return this.updateVisualTrack(visualtrackdb, GONG__StackPath, frontRepo)
   }
-  updateVisualTrack(visualtrackdb: VisualTrackDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackDB> {
+  updateVisualTrack(visualtrackdb: VisualTrackAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<VisualTrackAPI> {
     const id = typeof visualtrackdb === 'number' ? visualtrackdb : visualtrackdb.ID;
     const url = `${this.visualtracksUrl}/${id}`;
 
@@ -171,11 +171,11 @@ export class VisualTrackService {
       params: params
     };
 
-    return this.http.put<VisualTrackDB>(url, visualtrackdb, httpOptions).pipe(
+    return this.http.put<VisualTrackAPI>(url, visualtrackdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`updated visualtrackdb id=${visualtrackdb.ID}`)
       }),
-      catchError(this.handleError<VisualTrackDB>('updateVisualTrack'))
+      catchError(this.handleError<VisualTrackAPI>('updateVisualTrack'))
     );
   }
 

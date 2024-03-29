@@ -11,8 +11,8 @@ import { BehaviorSubject } from 'rxjs'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
 
-import { DivIconDB } from './divicon-db'
-import { DivIcon, CopyDivIconToDivIconDB } from './divicon'
+import { DivIconAPI } from './divicon-api'
+import { DivIcon, CopyDivIconToDivIconAPI } from './divicon'
 
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
@@ -46,41 +46,41 @@ export class DivIconService {
 
   /** GET divicons from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB[]> {
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconAPI[]> {
     return this.getDivIcons(GONG__StackPath, frontRepo)
   }
-  getDivIcons(GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB[]> {
+  getDivIcons(GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconAPI[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
-    return this.http.get<DivIconDB[]>(this.diviconsUrl, { params: params })
+    return this.http.get<DivIconAPI[]>(this.diviconsUrl, { params: params })
       .pipe(
         tap(),
-        catchError(this.handleError<DivIconDB[]>('getDivIcons', []))
+        catchError(this.handleError<DivIconAPI[]>('getDivIcons', []))
       );
   }
 
   /** GET divicon by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconAPI> {
     return this.getDivIcon(id, GONG__StackPath, frontRepo)
   }
-  getDivIcon(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
+  getDivIcon(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     const url = `${this.diviconsUrl}/${id}`;
-    return this.http.get<DivIconDB>(url, { params: params }).pipe(
+    return this.http.get<DivIconAPI>(url, { params: params }).pipe(
       // tap(_ => this.log(`fetched divicon id=${id}`)),
-      catchError(this.handleError<DivIconDB>(`getDivIcon id=${id}`))
+      catchError(this.handleError<DivIconAPI>(`getDivIcon id=${id}`))
     );
   }
 
   // postFront copy divicon to a version with encoded pointers and post to the back
-  postFront(divicon: DivIcon, GONG__StackPath: string): Observable<DivIconDB> {
-    let diviconDB = new DivIconDB
-    CopyDivIconToDivIconDB(divicon, diviconDB)
-    const id = typeof diviconDB === 'number' ? diviconDB : diviconDB.ID
+  postFront(divicon: DivIcon, GONG__StackPath: string): Observable<DivIconAPI> {
+    let diviconAPI = new DivIconAPI
+    CopyDivIconToDivIconAPI(divicon, diviconAPI)
+    const id = typeof diviconAPI === 'number' ? diviconAPI : diviconAPI.ID
     const url = `${this.diviconsUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -88,18 +88,18 @@ export class DivIconService {
       params: params
     }
 
-    return this.http.post<DivIconDB>(url, diviconDB, httpOptions).pipe(
+    return this.http.post<DivIconAPI>(url, diviconAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<DivIconDB>('postDivIcon'))
+      catchError(this.handleError<DivIconAPI>('postDivIcon'))
     );
   }
   
   /** POST: add a new divicon to the server */
-  post(divicondb: DivIconDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
+  post(divicondb: DivIconAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconAPI> {
     return this.postDivIcon(divicondb, GONG__StackPath, frontRepo)
   }
-  postDivIcon(divicondb: DivIconDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
+  postDivIcon(divicondb: DivIconAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -107,19 +107,19 @@ export class DivIconService {
       params: params
     }
 
-    return this.http.post<DivIconDB>(this.diviconsUrl, divicondb, httpOptions).pipe(
+    return this.http.post<DivIconAPI>(this.diviconsUrl, divicondb, httpOptions).pipe(
       tap(_ => {
         // this.log(`posted divicondb id=${divicondb.ID}`)
       }),
-      catchError(this.handleError<DivIconDB>('postDivIcon'))
+      catchError(this.handleError<DivIconAPI>('postDivIcon'))
     );
   }
 
   /** DELETE: delete the divicondb from the server */
-  delete(divicondb: DivIconDB | number, GONG__StackPath: string): Observable<DivIconDB> {
+  delete(divicondb: DivIconAPI | number, GONG__StackPath: string): Observable<DivIconAPI> {
     return this.deleteDivIcon(divicondb, GONG__StackPath)
   }
-  deleteDivIcon(divicondb: DivIconDB | number, GONG__StackPath: string): Observable<DivIconDB> {
+  deleteDivIcon(divicondb: DivIconAPI | number, GONG__StackPath: string): Observable<DivIconAPI> {
     const id = typeof divicondb === 'number' ? divicondb : divicondb.ID;
     const url = `${this.diviconsUrl}/${id}`;
 
@@ -129,17 +129,17 @@ export class DivIconService {
       params: params
     };
 
-    return this.http.delete<DivIconDB>(url, httpOptions).pipe(
+    return this.http.delete<DivIconAPI>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted divicondb id=${id}`)),
-      catchError(this.handleError<DivIconDB>('deleteDivIcon'))
+      catchError(this.handleError<DivIconAPI>('deleteDivIcon'))
     );
   }
 
   // updateFront copy divicon to a version with encoded pointers and update to the back
-  updateFront(divicon: DivIcon, GONG__StackPath: string): Observable<DivIconDB> {
-    let diviconDB = new DivIconDB
-    CopyDivIconToDivIconDB(divicon, diviconDB)
-    const id = typeof diviconDB === 'number' ? diviconDB : diviconDB.ID
+  updateFront(divicon: DivIcon, GONG__StackPath: string): Observable<DivIconAPI> {
+    let diviconAPI = new DivIconAPI
+    CopyDivIconToDivIconAPI(divicon, diviconAPI)
+    const id = typeof diviconAPI === 'number' ? diviconAPI : diviconAPI.ID
     const url = `${this.diviconsUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -147,18 +147,18 @@ export class DivIconService {
       params: params
     }
 
-    return this.http.put<DivIconDB>(url, diviconDB, httpOptions).pipe(
+    return this.http.put<DivIconAPI>(url, diviconAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<DivIconDB>('updateDivIcon'))
+      catchError(this.handleError<DivIconAPI>('updateDivIcon'))
     );
   }
 
   /** PUT: update the divicondb on the server */
-  update(divicondb: DivIconDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
+  update(divicondb: DivIconAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconAPI> {
     return this.updateDivIcon(divicondb, GONG__StackPath, frontRepo)
   }
-  updateDivIcon(divicondb: DivIconDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconDB> {
+  updateDivIcon(divicondb: DivIconAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<DivIconAPI> {
     const id = typeof divicondb === 'number' ? divicondb : divicondb.ID;
     const url = `${this.diviconsUrl}/${id}`;
 
@@ -169,11 +169,11 @@ export class DivIconService {
       params: params
     };
 
-    return this.http.put<DivIconDB>(url, divicondb, httpOptions).pipe(
+    return this.http.put<DivIconAPI>(url, divicondb, httpOptions).pipe(
       tap(_ => {
         // this.log(`updated divicondb id=${divicondb.ID}`)
       }),
-      catchError(this.handleError<DivIconDB>('updateDivIcon'))
+      catchError(this.handleError<DivIconAPI>('updateDivIcon'))
     );
   }
 

@@ -38,6 +38,7 @@ type DummyAgentAPI struct {
 	models.DummyAgent_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	DummyAgentPointersEncoding DummyAgentPointersEncoding
 }
 
@@ -63,7 +64,9 @@ type DummyAgentDB struct {
 
 	// Declation for basic field dummyagentDB.Name
 	Name_Data sql.NullString
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	DummyAgentPointersEncoding
 }
 

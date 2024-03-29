@@ -1,44 +1,47 @@
 import { Injectable } from '@angular/core'
-import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http'
 
 import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs'
 
 // insertion point sub template for services imports
-import { CircleDB } from './circle-db'
-import { Circle, CopyCircleDBToCircle } from './circle'
+import { CircleAPI } from './circle-api'
+import { Circle, CopyCircleAPIToCircle } from './circle'
 import { CircleService } from './circle.service'
 
-import { DivIconDB } from './divicon-db'
-import { DivIcon, CopyDivIconDBToDivIcon } from './divicon'
+import { DivIconAPI } from './divicon-api'
+import { DivIcon, CopyDivIconAPIToDivIcon } from './divicon'
 import { DivIconService } from './divicon.service'
 
-import { LayerGroupDB } from './layergroup-db'
-import { LayerGroup, CopyLayerGroupDBToLayerGroup } from './layergroup'
+import { LayerGroupAPI } from './layergroup-api'
+import { LayerGroup, CopyLayerGroupAPIToLayerGroup } from './layergroup'
 import { LayerGroupService } from './layergroup.service'
 
-import { LayerGroupUseDB } from './layergroupuse-db'
-import { LayerGroupUse, CopyLayerGroupUseDBToLayerGroupUse } from './layergroupuse'
+import { LayerGroupUseAPI } from './layergroupuse-api'
+import { LayerGroupUse, CopyLayerGroupUseAPIToLayerGroupUse } from './layergroupuse'
 import { LayerGroupUseService } from './layergroupuse.service'
 
-import { MapOptionsDB } from './mapoptions-db'
-import { MapOptions, CopyMapOptionsDBToMapOptions } from './mapoptions'
+import { MapOptionsAPI } from './mapoptions-api'
+import { MapOptions, CopyMapOptionsAPIToMapOptions } from './mapoptions'
 import { MapOptionsService } from './mapoptions.service'
 
-import { MarkerDB } from './marker-db'
-import { Marker, CopyMarkerDBToMarker } from './marker'
+import { MarkerAPI } from './marker-api'
+import { Marker, CopyMarkerAPIToMarker } from './marker'
 import { MarkerService } from './marker.service'
 
-import { UserClickDB } from './userclick-db'
-import { UserClick, CopyUserClickDBToUserClick } from './userclick'
+import { UserClickAPI } from './userclick-api'
+import { UserClick, CopyUserClickAPIToUserClick } from './userclick'
 import { UserClickService } from './userclick.service'
 
-import { VLineDB } from './vline-db'
-import { VLine, CopyVLineDBToVLine } from './vline'
+import { VLineAPI } from './vline-api'
+import { VLine, CopyVLineAPIToVLine } from './vline'
 import { VLineService } from './vline.service'
 
-import { VisualTrackDB } from './visualtrack-db'
-import { VisualTrack, CopyVisualTrackDBToVisualTrack } from './visualtrack'
+import { VisualTrackAPI } from './visualtrack-api'
+import { VisualTrack, CopyVisualTrackAPIToVisualTrack } from './visualtrack'
 import { VisualTrackService } from './visualtrack.service'
+
+
+import { BackRepoData } from './back-repo-data'
 
 export const StackType = "github.com/fullstack-lang/gongleaflet/go/models"
 
@@ -100,7 +103,7 @@ export class FrontRepo { // insertion point sub template
 				throw new Error("Type not recognized");
 		}
 	}
-	
+
 	getFrontMap<Type>(gongStructName: string): Map<number, Type> {
 		switch (gongStructName) {
 			// insertion point
@@ -176,6 +179,7 @@ export enum SelectionMode {
 export class FrontRepoService {
 
 	GONG__StackPath: string = ""
+	private socket: WebSocket | undefined
 
 	httpOptions = {
 		headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -229,15 +233,15 @@ export class FrontRepoService {
 	observableFrontRepo: [
 		Observable<null>, // see below for the of(null) observable
 		// insertion point sub template 
-		Observable<CircleDB[]>,
-		Observable<DivIconDB[]>,
-		Observable<LayerGroupDB[]>,
-		Observable<LayerGroupUseDB[]>,
-		Observable<MapOptionsDB[]>,
-		Observable<MarkerDB[]>,
-		Observable<UserClickDB[]>,
-		Observable<VLineDB[]>,
-		Observable<VisualTrackDB[]>,
+		Observable<CircleAPI[]>,
+		Observable<DivIconAPI[]>,
+		Observable<LayerGroupAPI[]>,
+		Observable<LayerGroupUseAPI[]>,
+		Observable<MapOptionsAPI[]>,
+		Observable<MarkerAPI[]>,
+		Observable<UserClickAPI[]>,
+		Observable<VLineAPI[]>,
+		Observable<VisualTrackAPI[]>,
 	] = [
 			// Using "combineLatest" with a placeholder observable.
 			//
@@ -304,24 +308,24 @@ export class FrontRepoService {
 						let _this = this
 						// Typing can be messy with many items. Therefore, type casting is necessary here
 						// insertion point sub template for type casting 
-						var circles: CircleDB[]
-						circles = circles_ as CircleDB[]
-						var divicons: DivIconDB[]
-						divicons = divicons_ as DivIconDB[]
-						var layergroups: LayerGroupDB[]
-						layergroups = layergroups_ as LayerGroupDB[]
-						var layergroupuses: LayerGroupUseDB[]
-						layergroupuses = layergroupuses_ as LayerGroupUseDB[]
-						var mapoptionss: MapOptionsDB[]
-						mapoptionss = mapoptionss_ as MapOptionsDB[]
-						var markers: MarkerDB[]
-						markers = markers_ as MarkerDB[]
-						var userclicks: UserClickDB[]
-						userclicks = userclicks_ as UserClickDB[]
-						var vlines: VLineDB[]
-						vlines = vlines_ as VLineDB[]
-						var visualtracks: VisualTrackDB[]
-						visualtracks = visualtracks_ as VisualTrackDB[]
+						var circles: CircleAPI[]
+						circles = circles_ as CircleAPI[]
+						var divicons: DivIconAPI[]
+						divicons = divicons_ as DivIconAPI[]
+						var layergroups: LayerGroupAPI[]
+						layergroups = layergroups_ as LayerGroupAPI[]
+						var layergroupuses: LayerGroupUseAPI[]
+						layergroupuses = layergroupuses_ as LayerGroupUseAPI[]
+						var mapoptionss: MapOptionsAPI[]
+						mapoptionss = mapoptionss_ as MapOptionsAPI[]
+						var markers: MarkerAPI[]
+						markers = markers_ as MarkerAPI[]
+						var userclicks: UserClickAPI[]
+						userclicks = userclicks_ as UserClickAPI[]
+						var vlines: VLineAPI[]
+						vlines = vlines_ as VLineAPI[]
+						var visualtracks: VisualTrackAPI[]
+						visualtracks = visualtracks_ as VisualTrackAPI[]
 
 						// 
 						// First Step: init map of instances
@@ -331,10 +335,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_Circle.clear()
 
 						circles.forEach(
-							circleDB => {
+							circleAPI => {
 								let circle = new Circle
 								this.frontRepo.array_Circles.push(circle)
-								this.frontRepo.map_ID_Circle.set(circleDB.ID, circle)
+								this.frontRepo.map_ID_Circle.set(circleAPI.ID, circle)
 							}
 						)
 
@@ -343,10 +347,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_DivIcon.clear()
 
 						divicons.forEach(
-							diviconDB => {
+							diviconAPI => {
 								let divicon = new DivIcon
 								this.frontRepo.array_DivIcons.push(divicon)
-								this.frontRepo.map_ID_DivIcon.set(diviconDB.ID, divicon)
+								this.frontRepo.map_ID_DivIcon.set(diviconAPI.ID, divicon)
 							}
 						)
 
@@ -355,10 +359,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_LayerGroup.clear()
 
 						layergroups.forEach(
-							layergroupDB => {
+							layergroupAPI => {
 								let layergroup = new LayerGroup
 								this.frontRepo.array_LayerGroups.push(layergroup)
-								this.frontRepo.map_ID_LayerGroup.set(layergroupDB.ID, layergroup)
+								this.frontRepo.map_ID_LayerGroup.set(layergroupAPI.ID, layergroup)
 							}
 						)
 
@@ -367,10 +371,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_LayerGroupUse.clear()
 
 						layergroupuses.forEach(
-							layergroupuseDB => {
+							layergroupuseAPI => {
 								let layergroupuse = new LayerGroupUse
 								this.frontRepo.array_LayerGroupUses.push(layergroupuse)
-								this.frontRepo.map_ID_LayerGroupUse.set(layergroupuseDB.ID, layergroupuse)
+								this.frontRepo.map_ID_LayerGroupUse.set(layergroupuseAPI.ID, layergroupuse)
 							}
 						)
 
@@ -379,10 +383,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_MapOptions.clear()
 
 						mapoptionss.forEach(
-							mapoptionsDB => {
+							mapoptionsAPI => {
 								let mapoptions = new MapOptions
 								this.frontRepo.array_MapOptionss.push(mapoptions)
-								this.frontRepo.map_ID_MapOptions.set(mapoptionsDB.ID, mapoptions)
+								this.frontRepo.map_ID_MapOptions.set(mapoptionsAPI.ID, mapoptions)
 							}
 						)
 
@@ -391,10 +395,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_Marker.clear()
 
 						markers.forEach(
-							markerDB => {
+							markerAPI => {
 								let marker = new Marker
 								this.frontRepo.array_Markers.push(marker)
-								this.frontRepo.map_ID_Marker.set(markerDB.ID, marker)
+								this.frontRepo.map_ID_Marker.set(markerAPI.ID, marker)
 							}
 						)
 
@@ -403,10 +407,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_UserClick.clear()
 
 						userclicks.forEach(
-							userclickDB => {
+							userclickAPI => {
 								let userclick = new UserClick
 								this.frontRepo.array_UserClicks.push(userclick)
-								this.frontRepo.map_ID_UserClick.set(userclickDB.ID, userclick)
+								this.frontRepo.map_ID_UserClick.set(userclickAPI.ID, userclick)
 							}
 						)
 
@@ -415,10 +419,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_VLine.clear()
 
 						vlines.forEach(
-							vlineDB => {
+							vlineAPI => {
 								let vline = new VLine
 								this.frontRepo.array_VLines.push(vline)
-								this.frontRepo.map_ID_VLine.set(vlineDB.ID, vline)
+								this.frontRepo.map_ID_VLine.set(vlineAPI.ID, vline)
 							}
 						)
 
@@ -427,10 +431,10 @@ export class FrontRepoService {
 						this.frontRepo.map_ID_VisualTrack.clear()
 
 						visualtracks.forEach(
-							visualtrackDB => {
+							visualtrackAPI => {
 								let visualtrack = new VisualTrack
 								this.frontRepo.array_VisualTracks.push(visualtrack)
-								this.frontRepo.map_ID_VisualTrack.set(visualtrackDB.ID, visualtrack)
+								this.frontRepo.map_ID_VisualTrack.set(visualtrackAPI.ID, visualtrack)
 							}
 						)
 
@@ -440,73 +444,73 @@ export class FrontRepoService {
 						// insertion point sub template for redeem 
 						// fill up front objects
 						circles.forEach(
-							circleDB => {
-								let circle = this.frontRepo.map_ID_Circle.get(circleDB.ID)
-								CopyCircleDBToCircle(circleDB, circle!, this.frontRepo)
+							circleAPI => {
+								let circle = this.frontRepo.map_ID_Circle.get(circleAPI.ID)
+								CopyCircleAPIToCircle(circleAPI, circle!, this.frontRepo)
 							}
 						)
 
 						// fill up front objects
 						divicons.forEach(
-							diviconDB => {
-								let divicon = this.frontRepo.map_ID_DivIcon.get(diviconDB.ID)
-								CopyDivIconDBToDivIcon(diviconDB, divicon!, this.frontRepo)
+							diviconAPI => {
+								let divicon = this.frontRepo.map_ID_DivIcon.get(diviconAPI.ID)
+								CopyDivIconAPIToDivIcon(diviconAPI, divicon!, this.frontRepo)
 							}
 						)
 
 						// fill up front objects
 						layergroups.forEach(
-							layergroupDB => {
-								let layergroup = this.frontRepo.map_ID_LayerGroup.get(layergroupDB.ID)
-								CopyLayerGroupDBToLayerGroup(layergroupDB, layergroup!, this.frontRepo)
+							layergroupAPI => {
+								let layergroup = this.frontRepo.map_ID_LayerGroup.get(layergroupAPI.ID)
+								CopyLayerGroupAPIToLayerGroup(layergroupAPI, layergroup!, this.frontRepo)
 							}
 						)
 
 						// fill up front objects
 						layergroupuses.forEach(
-							layergroupuseDB => {
-								let layergroupuse = this.frontRepo.map_ID_LayerGroupUse.get(layergroupuseDB.ID)
-								CopyLayerGroupUseDBToLayerGroupUse(layergroupuseDB, layergroupuse!, this.frontRepo)
+							layergroupuseAPI => {
+								let layergroupuse = this.frontRepo.map_ID_LayerGroupUse.get(layergroupuseAPI.ID)
+								CopyLayerGroupUseAPIToLayerGroupUse(layergroupuseAPI, layergroupuse!, this.frontRepo)
 							}
 						)
 
 						// fill up front objects
 						mapoptionss.forEach(
-							mapoptionsDB => {
-								let mapoptions = this.frontRepo.map_ID_MapOptions.get(mapoptionsDB.ID)
-								CopyMapOptionsDBToMapOptions(mapoptionsDB, mapoptions!, this.frontRepo)
+							mapoptionsAPI => {
+								let mapoptions = this.frontRepo.map_ID_MapOptions.get(mapoptionsAPI.ID)
+								CopyMapOptionsAPIToMapOptions(mapoptionsAPI, mapoptions!, this.frontRepo)
 							}
 						)
 
 						// fill up front objects
 						markers.forEach(
-							markerDB => {
-								let marker = this.frontRepo.map_ID_Marker.get(markerDB.ID)
-								CopyMarkerDBToMarker(markerDB, marker!, this.frontRepo)
+							markerAPI => {
+								let marker = this.frontRepo.map_ID_Marker.get(markerAPI.ID)
+								CopyMarkerAPIToMarker(markerAPI, marker!, this.frontRepo)
 							}
 						)
 
 						// fill up front objects
 						userclicks.forEach(
-							userclickDB => {
-								let userclick = this.frontRepo.map_ID_UserClick.get(userclickDB.ID)
-								CopyUserClickDBToUserClick(userclickDB, userclick!, this.frontRepo)
+							userclickAPI => {
+								let userclick = this.frontRepo.map_ID_UserClick.get(userclickAPI.ID)
+								CopyUserClickAPIToUserClick(userclickAPI, userclick!, this.frontRepo)
 							}
 						)
 
 						// fill up front objects
 						vlines.forEach(
-							vlineDB => {
-								let vline = this.frontRepo.map_ID_VLine.get(vlineDB.ID)
-								CopyVLineDBToVLine(vlineDB, vline!, this.frontRepo)
+							vlineAPI => {
+								let vline = this.frontRepo.map_ID_VLine.get(vlineAPI.ID)
+								CopyVLineAPIToVLine(vlineAPI, vline!, this.frontRepo)
 							}
 						)
 
 						// fill up front objects
 						visualtracks.forEach(
-							visualtrackDB => {
-								let visualtrack = this.frontRepo.map_ID_VisualTrack.get(visualtrackDB.ID)
-								CopyVisualTrackDBToVisualTrack(visualtrackDB, visualtrack!, this.frontRepo)
+							visualtrackAPI => {
+								let visualtrack = this.frontRepo.map_ID_VisualTrack.get(visualtrackAPI.ID)
+								CopyVisualTrackAPIToVisualTrack(visualtrackAPI, visualtrack!, this.frontRepo)
 							}
 						)
 
@@ -517,6 +521,231 @@ export class FrontRepoService {
 				)
 			}
 		)
+	}
+
+	public connectToWebSocket(GONG__StackPath: string): Observable<FrontRepo> {
+
+		this.GONG__StackPath = GONG__StackPath
+
+
+		let params = new HttpParams().set("GONG__StackPath", this.GONG__StackPath)
+		let basePath = 'ws://localhost:8080/api/github.com/fullstack-lang/gongleaflet/go/v1/ws/stage'
+		let paramString = params.toString()
+		let url = `${basePath}?${paramString}`
+		this.socket = new WebSocket(url)
+
+		return new Observable(observer => {
+			this.socket!.onmessage = event => {
+				let _this = this
+
+				const backRepoData = new BackRepoData(JSON.parse(event.data))
+
+				// 
+				// First Step: init map of instances
+				// insertion point sub template for init 
+				// init the arrays
+				// insertion point sub template for init 
+				// init the arrays
+				this.frontRepo.array_Circles = []
+				this.frontRepo.map_ID_Circle.clear()
+
+				backRepoData.CircleAPIs.forEach(
+					circleAPI => {
+						let circle = new Circle
+						this.frontRepo.array_Circles.push(circle)
+						this.frontRepo.map_ID_Circle.set(circleAPI.ID, circle)
+					}
+				)
+
+				// init the arrays
+				this.frontRepo.array_DivIcons = []
+				this.frontRepo.map_ID_DivIcon.clear()
+
+				backRepoData.DivIconAPIs.forEach(
+					diviconAPI => {
+						let divicon = new DivIcon
+						this.frontRepo.array_DivIcons.push(divicon)
+						this.frontRepo.map_ID_DivIcon.set(diviconAPI.ID, divicon)
+					}
+				)
+
+				// init the arrays
+				this.frontRepo.array_LayerGroups = []
+				this.frontRepo.map_ID_LayerGroup.clear()
+
+				backRepoData.LayerGroupAPIs.forEach(
+					layergroupAPI => {
+						let layergroup = new LayerGroup
+						this.frontRepo.array_LayerGroups.push(layergroup)
+						this.frontRepo.map_ID_LayerGroup.set(layergroupAPI.ID, layergroup)
+					}
+				)
+
+				// init the arrays
+				this.frontRepo.array_LayerGroupUses = []
+				this.frontRepo.map_ID_LayerGroupUse.clear()
+
+				backRepoData.LayerGroupUseAPIs.forEach(
+					layergroupuseAPI => {
+						let layergroupuse = new LayerGroupUse
+						this.frontRepo.array_LayerGroupUses.push(layergroupuse)
+						this.frontRepo.map_ID_LayerGroupUse.set(layergroupuseAPI.ID, layergroupuse)
+					}
+				)
+
+				// init the arrays
+				this.frontRepo.array_MapOptionss = []
+				this.frontRepo.map_ID_MapOptions.clear()
+
+				backRepoData.MapOptionsAPIs.forEach(
+					mapoptionsAPI => {
+						let mapoptions = new MapOptions
+						this.frontRepo.array_MapOptionss.push(mapoptions)
+						this.frontRepo.map_ID_MapOptions.set(mapoptionsAPI.ID, mapoptions)
+					}
+				)
+
+				// init the arrays
+				this.frontRepo.array_Markers = []
+				this.frontRepo.map_ID_Marker.clear()
+
+				backRepoData.MarkerAPIs.forEach(
+					markerAPI => {
+						let marker = new Marker
+						this.frontRepo.array_Markers.push(marker)
+						this.frontRepo.map_ID_Marker.set(markerAPI.ID, marker)
+					}
+				)
+
+				// init the arrays
+				this.frontRepo.array_UserClicks = []
+				this.frontRepo.map_ID_UserClick.clear()
+
+				backRepoData.UserClickAPIs.forEach(
+					userclickAPI => {
+						let userclick = new UserClick
+						this.frontRepo.array_UserClicks.push(userclick)
+						this.frontRepo.map_ID_UserClick.set(userclickAPI.ID, userclick)
+					}
+				)
+
+				// init the arrays
+				this.frontRepo.array_VLines = []
+				this.frontRepo.map_ID_VLine.clear()
+
+				backRepoData.VLineAPIs.forEach(
+					vlineAPI => {
+						let vline = new VLine
+						this.frontRepo.array_VLines.push(vline)
+						this.frontRepo.map_ID_VLine.set(vlineAPI.ID, vline)
+					}
+				)
+
+				// init the arrays
+				this.frontRepo.array_VisualTracks = []
+				this.frontRepo.map_ID_VisualTrack.clear()
+
+				backRepoData.VisualTrackAPIs.forEach(
+					visualtrackAPI => {
+						let visualtrack = new VisualTrack
+						this.frontRepo.array_VisualTracks.push(visualtrack)
+						this.frontRepo.map_ID_VisualTrack.set(visualtrackAPI.ID, visualtrack)
+					}
+				)
+
+
+				// 
+				// Second Step: reddeem front objects
+				// insertion point sub template for redeem 
+				// fill up front objects
+				// insertion point sub template for redeem 
+				// fill up front objects
+				backRepoData.CircleAPIs.forEach(
+					circleAPI => {
+						let circle = this.frontRepo.map_ID_Circle.get(circleAPI.ID)
+						CopyCircleAPIToCircle(circleAPI, circle!, this.frontRepo)
+					}
+				)
+
+				// fill up front objects
+				backRepoData.DivIconAPIs.forEach(
+					diviconAPI => {
+						let divicon = this.frontRepo.map_ID_DivIcon.get(diviconAPI.ID)
+						CopyDivIconAPIToDivIcon(diviconAPI, divicon!, this.frontRepo)
+					}
+				)
+
+				// fill up front objects
+				backRepoData.LayerGroupAPIs.forEach(
+					layergroupAPI => {
+						let layergroup = this.frontRepo.map_ID_LayerGroup.get(layergroupAPI.ID)
+						CopyLayerGroupAPIToLayerGroup(layergroupAPI, layergroup!, this.frontRepo)
+					}
+				)
+
+				// fill up front objects
+				backRepoData.LayerGroupUseAPIs.forEach(
+					layergroupuseAPI => {
+						let layergroupuse = this.frontRepo.map_ID_LayerGroupUse.get(layergroupuseAPI.ID)
+						CopyLayerGroupUseAPIToLayerGroupUse(layergroupuseAPI, layergroupuse!, this.frontRepo)
+					}
+				)
+
+				// fill up front objects
+				backRepoData.MapOptionsAPIs.forEach(
+					mapoptionsAPI => {
+						let mapoptions = this.frontRepo.map_ID_MapOptions.get(mapoptionsAPI.ID)
+						CopyMapOptionsAPIToMapOptions(mapoptionsAPI, mapoptions!, this.frontRepo)
+					}
+				)
+
+				// fill up front objects
+				backRepoData.MarkerAPIs.forEach(
+					markerAPI => {
+						let marker = this.frontRepo.map_ID_Marker.get(markerAPI.ID)
+						CopyMarkerAPIToMarker(markerAPI, marker!, this.frontRepo)
+					}
+				)
+
+				// fill up front objects
+				backRepoData.UserClickAPIs.forEach(
+					userclickAPI => {
+						let userclick = this.frontRepo.map_ID_UserClick.get(userclickAPI.ID)
+						CopyUserClickAPIToUserClick(userclickAPI, userclick!, this.frontRepo)
+					}
+				)
+
+				// fill up front objects
+				backRepoData.VLineAPIs.forEach(
+					vlineAPI => {
+						let vline = this.frontRepo.map_ID_VLine.get(vlineAPI.ID)
+						CopyVLineAPIToVLine(vlineAPI, vline!, this.frontRepo)
+					}
+				)
+
+				// fill up front objects
+				backRepoData.VisualTrackAPIs.forEach(
+					visualtrackAPI => {
+						let visualtrack = this.frontRepo.map_ID_VisualTrack.get(visualtrackAPI.ID)
+						CopyVisualTrackAPIToVisualTrack(visualtrackAPI, visualtrack!, this.frontRepo)
+					}
+				)
+
+
+
+				observer.next(this.frontRepo)
+			}
+			this.socket!.onerror = event => {
+				observer.error(event)
+			}
+			this.socket!.onclose = event => {
+				observer.complete()
+			}
+
+			return () => {
+				this.socket!.close()
+			}
+		})
 	}
 }
 

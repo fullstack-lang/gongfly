@@ -11,8 +11,8 @@ import { BehaviorSubject } from 'rxjs'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
 
-import { EventDB } from './event-db'
-import { Event, CopyEventToEventDB } from './event'
+import { EventAPI } from './event-api'
+import { Event, CopyEventToEventAPI } from './event'
 
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
@@ -46,41 +46,41 @@ export class EventService {
 
   /** GET events from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB[]> {
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventAPI[]> {
     return this.getEvents(GONG__StackPath, frontRepo)
   }
-  getEvents(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB[]> {
+  getEvents(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventAPI[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
-    return this.http.get<EventDB[]>(this.eventsUrl, { params: params })
+    return this.http.get<EventAPI[]>(this.eventsUrl, { params: params })
       .pipe(
         tap(),
-        catchError(this.handleError<EventDB[]>('getEvents', []))
+        catchError(this.handleError<EventAPI[]>('getEvents', []))
       );
   }
 
   /** GET event by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventAPI> {
     return this.getEvent(id, GONG__StackPath, frontRepo)
   }
-  getEvent(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
+  getEvent(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     const url = `${this.eventsUrl}/${id}`;
-    return this.http.get<EventDB>(url, { params: params }).pipe(
+    return this.http.get<EventAPI>(url, { params: params }).pipe(
       // tap(_ => this.log(`fetched event id=${id}`)),
-      catchError(this.handleError<EventDB>(`getEvent id=${id}`))
+      catchError(this.handleError<EventAPI>(`getEvent id=${id}`))
     );
   }
 
   // postFront copy event to a version with encoded pointers and post to the back
-  postFront(event: Event, GONG__StackPath: string): Observable<EventDB> {
-    let eventDB = new EventDB
-    CopyEventToEventDB(event, eventDB)
-    const id = typeof eventDB === 'number' ? eventDB : eventDB.ID
+  postFront(event: Event, GONG__StackPath: string): Observable<EventAPI> {
+    let eventAPI = new EventAPI
+    CopyEventToEventAPI(event, eventAPI)
+    const id = typeof eventAPI === 'number' ? eventAPI : eventAPI.ID
     const url = `${this.eventsUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -88,18 +88,18 @@ export class EventService {
       params: params
     }
 
-    return this.http.post<EventDB>(url, eventDB, httpOptions).pipe(
+    return this.http.post<EventAPI>(url, eventAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<EventDB>('postEvent'))
+      catchError(this.handleError<EventAPI>('postEvent'))
     );
   }
   
   /** POST: add a new event to the server */
-  post(eventdb: EventDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
+  post(eventdb: EventAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventAPI> {
     return this.postEvent(eventdb, GONG__StackPath, frontRepo)
   }
-  postEvent(eventdb: EventDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
+  postEvent(eventdb: EventAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -107,19 +107,19 @@ export class EventService {
       params: params
     }
 
-    return this.http.post<EventDB>(this.eventsUrl, eventdb, httpOptions).pipe(
+    return this.http.post<EventAPI>(this.eventsUrl, eventdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`posted eventdb id=${eventdb.ID}`)
       }),
-      catchError(this.handleError<EventDB>('postEvent'))
+      catchError(this.handleError<EventAPI>('postEvent'))
     );
   }
 
   /** DELETE: delete the eventdb from the server */
-  delete(eventdb: EventDB | number, GONG__StackPath: string): Observable<EventDB> {
+  delete(eventdb: EventAPI | number, GONG__StackPath: string): Observable<EventAPI> {
     return this.deleteEvent(eventdb, GONG__StackPath)
   }
-  deleteEvent(eventdb: EventDB | number, GONG__StackPath: string): Observable<EventDB> {
+  deleteEvent(eventdb: EventAPI | number, GONG__StackPath: string): Observable<EventAPI> {
     const id = typeof eventdb === 'number' ? eventdb : eventdb.ID;
     const url = `${this.eventsUrl}/${id}`;
 
@@ -129,17 +129,17 @@ export class EventService {
       params: params
     };
 
-    return this.http.delete<EventDB>(url, httpOptions).pipe(
+    return this.http.delete<EventAPI>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted eventdb id=${id}`)),
-      catchError(this.handleError<EventDB>('deleteEvent'))
+      catchError(this.handleError<EventAPI>('deleteEvent'))
     );
   }
 
   // updateFront copy event to a version with encoded pointers and update to the back
-  updateFront(event: Event, GONG__StackPath: string): Observable<EventDB> {
-    let eventDB = new EventDB
-    CopyEventToEventDB(event, eventDB)
-    const id = typeof eventDB === 'number' ? eventDB : eventDB.ID
+  updateFront(event: Event, GONG__StackPath: string): Observable<EventAPI> {
+    let eventAPI = new EventAPI
+    CopyEventToEventAPI(event, eventAPI)
+    const id = typeof eventAPI === 'number' ? eventAPI : eventAPI.ID
     const url = `${this.eventsUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -147,18 +147,18 @@ export class EventService {
       params: params
     }
 
-    return this.http.put<EventDB>(url, eventDB, httpOptions).pipe(
+    return this.http.put<EventAPI>(url, eventAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<EventDB>('updateEvent'))
+      catchError(this.handleError<EventAPI>('updateEvent'))
     );
   }
 
   /** PUT: update the eventdb on the server */
-  update(eventdb: EventDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
+  update(eventdb: EventAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventAPI> {
     return this.updateEvent(eventdb, GONG__StackPath, frontRepo)
   }
-  updateEvent(eventdb: EventDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventDB> {
+  updateEvent(eventdb: EventAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EventAPI> {
     const id = typeof eventdb === 'number' ? eventdb : eventdb.ID;
     const url = `${this.eventsUrl}/${id}`;
 
@@ -169,11 +169,11 @@ export class EventService {
       params: params
     };
 
-    return this.http.put<EventDB>(url, eventdb, httpOptions).pipe(
+    return this.http.put<EventAPI>(url, eventdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`updated eventdb id=${eventdb.ID}`)
       }),
-      catchError(this.handleError<EventDB>('updateEvent'))
+      catchError(this.handleError<EventAPI>('updateEvent'))
     );
   }
 

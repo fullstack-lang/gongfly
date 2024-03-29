@@ -11,8 +11,8 @@ import { BehaviorSubject } from 'rxjs'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
 
-import { EngineDB } from './engine-db'
-import { Engine, CopyEngineToEngineDB } from './engine'
+import { EngineAPI } from './engine-api'
+import { Engine, CopyEngineToEngineAPI } from './engine'
 
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
@@ -46,41 +46,41 @@ export class EngineService {
 
   /** GET engines from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB[]> {
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineAPI[]> {
     return this.getEngines(GONG__StackPath, frontRepo)
   }
-  getEngines(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB[]> {
+  getEngines(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineAPI[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
-    return this.http.get<EngineDB[]>(this.enginesUrl, { params: params })
+    return this.http.get<EngineAPI[]>(this.enginesUrl, { params: params })
       .pipe(
         tap(),
-        catchError(this.handleError<EngineDB[]>('getEngines', []))
+        catchError(this.handleError<EngineAPI[]>('getEngines', []))
       );
   }
 
   /** GET engine by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineAPI> {
     return this.getEngine(id, GONG__StackPath, frontRepo)
   }
-  getEngine(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
+  getEngine(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     const url = `${this.enginesUrl}/${id}`;
-    return this.http.get<EngineDB>(url, { params: params }).pipe(
+    return this.http.get<EngineAPI>(url, { params: params }).pipe(
       // tap(_ => this.log(`fetched engine id=${id}`)),
-      catchError(this.handleError<EngineDB>(`getEngine id=${id}`))
+      catchError(this.handleError<EngineAPI>(`getEngine id=${id}`))
     );
   }
 
   // postFront copy engine to a version with encoded pointers and post to the back
-  postFront(engine: Engine, GONG__StackPath: string): Observable<EngineDB> {
-    let engineDB = new EngineDB
-    CopyEngineToEngineDB(engine, engineDB)
-    const id = typeof engineDB === 'number' ? engineDB : engineDB.ID
+  postFront(engine: Engine, GONG__StackPath: string): Observable<EngineAPI> {
+    let engineAPI = new EngineAPI
+    CopyEngineToEngineAPI(engine, engineAPI)
+    const id = typeof engineAPI === 'number' ? engineAPI : engineAPI.ID
     const url = `${this.enginesUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -88,18 +88,18 @@ export class EngineService {
       params: params
     }
 
-    return this.http.post<EngineDB>(url, engineDB, httpOptions).pipe(
+    return this.http.post<EngineAPI>(url, engineAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<EngineDB>('postEngine'))
+      catchError(this.handleError<EngineAPI>('postEngine'))
     );
   }
   
   /** POST: add a new engine to the server */
-  post(enginedb: EngineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
+  post(enginedb: EngineAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineAPI> {
     return this.postEngine(enginedb, GONG__StackPath, frontRepo)
   }
-  postEngine(enginedb: EngineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
+  postEngine(enginedb: EngineAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -107,19 +107,19 @@ export class EngineService {
       params: params
     }
 
-    return this.http.post<EngineDB>(this.enginesUrl, enginedb, httpOptions).pipe(
+    return this.http.post<EngineAPI>(this.enginesUrl, enginedb, httpOptions).pipe(
       tap(_ => {
         // this.log(`posted enginedb id=${enginedb.ID}`)
       }),
-      catchError(this.handleError<EngineDB>('postEngine'))
+      catchError(this.handleError<EngineAPI>('postEngine'))
     );
   }
 
   /** DELETE: delete the enginedb from the server */
-  delete(enginedb: EngineDB | number, GONG__StackPath: string): Observable<EngineDB> {
+  delete(enginedb: EngineAPI | number, GONG__StackPath: string): Observable<EngineAPI> {
     return this.deleteEngine(enginedb, GONG__StackPath)
   }
-  deleteEngine(enginedb: EngineDB | number, GONG__StackPath: string): Observable<EngineDB> {
+  deleteEngine(enginedb: EngineAPI | number, GONG__StackPath: string): Observable<EngineAPI> {
     const id = typeof enginedb === 'number' ? enginedb : enginedb.ID;
     const url = `${this.enginesUrl}/${id}`;
 
@@ -129,17 +129,17 @@ export class EngineService {
       params: params
     };
 
-    return this.http.delete<EngineDB>(url, httpOptions).pipe(
+    return this.http.delete<EngineAPI>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted enginedb id=${id}`)),
-      catchError(this.handleError<EngineDB>('deleteEngine'))
+      catchError(this.handleError<EngineAPI>('deleteEngine'))
     );
   }
 
   // updateFront copy engine to a version with encoded pointers and update to the back
-  updateFront(engine: Engine, GONG__StackPath: string): Observable<EngineDB> {
-    let engineDB = new EngineDB
-    CopyEngineToEngineDB(engine, engineDB)
-    const id = typeof engineDB === 'number' ? engineDB : engineDB.ID
+  updateFront(engine: Engine, GONG__StackPath: string): Observable<EngineAPI> {
+    let engineAPI = new EngineAPI
+    CopyEngineToEngineAPI(engine, engineAPI)
+    const id = typeof engineAPI === 'number' ? engineAPI : engineAPI.ID
     const url = `${this.enginesUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -147,18 +147,18 @@ export class EngineService {
       params: params
     }
 
-    return this.http.put<EngineDB>(url, engineDB, httpOptions).pipe(
+    return this.http.put<EngineAPI>(url, engineAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<EngineDB>('updateEngine'))
+      catchError(this.handleError<EngineAPI>('updateEngine'))
     );
   }
 
   /** PUT: update the enginedb on the server */
-  update(enginedb: EngineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
+  update(enginedb: EngineAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineAPI> {
     return this.updateEngine(enginedb, GONG__StackPath, frontRepo)
   }
-  updateEngine(enginedb: EngineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineDB> {
+  updateEngine(enginedb: EngineAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EngineAPI> {
     const id = typeof enginedb === 'number' ? enginedb : enginedb.ID;
     const url = `${this.enginesUrl}/${id}`;
 
@@ -169,11 +169,11 @@ export class EngineService {
       params: params
     };
 
-    return this.http.put<EngineDB>(url, enginedb, httpOptions).pipe(
+    return this.http.put<EngineAPI>(url, enginedb, httpOptions).pipe(
       tap(_ => {
         // this.log(`updated enginedb id=${enginedb.ID}`)
       }),
-      catchError(this.handleError<EngineDB>('updateEngine'))
+      catchError(this.handleError<EngineAPI>('updateEngine'))
     );
   }
 

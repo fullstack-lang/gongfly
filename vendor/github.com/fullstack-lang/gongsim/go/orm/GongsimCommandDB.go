@@ -38,6 +38,7 @@ type GongsimCommandAPI struct {
 	models.GongsimCommand_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	GongsimCommandPointersEncoding GongsimCommandPointersEncoding
 }
 
@@ -76,7 +77,9 @@ type GongsimCommandDB struct {
 
 	// Declation for basic field gongsimcommandDB.DateSpeedCommand
 	DateSpeedCommand_Data sql.NullString
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	GongsimCommandPointersEncoding
 }
 

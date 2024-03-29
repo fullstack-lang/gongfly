@@ -1,6 +1,6 @@
 // generated code - do not edit
 
-import { VLineDB } from './vline-db'
+import { VLineAPI } from './vline-api'
 import { FrontRepo } from './front-repo.service';
 
 // insertion point for imports
@@ -35,62 +35,62 @@ export class VLine {
 
 }
 
-export function CopyVLineToVLineDB(vline: VLine, vlineDB: VLineDB) {
+export function CopyVLineToVLineAPI(vline: VLine, vlineAPI: VLineAPI) {
 
-	vlineDB.CreatedAt = vline.CreatedAt
-	vlineDB.DeletedAt = vline.DeletedAt
-	vlineDB.ID = vline.ID
+	vlineAPI.CreatedAt = vline.CreatedAt
+	vlineAPI.DeletedAt = vline.DeletedAt
+	vlineAPI.ID = vline.ID
 
 	// insertion point for basic fields copy operations
-	vlineDB.StartLat = vline.StartLat
-	vlineDB.StartLng = vline.StartLng
-	vlineDB.EndLat = vline.EndLat
-	vlineDB.EndLng = vline.EndLng
-	vlineDB.Name = vline.Name
-	vlineDB.ColorEnum = vline.ColorEnum
-	vlineDB.DashStyleEnum = vline.DashStyleEnum
-	vlineDB.IsTransmitting = vline.IsTransmitting
-	vlineDB.Message = vline.Message
-	vlineDB.IsTransmittingBackward = vline.IsTransmittingBackward
-	vlineDB.MessageBackward = vline.MessageBackward
+	vlineAPI.StartLat = vline.StartLat
+	vlineAPI.StartLng = vline.StartLng
+	vlineAPI.EndLat = vline.EndLat
+	vlineAPI.EndLng = vline.EndLng
+	vlineAPI.Name = vline.Name
+	vlineAPI.ColorEnum = vline.ColorEnum
+	vlineAPI.DashStyleEnum = vline.DashStyleEnum
+	vlineAPI.IsTransmitting = vline.IsTransmitting
+	vlineAPI.Message = vline.Message
+	vlineAPI.IsTransmittingBackward = vline.IsTransmittingBackward
+	vlineAPI.MessageBackward = vline.MessageBackward
 
 	// insertion point for pointer fields encoding
-	vlineDB.VLinePointersEncoding.LayerGroupID.Valid = true
+	vlineAPI.VLinePointersEncoding.LayerGroupID.Valid = true
 	if (vline.LayerGroup != undefined) {
-		vlineDB.VLinePointersEncoding.LayerGroupID.Int64 = vline.LayerGroup.ID  
+		vlineAPI.VLinePointersEncoding.LayerGroupID.Int64 = vline.LayerGroup.ID  
 	} else {
-		vlineDB.VLinePointersEncoding.LayerGroupID.Int64 = 0 		
+		vlineAPI.VLinePointersEncoding.LayerGroupID.Int64 = 0 		
 	}
 
 
 	// insertion point for slice of pointers fields encoding
 }
 
-// CopyVLineDBToVLine update basic, pointers and slice of pointers fields of vline
-// from respectively the basic fields and encoded fields of pointers and slices of pointers of vlineDB
+// CopyVLineAPIToVLine update basic, pointers and slice of pointers fields of vline
+// from respectively the basic fields and encoded fields of pointers and slices of pointers of vlineAPI
 // this function uses frontRepo.map_ID_<structname> to decode the encoded fields
 // a condition is that those maps has to be initialized before
-export function CopyVLineDBToVLine(vlineDB: VLineDB, vline: VLine, frontRepo: FrontRepo) {
+export function CopyVLineAPIToVLine(vlineAPI: VLineAPI, vline: VLine, frontRepo: FrontRepo) {
 
-	vline.CreatedAt = vlineDB.CreatedAt
-	vline.DeletedAt = vlineDB.DeletedAt
-	vline.ID = vlineDB.ID
+	vline.CreatedAt = vlineAPI.CreatedAt
+	vline.DeletedAt = vlineAPI.DeletedAt
+	vline.ID = vlineAPI.ID
 
 	// insertion point for basic fields copy operations
-	vline.StartLat = vlineDB.StartLat
-	vline.StartLng = vlineDB.StartLng
-	vline.EndLat = vlineDB.EndLat
-	vline.EndLng = vlineDB.EndLng
-	vline.Name = vlineDB.Name
-	vline.ColorEnum = vlineDB.ColorEnum
-	vline.DashStyleEnum = vlineDB.DashStyleEnum
-	vline.IsTransmitting = vlineDB.IsTransmitting
-	vline.Message = vlineDB.Message
-	vline.IsTransmittingBackward = vlineDB.IsTransmittingBackward
-	vline.MessageBackward = vlineDB.MessageBackward
+	vline.StartLat = vlineAPI.StartLat
+	vline.StartLng = vlineAPI.StartLng
+	vline.EndLat = vlineAPI.EndLat
+	vline.EndLng = vlineAPI.EndLng
+	vline.Name = vlineAPI.Name
+	vline.ColorEnum = vlineAPI.ColorEnum
+	vline.DashStyleEnum = vlineAPI.DashStyleEnum
+	vline.IsTransmitting = vlineAPI.IsTransmitting
+	vline.Message = vlineAPI.Message
+	vline.IsTransmittingBackward = vlineAPI.IsTransmittingBackward
+	vline.MessageBackward = vlineAPI.MessageBackward
 
 	// insertion point for pointer fields encoding
-	vline.LayerGroup = frontRepo.map_ID_LayerGroup.get(vlineDB.VLinePointersEncoding.LayerGroupID.Int64)
+	vline.LayerGroup = frontRepo.map_ID_LayerGroup.get(vlineAPI.VLinePointersEncoding.LayerGroupID.Int64)
 
 	// insertion point for slice of pointers fields encoding
 }

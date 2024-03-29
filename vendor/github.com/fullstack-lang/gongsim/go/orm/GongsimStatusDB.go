@@ -38,6 +38,7 @@ type GongsimStatusAPI struct {
 	models.GongsimStatus_WOP
 
 	// encoding of pointers
+	// for API, it cannot be embedded
 	GongsimStatusPointersEncoding GongsimStatusPointersEncoding
 }
 
@@ -72,7 +73,9 @@ type GongsimStatusDB struct {
 
 	// Declation for basic field gongsimstatusDB.SpeedCommandCompletionDate
 	SpeedCommandCompletionDate_Data sql.NullString
+	
 	// encoding of pointers
+	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	GongsimStatusPointersEncoding
 }
 

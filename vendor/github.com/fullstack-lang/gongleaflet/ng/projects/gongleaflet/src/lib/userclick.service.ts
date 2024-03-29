@@ -11,8 +11,8 @@ import { BehaviorSubject } from 'rxjs'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
 
-import { UserClickDB } from './userclick-db'
-import { UserClick, CopyUserClickToUserClickDB } from './userclick'
+import { UserClickAPI } from './userclick-api'
+import { UserClick, CopyUserClickToUserClickAPI } from './userclick'
 
 import { FrontRepo, FrontRepoService } from './front-repo.service';
 
@@ -46,41 +46,41 @@ export class UserClickService {
 
   /** GET userclicks from the server */
   // gets is more robust to refactoring
-  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB[]> {
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickAPI[]> {
     return this.getUserClicks(GONG__StackPath, frontRepo)
   }
-  getUserClicks(GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB[]> {
+  getUserClicks(GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickAPI[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
-    return this.http.get<UserClickDB[]>(this.userclicksUrl, { params: params })
+    return this.http.get<UserClickAPI[]>(this.userclicksUrl, { params: params })
       .pipe(
         tap(),
-        catchError(this.handleError<UserClickDB[]>('getUserClicks', []))
+        catchError(this.handleError<UserClickAPI[]>('getUserClicks', []))
       );
   }
 
   /** GET userclick by id. Will 404 if id not found */
   // more robust API to refactoring
-  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickAPI> {
     return this.getUserClick(id, GONG__StackPath, frontRepo)
   }
-  getUserClick(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
+  getUserClick(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     const url = `${this.userclicksUrl}/${id}`;
-    return this.http.get<UserClickDB>(url, { params: params }).pipe(
+    return this.http.get<UserClickAPI>(url, { params: params }).pipe(
       // tap(_ => this.log(`fetched userclick id=${id}`)),
-      catchError(this.handleError<UserClickDB>(`getUserClick id=${id}`))
+      catchError(this.handleError<UserClickAPI>(`getUserClick id=${id}`))
     );
   }
 
   // postFront copy userclick to a version with encoded pointers and post to the back
-  postFront(userclick: UserClick, GONG__StackPath: string): Observable<UserClickDB> {
-    let userclickDB = new UserClickDB
-    CopyUserClickToUserClickDB(userclick, userclickDB)
-    const id = typeof userclickDB === 'number' ? userclickDB : userclickDB.ID
+  postFront(userclick: UserClick, GONG__StackPath: string): Observable<UserClickAPI> {
+    let userclickAPI = new UserClickAPI
+    CopyUserClickToUserClickAPI(userclick, userclickAPI)
+    const id = typeof userclickAPI === 'number' ? userclickAPI : userclickAPI.ID
     const url = `${this.userclicksUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -88,18 +88,18 @@ export class UserClickService {
       params: params
     }
 
-    return this.http.post<UserClickDB>(url, userclickDB, httpOptions).pipe(
+    return this.http.post<UserClickAPI>(url, userclickAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<UserClickDB>('postUserClick'))
+      catchError(this.handleError<UserClickAPI>('postUserClick'))
     );
   }
   
   /** POST: add a new userclick to the server */
-  post(userclickdb: UserClickDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
+  post(userclickdb: UserClickAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickAPI> {
     return this.postUserClick(userclickdb, GONG__StackPath, frontRepo)
   }
-  postUserClick(userclickdb: UserClickDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
+  postUserClick(userclickdb: UserClickAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickAPI> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -107,19 +107,19 @@ export class UserClickService {
       params: params
     }
 
-    return this.http.post<UserClickDB>(this.userclicksUrl, userclickdb, httpOptions).pipe(
+    return this.http.post<UserClickAPI>(this.userclicksUrl, userclickdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`posted userclickdb id=${userclickdb.ID}`)
       }),
-      catchError(this.handleError<UserClickDB>('postUserClick'))
+      catchError(this.handleError<UserClickAPI>('postUserClick'))
     );
   }
 
   /** DELETE: delete the userclickdb from the server */
-  delete(userclickdb: UserClickDB | number, GONG__StackPath: string): Observable<UserClickDB> {
+  delete(userclickdb: UserClickAPI | number, GONG__StackPath: string): Observable<UserClickAPI> {
     return this.deleteUserClick(userclickdb, GONG__StackPath)
   }
-  deleteUserClick(userclickdb: UserClickDB | number, GONG__StackPath: string): Observable<UserClickDB> {
+  deleteUserClick(userclickdb: UserClickAPI | number, GONG__StackPath: string): Observable<UserClickAPI> {
     const id = typeof userclickdb === 'number' ? userclickdb : userclickdb.ID;
     const url = `${this.userclicksUrl}/${id}`;
 
@@ -129,17 +129,17 @@ export class UserClickService {
       params: params
     };
 
-    return this.http.delete<UserClickDB>(url, httpOptions).pipe(
+    return this.http.delete<UserClickAPI>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted userclickdb id=${id}`)),
-      catchError(this.handleError<UserClickDB>('deleteUserClick'))
+      catchError(this.handleError<UserClickAPI>('deleteUserClick'))
     );
   }
 
   // updateFront copy userclick to a version with encoded pointers and update to the back
-  updateFront(userclick: UserClick, GONG__StackPath: string): Observable<UserClickDB> {
-    let userclickDB = new UserClickDB
-    CopyUserClickToUserClickDB(userclick, userclickDB)
-    const id = typeof userclickDB === 'number' ? userclickDB : userclickDB.ID
+  updateFront(userclick: UserClick, GONG__StackPath: string): Observable<UserClickAPI> {
+    let userclickAPI = new UserClickAPI
+    CopyUserClickToUserClickAPI(userclick, userclickAPI)
+    const id = typeof userclickAPI === 'number' ? userclickAPI : userclickAPI.ID
     const url = `${this.userclicksUrl}/${id}`;
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -147,18 +147,18 @@ export class UserClickService {
       params: params
     }
 
-    return this.http.put<UserClickDB>(url, userclickDB, httpOptions).pipe(
+    return this.http.put<UserClickAPI>(url, userclickAPI, httpOptions).pipe(
       tap(_ => {
       }),
-      catchError(this.handleError<UserClickDB>('updateUserClick'))
+      catchError(this.handleError<UserClickAPI>('updateUserClick'))
     );
   }
 
   /** PUT: update the userclickdb on the server */
-  update(userclickdb: UserClickDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
+  update(userclickdb: UserClickAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickAPI> {
     return this.updateUserClick(userclickdb, GONG__StackPath, frontRepo)
   }
-  updateUserClick(userclickdb: UserClickDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickDB> {
+  updateUserClick(userclickdb: UserClickAPI, GONG__StackPath: string, frontRepo: FrontRepo): Observable<UserClickAPI> {
     const id = typeof userclickdb === 'number' ? userclickdb : userclickdb.ID;
     const url = `${this.userclicksUrl}/${id}`;
 
@@ -169,11 +169,11 @@ export class UserClickService {
       params: params
     };
 
-    return this.http.put<UserClickDB>(url, userclickdb, httpOptions).pipe(
+    return this.http.put<UserClickAPI>(url, userclickdb, httpOptions).pipe(
       tap(_ => {
         // this.log(`updated userclickdb id=${userclickdb.ID}`)
       }),
-      catchError(this.handleError<UserClickDB>('updateUserClick'))
+      catchError(this.handleError<UserClickAPI>('updateUserClick'))
     );
   }
 
