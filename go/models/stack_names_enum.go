@@ -10,9 +10,4 @@ const (
 	GongflyStackName      StacksNames = "gongfly"
 	GongLeafleatStackName StacksNames = "gongleaflet"
 	GongsimStackName      StacksNames = "gongsim"
-
-	// we have three probes, each with 3 stacks. Their prefix have to differ
-	GongflyProbeStacksPrefix     StacksNames = "gongfly-probe"
-	GongsimProbeStacksPrefix     StacksNames = "gongsim-probe"
-	GongleafletProbeStacksPrefix StacksNames = "gongleaflet-probe"
 )

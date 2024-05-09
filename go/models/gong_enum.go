@@ -562,12 +562,6 @@ func (stacksnames StacksNames) ToString() (res string) {
 		res = "gongleaflet"
 	case GongsimStackName:
 		res = "gongsim"
-	case GongflyProbeStacksPrefix:
-		res = "gongfly-probe"
-	case GongsimProbeStacksPrefix:
-		res = "gongsim-probe"
-	case GongleafletProbeStacksPrefix:
-		res = "gongleaflet-probe"
 	}
 	return
 }
@@ -582,12 +576,6 @@ func (stacksnames *StacksNames) FromString(input string) (err error) {
 		*stacksnames = GongLeafleatStackName
 	case "gongsim":
 		*stacksnames = GongsimStackName
-	case "gongfly-probe":
-		*stacksnames = GongflyProbeStacksPrefix
-	case "gongsim-probe":
-		*stacksnames = GongsimProbeStacksPrefix
-	case "gongleaflet-probe":
-		*stacksnames = GongleafletProbeStacksPrefix
 	default:
 		return errUnkownEnum
 	}
@@ -604,12 +592,6 @@ func (stacksnames *StacksNames) FromCodeString(input string) (err error) {
 		*stacksnames = GongLeafleatStackName
 	case "GongsimStackName":
 		*stacksnames = GongsimStackName
-	case "GongflyProbeStacksPrefix":
-		*stacksnames = GongflyProbeStacksPrefix
-	case "GongsimProbeStacksPrefix":
-		*stacksnames = GongsimProbeStacksPrefix
-	case "GongleafletProbeStacksPrefix":
-		*stacksnames = GongleafletProbeStacksPrefix
 	default:
 		return errUnkownEnum
 	}
@@ -626,12 +608,6 @@ func (stacksnames *StacksNames) ToCodeString() (res string) {
 		res = "GongLeafleatStackName"
 	case GongsimStackName:
 		res = "GongsimStackName"
-	case GongflyProbeStacksPrefix:
-		res = "GongflyProbeStacksPrefix"
-	case GongsimProbeStacksPrefix:
-		res = "GongsimProbeStacksPrefix"
-	case GongleafletProbeStacksPrefix:
-		res = "GongleafletProbeStacksPrefix"
 	}
 	return
 }
@@ -644,9 +620,6 @@ func (stacksnames StacksNames) Codes() (res []string) {
 	res = append(res, "GongflyStackName")
 	res = append(res, "GongLeafleatStackName")
 	res = append(res, "GongsimStackName")
-	res = append(res, "GongflyProbeStacksPrefix")
-	res = append(res, "GongsimProbeStacksPrefix")
-	res = append(res, "GongleafletProbeStacksPrefix")
 
 	return
 }
@@ -659,9 +632,6 @@ func (stacksnames StacksNames) CodeValues() (res []string) {
 	res = append(res, "gongfly")
 	res = append(res, "gongleaflet")
 	res = append(res, "gongsim")
-	res = append(res, "gongfly-probe")
-	res = append(res, "gongsim-probe")
-	res = append(res, "gongleaflet-probe")
 
 	return
 }
