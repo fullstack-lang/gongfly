@@ -59,7 +59,7 @@
     {
       "label": "04 - ng serve",
       "type": "shell",
-      "command": "cd ng; ng serve",
+      "command": "cd ng-github.com-fullstack-lang-gongfly; ng serve",
       "group": "build",
       "problemMatcher": []
     },

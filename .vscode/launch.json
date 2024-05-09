@@ -2,6 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:4200",
+            "webRoot": "${workspaceFolder}/ng-github.com-fullstack-lang-gongfly"
+        },
+        {
             "name": "Cloud Run: Run/Debug Locally",
             "type": "cloudcode.cloudrun",
             "request": "launch",
@@ -26,61 +33,6 @@
                 "minikube": {}
             },
             "watch": true
-        },
-        {
-            "name": "Launch firefox localhost:4200",
-            "type": "firefox",
-            "request": "launch",
-            "reAttach": true,
-            "url": "http://localhost:4200/",
-            "webRoot": "${workspaceFolder}/ng",
-            "pathMappings": [
-                {
-                    "url": "webpack:///vendor",
-                    "path": "${workspaceFolder}/vendor"
-                },
-                {
-                    "url": "webpack:///projects",
-                    "path": "${workspaceFolder}/ng/projects"
-                }
-            ]
-        },
-        {
-            "name": "Launch firefox localhost:8080",
-            "type": "firefox",
-            "request": "launch",
-            "reAttach": true,
-            "url": "http://localhost:8080/",
-            "webRoot": "${workspaceFolder}/ng",
-            "pathMappings": [
-                {
-                    "url": "webpack:///gongleaflet",
-                    "path": "/Users/thomaspeugeot/go/src/github.com/fullstack-lang/gongleaflet"
-                },
-                {
-                    "url": "webpack:///projects",
-                    "path": "${workspaceFolder}/ng/projects"
-                }
-            ]
-        },
-        {
-            "name": "Launch appv firefox localhost:4200",
-            "type": "firefox",
-            "request": "launch",
-            "reAttach": true,
-            "url": "http://localhost:4200/",
-            "webRoot": "${workspaceFolder}/ng",
-            "firefoxExecutable": "C:/Users/peugeot/AppData/Local/Microsoft/AppV/Client/Integration/F8B22858-413B-4241-955C-7CDA2C0B6696/Root/VFS/ProgramFilesX64/Mozilla Firefox/firefox.exe",
-            "pathMappings": [
-                {
-                    "url": "webpack:///vendor",
-                    "path": "${workspaceFolder}/vendor"
-                },
-                {
-                    "url": "webpack:///projects",
-                    "path": "${workspaceFolder}/ng/projects"
-                }
-            ]
         },
         {
             "name": "go server w/o diagrams",
