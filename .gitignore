@@ -8,3 +8,5 @@ main.go
 go/cmd/gongfly/gongfly
 go/cmd/gongfly/__debug_bin.exe
 go/cmd/gongfly/__debug_bin*
+
+node_modules
