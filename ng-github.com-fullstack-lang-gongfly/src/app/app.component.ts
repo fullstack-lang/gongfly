@@ -2,20 +2,53 @@ import { Component, OnInit } from '@angular/core';
 
 import { Observable, combineLatest, timer } from 'rxjs'
 
-import * as gongdoc from 'gongdoc'
-import * as gongfly from 'gongfly'
+// for angular & angular material
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
-import { GongdocModule } from 'gongdoc'
-import { GongdocspecificModule } from 'gongdocspecific'
+import { AngularSplitModule } from 'angular-split';
 
-import { GongtreeModule } from 'gongtree'
-import { GongtreespecificModule } from 'gongtreespecific'
+import * as gongfly from '../../projects/gongfly/src/public-api'
 
-import { GongtableModule } from 'gongtable'
-import { GongtablespecificModule } from 'gongtablespecific'
+import { TreeComponent } from '@vendored_components/github.com/fullstack-lang/gongtree/ng-github.com-fullstack-lang-gongtree/projects/gongtreespecific/src/public-api'
+import { MaterialTableComponent } from '@vendored_components/github.com/fullstack-lang/gongtable/ng-github.com-fullstack-lang-gongtable/projects/gongtablespecific/src/lib/material-table/material-table.component';
+import { MaterialFormComponent } from '@vendored_components/github.com/fullstack-lang/gongtable/ng-github.com-fullstack-lang-gongtable/projects/gongtablespecific/src/lib/material-form/material-form.component';
+import * as gongtable from '@vendored_components/github.com/fullstack-lang/gongtable/ng-github.com-fullstack-lang-gongtable/projects/gongtable/src/public-api';
+import { PanelComponent } from '@vendored_components/github.com/fullstack-lang/gongdoc/ng-github.com-fullstack-lang-gongdoc/projects/gongdocspecific/src/public-api'
+import { GongflyDashboardComponent } from '../../projects/gongflyspecific/src/lib/gongfly-dashboard/gongfly-dashboard.component';
+
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { MatOptionModule } from '@angular/material/core'
 
 @Component({
   selector: 'app-root',
+  standalone: true,
+  imports: [
+
+    CommonModule,
+    FormsModule,
+
+    MatRadioModule,
+    MatButtonModule,
+    MatIconModule,
+
+    AngularSplitModule,
+
+    TreeComponent,
+    MaterialTableComponent,
+    MaterialFormComponent,
+    PanelComponent,
+
+    GongflyDashboardComponent,
+
+    LeafletModule,
+    MatOptionModule,
+
+  ],
+
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {

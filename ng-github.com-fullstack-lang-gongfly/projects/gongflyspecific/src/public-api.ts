@@ -2,6 +2,4 @@
  * Public API Surface of gongflyspecific
  */
 
-export * from './lib/gongflyspecific.service';
-export * from './lib/gongflyspecific.component';
-export * from './lib/gongflyspecific.module';
+export * from './lib/gongfly-dashboard/gongfly-dashboard.component';
