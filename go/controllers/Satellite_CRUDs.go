@@ -55,10 +55,10 @@ func (controller *Controller) GetSatellites(c *gin.Context) {
 	// source slice
 	var satelliteDBs []orm.SatelliteDB
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetSatellites", "GONG__StackPath", stackPath)
@@ -118,10 +118,10 @@ func (controller *Controller) PostSatellite(c *gin.Context) {
 	mutexSatellite.Lock()
 	defer mutexSatellite.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("PostSatellites", "GONG__StackPath", stackPath)
@@ -188,10 +188,10 @@ func (controller *Controller) PostSatellite(c *gin.Context) {
 //	200: satelliteDBResponse
 func (controller *Controller) GetSatellite(c *gin.Context) {
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetSatellite", "GONG__StackPath", stackPath)
@@ -237,10 +237,10 @@ func (controller *Controller) UpdateSatellite(c *gin.Context) {
 	mutexSatellite.Lock()
 	defer mutexSatellite.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("UpdateSatellite", "GONG__StackPath", stackPath)
@@ -326,10 +326,10 @@ func (controller *Controller) DeleteSatellite(c *gin.Context) {
 	mutexSatellite.Lock()
 	defer mutexSatellite.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("DeleteSatellite", "GONG__StackPath", stackPath)

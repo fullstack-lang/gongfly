@@ -103,9 +103,9 @@ func (gongsimCommand *GongsimCommand) SetupGongsimThreads() *GongsimCommand {
 					nextState = COMMIT_AGENT_STATES
 				} else {
 					if gongsimCommand.Engine.nextCheckoutDate.After(gongsimCommand.Engine.lastCheckoutDate) {
-						log.Printf("Checkout agent states scheduled at event # %d and commit nb # %d",
-							gongsimCommand.Engine.Fired,
-							gongsimCommand.Engine.GetLastCommitNb())
+						// log.Printf("Checkout agent states scheduled at event # %d and commit nb # %d",
+						// 	gongsimCommand.Engine.Fired,
+						// 	gongsimCommand.Engine.GetLastCommitNb())
 						nextState = CHECKOUT_AGENT_STATES
 					} else if nextSimTime.Before(gongsimCommand.Engine.GetEndTime()) {
 						switch gongsimCommand.Command {
@@ -142,7 +142,17 @@ func (gongsimCommand *GongsimCommand) SetupGongsimThreads() *GongsimCommand {
 							nextState = SLEEP_100_MS
 						}
 					} else {
-						nextState = SLEEP_100_MS
+						switch gongsimCommand.Command {
+						case COMMAND_RESET:
+							if commandCompletionDate != gongsimCommand.CommandDate {
+								nextState = RESET_SIMULATION
+								commandCompletionDate = gongsimCommand.CommandDate
+							} else {
+								nextState = SLEEP_100_MS
+							}
+						default:
+							nextState = SLEEP_100_MS
+						}
 					}
 				}
 				if nextState == UNKOWN {

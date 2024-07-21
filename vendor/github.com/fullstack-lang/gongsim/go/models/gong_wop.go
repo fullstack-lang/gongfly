@@ -24,6 +24,7 @@ type Engine_WOP struct {
 	Name string
 	EndTime string
 	CurrentTime string
+	DisplayFormat string
 	SecondsSinceStart float64
 	Fired int
 	ControlMode ControlMode
@@ -36,6 +37,7 @@ func (from *Engine) CopyBasicFields(to *Engine) {
 	to.Name = from.Name
 	to.EndTime = from.EndTime
 	to.CurrentTime = from.CurrentTime
+	to.DisplayFormat = from.DisplayFormat
 	to.SecondsSinceStart = from.SecondsSinceStart
 	to.Fired = from.Fired
 	to.ControlMode = from.ControlMode

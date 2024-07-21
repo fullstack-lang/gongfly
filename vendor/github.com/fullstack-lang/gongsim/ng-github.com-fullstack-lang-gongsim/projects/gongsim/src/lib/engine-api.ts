@@ -15,6 +15,7 @@ export class EngineAPI {
 	Name: string = ""
 	EndTime: string = ""
 	CurrentTime: string = ""
+	DisplayFormat: string = ""
 	SecondsSinceStart: number = 0
 	Fired: number = 0
 	ControlMode: string = ""

@@ -27,12 +27,14 @@
         <ng-container *ngFor="let layer of svg.Layers" class="noevents-area">
             <ng-container *ngFor="let circle of layer.Circles">
                 <circle
+                    class="click-through"
                     [attr.cx]="circle.CX" 
                     [attr.cy]="circle.CY" 
                     [attr.r]="circle.Radius" 
                     [attr.fill]="circle.Color!" 
                     [attr.fill-opacity]="circle.FillOpacity"
                     [attr.stroke]="circle.Stroke" 
+                    [attr.stroke-opacity]="circle.StrokeOpacity"
                     [attr.stroke-width]="circle.StrokeWidth" 
                     [attr.stroke-dasharray]="circle.StrokeDashArray"
                     [attr.transform]="circle.Transform">
@@ -45,7 +47,8 @@
             </circle>
             </ng-container>
             <ng-container *ngFor="let ellipse of layer.Ellipses">
-                <ellipse 
+                <ellipse
+                    class="click-through"
                     [attr.rx]="ellipse.RX"
                     [attr.ry]="ellipse.RY"
                     [attr.cx]="ellipse.CX"
@@ -53,6 +56,7 @@
                     [attr.fill]="ellipse.Color"
                     [attr.fill-opacity]="ellipse.FillOpacity"
                     [attr.stroke]="ellipse.Stroke"
+                    [attr.stroke-opacity]="ellipse.StrokeOpacity"
                     [attr.stroke-width]="ellipse.StrokeWidth"
                     [attr.stroke-dasharray]="ellipse.StrokeDashArray" />
 
@@ -63,7 +67,8 @@
                     [attr.repeatCount]="animate.RepeatCount" />
             </ng-container>
             <ng-container *ngFor="let line of layer.Lines">
-                <line 
+                <line
+                    class="click-through"
                     [attr.x1]="line.X1"
                     [attr.y1]="line.Y1"
                     [attr.x2]="line.X2"
@@ -71,6 +76,7 @@
                     [attr.fill]="line.Color"
                     [attr.fill-opacity]="line.FillOpacity"
                     [attr.stroke]="line.Stroke"
+                    [attr.stroke-opacity]="line.StrokeOpacity"
                     [attr.stroke-width]="line.StrokeWidth"
                     [attr.stroke-dasharray]="line.StrokeDashArray"
                     [attr.transform]="line.Transform" />
@@ -81,7 +87,8 @@
                     [attr.repeatCount]="animate.RepeatCount" />
             </ng-container>
             <ng-container *ngFor="let text of layer.Texts">
-                <text 
+                <text
+                    class="click-through"
                     [attr.x]="text.X" 
                     [attr.y]="text.Y" 
                     [attr.fill]="text.Color" 
@@ -89,6 +96,7 @@
                     [attr.fill-opacity]="text.FillOpacity"
                     
                     [attr.stroke]="text.Stroke" 
+                    [attr.stroke-opacity]="text.StrokeOpacity"
                     [attr.stroke-width]="text.StrokeWidth" 
                     [attr.stroke-dasharray]="text.StrokeDashArray"
                     [attr.transform]="text.Transform">{{text.Content}}</text>
@@ -96,9 +104,11 @@
             </ng-container>
             <ng-container *ngFor="let path of layer.Paths">
                 <path [attr.d]="path.Definition"
+                    class="click-through"
                     [attr.fill]="path.Color"
                     [attr.fill-opacity]="path.FillOpacity"
                     [attr.stroke]="path.Stroke"
+                    [attr.stroke-opacity]="path.StrokeOpacity"
                     [attr.stroke-width]="path.StrokeWidth"
                     [attr.stroke-dasharray]="path.StrokeDashArray"
                     [attr.transform]="path.Transform" />
@@ -111,10 +121,12 @@
             </ng-container>
             <ng-container *ngFor="let polygone of layer.Polygones">
                 <polygon 
+                    class="click-through"
                     [attr.points]="polygone.Points"
                     [attr.fill]="polygone.Color"
                     [attr.fill-opacity]="polygone.FillOpacity"
                     [attr.stroke]="polygone.Stroke"
+                    [attr.stroke-opacity]="polygone.StrokeOpacity"
                     [attr.stroke-width]="polygone.StrokeWidth"
                     [attr.stroke-dasharray]="polygone.StrokeDashArray" />
     
@@ -125,10 +137,13 @@
                     [attr.repeatCount]="animate.RepeatCount" />
             </ng-container>
             <ng-container *ngFor="let polyline of layer.Polylines">
-                <polyline [attr.points]="polyline.Points"
+                <polyline 
+                    class="click-through"
+                    [attr.points]="polyline.Points"
                     [attr.fill]="polyline.Color"
                     [attr.fill-opacity]="polyline.FillOpacity"
                     [attr.stroke]="polyline.Stroke"
+                    [attr.stroke-opacity]="polyline.StrokeOpacity"
                     [attr.stroke-width]="polyline.StrokeWidth"
                     [attr.stroke-dasharray]="polyline.StrokeDashArray"
                 />
@@ -149,6 +164,7 @@
                     [attr.fill]="rect.Color"
                     [attr.fill-opacity]="rect.FillOpacity"
                     [attr.stroke]="rect.Stroke"
+                    [attr.stroke-opacity]="rect.StrokeOpacity"
                     [attr.stroke-width]="rect.StrokeWidth"
                     [attr.stroke-dasharray]="rect.IsSelected ? rect.StrokeDashArrayWhenSelected : rect.StrokeDashArray"
                     [attr.transform]="rect.Transform"
@@ -274,7 +290,8 @@
                             [ngTemplateOutletContext]="{ 
                                     text: text, 
                                     anchorX: rect.X + text.X_Offset, 
-                                    anchorY: rect.Y + text.Y_Offset }
+                                    anchorY: rect.Y + text.Y_Offset,
+                                }
                             ">
                     </ng-container>
                     <ng-container *ngIf="text.RectAnchorType == RectAnchorType.RECT_TOP" 
@@ -363,6 +380,7 @@
                             [attr.fill]="link.Color"
                             [attr.fill-opacity]="link.FillOpacity" 
                             [attr.stroke]="link.Stroke" 
+                            [attr.stroke-opacity]="link.StrokeOpacity"
                             [attr.stroke-width]="link.StrokeWidth"
                             [attr.stroke-dasharray]="link.StrokeDashArray" 
                             />
@@ -377,6 +395,7 @@
                                 [attr.fill]="link.Color"
                                 [attr.fill-opacity]="link.FillOpacity" 
                                 [attr.stroke]="link.Stroke" 
+                                [attr.stroke-opacity]="link.StrokeOpacity"
                                 [attr.stroke-width]="link.StrokeWidth"
                                 [attr.stroke-dasharray]="link.StrokeDashArray" 
                                 [attr.segment-orientation]="getOrientation(segment)"
@@ -393,6 +412,7 @@
                                 [attr.fill]="link.Color"
                                 [attr.fill-opacity]="link.FillOpacity" 
                                 [attr.stroke]="link.Stroke" 
+                                [attr.stroke-opacity]="link.StrokeOpacity"
                                 [attr.stroke-width]="link.StrokeWidth"
                                 [attr.stroke-dasharray]="link.StrokeDashArray" 
                                 [attr.segment-orientation]="getOrientation(segment)"
@@ -411,6 +431,7 @@
                             [attr.fill]="link.Color"
                             [attr.fill-opacity]="link.FillOpacity" 
                             [attr.stroke]="link.Stroke" 
+                            [attr.stroke-opacity]="link.StrokeOpacity"
                             [attr.stroke-width]="link.StrokeWidth"
                             [attr.stroke-dasharray]="link.StrokeDashArray" 
                             />
@@ -421,6 +442,7 @@
                                 [attr.fill]="link.Color"
                                 [attr.fill-opacity]="link.FillOpacity" 
                                 [attr.stroke]="link.Stroke" 
+                                [attr.stroke-opacity]="link.StrokeOpacity"
                                 [attr.stroke-width]="link.StrokeWidth"
                                 [attr.stroke-dasharray]="link.StrokeDashArray" 
                             />
@@ -431,6 +453,7 @@
                                 [attr.fill]="link.Color"
                                 [attr.fill-opacity]="link.FillOpacity" 
                                 [attr.stroke]="link.Stroke" 
+                                [attr.stroke-opacity]="link.StrokeOpacity"
                                 [attr.stroke-width]="link.StrokeWidth"
                                 [attr.stroke-dasharray]="link.StrokeDashArray" 
                             />
@@ -441,16 +464,21 @@
                         <ng-container *ngIf="(i == (segments.length - 1))">
                             <ng-container *ngFor='let text of this.link.TextAtArrowEnd!; let k = index'>
                                 <ng-container *ngIf='!text.AutomaticLayout && splitTextIntoLines(text.Content) as lines'>
-                                    <text class="movable-text"
+                                    <text class="click-through"
                                         [attr.x]="segment.EndPoint.X + text.X_Offset" 
                                         [attr.y]="segment.EndPoint.Y + text.Y_Offset" 
+                                        [attr.font-weight]="text.FontWeight"
+                                        [attr.font-size]="text.FontSize"
+                                        [attr.letter-spacing]="text.LetterSpacing"
+
                                         [attr.fill]="text.Color"    
                                         [attr.fill-opacity]="text.FillOpacity"
                                         [attr.stroke]="text.Stroke"
+                                        [attr.stroke-opacity]="text.StrokeOpacity"
                                         [attr.stroke-width]="text.StrokeWidth"
                                         [attr.stroke-dasharray]="text.StrokeDashArray"
                                         [attr.transform]="text.Transform"
-                                        
+
                                         (mousedown)="textAnchoredMouseDown(link, $event, k, PositionOnArrowType.POSITION_ON_ARROW_END)" 
                                         (mousemove)="onmousemove($event)" 
                                         (mouseup)="textAnchoredMouseUp(link, $event)"
@@ -464,9 +492,14 @@
                                     <text class="noevents-area"
                                         [attr.x]="segment.EndPoint.X" 
                                         [attr.y]="segment.EndPoint.Y + auto_Y_offset(link, segment, text, PositionOnArrowType.POSITION_ON_ARROW_END)" 
+                                        [attr.font-weight]="text.FontWeight"
+                                        [attr.font-size]="text.FontSize"
+                                        [attr.letter-spacing]="text.LetterSpacing"
+                                       
                                         [attr.fill]="text.Color"    
                                         [attr.fill-opacity]="text.FillOpacity"
                                         [attr.stroke]="text.Stroke"
+                                        [attr.stroke-opacity]="text.StrokeOpacity"
                                         [attr.stroke-width]="text.StrokeWidth"
                                         [attr.stroke-dasharray]="text.StrokeDashArray"
                                         [attr.transform]="text.Transform"
@@ -481,12 +514,17 @@
                         <ng-container *ngIf="i == 0">
                             <ng-container *ngFor='let text of this.link.TextAtArrowStart!; let k = index'>
                                 <ng-container *ngIf='!text.AutomaticLayout && splitTextIntoLines(text.Content) as lines'>
-                                    <text class="movable-text"
+                                    <text class="click-through"
                                         [attr.x]="segment.StartPoint.X + text.X_Offset" 
                                         [attr.y]="segment.StartPoint.Y + text.Y_Offset" 
+                                        [attr.font-weight]="text.FontWeight"
+                                        [attr.font-size]="text.FontSize"
+                                        [attr.letter-spacing]="text.LetterSpacing"
+
                                         [attr.fill]="text.Color"    
                                         [attr.fill-opacity]="text.FillOpacity"
                                         [attr.stroke]="text.Stroke"
+                                        [attr.stroke-opacity]="text.StrokeOpacity"
                                         [attr.stroke-width]="text.StrokeWidth"
                                         [attr.stroke-dasharray]="text.StrokeDashArray"
                                         [attr.transform]="text.Transform"
@@ -504,9 +542,14 @@
                                     <text class="noevents-area"
                                         [attr.x]="segment.StartPoint.X" 
                                         [attr.y]="segment.StartPoint.Y + auto_Y_offset(link, segment, text, PositionOnArrowType.POSITION_ON_ARROW_START)" 
+                                        [attr.font-weight]="text.FontWeight"
+                                        [attr.font-size]="text.FontSize"
+                                        [attr.letter-spacing]="text.LetterSpacing"
+
                                         [attr.fill]="text.Color"    
                                         [attr.fill-opacity]="text.FillOpacity"
                                         [attr.stroke]="text.Stroke"
+                                        [attr.stroke-opacity]="text.StrokeOpacity"
                                         [attr.stroke-width]="text.StrokeWidth"
                                         [attr.stroke-dasharray]="text.StrokeDashArray"
                                         [attr.transform]="text.Transform"
@@ -531,6 +574,7 @@
                             [attr.fill]="link.Color"
                             [attr.fill-opacity]="link.FillOpacity" 
                             [attr.stroke]="link.Stroke" 
+                            [attr.stroke-opacity]="link.StrokeOpacity"
                             [attr.stroke-width]="link.StrokeWidth"
                             [attr.stroke-dasharray]="link.StrokeDashArray" 
                             [attr.transform]="link.Transform" 
@@ -548,6 +592,7 @@
                         [attr.fill]="rectLinkLink.Color"
                         [attr.fill-opacity]="rectLinkLink.FillOpacity" 
                         [attr.stroke]="rectLinkLink.Stroke" 
+                        [attr.stroke-opacity]="rectLinkLink.StrokeOpacity"
                         [attr.stroke-width]="rectLinkLink.StrokeWidth"
                         [attr.stroke-dasharray]="rectLinkLink.StrokeDashArray" 
                         [attr.transform]="rectLinkLink.Transform" 
@@ -577,11 +622,13 @@
 <ng-template #anchoredText let-text="text" let-anchorX="anchorX" let-anchorY="anchorY">
     <ng-container *ngIf='splitTextIntoLines(text.Content) as lines'>
             <svg:text class="anchored-text"
+            class="click-through"
             [attr.x]="anchorX" 
             [attr.y]="anchorY" 
             [attr.fill]="text.Color"    
             [attr.fill-opacity]="text.FillOpacity"
             [attr.stroke]="text.Stroke"
+            [attr.stroke-opacity]="text.StrokeOpacity"
             [attr.stroke-width]="text.StrokeWidth != 0 ? text.StrokeWidth : null"
             [attr.stroke-dasharray]="text.StrokeDashArray"
             [attr.transform]="text.Transform"
@@ -599,7 +646,7 @@
 
 <ng-template #anchoredRect let-rect="rect" let-anchorX="anchorX" let-anchorY="anchorY" let-width="width">
     <svg:rect   
-        pointer-events="none"
+        class="click-through"
         [attr.x]="anchorX"
         [attr.y]="anchorY"
         [attr.width]="width"
@@ -608,6 +655,7 @@
         [attr.fill]="rect.Color"
         [attr.fill-opacity]="rect.FillOpacity"
         [attr.stroke]="rect.Stroke"
+        [attr.stroke-opacity]="rect.StrokeOpacity"
         [attr.stroke-width]="rect.StrokeWidth"
     > </rect>
 </ng-template>
@@ -621,6 +669,7 @@
                 [attr.fill]="path.Color"
                 [attr.fill-opacity]="path.FillOpacity"
                 [attr.stroke]="path.Stroke"
+                [attr.stroke-opacity]="path.StrokeOpacity"
                 [attr.stroke-width]="path.StrokeWidth"
                 [attr.transform]="path.Transform"
             > </path>
@@ -636,6 +685,7 @@
                 [attr.fill]="path.Color"
                 [attr.fill-opacity]="path.FillOpacity"
                 [attr.stroke]="path.Stroke"
+                [attr.stroke-opacity]="path.StrokeOpacity"
                 [attr.stroke-width]="path.StrokeWidth"
                 [attr.transform]="path.Transform + ' translate(' + anchorX + ' ' + anchorY + ') scale(' + path.AppliedScaling + ' ' + path.AppliedScaling + ')'"
             > </path>

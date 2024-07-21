@@ -679,6 +679,10 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					// remove first and last char
 					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
 					__gong__map_Engine[identifier].CurrentTime = fielValue
+				case "DisplayFormat":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_Engine[identifier].DisplayFormat = fielValue
 				case "SecondsSinceStart":
 					// convert string to float64
 					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)

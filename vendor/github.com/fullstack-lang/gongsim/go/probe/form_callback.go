@@ -146,6 +146,8 @@ func (engineFormCallback *EngineFormCallback) OnSave() {
 			FormDivBasicFieldToField(&(engine_.EndTime), formDiv)
 		case "CurrentTime":
 			FormDivBasicFieldToField(&(engine_.CurrentTime), formDiv)
+		case "DisplayFormat":
+			FormDivBasicFieldToField(&(engine_.DisplayFormat), formDiv)
 		case "SecondsSinceStart":
 			FormDivBasicFieldToField(&(engine_.SecondsSinceStart), formDiv)
 		case "Fired":

@@ -23,40 +23,24 @@ import (
 
 // generated in order to avoid error in the package import
 // if there are no elements in the stage to marshall
-var ___dummy__Stage_{{databaseName}} models.StageStruct
-var ___dummy__Time_{{databaseName}} time.Time
+var _ time.Time
 
 // Injection point for meta package dummy declaration{{ImportPackageDummyDeclaration}}
 
-// currently, DocLink renaming is not enabled in gopls
-// the following map are devised to overcome this limitation
-// those maps and the processing code will be eleminated when
-// DocLink renaming will be enabled in gopls
-// [Corresponding Issue](https://github.com/golang/go/issues/57559)
-//
 // When parsed, those maps will help with the renaming process
-var map_DocLink_Identifier_{{databaseName}} map[string]any = map[string]any{
+var _ map[string]any = map[string]any{
 	// injection point for docLink to identifiers{{EntriesDocLinkStringDocLinkIdentifier}}
 }
 
-// init might be handy if one want to have the data embedded in the binary
-// but it has to properly reference the Injection gateway in the main package
-// func init() {
-// 	_ = __Dummy_time_variable
-// 	InjectionGateway["{{databaseName}}"] = {{databaseName}}Injection
-// }
-
-// {{databaseName}}Injection will stage objects of database "{{databaseName}}"
-func {{databaseName}}Injection(stage *models.StageStruct) {
+// function will stage objects
+func _(stage *models.StageStruct) {
 
 	// Declaration of instances to stage{{Identifiers}}
 
 	// Setup of values{{ValueInitializers}}
 
 	// Setup of pointers{{PointersInitializers}}
-}
-
-`
+}`
 
 const IdentifiersDecls = `
 	{{Identifier}} := (&models.{{GeneratedStructName}}{Name: ` + "`" + `{{GeneratedFieldNameValue}}` + "`" + `}).Stage(stage)`
@@ -107,7 +91,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	decl := ""
 	_ = decl
 	setValueField := ""
-	_ = setValueField 
+	_ = setValueField
 
 	// insertion initialization of objects to stage
 	map_CivilianAirport_Identifiers := make(map[*CivilianAirport]string)
@@ -120,7 +104,9 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(civilianairportOrdered[:], func(i, j int) bool {
 		return civilianairportOrdered[i].Name < civilianairportOrdered[j].Name
 	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of CivilianAirport"
+	if len(civilianairportOrdered) > 0 {
+		identifiersDecl += "\n"
+	}
 	for idx, civilianairport := range civilianairportOrdered {
 
 		id = generatesIdentifier("CivilianAirport", idx, civilianairport.Name)
@@ -132,7 +118,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", civilianairport.Name)
 		identifiersDecl += decl
 
-		initializerStatements += "\n\n	// CivilianAirport values setup"
+		initializerStatements += "\n"
 		// Initialisation of values
 		setValueField = NumberInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -164,7 +150,9 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(linerOrdered[:], func(i, j int) bool {
 		return linerOrdered[i].Name < linerOrdered[j].Name
 	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of Liner"
+	if len(linerOrdered) > 0 {
+		identifiersDecl += "\n"
+	}
 	for idx, liner := range linerOrdered {
 
 		id = generatesIdentifier("Liner", idx, liner.Name)
@@ -176,7 +164,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", liner.Name)
 		identifiersDecl += decl
 
-		initializerStatements += "\n\n	// Liner values setup"
+		initializerStatements += "\n"
 		// Initialisation of values
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -276,7 +264,9 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(messageOrdered[:], func(i, j int) bool {
 		return messageOrdered[i].Name < messageOrdered[j].Name
 	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of Message"
+	if len(messageOrdered) > 0 {
+		identifiersDecl += "\n"
+	}
 	for idx, message := range messageOrdered {
 
 		id = generatesIdentifier("Message", idx, message.Name)
@@ -288,7 +278,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", message.Name)
 		identifiersDecl += decl
 
-		initializerStatements += "\n\n	// Message values setup"
+		initializerStatements += "\n"
 		// Initialisation of values
 		setValueField = NumberInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -412,7 +402,9 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(opslineOrdered[:], func(i, j int) bool {
 		return opslineOrdered[i].Name < opslineOrdered[j].Name
 	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of OpsLine"
+	if len(opslineOrdered) > 0 {
+		identifiersDecl += "\n"
+	}
 	for idx, opsline := range opslineOrdered {
 
 		id = generatesIdentifier("OpsLine", idx, opsline.Name)
@@ -424,7 +416,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", opsline.Name)
 		identifiersDecl += decl
 
-		initializerStatements += "\n\n	// OpsLine values setup"
+		initializerStatements += "\n"
 		// Initialisation of values
 		setValueField = NumberInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -476,7 +468,9 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(radarOrdered[:], func(i, j int) bool {
 		return radarOrdered[i].Name < radarOrdered[j].Name
 	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of Radar"
+	if len(radarOrdered) > 0 {
+		identifiersDecl += "\n"
+	}
 	for idx, radar := range radarOrdered {
 
 		id = generatesIdentifier("Radar", idx, radar.Name)
@@ -488,7 +482,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", radar.Name)
 		identifiersDecl += decl
 
-		initializerStatements += "\n\n	// Radar values setup"
+		initializerStatements += "\n"
 		// Initialisation of values
 		if radar.State != "" {
 			setValueField = StringEnumInitStatement
@@ -534,7 +528,9 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(satelliteOrdered[:], func(i, j int) bool {
 		return satelliteOrdered[i].Name < satelliteOrdered[j].Name
 	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of Satellite"
+	if len(satelliteOrdered) > 0 {
+		identifiersDecl += "\n"
+	}
 	for idx, satellite := range satelliteOrdered {
 
 		id = generatesIdentifier("Satellite", idx, satellite.Name)
@@ -546,7 +542,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", satellite.Name)
 		identifiersDecl += decl
 
-		initializerStatements += "\n\n	// Satellite values setup"
+		initializerStatements += "\n"
 		// Initialisation of values
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -620,7 +616,9 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	sort.Slice(scenarioOrdered[:], func(i, j int) bool {
 		return scenarioOrdered[i].Name < scenarioOrdered[j].Name
 	})
-	identifiersDecl += "\n\n	// Declarations of staged instances of Scenario"
+	if len(scenarioOrdered) > 0 {
+		identifiersDecl += "\n"
+	}
 	for idx, scenario := range scenarioOrdered {
 
 		id = generatesIdentifier("Scenario", idx, scenario.Name)
@@ -632,7 +630,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", scenario.Name)
 		identifiersDecl += decl
 
-		initializerStatements += "\n\n	// Scenario values setup"
+		initializerStatements += "\n"
 		// Initialisation of values
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
@@ -762,9 +760,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 			fmt.Sprintf("\n\t%s %s", stage.MetaPackageImportAlias, stage.MetaPackageImportPath))
 
 		res = strings.ReplaceAll(res, "{{ImportPackageDummyDeclaration}}",
-			fmt.Sprintf("\nvar ___dummy__%s_%s %s.StageStruct",
-				stage.MetaPackageImportAlias,
-				strings.ReplaceAll(filepath.Base(name), ".go", ""),
+			fmt.Sprintf("\nvar _ %s.StageStruct",
 				stage.MetaPackageImportAlias))
 
 		var entries string
@@ -803,7 +799,7 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 			}
 		}
 
-		res = strings.ReplaceAll(res, "{{EntriesDocLinkStringDocLinkIdentifier}}", entries)
+		// res = strings.ReplaceAll(res, "{{EntriesDocLinkStringDocLinkIdentifier}}", entries)
 	}
 
 	fmt.Fprintln(file, res)

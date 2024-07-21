@@ -1,9 +1,6 @@
 <mat-toolbar *ngIf="engine">
     <mat-toolbar-row>
-        <span>{{ simulationTitle }}</span>
-        <!-- <span class="example-spacer"></span>
-        <span class="example-spacer"></span>
-        <span class="example-spacer"></span> -->
+        <span>{{ simulationTitle }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <span class="example-spacer status-indicator" [ngStyle]="
             {
                 'color': engine.State === 'PAUSED' ? 
@@ -62,11 +59,21 @@
                 forward_10
             </mat-icon>
         </button>
-        <span class="example-spacer">
+        <span class="example-spacer">&nbsp;&nbsp;
         </span>
-        <span class="example-spacer"></span> Time
+        <mat-icon>
+            schedule
+        </mat-icon>
+        <span class="example-spacer">&nbsp;&nbsp;
+        </span>
         <span class="example-spacer"></span> {{ engine.CurrentTime }}
-        <span class="example-spacer"></span> End
+        <span class="example-spacer">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+        <mat-icon>
+            alarm_on
+        </mat-icon>
+        <span class="example-spacer">&nbsp;&nbsp;
+        </span>
         <span class="example-spacer"></span> {{ engine.EndTime }}
         <button (click)='publishAgentStates()' matTooltip="publish agent states" mat-button>
             <mat-icon>

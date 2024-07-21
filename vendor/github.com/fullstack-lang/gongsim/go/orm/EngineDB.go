@@ -68,6 +68,9 @@ type EngineDB struct {
 	// Declation for basic field engineDB.CurrentTime
 	CurrentTime_Data sql.NullString
 
+	// Declation for basic field engineDB.DisplayFormat
+	DisplayFormat_Data sql.NullString
+
 	// Declation for basic field engineDB.SecondsSinceStart
 	SecondsSinceStart_Data sql.NullFloat64
 
@@ -111,15 +114,17 @@ type EngineWOP struct {
 
 	CurrentTime string `xlsx:"3"`
 
-	SecondsSinceStart float64 `xlsx:"4"`
+	DisplayFormat string `xlsx:"4"`
 
-	Fired int `xlsx:"5"`
+	SecondsSinceStart float64 `xlsx:"5"`
 
-	ControlMode models.ControlMode `xlsx:"6"`
+	Fired int `xlsx:"6"`
 
-	State models.EngineState `xlsx:"7"`
+	ControlMode models.ControlMode `xlsx:"7"`
 
-	Speed float64 `xlsx:"8"`
+	State models.EngineState `xlsx:"8"`
+
+	Speed float64 `xlsx:"9"`
 	// insertion for WOP pointer fields
 }
 
@@ -129,6 +134,7 @@ var Engine_Fields = []string{
 	"Name",
 	"EndTime",
 	"CurrentTime",
+	"DisplayFormat",
 	"SecondsSinceStart",
 	"Fired",
 	"ControlMode",
@@ -409,6 +415,9 @@ func (engineDB *EngineDB) CopyBasicFieldsFromEngine(engine *models.Engine) {
 	engineDB.CurrentTime_Data.String = engine.CurrentTime
 	engineDB.CurrentTime_Data.Valid = true
 
+	engineDB.DisplayFormat_Data.String = engine.DisplayFormat
+	engineDB.DisplayFormat_Data.Valid = true
+
 	engineDB.SecondsSinceStart_Data.Float64 = engine.SecondsSinceStart
 	engineDB.SecondsSinceStart_Data.Valid = true
 
@@ -437,6 +446,9 @@ func (engineDB *EngineDB) CopyBasicFieldsFromEngine_WOP(engine *models.Engine_WO
 
 	engineDB.CurrentTime_Data.String = engine.CurrentTime
 	engineDB.CurrentTime_Data.Valid = true
+
+	engineDB.DisplayFormat_Data.String = engine.DisplayFormat
+	engineDB.DisplayFormat_Data.Valid = true
 
 	engineDB.SecondsSinceStart_Data.Float64 = engine.SecondsSinceStart
 	engineDB.SecondsSinceStart_Data.Valid = true
@@ -467,6 +479,9 @@ func (engineDB *EngineDB) CopyBasicFieldsFromEngineWOP(engine *EngineWOP) {
 	engineDB.CurrentTime_Data.String = engine.CurrentTime
 	engineDB.CurrentTime_Data.Valid = true
 
+	engineDB.DisplayFormat_Data.String = engine.DisplayFormat
+	engineDB.DisplayFormat_Data.Valid = true
+
 	engineDB.SecondsSinceStart_Data.Float64 = engine.SecondsSinceStart
 	engineDB.SecondsSinceStart_Data.Valid = true
 
@@ -489,6 +504,7 @@ func (engineDB *EngineDB) CopyBasicFieldsToEngine(engine *models.Engine) {
 	engine.Name = engineDB.Name_Data.String
 	engine.EndTime = engineDB.EndTime_Data.String
 	engine.CurrentTime = engineDB.CurrentTime_Data.String
+	engine.DisplayFormat = engineDB.DisplayFormat_Data.String
 	engine.SecondsSinceStart = engineDB.SecondsSinceStart_Data.Float64
 	engine.Fired = int(engineDB.Fired_Data.Int64)
 	engine.ControlMode.FromString(engineDB.ControlMode_Data.String)
@@ -502,6 +518,7 @@ func (engineDB *EngineDB) CopyBasicFieldsToEngine_WOP(engine *models.Engine_WOP)
 	engine.Name = engineDB.Name_Data.String
 	engine.EndTime = engineDB.EndTime_Data.String
 	engine.CurrentTime = engineDB.CurrentTime_Data.String
+	engine.DisplayFormat = engineDB.DisplayFormat_Data.String
 	engine.SecondsSinceStart = engineDB.SecondsSinceStart_Data.Float64
 	engine.Fired = int(engineDB.Fired_Data.Int64)
 	engine.ControlMode.FromString(engineDB.ControlMode_Data.String)
@@ -516,6 +533,7 @@ func (engineDB *EngineDB) CopyBasicFieldsToEngineWOP(engine *EngineWOP) {
 	engine.Name = engineDB.Name_Data.String
 	engine.EndTime = engineDB.EndTime_Data.String
 	engine.CurrentTime = engineDB.CurrentTime_Data.String
+	engine.DisplayFormat = engineDB.DisplayFormat_Data.String
 	engine.SecondsSinceStart = engineDB.SecondsSinceStart_Data.Float64
 	engine.Fired = int(engineDB.Fired_Data.Int64)
 	engine.ControlMode.FromString(engineDB.ControlMode_Data.String)

@@ -82,7 +82,6 @@ func (stage *StageStruct) IsStagedScenario(scenario *Scenario) (ok bool) {
 	return
 }
 
-
 // StageBranch stages instance and apply StageBranch on all gongstruct instances that are
 // referenced by pointers or slices of pointers of the instance
 //
@@ -229,7 +228,6 @@ func (stage *StageStruct) StageBranchScenario(scenario *Scenario) {
 
 }
 
-
 // CopyBranch stages instance and apply CopyBranch on all gongstruct instances that are
 // referenced by pointers or slices of pointers of the instance
 //
@@ -276,7 +274,7 @@ func CopyBranch[Type Gongstruct](from *Type) (to *Type) {
 }
 
 // insertion point for stage branch per struct
-func CopyBranchCivilianAirport(mapOrigCopy map[any]any, civilianairportFrom *CivilianAirport) (civilianairportTo  *CivilianAirport){
+func CopyBranchCivilianAirport(mapOrigCopy map[any]any, civilianairportFrom *CivilianAirport) (civilianairportTo *CivilianAirport) {
 
 	// civilianairportFrom has already been copied
 	if _civilianairportTo, ok := mapOrigCopy[civilianairportFrom]; ok {
@@ -295,7 +293,7 @@ func CopyBranchCivilianAirport(mapOrigCopy map[any]any, civilianairportFrom *Civ
 	return
 }
 
-func CopyBranchLiner(mapOrigCopy map[any]any, linerFrom *Liner) (linerTo  *Liner){
+func CopyBranchLiner(mapOrigCopy map[any]any, linerFrom *Liner) (linerTo *Liner) {
 
 	// linerFrom has already been copied
 	if _linerTo, ok := mapOrigCopy[linerFrom]; ok {
@@ -317,7 +315,7 @@ func CopyBranchLiner(mapOrigCopy map[any]any, linerFrom *Liner) (linerTo  *Liner
 	return
 }
 
-func CopyBranchMessage(mapOrigCopy map[any]any, messageFrom *Message) (messageTo  *Message){
+func CopyBranchMessage(mapOrigCopy map[any]any, messageFrom *Message) (messageTo *Message) {
 
 	// messageFrom has already been copied
 	if _messageTo, ok := mapOrigCopy[messageFrom]; ok {
@@ -336,7 +334,7 @@ func CopyBranchMessage(mapOrigCopy map[any]any, messageFrom *Message) (messageTo
 	return
 }
 
-func CopyBranchOpsLine(mapOrigCopy map[any]any, opslineFrom *OpsLine) (opslineTo  *OpsLine){
+func CopyBranchOpsLine(mapOrigCopy map[any]any, opslineFrom *OpsLine) (opslineTo *OpsLine) {
 
 	// opslineFrom has already been copied
 	if _opslineTo, ok := mapOrigCopy[opslineFrom]; ok {
@@ -358,7 +356,7 @@ func CopyBranchOpsLine(mapOrigCopy map[any]any, opslineFrom *OpsLine) (opslineTo
 	return
 }
 
-func CopyBranchRadar(mapOrigCopy map[any]any, radarFrom *Radar) (radarTo  *Radar){
+func CopyBranchRadar(mapOrigCopy map[any]any, radarFrom *Radar) (radarTo *Radar) {
 
 	// radarFrom has already been copied
 	if _radarTo, ok := mapOrigCopy[radarFrom]; ok {
@@ -377,7 +375,7 @@ func CopyBranchRadar(mapOrigCopy map[any]any, radarFrom *Radar) (radarTo  *Radar
 	return
 }
 
-func CopyBranchSatellite(mapOrigCopy map[any]any, satelliteFrom *Satellite) (satelliteTo  *Satellite){
+func CopyBranchSatellite(mapOrigCopy map[any]any, satelliteFrom *Satellite) (satelliteTo *Satellite) {
 
 	// satelliteFrom has already been copied
 	if _satelliteTo, ok := mapOrigCopy[satelliteFrom]; ok {
@@ -396,7 +394,7 @@ func CopyBranchSatellite(mapOrigCopy map[any]any, satelliteFrom *Satellite) (sat
 	return
 }
 
-func CopyBranchScenario(mapOrigCopy map[any]any, scenarioFrom *Scenario) (scenarioTo  *Scenario){
+func CopyBranchScenario(mapOrigCopy map[any]any, scenarioFrom *Scenario) (scenarioTo *Scenario) {
 
 	// scenarioFrom has already been copied
 	if _scenarioTo, ok := mapOrigCopy[scenarioFrom]; ok {
@@ -414,7 +412,6 @@ func CopyBranchScenario(mapOrigCopy map[any]any, scenarioFrom *Scenario) (scenar
 
 	return
 }
-
 
 // UnstageBranch stages instance and apply UnstageBranch on all gongstruct instances that are
 // referenced by pointers or slices of pointers of the insance
@@ -454,7 +451,7 @@ func UnstageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 func (stage *StageStruct) UnstageBranchCivilianAirport(civilianairport *CivilianAirport) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, civilianairport) {
+	if !IsStaged(stage, civilianairport) {
 		return
 	}
 
@@ -469,7 +466,7 @@ func (stage *StageStruct) UnstageBranchCivilianAirport(civilianairport *Civilian
 func (stage *StageStruct) UnstageBranchLiner(liner *Liner) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, liner) {
+	if !IsStaged(stage, liner) {
 		return
 	}
 
@@ -487,7 +484,7 @@ func (stage *StageStruct) UnstageBranchLiner(liner *Liner) {
 func (stage *StageStruct) UnstageBranchMessage(message *Message) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, message) {
+	if !IsStaged(stage, message) {
 		return
 	}
 
@@ -502,7 +499,7 @@ func (stage *StageStruct) UnstageBranchMessage(message *Message) {
 func (stage *StageStruct) UnstageBranchOpsLine(opsline *OpsLine) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, opsline) {
+	if !IsStaged(stage, opsline) {
 		return
 	}
 
@@ -520,7 +517,7 @@ func (stage *StageStruct) UnstageBranchOpsLine(opsline *OpsLine) {
 func (stage *StageStruct) UnstageBranchRadar(radar *Radar) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, radar) {
+	if !IsStaged(stage, radar) {
 		return
 	}
 
@@ -535,7 +532,7 @@ func (stage *StageStruct) UnstageBranchRadar(radar *Radar) {
 func (stage *StageStruct) UnstageBranchSatellite(satellite *Satellite) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, satellite) {
+	if !IsStaged(stage, satellite) {
 		return
 	}
 
@@ -550,7 +547,7 @@ func (stage *StageStruct) UnstageBranchSatellite(satellite *Satellite) {
 func (stage *StageStruct) UnstageBranchScenario(scenario *Scenario) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, scenario) {
+	if !IsStaged(stage, scenario) {
 		return
 	}
 
@@ -561,4 +558,3 @@ func (stage *StageStruct) UnstageBranchScenario(scenario *Scenario) {
 	//insertion point for the staging of instances referenced by slice of pointers
 
 }
-

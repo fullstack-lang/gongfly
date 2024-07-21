@@ -977,7 +977,7 @@ func GetFields[Type Gongstruct]() (res []string) {
 	case DummyAgent:
 		res = []string{"TechName", "Name"}
 	case Engine:
-		res = []string{"Name", "EndTime", "CurrentTime", "SecondsSinceStart", "Fired", "ControlMode", "State", "Speed"}
+		res = []string{"Name", "EndTime", "CurrentTime", "DisplayFormat", "SecondsSinceStart", "Fired", "ControlMode", "State", "Speed"}
 	case Event:
 		res = []string{"Name", "Duration"}
 	case GongsimCommand:
@@ -1031,7 +1031,7 @@ func GetFieldsFromPointer[Type PointerToGongstruct]() (res []string) {
 	case *DummyAgent:
 		res = []string{"TechName", "Name"}
 	case *Engine:
-		res = []string{"Name", "EndTime", "CurrentTime", "SecondsSinceStart", "Fired", "ControlMode", "State", "Speed"}
+		res = []string{"Name", "EndTime", "CurrentTime", "DisplayFormat", "SecondsSinceStart", "Fired", "ControlMode", "State", "Speed"}
 	case *Event:
 		res = []string{"Name", "Duration"}
 	case *GongsimCommand:
@@ -1063,6 +1063,8 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 			res = inferedInstance.EndTime
 		case "CurrentTime":
 			res = inferedInstance.CurrentTime
+		case "DisplayFormat":
+			res = inferedInstance.DisplayFormat
 		case "SecondsSinceStart":
 			res = fmt.Sprintf("%f", inferedInstance.SecondsSinceStart)
 		case "Fired":
@@ -1186,6 +1188,8 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = inferedInstance.EndTime
 		case "CurrentTime":
 			res = inferedInstance.CurrentTime
+		case "DisplayFormat":
+			res = inferedInstance.DisplayFormat
 		case "SecondsSinceStart":
 			res = fmt.Sprintf("%f", inferedInstance.SecondsSinceStart)
 		case "Fired":

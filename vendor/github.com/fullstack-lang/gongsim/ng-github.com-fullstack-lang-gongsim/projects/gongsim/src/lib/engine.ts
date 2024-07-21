@@ -20,6 +20,7 @@ export class Engine {
 	Name: string = ""
 	EndTime: string = ""
 	CurrentTime: string = ""
+	DisplayFormat: string = ""
 	SecondsSinceStart: number = 0
 	Fired: number = 0
 	ControlMode: string = ""
@@ -39,6 +40,7 @@ export function CopyEngineToEngineAPI(engine: Engine, engineAPI: EngineAPI) {
 	engineAPI.Name = engine.Name
 	engineAPI.EndTime = engine.EndTime
 	engineAPI.CurrentTime = engine.CurrentTime
+	engineAPI.DisplayFormat = engine.DisplayFormat
 	engineAPI.SecondsSinceStart = engine.SecondsSinceStart
 	engineAPI.Fired = engine.Fired
 	engineAPI.ControlMode = engine.ControlMode
@@ -64,6 +66,7 @@ export function CopyEngineAPIToEngine(engineAPI: EngineAPI, engine: Engine, fron
 	engine.Name = engineAPI.Name
 	engine.EndTime = engineAPI.EndTime
 	engine.CurrentTime = engineAPI.CurrentTime
+	engine.DisplayFormat = engineAPI.DisplayFormat
 	engine.SecondsSinceStart = engineAPI.SecondsSinceStart
 	engine.Fired = engineAPI.Fired
 	engine.ControlMode = engineAPI.ControlMode
