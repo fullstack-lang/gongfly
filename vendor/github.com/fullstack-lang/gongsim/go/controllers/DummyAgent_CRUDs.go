@@ -55,10 +55,10 @@ func (controller *Controller) GetDummyAgents(c *gin.Context) {
 	// source slice
 	var dummyagentDBs []orm.DummyAgentDB
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetDummyAgents", "GONG__StackPath", stackPath)
@@ -118,10 +118,10 @@ func (controller *Controller) PostDummyAgent(c *gin.Context) {
 	mutexDummyAgent.Lock()
 	defer mutexDummyAgent.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("PostDummyAgents", "GONG__StackPath", stackPath)
@@ -188,10 +188,10 @@ func (controller *Controller) PostDummyAgent(c *gin.Context) {
 //	200: dummyagentDBResponse
 func (controller *Controller) GetDummyAgent(c *gin.Context) {
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetDummyAgent", "GONG__StackPath", stackPath)
@@ -237,10 +237,10 @@ func (controller *Controller) UpdateDummyAgent(c *gin.Context) {
 	mutexDummyAgent.Lock()
 	defer mutexDummyAgent.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("UpdateDummyAgent", "GONG__StackPath", stackPath)
@@ -326,10 +326,10 @@ func (controller *Controller) DeleteDummyAgent(c *gin.Context) {
 	mutexDummyAgent.Lock()
 	defer mutexDummyAgent.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("DeleteDummyAgent", "GONG__StackPath", stackPath)
