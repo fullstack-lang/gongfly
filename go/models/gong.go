@@ -53,7 +53,6 @@ type StageStruct struct {
 	CivilianAirports_mapString map[string]*CivilianAirport
 
 	// insertion point for slice of pointers maps
-
 	OnAfterCivilianAirportCreateCallback OnAfterCreateInterface[CivilianAirport]
 	OnAfterCivilianAirportUpdateCallback OnAfterUpdateInterface[CivilianAirport]
 	OnAfterCivilianAirportDeleteCallback OnAfterDeleteInterface[CivilianAirport]
@@ -63,7 +62,6 @@ type StageStruct struct {
 	Liners_mapString map[string]*Liner
 
 	// insertion point for slice of pointers maps
-
 	OnAfterLinerCreateCallback OnAfterCreateInterface[Liner]
 	OnAfterLinerUpdateCallback OnAfterUpdateInterface[Liner]
 	OnAfterLinerDeleteCallback OnAfterDeleteInterface[Liner]
@@ -73,7 +71,6 @@ type StageStruct struct {
 	Messages_mapString map[string]*Message
 
 	// insertion point for slice of pointers maps
-
 	OnAfterMessageCreateCallback OnAfterCreateInterface[Message]
 	OnAfterMessageUpdateCallback OnAfterUpdateInterface[Message]
 	OnAfterMessageDeleteCallback OnAfterDeleteInterface[Message]
@@ -83,7 +80,6 @@ type StageStruct struct {
 	OpsLines_mapString map[string]*OpsLine
 
 	// insertion point for slice of pointers maps
-
 	OnAfterOpsLineCreateCallback OnAfterCreateInterface[OpsLine]
 	OnAfterOpsLineUpdateCallback OnAfterUpdateInterface[OpsLine]
 	OnAfterOpsLineDeleteCallback OnAfterDeleteInterface[OpsLine]
@@ -93,7 +89,6 @@ type StageStruct struct {
 	Radars_mapString map[string]*Radar
 
 	// insertion point for slice of pointers maps
-
 	OnAfterRadarCreateCallback OnAfterCreateInterface[Radar]
 	OnAfterRadarUpdateCallback OnAfterUpdateInterface[Radar]
 	OnAfterRadarDeleteCallback OnAfterDeleteInterface[Radar]
@@ -103,7 +98,6 @@ type StageStruct struct {
 	Satellites_mapString map[string]*Satellite
 
 	// insertion point for slice of pointers maps
-
 	OnAfterSatelliteCreateCallback OnAfterCreateInterface[Satellite]
 	OnAfterSatelliteUpdateCallback OnAfterUpdateInterface[Satellite]
 	OnAfterSatelliteDeleteCallback OnAfterDeleteInterface[Satellite]
@@ -113,7 +107,6 @@ type StageStruct struct {
 	Scenarios_mapString map[string]*Scenario
 
 	// insertion point for slice of pointers maps
-
 	OnAfterScenarioCreateCallback OnAfterCreateInterface[Scenario]
 	OnAfterScenarioUpdateCallback OnAfterUpdateInterface[Scenario]
 	OnAfterScenarioDeleteCallback OnAfterDeleteInterface[Scenario]
@@ -773,8 +766,7 @@ func (stage *StageStruct) Unstage() { // insertion point for array nil
 // - navigation between staged instances by going backward association links between gongstruct
 // - full refactoring of Gongstruct identifiers / fields
 type Gongstruct interface {
-	// insertion point for generic types
-	CivilianAirport | Liner | Message | OpsLine | Radar | Satellite | Scenario
+
 }
 
 type GongtructBasicField interface {
@@ -786,11 +778,10 @@ type GongtructBasicField interface {
 // - navigation between staged instances by going backward association links between gongstruct
 // - full refactoring of Gongstruct identifiers / fields
 type PointerToGongstruct interface {
-	// insertion point for generic types
-	*CivilianAirport | *Liner | *Message | *OpsLine | *Radar | *Satellite | *Scenario
 	GetName() string
 	CommitVoid(*StageStruct)
 	UnstageVoid(stage *StageStruct)
+	comparable
 }
 
 func CompareGongstructByName[T PointerToGongstruct](a, b T) int {
@@ -814,29 +805,11 @@ func GetGongstrucsSorted[T PointerToGongstruct](stage *StageStruct) (sortedSlice
 }
 
 type GongstructSet interface {
-	map[any]any |
-		// insertion point for generic types
-		map[*CivilianAirport]any |
-		map[*Liner]any |
-		map[*Message]any |
-		map[*OpsLine]any |
-		map[*Radar]any |
-		map[*Satellite]any |
-		map[*Scenario]any |
-		map[*any]any // because go does not support an extra "|" at the end of type specifications
+	map[any]any
 }
 
 type GongstructMapString interface {
-	map[any]any |
-		// insertion point for generic types
-		map[string]*CivilianAirport |
-		map[string]*Liner |
-		map[string]*Message |
-		map[string]*OpsLine |
-		map[string]*Radar |
-		map[string]*Satellite |
-		map[string]*Scenario |
-		map[*any]any // because go does not support an extra "|" at the end of type specifications
+	map[any]any
 }
 
 // GongGetSet returns the set staged GongstructType instances

@@ -30,18 +30,22 @@ func (conceptenum *ConceptEnum) FromString(input string) (err error) {
 	// insertion code per enum code
 	case "Aircrafts":
 		*conceptenum = Aircraft_
+		return
 	case "Satellites":
 		*conceptenum = Satellite_
+		return
 	case "Networks":
 		*conceptenum = Network_
+		return
 	case "Centers":
 		*conceptenum = Center_
+		return
 	case "Systems":
 		*conceptenum = System_
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (conceptenum *ConceptEnum) FromCodeString(input string) (err error) {
@@ -132,12 +136,13 @@ func (linerstateenum *LinerStateEnum) FromString(input string) (err error) {
 	// insertion code per enum code
 	case "EN_ROUTE_NOMINAL":
 		*linerstateenum = EN_ROUTE_NOMINAL
+		return
 	case "LANDED":
 		*linerstateenum = LANDED
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (linerstateenum *LinerStateEnum) FromCodeString(input string) (err error) {
@@ -210,12 +215,13 @@ func (messagestateenum *MessageStateEnum) FromString(input string) (err error) {
 	// insertion code per enum code
 	case "MESSAGE_EN_ROUTE":
 		*messagestateenum = MESSAGE_EN_ROUTE
+		return
 	case "MESSAGE_ARRIVED":
 		*messagestateenum = MESSAGE_ARRIVED
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (messagestateenum *MessageStateEnum) FromCodeString(input string) (err error) {
@@ -288,12 +294,13 @@ func (operationallinestateenum *OperationalLineStateEnum) FromString(input strin
 	// insertion code per enum code
 	case "OPS_COM_LINK_OPERATIONAL_LINE_WORKING":
 		*operationallinestateenum = OPS_COM_LINK_OPERATIONAL_LINE_WORKING
+		return
 	case "OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING":
 		*operationallinestateenum = OPS_COM_LINK_OPERATIONAL_LINE_NOT_WORKING
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (operationallinestateenum *OperationalLineStateEnum) FromCodeString(input string) (err error) {
@@ -364,10 +371,10 @@ func (orderenum *OrderEnum) FromString(input string) (err error) {
 	// insertion code per enum code
 	case "TAKE_OFF":
 		*orderenum = TAKE_OFF
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (orderenum *OrderEnum) FromCodeString(input string) (err error) {
@@ -432,10 +439,10 @@ func (radarstateenum *RadarStateEnum) FromString(input string) (err error) {
 	// insertion code per enum code
 	case "WORKING":
 		*radarstateenum = WORKING
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (radarstateenum *RadarStateEnum) FromCodeString(input string) (err error) {
@@ -500,10 +507,10 @@ func (reportenum *ReportEnum) FromString(input string) (err error) {
 	// insertion code per enum code
 	case "TAKE_OFF_COMPLETED":
 		*reportenum = TAKE_OFF_COMPLETED
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (reportenum *ReportEnum) FromCodeString(input string) (err error) {
@@ -572,14 +579,16 @@ func (stacksnames *StacksNames) FromString(input string) (err error) {
 	// insertion code per enum code
 	case "gongfly":
 		*stacksnames = GongflyStackName
+		return
 	case "gongleaflet":
 		*stacksnames = GongLeafleatStackName
+		return
 	case "gongsim":
 		*stacksnames = GongsimStackName
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (stacksnames *StacksNames) FromCodeString(input string) (err error) {
@@ -639,13 +648,12 @@ func (stacksnames StacksNames) CodeValues() (res []string) {
 // end of insertion point for enum utility functions
 
 type GongstructEnumStringField interface {
-	string | ConceptEnum | LinerStateEnum | MessageStateEnum | OperationalLineStateEnum | OrderEnum | RadarStateEnum | ReportEnum | StacksNames
 	Codes() []string
 	CodeValues() []string
+	ToString() string
 }
 
 type PointerToGongstructEnumStringField interface {
-	*ConceptEnum | *LinerStateEnum | *MessageStateEnum | *OperationalLineStateEnum | *OrderEnum | *RadarStateEnum | *ReportEnum | *StacksNames
 	FromCodeString(input string) (err error)
 }
 
