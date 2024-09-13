@@ -55,10 +55,10 @@ func (controller *Controller) GetVisualTracks(c *gin.Context) {
 	// source slice
 	var visualtrackDBs []orm.VisualTrackDB
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetVisualTracks", "GONG__StackPath", stackPath)
@@ -118,10 +118,10 @@ func (controller *Controller) PostVisualTrack(c *gin.Context) {
 	mutexVisualTrack.Lock()
 	defer mutexVisualTrack.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("PostVisualTracks", "GONG__StackPath", stackPath)
@@ -188,10 +188,10 @@ func (controller *Controller) PostVisualTrack(c *gin.Context) {
 //	200: visualtrackDBResponse
 func (controller *Controller) GetVisualTrack(c *gin.Context) {
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetVisualTrack", "GONG__StackPath", stackPath)
@@ -237,10 +237,10 @@ func (controller *Controller) UpdateVisualTrack(c *gin.Context) {
 	mutexVisualTrack.Lock()
 	defer mutexVisualTrack.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("UpdateVisualTrack", "GONG__StackPath", stackPath)
@@ -326,10 +326,10 @@ func (controller *Controller) DeleteVisualTrack(c *gin.Context) {
 	mutexVisualTrack.Lock()
 	defer mutexVisualTrack.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("DeleteVisualTrack", "GONG__StackPath", stackPath)

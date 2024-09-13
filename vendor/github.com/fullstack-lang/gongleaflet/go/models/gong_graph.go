@@ -102,7 +102,6 @@ func (stage *StageStruct) IsStagedVisualTrack(visualtrack *VisualTrack) (ok bool
 	return
 }
 
-
 // StageBranch stages instance and apply StageBranch on all gongstruct instances that are
 // referenced by pointers or slices of pointers of the instance
 //
@@ -303,7 +302,6 @@ func (stage *StageStruct) StageBranchVisualTrack(visualtrack *VisualTrack) {
 
 }
 
-
 // CopyBranch stages instance and apply CopyBranch on all gongstruct instances that are
 // referenced by pointers or slices of pointers of the instance
 //
@@ -358,7 +356,7 @@ func CopyBranch[Type Gongstruct](from *Type) (to *Type) {
 }
 
 // insertion point for stage branch per struct
-func CopyBranchCircle(mapOrigCopy map[any]any, circleFrom *Circle) (circleTo  *Circle){
+func CopyBranchCircle(mapOrigCopy map[any]any, circleFrom *Circle) (circleTo *Circle) {
 
 	// circleFrom has already been copied
 	if _circleTo, ok := mapOrigCopy[circleFrom]; ok {
@@ -380,7 +378,7 @@ func CopyBranchCircle(mapOrigCopy map[any]any, circleFrom *Circle) (circleTo  *C
 	return
 }
 
-func CopyBranchDivIcon(mapOrigCopy map[any]any, diviconFrom *DivIcon) (diviconTo  *DivIcon){
+func CopyBranchDivIcon(mapOrigCopy map[any]any, diviconFrom *DivIcon) (diviconTo *DivIcon) {
 
 	// diviconFrom has already been copied
 	if _diviconTo, ok := mapOrigCopy[diviconFrom]; ok {
@@ -399,7 +397,7 @@ func CopyBranchDivIcon(mapOrigCopy map[any]any, diviconFrom *DivIcon) (diviconTo
 	return
 }
 
-func CopyBranchLayerGroup(mapOrigCopy map[any]any, layergroupFrom *LayerGroup) (layergroupTo  *LayerGroup){
+func CopyBranchLayerGroup(mapOrigCopy map[any]any, layergroupFrom *LayerGroup) (layergroupTo *LayerGroup) {
 
 	// layergroupFrom has already been copied
 	if _layergroupTo, ok := mapOrigCopy[layergroupFrom]; ok {
@@ -418,7 +416,7 @@ func CopyBranchLayerGroup(mapOrigCopy map[any]any, layergroupFrom *LayerGroup) (
 	return
 }
 
-func CopyBranchLayerGroupUse(mapOrigCopy map[any]any, layergroupuseFrom *LayerGroupUse) (layergroupuseTo  *LayerGroupUse){
+func CopyBranchLayerGroupUse(mapOrigCopy map[any]any, layergroupuseFrom *LayerGroupUse) (layergroupuseTo *LayerGroupUse) {
 
 	// layergroupuseFrom has already been copied
 	if _layergroupuseTo, ok := mapOrigCopy[layergroupuseFrom]; ok {
@@ -440,7 +438,7 @@ func CopyBranchLayerGroupUse(mapOrigCopy map[any]any, layergroupuseFrom *LayerGr
 	return
 }
 
-func CopyBranchMapOptions(mapOrigCopy map[any]any, mapoptionsFrom *MapOptions) (mapoptionsTo  *MapOptions){
+func CopyBranchMapOptions(mapOrigCopy map[any]any, mapoptionsFrom *MapOptions) (mapoptionsTo *MapOptions) {
 
 	// mapoptionsFrom has already been copied
 	if _mapoptionsTo, ok := mapOrigCopy[mapoptionsFrom]; ok {
@@ -456,13 +454,13 @@ func CopyBranchMapOptions(mapOrigCopy map[any]any, mapoptionsFrom *MapOptions) (
 
 	//insertion point for the staging of instances referenced by slice of pointers
 	for _, _layergroupuse := range mapoptionsFrom.LayerGroupUses {
-		mapoptionsTo.LayerGroupUses = append( mapoptionsTo.LayerGroupUses, CopyBranchLayerGroupUse(mapOrigCopy, _layergroupuse))
+		mapoptionsTo.LayerGroupUses = append(mapoptionsTo.LayerGroupUses, CopyBranchLayerGroupUse(mapOrigCopy, _layergroupuse))
 	}
 
 	return
 }
 
-func CopyBranchMarker(mapOrigCopy map[any]any, markerFrom *Marker) (markerTo  *Marker){
+func CopyBranchMarker(mapOrigCopy map[any]any, markerFrom *Marker) (markerTo *Marker) {
 
 	// markerFrom has already been copied
 	if _markerTo, ok := mapOrigCopy[markerFrom]; ok {
@@ -487,7 +485,7 @@ func CopyBranchMarker(mapOrigCopy map[any]any, markerFrom *Marker) (markerTo  *M
 	return
 }
 
-func CopyBranchUserClick(mapOrigCopy map[any]any, userclickFrom *UserClick) (userclickTo  *UserClick){
+func CopyBranchUserClick(mapOrigCopy map[any]any, userclickFrom *UserClick) (userclickTo *UserClick) {
 
 	// userclickFrom has already been copied
 	if _userclickTo, ok := mapOrigCopy[userclickFrom]; ok {
@@ -506,7 +504,7 @@ func CopyBranchUserClick(mapOrigCopy map[any]any, userclickFrom *UserClick) (use
 	return
 }
 
-func CopyBranchVLine(mapOrigCopy map[any]any, vlineFrom *VLine) (vlineTo  *VLine){
+func CopyBranchVLine(mapOrigCopy map[any]any, vlineFrom *VLine) (vlineTo *VLine) {
 
 	// vlineFrom has already been copied
 	if _vlineTo, ok := mapOrigCopy[vlineFrom]; ok {
@@ -528,7 +526,7 @@ func CopyBranchVLine(mapOrigCopy map[any]any, vlineFrom *VLine) (vlineTo  *VLine
 	return
 }
 
-func CopyBranchVisualTrack(mapOrigCopy map[any]any, visualtrackFrom *VisualTrack) (visualtrackTo  *VisualTrack){
+func CopyBranchVisualTrack(mapOrigCopy map[any]any, visualtrackFrom *VisualTrack) (visualtrackTo *VisualTrack) {
 
 	// visualtrackFrom has already been copied
 	if _visualtrackTo, ok := mapOrigCopy[visualtrackFrom]; ok {
@@ -552,7 +550,6 @@ func CopyBranchVisualTrack(mapOrigCopy map[any]any, visualtrackFrom *VisualTrack
 
 	return
 }
-
 
 // UnstageBranch stages instance and apply UnstageBranch on all gongstruct instances that are
 // referenced by pointers or slices of pointers of the insance
@@ -598,7 +595,7 @@ func UnstageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 func (stage *StageStruct) UnstageBranchCircle(circle *Circle) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, circle) {
+	if !IsStaged(stage, circle) {
 		return
 	}
 
@@ -616,7 +613,7 @@ func (stage *StageStruct) UnstageBranchCircle(circle *Circle) {
 func (stage *StageStruct) UnstageBranchDivIcon(divicon *DivIcon) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, divicon) {
+	if !IsStaged(stage, divicon) {
 		return
 	}
 
@@ -631,7 +628,7 @@ func (stage *StageStruct) UnstageBranchDivIcon(divicon *DivIcon) {
 func (stage *StageStruct) UnstageBranchLayerGroup(layergroup *LayerGroup) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, layergroup) {
+	if !IsStaged(stage, layergroup) {
 		return
 	}
 
@@ -646,7 +643,7 @@ func (stage *StageStruct) UnstageBranchLayerGroup(layergroup *LayerGroup) {
 func (stage *StageStruct) UnstageBranchLayerGroupUse(layergroupuse *LayerGroupUse) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, layergroupuse) {
+	if !IsStaged(stage, layergroupuse) {
 		return
 	}
 
@@ -664,7 +661,7 @@ func (stage *StageStruct) UnstageBranchLayerGroupUse(layergroupuse *LayerGroupUs
 func (stage *StageStruct) UnstageBranchMapOptions(mapoptions *MapOptions) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, mapoptions) {
+	if !IsStaged(stage, mapoptions) {
 		return
 	}
 
@@ -682,7 +679,7 @@ func (stage *StageStruct) UnstageBranchMapOptions(mapoptions *MapOptions) {
 func (stage *StageStruct) UnstageBranchMarker(marker *Marker) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, marker) {
+	if !IsStaged(stage, marker) {
 		return
 	}
 
@@ -703,7 +700,7 @@ func (stage *StageStruct) UnstageBranchMarker(marker *Marker) {
 func (stage *StageStruct) UnstageBranchUserClick(userclick *UserClick) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, userclick) {
+	if !IsStaged(stage, userclick) {
 		return
 	}
 
@@ -718,7 +715,7 @@ func (stage *StageStruct) UnstageBranchUserClick(userclick *UserClick) {
 func (stage *StageStruct) UnstageBranchVLine(vline *VLine) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, vline) {
+	if !IsStaged(stage, vline) {
 		return
 	}
 
@@ -736,7 +733,7 @@ func (stage *StageStruct) UnstageBranchVLine(vline *VLine) {
 func (stage *StageStruct) UnstageBranchVisualTrack(visualtrack *VisualTrack) {
 
 	// check if instance is already staged
-	if ! IsStaged(stage, visualtrack) {
+	if !IsStaged(stage, visualtrack) {
 		return
 	}
 
@@ -753,4 +750,3 @@ func (stage *StageStruct) UnstageBranchVisualTrack(visualtrack *VisualTrack) {
 	//insertion point for the staging of instances referenced by slice of pointers
 
 }
-

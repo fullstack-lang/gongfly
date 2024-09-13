@@ -55,10 +55,10 @@ func (controller *Controller) GetUserClicks(c *gin.Context) {
 	// source slice
 	var userclickDBs []orm.UserClickDB
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetUserClicks", "GONG__StackPath", stackPath)
@@ -118,10 +118,10 @@ func (controller *Controller) PostUserClick(c *gin.Context) {
 	mutexUserClick.Lock()
 	defer mutexUserClick.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("PostUserClicks", "GONG__StackPath", stackPath)
@@ -188,10 +188,10 @@ func (controller *Controller) PostUserClick(c *gin.Context) {
 //	200: userclickDBResponse
 func (controller *Controller) GetUserClick(c *gin.Context) {
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetUserClick", "GONG__StackPath", stackPath)
@@ -237,10 +237,10 @@ func (controller *Controller) UpdateUserClick(c *gin.Context) {
 	mutexUserClick.Lock()
 	defer mutexUserClick.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("UpdateUserClick", "GONG__StackPath", stackPath)
@@ -326,10 +326,10 @@ func (controller *Controller) DeleteUserClick(c *gin.Context) {
 	mutexUserClick.Lock()
 	defer mutexUserClick.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("DeleteUserClick", "GONG__StackPath", stackPath)

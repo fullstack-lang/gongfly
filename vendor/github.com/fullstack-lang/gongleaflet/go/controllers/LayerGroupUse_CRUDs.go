@@ -55,10 +55,10 @@ func (controller *Controller) GetLayerGroupUses(c *gin.Context) {
 	// source slice
 	var layergroupuseDBs []orm.LayerGroupUseDB
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetLayerGroupUses", "GONG__StackPath", stackPath)
@@ -118,10 +118,10 @@ func (controller *Controller) PostLayerGroupUse(c *gin.Context) {
 	mutexLayerGroupUse.Lock()
 	defer mutexLayerGroupUse.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("PostLayerGroupUses", "GONG__StackPath", stackPath)
@@ -188,10 +188,10 @@ func (controller *Controller) PostLayerGroupUse(c *gin.Context) {
 //	200: layergroupuseDBResponse
 func (controller *Controller) GetLayerGroupUse(c *gin.Context) {
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetLayerGroupUse", "GONG__StackPath", stackPath)
@@ -237,10 +237,10 @@ func (controller *Controller) UpdateLayerGroupUse(c *gin.Context) {
 	mutexLayerGroupUse.Lock()
 	defer mutexLayerGroupUse.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("UpdateLayerGroupUse", "GONG__StackPath", stackPath)
@@ -326,10 +326,10 @@ func (controller *Controller) DeleteLayerGroupUse(c *gin.Context) {
 	mutexLayerGroupUse.Lock()
 	defer mutexLayerGroupUse.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("DeleteLayerGroupUse", "GONG__StackPath", stackPath)

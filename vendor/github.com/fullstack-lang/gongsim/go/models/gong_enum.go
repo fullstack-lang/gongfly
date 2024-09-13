@@ -24,12 +24,13 @@ func (controlmode *ControlMode) FromString(input string) (err error) {
 	// insertion code per enum code
 	case "Autonomous":
 		*controlmode = AUTONOMOUS
+		return
 	case "ClientControl":
 		*controlmode = CLIENT_CONTROL
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (controlmode *ControlMode) FromCodeString(input string) (err error) {
@@ -110,20 +111,25 @@ func (enginedriverstate *EngineDriverState) FromInt(input int) (err error) {
 	// insertion code per enum code
 	case 0:
 		*enginedriverstate = COMMIT_AGENT_STATES
+		return
 	case 1:
 		*enginedriverstate = CHECKOUT_AGENT_STATES
+		return
 	case 2:
 		*enginedriverstate = FIRE_ONE_EVENT
+		return
 	case 3:
 		*enginedriverstate = SLEEP_100_MS
+		return
 	case 4:
 		*enginedriverstate = RESET_SIMULATION
+		return
 	case 5:
 		*enginedriverstate = UNKOWN
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (enginedriverstate *EngineDriverState) FromCodeString(input string) (err error) {
@@ -220,12 +226,13 @@ func (enginerunmode *EngineRunMode) FromInt(input int) (err error) {
 	// insertion code per enum code
 	case 0:
 		*enginerunmode = RELATIVE_SPEED
+		return
 	case 1:
 		*enginerunmode = FULL_SPEED
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (enginerunmode *EngineRunMode) FromCodeString(input string) (err error) {
@@ -300,14 +307,16 @@ func (enginestate *EngineState) FromString(input string) (err error) {
 	// insertion code per enum code
 	case "RUNNING":
 		*enginestate = RUNNING
+		return
 	case "PAUSED":
 		*enginestate = PAUSED
+		return
 	case "OVER":
 		*enginestate = OVER
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (enginestate *EngineState) FromCodeString(input string) (err error) {
@@ -386,12 +395,13 @@ func (enginestopmode *EngineStopMode) FromInt(input int) (err error) {
 	// insertion code per enum code
 	case 0:
 		*enginestopmode = TEN_MINUTES
+		return
 	case 1:
 		*enginestopmode = STATE_CHANGED
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (enginestopmode *EngineStopMode) FromCodeString(input string) (err error) {
@@ -472,20 +482,25 @@ func (gongsimcommandtype *GongsimCommandType) FromString(input string) (err erro
 	// insertion code per enum code
 	case "PLAY":
 		*gongsimcommandtype = COMMAND_PLAY
+		return
 	case "PAUSE":
 		*gongsimcommandtype = COMMAND_PAUSE
+		return
 	case "FIRE_NEXT_EVENT":
 		*gongsimcommandtype = COMMAND_FIRE_NEXT_EVENT
+		return
 	case "FIRE_EVENT_TILL_STATES_CHANGE":
 		*gongsimcommandtype = COMMAND_FIRE_EVENT_TILL_STATES_CHANGE
+		return
 	case "RESET":
 		*gongsimcommandtype = COMMAND_RESET
+		return
 	case "ADVANCE_10_MIN":
 		*gongsimcommandtype = COMMAND_ADVANCE_10_MIN
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (gongsimcommandtype *GongsimCommandType) FromCodeString(input string) (err error) {
@@ -584,14 +599,16 @@ func (speedcommandtype *SpeedCommandType) FromString(input string) (err error) {
 	// insertion code per enum code
 	case "INCREASE_SPEED_100_PERCENTS":
 		*speedcommandtype = COMMAND_INCREASE_SPEED_100_PERCENTS
+		return
 	case "COMMAND_DECREASE_SPEED_50_PERCENTS ":
 		*speedcommandtype = COMMAND_DECREASE_SPEED_50_PERCENTS
+		return
 	case "COMMAND_SPEED_STEADY":
 		*speedcommandtype = COMMAND_SPEED_STEADY
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (speedcommandtype *SpeedCommandType) FromCodeString(input string) (err error) {
@@ -651,13 +668,12 @@ func (speedcommandtype SpeedCommandType) CodeValues() (res []string) {
 // end of insertion point for enum utility functions
 
 type GongstructEnumStringField interface {
-	string | ControlMode | EngineState | GongsimCommandType | SpeedCommandType
 	Codes() []string
 	CodeValues() []string
+	ToString() string
 }
 
 type PointerToGongstructEnumStringField interface {
-	*ControlMode | *EngineState | *GongsimCommandType | *SpeedCommandType
 	FromCodeString(input string) (err error)
 }
 

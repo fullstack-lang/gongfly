@@ -55,10 +55,10 @@ func (controller *Controller) GetDivIcons(c *gin.Context) {
 	// source slice
 	var diviconDBs []orm.DivIconDB
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetDivIcons", "GONG__StackPath", stackPath)
@@ -118,10 +118,10 @@ func (controller *Controller) PostDivIcon(c *gin.Context) {
 	mutexDivIcon.Lock()
 	defer mutexDivIcon.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("PostDivIcons", "GONG__StackPath", stackPath)
@@ -188,10 +188,10 @@ func (controller *Controller) PostDivIcon(c *gin.Context) {
 //	200: diviconDBResponse
 func (controller *Controller) GetDivIcon(c *gin.Context) {
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetDivIcon", "GONG__StackPath", stackPath)
@@ -237,10 +237,10 @@ func (controller *Controller) UpdateDivIcon(c *gin.Context) {
 	mutexDivIcon.Lock()
 	defer mutexDivIcon.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("UpdateDivIcon", "GONG__StackPath", stackPath)
@@ -326,10 +326,10 @@ func (controller *Controller) DeleteDivIcon(c *gin.Context) {
 	mutexDivIcon.Lock()
 	defer mutexDivIcon.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("DeleteDivIcon", "GONG__StackPath", stackPath)

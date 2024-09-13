@@ -53,7 +53,6 @@ type StageStruct struct {
 	DummyAgents_mapString map[string]*DummyAgent
 
 	// insertion point for slice of pointers maps
-
 	OnAfterDummyAgentCreateCallback OnAfterCreateInterface[DummyAgent]
 	OnAfterDummyAgentUpdateCallback OnAfterUpdateInterface[DummyAgent]
 	OnAfterDummyAgentDeleteCallback OnAfterDeleteInterface[DummyAgent]
@@ -63,7 +62,6 @@ type StageStruct struct {
 	Engines_mapString map[string]*Engine
 
 	// insertion point for slice of pointers maps
-
 	OnAfterEngineCreateCallback OnAfterCreateInterface[Engine]
 	OnAfterEngineUpdateCallback OnAfterUpdateInterface[Engine]
 	OnAfterEngineDeleteCallback OnAfterDeleteInterface[Engine]
@@ -73,7 +71,6 @@ type StageStruct struct {
 	Events_mapString map[string]*Event
 
 	// insertion point for slice of pointers maps
-
 	OnAfterEventCreateCallback OnAfterCreateInterface[Event]
 	OnAfterEventUpdateCallback OnAfterUpdateInterface[Event]
 	OnAfterEventDeleteCallback OnAfterDeleteInterface[Event]
@@ -83,7 +80,6 @@ type StageStruct struct {
 	GongsimCommands_mapString map[string]*GongsimCommand
 
 	// insertion point for slice of pointers maps
-
 	OnAfterGongsimCommandCreateCallback OnAfterCreateInterface[GongsimCommand]
 	OnAfterGongsimCommandUpdateCallback OnAfterUpdateInterface[GongsimCommand]
 	OnAfterGongsimCommandDeleteCallback OnAfterDeleteInterface[GongsimCommand]
@@ -93,7 +89,6 @@ type StageStruct struct {
 	GongsimStatuss_mapString map[string]*GongsimStatus
 
 	// insertion point for slice of pointers maps
-
 	OnAfterGongsimStatusCreateCallback OnAfterCreateInterface[GongsimStatus]
 	OnAfterGongsimStatusUpdateCallback OnAfterUpdateInterface[GongsimStatus]
 	OnAfterGongsimStatusDeleteCallback OnAfterDeleteInterface[GongsimStatus]
@@ -615,8 +610,7 @@ func (stage *StageStruct) Unstage() { // insertion point for array nil
 // - navigation between staged instances by going backward association links between gongstruct
 // - full refactoring of Gongstruct identifiers / fields
 type Gongstruct interface {
-	// insertion point for generic types
-	DummyAgent | Engine | Event | GongsimCommand | GongsimStatus
+
 }
 
 type GongtructBasicField interface {
@@ -628,11 +622,10 @@ type GongtructBasicField interface {
 // - navigation between staged instances by going backward association links between gongstruct
 // - full refactoring of Gongstruct identifiers / fields
 type PointerToGongstruct interface {
-	// insertion point for generic types
-	*DummyAgent | *Engine | *Event | *GongsimCommand | *GongsimStatus
 	GetName() string
 	CommitVoid(*StageStruct)
 	UnstageVoid(stage *StageStruct)
+	comparable
 }
 
 func CompareGongstructByName[T PointerToGongstruct](a, b T) int {
@@ -656,25 +649,11 @@ func GetGongstrucsSorted[T PointerToGongstruct](stage *StageStruct) (sortedSlice
 }
 
 type GongstructSet interface {
-	map[any]any |
-		// insertion point for generic types
-		map[*DummyAgent]any |
-		map[*Engine]any |
-		map[*Event]any |
-		map[*GongsimCommand]any |
-		map[*GongsimStatus]any |
-		map[*any]any // because go does not support an extra "|" at the end of type specifications
+	map[any]any
 }
 
 type GongstructMapString interface {
-	map[any]any |
-		// insertion point for generic types
-		map[string]*DummyAgent |
-		map[string]*Engine |
-		map[string]*Event |
-		map[string]*GongsimCommand |
-		map[string]*GongsimStatus |
-		map[*any]any // because go does not support an extra "|" at the end of type specifications
+	map[any]any
 }
 
 // GongGetSet returns the set staged GongstructType instances

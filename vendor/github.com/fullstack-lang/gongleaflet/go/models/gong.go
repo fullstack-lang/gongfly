@@ -53,7 +53,6 @@ type StageStruct struct {
 	Circles_mapString map[string]*Circle
 
 	// insertion point for slice of pointers maps
-
 	OnAfterCircleCreateCallback OnAfterCreateInterface[Circle]
 	OnAfterCircleUpdateCallback OnAfterUpdateInterface[Circle]
 	OnAfterCircleDeleteCallback OnAfterDeleteInterface[Circle]
@@ -63,7 +62,6 @@ type StageStruct struct {
 	DivIcons_mapString map[string]*DivIcon
 
 	// insertion point for slice of pointers maps
-
 	OnAfterDivIconCreateCallback OnAfterCreateInterface[DivIcon]
 	OnAfterDivIconUpdateCallback OnAfterUpdateInterface[DivIcon]
 	OnAfterDivIconDeleteCallback OnAfterDeleteInterface[DivIcon]
@@ -73,7 +71,6 @@ type StageStruct struct {
 	LayerGroups_mapString map[string]*LayerGroup
 
 	// insertion point for slice of pointers maps
-
 	OnAfterLayerGroupCreateCallback OnAfterCreateInterface[LayerGroup]
 	OnAfterLayerGroupUpdateCallback OnAfterUpdateInterface[LayerGroup]
 	OnAfterLayerGroupDeleteCallback OnAfterDeleteInterface[LayerGroup]
@@ -83,7 +80,6 @@ type StageStruct struct {
 	LayerGroupUses_mapString map[string]*LayerGroupUse
 
 	// insertion point for slice of pointers maps
-
 	OnAfterLayerGroupUseCreateCallback OnAfterCreateInterface[LayerGroupUse]
 	OnAfterLayerGroupUseUpdateCallback OnAfterUpdateInterface[LayerGroupUse]
 	OnAfterLayerGroupUseDeleteCallback OnAfterDeleteInterface[LayerGroupUse]
@@ -104,7 +100,6 @@ type StageStruct struct {
 	Markers_mapString map[string]*Marker
 
 	// insertion point for slice of pointers maps
-
 	OnAfterMarkerCreateCallback OnAfterCreateInterface[Marker]
 	OnAfterMarkerUpdateCallback OnAfterUpdateInterface[Marker]
 	OnAfterMarkerDeleteCallback OnAfterDeleteInterface[Marker]
@@ -114,7 +109,6 @@ type StageStruct struct {
 	UserClicks_mapString map[string]*UserClick
 
 	// insertion point for slice of pointers maps
-
 	OnAfterUserClickCreateCallback OnAfterCreateInterface[UserClick]
 	OnAfterUserClickUpdateCallback OnAfterUpdateInterface[UserClick]
 	OnAfterUserClickDeleteCallback OnAfterDeleteInterface[UserClick]
@@ -124,7 +118,6 @@ type StageStruct struct {
 	VLines_mapString map[string]*VLine
 
 	// insertion point for slice of pointers maps
-
 	OnAfterVLineCreateCallback OnAfterCreateInterface[VLine]
 	OnAfterVLineUpdateCallback OnAfterUpdateInterface[VLine]
 	OnAfterVLineDeleteCallback OnAfterDeleteInterface[VLine]
@@ -134,7 +127,6 @@ type StageStruct struct {
 	VisualTracks_mapString map[string]*VisualTrack
 
 	// insertion point for slice of pointers maps
-
 	OnAfterVisualTrackCreateCallback OnAfterCreateInterface[VisualTrack]
 	OnAfterVisualTrackUpdateCallback OnAfterUpdateInterface[VisualTrack]
 	OnAfterVisualTrackDeleteCallback OnAfterDeleteInterface[VisualTrack]
@@ -932,8 +924,7 @@ func (stage *StageStruct) Unstage() { // insertion point for array nil
 // - navigation between staged instances by going backward association links between gongstruct
 // - full refactoring of Gongstruct identifiers / fields
 type Gongstruct interface {
-	// insertion point for generic types
-	Circle | DivIcon | LayerGroup | LayerGroupUse | MapOptions | Marker | UserClick | VLine | VisualTrack
+
 }
 
 type GongtructBasicField interface {
@@ -945,11 +936,10 @@ type GongtructBasicField interface {
 // - navigation between staged instances by going backward association links between gongstruct
 // - full refactoring of Gongstruct identifiers / fields
 type PointerToGongstruct interface {
-	// insertion point for generic types
-	*Circle | *DivIcon | *LayerGroup | *LayerGroupUse | *MapOptions | *Marker | *UserClick | *VLine | *VisualTrack
 	GetName() string
 	CommitVoid(*StageStruct)
 	UnstageVoid(stage *StageStruct)
+	comparable
 }
 
 func CompareGongstructByName[T PointerToGongstruct](a, b T) int {
@@ -973,33 +963,11 @@ func GetGongstrucsSorted[T PointerToGongstruct](stage *StageStruct) (sortedSlice
 }
 
 type GongstructSet interface {
-	map[any]any |
-		// insertion point for generic types
-		map[*Circle]any |
-		map[*DivIcon]any |
-		map[*LayerGroup]any |
-		map[*LayerGroupUse]any |
-		map[*MapOptions]any |
-		map[*Marker]any |
-		map[*UserClick]any |
-		map[*VLine]any |
-		map[*VisualTrack]any |
-		map[*any]any // because go does not support an extra "|" at the end of type specifications
+	map[any]any
 }
 
 type GongstructMapString interface {
-	map[any]any |
-		// insertion point for generic types
-		map[string]*Circle |
-		map[string]*DivIcon |
-		map[string]*LayerGroup |
-		map[string]*LayerGroupUse |
-		map[string]*MapOptions |
-		map[string]*Marker |
-		map[string]*UserClick |
-		map[string]*VLine |
-		map[string]*VisualTrack |
-		map[*any]any // because go does not support an extra "|" at the end of type specifications
+	map[any]any
 }
 
 // GongGetSet returns the set staged GongstructType instances
