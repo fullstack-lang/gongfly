@@ -11,12 +11,9 @@ import (
 	"sync"
 
 	"github.com/fullstack-lang/gongfly/go/models"
+	"github.com/fullstack-lang/gongfly/go/orm/dbgorm"
 
 	"github.com/tealeg/xlsx/v3"
-
-	"github.com/glebarez/sqlite"
-	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 )
 
 // BackRepoStruct supports callback functions
@@ -49,33 +46,7 @@ type BackRepoStruct struct {
 
 func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepoStruct) {
 
-	// adjust naming strategy to the stack
-	gormConfig := &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
-			TablePrefix: "github_com_fullstack_lang_gong_test_go_", // table name prefix
-		},
-	}
-	db, err := gorm.Open(sqlite.Open(filename), gormConfig)
-
-	// since testsim is a multi threaded application. It is important to set up
-	// only one open connexion at a time
-	dbDB_inMemory, err := db.DB()
-	if err != nil {
-		panic("cannot access DB of db" + err.Error())
-	}
-	// it is mandatory to allow parallel access, otherwise, bizarre errors occurs
-	dbDB_inMemory.SetMaxOpenConns(1)
-
-	if err != nil {
-		panic("Failed to connect to database!")
-	}
-
-	// adjust naming strategy to the stack
-	db.Config.NamingStrategy = &schema.NamingStrategy{
-		TablePrefix: "github_com_fullstack_lang_gong_test_go_", // table name prefix
-	}
-
-	err = db.AutoMigrate( // insertion point for reference to structs
+	dbWrapper := dbgorm.NewDBWrapper(filename, "github_com_fullstack_lang_gongfly_go",
 		&CivilianAirportDB{},
 		&LinerDB{},
 		&MessageDB{},
@@ -85,11 +56,6 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		&ScenarioDB{},
 	)
 
-	if err != nil {
-		msg := err.Error()
-		panic("problem with migration " + msg + " on package github.com/fullstack-lang/gong/test/go")
-	}
-
 	backRepo = new(BackRepoStruct)
 
 	// insertion point for per struct back repo declarations
@@ -98,7 +64,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_CivilianAirportDBID_CivilianAirportDB:  make(map[uint]*CivilianAirportDB, 0),
 		Map_CivilianAirportPtr_CivilianAirportDBID: make(map[*models.CivilianAirport]uint, 0),
 
-		db:    db,
+		db:    dbWrapper,
 		stage: stage,
 	}
 	backRepo.BackRepoLiner = BackRepoLinerStruct{
@@ -106,7 +72,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_LinerDBID_LinerDB:  make(map[uint]*LinerDB, 0),
 		Map_LinerPtr_LinerDBID: make(map[*models.Liner]uint, 0),
 
-		db:    db,
+		db:    dbWrapper,
 		stage: stage,
 	}
 	backRepo.BackRepoMessage = BackRepoMessageStruct{
@@ -114,7 +80,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_MessageDBID_MessageDB:  make(map[uint]*MessageDB, 0),
 		Map_MessagePtr_MessageDBID: make(map[*models.Message]uint, 0),
 
-		db:    db,
+		db:    dbWrapper,
 		stage: stage,
 	}
 	backRepo.BackRepoOpsLine = BackRepoOpsLineStruct{
@@ -122,7 +88,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_OpsLineDBID_OpsLineDB:  make(map[uint]*OpsLineDB, 0),
 		Map_OpsLinePtr_OpsLineDBID: make(map[*models.OpsLine]uint, 0),
 
-		db:    db,
+		db:    dbWrapper,
 		stage: stage,
 	}
 	backRepo.BackRepoRadar = BackRepoRadarStruct{
@@ -130,7 +96,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_RadarDBID_RadarDB:  make(map[uint]*RadarDB, 0),
 		Map_RadarPtr_RadarDBID: make(map[*models.Radar]uint, 0),
 
-		db:    db,
+		db:    dbWrapper,
 		stage: stage,
 	}
 	backRepo.BackRepoSatellite = BackRepoSatelliteStruct{
@@ -138,7 +104,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_SatelliteDBID_SatelliteDB:  make(map[uint]*SatelliteDB, 0),
 		Map_SatellitePtr_SatelliteDBID: make(map[*models.Satellite]uint, 0),
 
-		db:    db,
+		db:    dbWrapper,
 		stage: stage,
 	}
 	backRepo.BackRepoScenario = BackRepoScenarioStruct{
@@ -146,7 +112,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_ScenarioDBID_ScenarioDB:  make(map[uint]*ScenarioDB, 0),
 		Map_ScenarioPtr_ScenarioDBID: make(map[*models.Scenario]uint, 0),
 
-		db:    db,
+		db:    dbWrapper,
 		stage: stage,
 	}
 
@@ -179,7 +145,7 @@ func (backRepo *BackRepoStruct) IncrementCommitFromBackNb() uint {
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 
 	backRepo.broadcastNbCommitToBack()
-	
+
 	return backRepo.CommitFromBackNb
 }
 

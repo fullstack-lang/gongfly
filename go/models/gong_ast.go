@@ -494,31 +494,45 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 									switch gongstructName {
 									// insertion point for identifiers
 									case "CivilianAirport":
-										instanceCivilianAirport := (&CivilianAirport{Name: instanceName}).Stage(stage)
+										instanceCivilianAirport := new(CivilianAirport)
+										instanceCivilianAirport.Name = instanceName
+										instanceCivilianAirport.Stage(stage)
 										instance = any(instanceCivilianAirport)
 										__gong__map_CivilianAirport[identifier] = instanceCivilianAirport
 									case "Liner":
-										instanceLiner := (&Liner{Name: instanceName}).Stage(stage)
+										instanceLiner := new(Liner)
+										instanceLiner.Name = instanceName
+										instanceLiner.Stage(stage)
 										instance = any(instanceLiner)
 										__gong__map_Liner[identifier] = instanceLiner
 									case "Message":
-										instanceMessage := (&Message{Name: instanceName}).Stage(stage)
+										instanceMessage := new(Message)
+										instanceMessage.Name = instanceName
+										instanceMessage.Stage(stage)
 										instance = any(instanceMessage)
 										__gong__map_Message[identifier] = instanceMessage
 									case "OpsLine":
-										instanceOpsLine := (&OpsLine{Name: instanceName}).Stage(stage)
+										instanceOpsLine := new(OpsLine)
+										instanceOpsLine.Name = instanceName
+										instanceOpsLine.Stage(stage)
 										instance = any(instanceOpsLine)
 										__gong__map_OpsLine[identifier] = instanceOpsLine
 									case "Radar":
-										instanceRadar := (&Radar{Name: instanceName}).Stage(stage)
+										instanceRadar := new(Radar)
+										instanceRadar.Name = instanceName
+										instanceRadar.Stage(stage)
 										instance = any(instanceRadar)
 										__gong__map_Radar[identifier] = instanceRadar
 									case "Satellite":
-										instanceSatellite := (&Satellite{Name: instanceName}).Stage(stage)
+										instanceSatellite := new(Satellite)
+										instanceSatellite.Name = instanceName
+										instanceSatellite.Stage(stage)
 										instance = any(instanceSatellite)
 										__gong__map_Satellite[identifier] = instanceSatellite
 									case "Scenario":
-										instanceScenario := (&Scenario{Name: instanceName}).Stage(stage)
+										instanceScenario := new(Scenario)
+										instanceScenario.Name = instanceName
+										instanceScenario.Stage(stage)
 										instance = any(instanceScenario)
 										__gong__map_Scenario[identifier] = instanceScenario
 									}

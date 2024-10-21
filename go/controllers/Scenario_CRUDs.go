@@ -70,12 +70,12 @@ func (controller *Controller) GetScenarios(c *gin.Context) {
 	}
 	db := backRepo.BackRepoScenario.GetDB()
 
-	query := db.Find(&scenarioDBs)
-	if query.Error != nil {
+	_, err := db.Find(&scenarioDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -151,12 +151,12 @@ func (controller *Controller) PostScenario(c *gin.Context) {
 	scenarioDB.ScenarioPointersEncoding = input.ScenarioPointersEncoding
 	scenarioDB.CopyBasicFieldsFromScenario_WOP(&input.Scenario_WOP)
 
-	query := db.Create(&scenarioDB)
-	if query.Error != nil {
+	_, err = db.Create(&scenarioDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -205,7 +205,7 @@ func (controller *Controller) GetScenario(c *gin.Context) {
 
 	// Get scenarioDB in DB
 	var scenarioDB orm.ScenarioDB
-	if err := db.First(&scenarioDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&scenarioDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateScenario(c *gin.Context) {
 	var scenarioDB orm.ScenarioDB
 
 	// fetch the scenario
-	query := db.First(&scenarioDB, c.Param("id"))
+	_, err := db.First(&scenarioDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateScenario(c *gin.Context) {
 	scenarioDB.CopyBasicFieldsFromScenario_WOP(&input.Scenario_WOP)
 	scenarioDB.ScenarioPointersEncoding = input.ScenarioPointersEncoding
 
-	query = db.Model(&scenarioDB).Updates(scenarioDB)
-	if query.Error != nil {
+	db, _ = db.Model(&scenarioDB)
+	_, err = db.Updates(scenarioDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteScenario(c *gin.Context) {
 
 	// Get model if exist
 	var scenarioDB orm.ScenarioDB
-	if err := db.First(&scenarioDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&scenarioDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteScenario(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&scenarioDB)
+	db.Unscoped()
+	db.Delete(&scenarioDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	scenarioDeleted := new(models.Scenario)

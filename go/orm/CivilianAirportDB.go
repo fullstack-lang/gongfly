@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongfly/go/db"
 	"github.com/fullstack-lang/gongfly/go/models"
 )
 
@@ -67,7 +68,7 @@ type CivilianAirportDB struct {
 
 	// Declation for basic field civilianairportDB.Name
 	Name_Data sql.NullString
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	CivilianAirportPointersEncoding
@@ -116,7 +117,7 @@ type BackRepoCivilianAirportStruct struct {
 	// stores CivilianAirport according to their gorm ID
 	Map_CivilianAirportDBID_CivilianAirportPtr map[uint]*models.CivilianAirport
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -126,7 +127,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) GetStage() (stage 
 	return
 }
 
-func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) GetDB() *gorm.DB {
+func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) GetDB() db.DBInterface {
 	return backRepoCivilianAirport.db
 }
 
@@ -163,9 +164,10 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitDeleteInstan
 
 	// civilianairport is not staged anymore, remove civilianairportDB
 	civilianairportDB := backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[id]
-	query := backRepoCivilianAirport.db.Unscoped().Delete(&civilianairportDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoCivilianAirport.db.Unscoped()
+	_, err := db.Delete(&civilianairportDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -189,9 +191,9 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseOneInst
 	var civilianairportDB CivilianAirportDB
 	civilianairportDB.CopyBasicFieldsFromCivilianAirport(civilianairport)
 
-	query := backRepoCivilianAirport.db.Create(&civilianairportDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoCivilianAirport.db.Create(&civilianairportDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -223,9 +225,9 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseTwoInst
 		civilianairportDB.CopyBasicFieldsFromCivilianAirport(civilianairport)
 
 		// insertion point for translating pointers encodings into actual pointers
-		query := backRepoCivilianAirport.db.Save(&civilianairportDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoCivilianAirport.db.Save(&civilianairportDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -244,9 +246,9 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseTwoInst
 func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CheckoutPhaseOne() (Error error) {
 
 	civilianairportDBArray := make([]CivilianAirportDB, 0)
-	query := backRepoCivilianAirport.db.Find(&civilianairportDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoCivilianAirport.db.Find(&civilianairportDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -357,7 +359,7 @@ func (backRepo *BackRepoStruct) CheckoutCivilianAirport(civilianairport *models.
 			var civilianairportDB CivilianAirportDB
 			civilianairportDB.ID = id
 
-			if err := backRepo.BackRepoCivilianAirport.db.First(&civilianairportDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoCivilianAirport.db.First(&civilianairportDB, id); err != nil {
 				log.Fatalln("CheckoutCivilianAirport : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoCivilianAirport.CheckoutPhaseOneInstance(&civilianairportDB)
@@ -528,9 +530,9 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) rowVisitorCivilian
 
 		civilianairportDB_ID_atBackupTime := civilianairportDB.ID
 		civilianairportDB.ID = 0
-		query := backRepoCivilianAirport.db.Create(civilianairportDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoCivilianAirport.db.Create(civilianairportDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[civilianairportDB.ID] = civilianairportDB
 		BackRepoCivilianAirportid_atBckpTime_newID[civilianairportDB_ID_atBackupTime] = civilianairportDB.ID
@@ -565,9 +567,9 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) RestorePhaseOne(di
 
 		civilianairportDB_ID_atBackupTime := civilianairportDB.ID
 		civilianairportDB.ID = 0
-		query := backRepoCivilianAirport.db.Create(civilianairportDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoCivilianAirport.db.Create(civilianairportDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[civilianairportDB.ID] = civilianairportDB
 		BackRepoCivilianAirportid_atBckpTime_newID[civilianairportDB_ID_atBackupTime] = civilianairportDB.ID
@@ -589,9 +591,10 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) RestorePhaseTwo() 
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoCivilianAirport.db.Model(civilianairportDB).Updates(*civilianairportDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoCivilianAirport.db.Model(civilianairportDB)
+		_, err := db.Updates(*civilianairportDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

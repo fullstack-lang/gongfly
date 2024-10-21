@@ -70,12 +70,12 @@ func (controller *Controller) GetOpsLines(c *gin.Context) {
 	}
 	db := backRepo.BackRepoOpsLine.GetDB()
 
-	query := db.Find(&opslineDBs)
-	if query.Error != nil {
+	_, err := db.Find(&opslineDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -151,12 +151,12 @@ func (controller *Controller) PostOpsLine(c *gin.Context) {
 	opslineDB.OpsLinePointersEncoding = input.OpsLinePointersEncoding
 	opslineDB.CopyBasicFieldsFromOpsLine_WOP(&input.OpsLine_WOP)
 
-	query := db.Create(&opslineDB)
-	if query.Error != nil {
+	_, err = db.Create(&opslineDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -205,7 +205,7 @@ func (controller *Controller) GetOpsLine(c *gin.Context) {
 
 	// Get opslineDB in DB
 	var opslineDB orm.OpsLineDB
-	if err := db.First(&opslineDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&opslineDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateOpsLine(c *gin.Context) {
 	var opslineDB orm.OpsLineDB
 
 	// fetch the opsline
-	query := db.First(&opslineDB, c.Param("id"))
+	_, err := db.First(&opslineDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateOpsLine(c *gin.Context) {
 	opslineDB.CopyBasicFieldsFromOpsLine_WOP(&input.OpsLine_WOP)
 	opslineDB.OpsLinePointersEncoding = input.OpsLinePointersEncoding
 
-	query = db.Model(&opslineDB).Updates(opslineDB)
-	if query.Error != nil {
+	db, _ = db.Model(&opslineDB)
+	_, err = db.Updates(opslineDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteOpsLine(c *gin.Context) {
 
 	// Get model if exist
 	var opslineDB orm.OpsLineDB
-	if err := db.First(&opslineDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&opslineDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteOpsLine(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&opslineDB)
+	db.Unscoped()
+	db.Delete(&opslineDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	opslineDeleted := new(models.OpsLine)

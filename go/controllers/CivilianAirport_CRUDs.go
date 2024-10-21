@@ -70,12 +70,12 @@ func (controller *Controller) GetCivilianAirports(c *gin.Context) {
 	}
 	db := backRepo.BackRepoCivilianAirport.GetDB()
 
-	query := db.Find(&civilianairportDBs)
-	if query.Error != nil {
+	_, err := db.Find(&civilianairportDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -151,12 +151,12 @@ func (controller *Controller) PostCivilianAirport(c *gin.Context) {
 	civilianairportDB.CivilianAirportPointersEncoding = input.CivilianAirportPointersEncoding
 	civilianairportDB.CopyBasicFieldsFromCivilianAirport_WOP(&input.CivilianAirport_WOP)
 
-	query := db.Create(&civilianairportDB)
-	if query.Error != nil {
+	_, err = db.Create(&civilianairportDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -205,7 +205,7 @@ func (controller *Controller) GetCivilianAirport(c *gin.Context) {
 
 	// Get civilianairportDB in DB
 	var civilianairportDB orm.CivilianAirportDB
-	if err := db.First(&civilianairportDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&civilianairportDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateCivilianAirport(c *gin.Context) {
 	var civilianairportDB orm.CivilianAirportDB
 
 	// fetch the civilianairport
-	query := db.First(&civilianairportDB, c.Param("id"))
+	_, err := db.First(&civilianairportDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateCivilianAirport(c *gin.Context) {
 	civilianairportDB.CopyBasicFieldsFromCivilianAirport_WOP(&input.CivilianAirport_WOP)
 	civilianairportDB.CivilianAirportPointersEncoding = input.CivilianAirportPointersEncoding
 
-	query = db.Model(&civilianairportDB).Updates(civilianairportDB)
-	if query.Error != nil {
+	db, _ = db.Model(&civilianairportDB)
+	_, err = db.Updates(civilianairportDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteCivilianAirport(c *gin.Context) {
 
 	// Get model if exist
 	var civilianairportDB orm.CivilianAirportDB
-	if err := db.First(&civilianairportDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&civilianairportDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteCivilianAirport(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&civilianairportDB)
+	db.Unscoped()
+	db.Delete(&civilianairportDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	civilianairportDeleted := new(models.CivilianAirport)

@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongfly/go/db"
 	"github.com/fullstack-lang/gongfly/go/models"
 )
 
@@ -73,7 +74,7 @@ type RadarDB struct {
 
 	// Declation for basic field radarDB.Range
 	Range_Data sql.NullFloat64
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	RadarPointersEncoding
@@ -128,7 +129,7 @@ type BackRepoRadarStruct struct {
 	// stores Radar according to their gorm ID
 	Map_RadarDBID_RadarPtr map[uint]*models.Radar
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -138,7 +139,7 @@ func (backRepoRadar *BackRepoRadarStruct) GetStage() (stage *models.StageStruct)
 	return
 }
 
-func (backRepoRadar *BackRepoRadarStruct) GetDB() *gorm.DB {
+func (backRepoRadar *BackRepoRadarStruct) GetDB() db.DBInterface {
 	return backRepoRadar.db
 }
 
@@ -175,9 +176,10 @@ func (backRepoRadar *BackRepoRadarStruct) CommitDeleteInstance(id uint) (Error e
 
 	// radar is not staged anymore, remove radarDB
 	radarDB := backRepoRadar.Map_RadarDBID_RadarDB[id]
-	query := backRepoRadar.db.Unscoped().Delete(&radarDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoRadar.db.Unscoped()
+	_, err := db.Delete(&radarDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -201,9 +203,9 @@ func (backRepoRadar *BackRepoRadarStruct) CommitPhaseOneInstance(radar *models.R
 	var radarDB RadarDB
 	radarDB.CopyBasicFieldsFromRadar(radar)
 
-	query := backRepoRadar.db.Create(&radarDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoRadar.db.Create(&radarDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -235,9 +237,9 @@ func (backRepoRadar *BackRepoRadarStruct) CommitPhaseTwoInstance(backRepo *BackR
 		radarDB.CopyBasicFieldsFromRadar(radar)
 
 		// insertion point for translating pointers encodings into actual pointers
-		query := backRepoRadar.db.Save(&radarDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoRadar.db.Save(&radarDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -256,9 +258,9 @@ func (backRepoRadar *BackRepoRadarStruct) CommitPhaseTwoInstance(backRepo *BackR
 func (backRepoRadar *BackRepoRadarStruct) CheckoutPhaseOne() (Error error) {
 
 	radarDBArray := make([]RadarDB, 0)
-	query := backRepoRadar.db.Find(&radarDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoRadar.db.Find(&radarDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -369,7 +371,7 @@ func (backRepo *BackRepoStruct) CheckoutRadar(radar *models.Radar) {
 			var radarDB RadarDB
 			radarDB.ID = id
 
-			if err := backRepo.BackRepoRadar.db.First(&radarDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoRadar.db.First(&radarDB, id); err != nil {
 				log.Fatalln("CheckoutRadar : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoRadar.CheckoutPhaseOneInstance(&radarDB)
@@ -564,9 +566,9 @@ func (backRepoRadar *BackRepoRadarStruct) rowVisitorRadar(row *xlsx.Row) error {
 
 		radarDB_ID_atBackupTime := radarDB.ID
 		radarDB.ID = 0
-		query := backRepoRadar.db.Create(radarDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoRadar.db.Create(radarDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoRadar.Map_RadarDBID_RadarDB[radarDB.ID] = radarDB
 		BackRepoRadarid_atBckpTime_newID[radarDB_ID_atBackupTime] = radarDB.ID
@@ -601,9 +603,9 @@ func (backRepoRadar *BackRepoRadarStruct) RestorePhaseOne(dirPath string) {
 
 		radarDB_ID_atBackupTime := radarDB.ID
 		radarDB.ID = 0
-		query := backRepoRadar.db.Create(radarDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoRadar.db.Create(radarDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoRadar.Map_RadarDBID_RadarDB[radarDB.ID] = radarDB
 		BackRepoRadarid_atBckpTime_newID[radarDB_ID_atBackupTime] = radarDB.ID
@@ -625,9 +627,10 @@ func (backRepoRadar *BackRepoRadarStruct) RestorePhaseTwo() {
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoRadar.db.Model(radarDB).Updates(*radarDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoRadar.db.Model(radarDB)
+		_, err := db.Updates(*radarDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

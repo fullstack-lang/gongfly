@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongfly/go/db"
 	"github.com/fullstack-lang/gongfly/go/models"
 )
 
@@ -82,7 +83,7 @@ type OpsLineDB struct {
 
 	// Declation for basic field opslineDB.Name
 	Name_Data sql.NullString
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	OpsLinePointersEncoding
@@ -140,7 +141,7 @@ type BackRepoOpsLineStruct struct {
 	// stores OpsLine according to their gorm ID
 	Map_OpsLineDBID_OpsLinePtr map[uint]*models.OpsLine
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -150,7 +151,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) GetStage() (stage *models.StageStr
 	return
 }
 
-func (backRepoOpsLine *BackRepoOpsLineStruct) GetDB() *gorm.DB {
+func (backRepoOpsLine *BackRepoOpsLineStruct) GetDB() db.DBInterface {
 	return backRepoOpsLine.db
 }
 
@@ -187,9 +188,10 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitDeleteInstance(id uint) (Err
 
 	// opsline is not staged anymore, remove opslineDB
 	opslineDB := backRepoOpsLine.Map_OpsLineDBID_OpsLineDB[id]
-	query := backRepoOpsLine.db.Unscoped().Delete(&opslineDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoOpsLine.db.Unscoped()
+	_, err := db.Delete(&opslineDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -213,9 +215,9 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseOneInstance(opsline *mo
 	var opslineDB OpsLineDB
 	opslineDB.CopyBasicFieldsFromOpsLine(opsline)
 
-	query := backRepoOpsLine.db.Create(&opslineDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoOpsLine.db.Create(&opslineDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -259,9 +261,9 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseTwoInstance(backRepo *B
 			opslineDB.ScenarioID.Valid = true
 		}
 
-		query := backRepoOpsLine.db.Save(&opslineDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoOpsLine.db.Save(&opslineDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -280,9 +282,9 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseTwoInstance(backRepo *B
 func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseOne() (Error error) {
 
 	opslineDBArray := make([]OpsLineDB, 0)
-	query := backRepoOpsLine.db.Find(&opslineDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoOpsLine.db.Find(&opslineDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -398,7 +400,7 @@ func (backRepo *BackRepoStruct) CheckoutOpsLine(opsline *models.OpsLine) {
 			var opslineDB OpsLineDB
 			opslineDB.ID = id
 
-			if err := backRepo.BackRepoOpsLine.db.First(&opslineDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoOpsLine.db.First(&opslineDB, id); err != nil {
 				log.Fatalln("CheckoutOpsLine : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoOpsLine.CheckoutPhaseOneInstance(&opslineDB)
@@ -605,9 +607,9 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) rowVisitorOpsLine(row *xlsx.Row) e
 
 		opslineDB_ID_atBackupTime := opslineDB.ID
 		opslineDB.ID = 0
-		query := backRepoOpsLine.db.Create(opslineDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoOpsLine.db.Create(opslineDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoOpsLine.Map_OpsLineDBID_OpsLineDB[opslineDB.ID] = opslineDB
 		BackRepoOpsLineid_atBckpTime_newID[opslineDB_ID_atBackupTime] = opslineDB.ID
@@ -642,9 +644,9 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) RestorePhaseOne(dirPath string) {
 
 		opslineDB_ID_atBackupTime := opslineDB.ID
 		opslineDB.ID = 0
-		query := backRepoOpsLine.db.Create(opslineDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoOpsLine.db.Create(opslineDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoOpsLine.Map_OpsLineDBID_OpsLineDB[opslineDB.ID] = opslineDB
 		BackRepoOpsLineid_atBckpTime_newID[opslineDB_ID_atBackupTime] = opslineDB.ID
@@ -672,9 +674,10 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) RestorePhaseTwo() {
 		}
 
 		// update databse with new index encoding
-		query := backRepoOpsLine.db.Model(opslineDB).Updates(*opslineDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoOpsLine.db.Model(opslineDB)
+		_, err := db.Updates(*opslineDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongfly/go/db"
 	"github.com/fullstack-lang/gongfly/go/models"
 )
 
@@ -104,7 +105,7 @@ type LinerDB struct {
 
 	// Declation for basic field linerDB.Timestampstring
 	Timestampstring_Data sql.NullString
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	LinerPointersEncoding
@@ -186,7 +187,7 @@ type BackRepoLinerStruct struct {
 	// stores Liner according to their gorm ID
 	Map_LinerDBID_LinerPtr map[uint]*models.Liner
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -196,7 +197,7 @@ func (backRepoLiner *BackRepoLinerStruct) GetStage() (stage *models.StageStruct)
 	return
 }
 
-func (backRepoLiner *BackRepoLinerStruct) GetDB() *gorm.DB {
+func (backRepoLiner *BackRepoLinerStruct) GetDB() db.DBInterface {
 	return backRepoLiner.db
 }
 
@@ -233,9 +234,10 @@ func (backRepoLiner *BackRepoLinerStruct) CommitDeleteInstance(id uint) (Error e
 
 	// liner is not staged anymore, remove linerDB
 	linerDB := backRepoLiner.Map_LinerDBID_LinerDB[id]
-	query := backRepoLiner.db.Unscoped().Delete(&linerDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoLiner.db.Unscoped()
+	_, err := db.Delete(&linerDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -259,9 +261,9 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseOneInstance(liner *models.L
 	var linerDB LinerDB
 	linerDB.CopyBasicFieldsFromLiner(liner)
 
-	query := backRepoLiner.db.Create(&linerDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoLiner.db.Create(&linerDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -305,9 +307,9 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseTwoInstance(backRepo *BackR
 			linerDB.ReporingLineID.Valid = true
 		}
 
-		query := backRepoLiner.db.Save(&linerDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoLiner.db.Save(&linerDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -326,9 +328,9 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseTwoInstance(backRepo *BackR
 func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseOne() (Error error) {
 
 	linerDBArray := make([]LinerDB, 0)
-	query := backRepoLiner.db.Find(&linerDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoLiner.db.Find(&linerDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -444,7 +446,7 @@ func (backRepo *BackRepoStruct) CheckoutLiner(liner *models.Liner) {
 			var linerDB LinerDB
 			linerDB.ID = id
 
-			if err := backRepo.BackRepoLiner.db.First(&linerDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoLiner.db.First(&linerDB, id); err != nil {
 				log.Fatalln("CheckoutLiner : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoLiner.CheckoutPhaseOneInstance(&linerDB)
@@ -747,9 +749,9 @@ func (backRepoLiner *BackRepoLinerStruct) rowVisitorLiner(row *xlsx.Row) error {
 
 		linerDB_ID_atBackupTime := linerDB.ID
 		linerDB.ID = 0
-		query := backRepoLiner.db.Create(linerDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoLiner.db.Create(linerDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoLiner.Map_LinerDBID_LinerDB[linerDB.ID] = linerDB
 		BackRepoLinerid_atBckpTime_newID[linerDB_ID_atBackupTime] = linerDB.ID
@@ -784,9 +786,9 @@ func (backRepoLiner *BackRepoLinerStruct) RestorePhaseOne(dirPath string) {
 
 		linerDB_ID_atBackupTime := linerDB.ID
 		linerDB.ID = 0
-		query := backRepoLiner.db.Create(linerDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoLiner.db.Create(linerDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoLiner.Map_LinerDBID_LinerDB[linerDB.ID] = linerDB
 		BackRepoLinerid_atBckpTime_newID[linerDB_ID_atBackupTime] = linerDB.ID
@@ -814,9 +816,10 @@ func (backRepoLiner *BackRepoLinerStruct) RestorePhaseTwo() {
 		}
 
 		// update databse with new index encoding
-		query := backRepoLiner.db.Model(linerDB).Updates(*linerDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoLiner.db.Model(linerDB)
+		_, err := db.Updates(*linerDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

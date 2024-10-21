@@ -70,12 +70,12 @@ func (controller *Controller) GetLiners(c *gin.Context) {
 	}
 	db := backRepo.BackRepoLiner.GetDB()
 
-	query := db.Find(&linerDBs)
-	if query.Error != nil {
+	_, err := db.Find(&linerDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -151,12 +151,12 @@ func (controller *Controller) PostLiner(c *gin.Context) {
 	linerDB.LinerPointersEncoding = input.LinerPointersEncoding
 	linerDB.CopyBasicFieldsFromLiner_WOP(&input.Liner_WOP)
 
-	query := db.Create(&linerDB)
-	if query.Error != nil {
+	_, err = db.Create(&linerDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -205,7 +205,7 @@ func (controller *Controller) GetLiner(c *gin.Context) {
 
 	// Get linerDB in DB
 	var linerDB orm.LinerDB
-	if err := db.First(&linerDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&linerDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateLiner(c *gin.Context) {
 	var linerDB orm.LinerDB
 
 	// fetch the liner
-	query := db.First(&linerDB, c.Param("id"))
+	_, err := db.First(&linerDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateLiner(c *gin.Context) {
 	linerDB.CopyBasicFieldsFromLiner_WOP(&input.Liner_WOP)
 	linerDB.LinerPointersEncoding = input.LinerPointersEncoding
 
-	query = db.Model(&linerDB).Updates(linerDB)
-	if query.Error != nil {
+	db, _ = db.Model(&linerDB)
+	_, err = db.Updates(linerDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteLiner(c *gin.Context) {
 
 	// Get model if exist
 	var linerDB orm.LinerDB
-	if err := db.First(&linerDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&linerDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteLiner(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&linerDB)
+	db.Unscoped()
+	db.Delete(&linerDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	linerDeleted := new(models.Liner)

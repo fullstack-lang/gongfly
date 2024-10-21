@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongfly/go/db"
 	"github.com/fullstack-lang/gongfly/go/models"
 )
 
@@ -73,7 +74,7 @@ type ScenarioDB struct {
 
 	// Declation for basic field scenarioDB.MessageVisualSpeed
 	MessageVisualSpeed_Data sql.NullFloat64
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	ScenarioPointersEncoding
@@ -128,7 +129,7 @@ type BackRepoScenarioStruct struct {
 	// stores Scenario according to their gorm ID
 	Map_ScenarioDBID_ScenarioPtr map[uint]*models.Scenario
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -138,7 +139,7 @@ func (backRepoScenario *BackRepoScenarioStruct) GetStage() (stage *models.StageS
 	return
 }
 
-func (backRepoScenario *BackRepoScenarioStruct) GetDB() *gorm.DB {
+func (backRepoScenario *BackRepoScenarioStruct) GetDB() db.DBInterface {
 	return backRepoScenario.db
 }
 
@@ -175,9 +176,10 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitDeleteInstance(id uint) (E
 
 	// scenario is not staged anymore, remove scenarioDB
 	scenarioDB := backRepoScenario.Map_ScenarioDBID_ScenarioDB[id]
-	query := backRepoScenario.db.Unscoped().Delete(&scenarioDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoScenario.db.Unscoped()
+	_, err := db.Delete(&scenarioDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -201,9 +203,9 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseOneInstance(scenario 
 	var scenarioDB ScenarioDB
 	scenarioDB.CopyBasicFieldsFromScenario(scenario)
 
-	query := backRepoScenario.db.Create(&scenarioDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoScenario.db.Create(&scenarioDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -235,9 +237,9 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseTwoInstance(backRepo 
 		scenarioDB.CopyBasicFieldsFromScenario(scenario)
 
 		// insertion point for translating pointers encodings into actual pointers
-		query := backRepoScenario.db.Save(&scenarioDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoScenario.db.Save(&scenarioDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -256,9 +258,9 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseTwoInstance(backRepo 
 func (backRepoScenario *BackRepoScenarioStruct) CheckoutPhaseOne() (Error error) {
 
 	scenarioDBArray := make([]ScenarioDB, 0)
-	query := backRepoScenario.db.Find(&scenarioDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoScenario.db.Find(&scenarioDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -369,7 +371,7 @@ func (backRepo *BackRepoStruct) CheckoutScenario(scenario *models.Scenario) {
 			var scenarioDB ScenarioDB
 			scenarioDB.ID = id
 
-			if err := backRepo.BackRepoScenario.db.First(&scenarioDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoScenario.db.First(&scenarioDB, id); err != nil {
 				log.Fatalln("CheckoutScenario : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoScenario.CheckoutPhaseOneInstance(&scenarioDB)
@@ -564,9 +566,9 @@ func (backRepoScenario *BackRepoScenarioStruct) rowVisitorScenario(row *xlsx.Row
 
 		scenarioDB_ID_atBackupTime := scenarioDB.ID
 		scenarioDB.ID = 0
-		query := backRepoScenario.db.Create(scenarioDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoScenario.db.Create(scenarioDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoScenario.Map_ScenarioDBID_ScenarioDB[scenarioDB.ID] = scenarioDB
 		BackRepoScenarioid_atBckpTime_newID[scenarioDB_ID_atBackupTime] = scenarioDB.ID
@@ -601,9 +603,9 @@ func (backRepoScenario *BackRepoScenarioStruct) RestorePhaseOne(dirPath string) 
 
 		scenarioDB_ID_atBackupTime := scenarioDB.ID
 		scenarioDB.ID = 0
-		query := backRepoScenario.db.Create(scenarioDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoScenario.db.Create(scenarioDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoScenario.Map_ScenarioDBID_ScenarioDB[scenarioDB.ID] = scenarioDB
 		BackRepoScenarioid_atBckpTime_newID[scenarioDB_ID_atBackupTime] = scenarioDB.ID
@@ -625,9 +627,10 @@ func (backRepoScenario *BackRepoScenarioStruct) RestorePhaseTwo() {
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoScenario.db.Model(scenarioDB).Updates(*scenarioDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoScenario.db.Model(scenarioDB)
+		_, err := db.Updates(*scenarioDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

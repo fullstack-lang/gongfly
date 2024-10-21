@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongfly/go/db"
 	"github.com/fullstack-lang/gongfly/go/models"
 )
 
@@ -88,7 +89,7 @@ type SatelliteDB struct {
 
 	// Declation for basic field satelliteDB.Timestampstring
 	Timestampstring_Data sql.NullString
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	SatellitePointersEncoding
@@ -158,7 +159,7 @@ type BackRepoSatelliteStruct struct {
 	// stores Satellite according to their gorm ID
 	Map_SatelliteDBID_SatellitePtr map[uint]*models.Satellite
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -168,7 +169,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) GetStage() (stage *models.Stag
 	return
 }
 
-func (backRepoSatellite *BackRepoSatelliteStruct) GetDB() *gorm.DB {
+func (backRepoSatellite *BackRepoSatelliteStruct) GetDB() db.DBInterface {
 	return backRepoSatellite.db
 }
 
@@ -205,9 +206,10 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitDeleteInstance(id uint) 
 
 	// satellite is not staged anymore, remove satelliteDB
 	satelliteDB := backRepoSatellite.Map_SatelliteDBID_SatelliteDB[id]
-	query := backRepoSatellite.db.Unscoped().Delete(&satelliteDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoSatellite.db.Unscoped()
+	_, err := db.Delete(&satelliteDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -231,9 +233,9 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseOneInstance(satelli
 	var satelliteDB SatelliteDB
 	satelliteDB.CopyBasicFieldsFromSatellite(satellite)
 
-	query := backRepoSatellite.db.Create(&satelliteDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoSatellite.db.Create(&satelliteDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -265,9 +267,9 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseTwoInstance(backRep
 		satelliteDB.CopyBasicFieldsFromSatellite(satellite)
 
 		// insertion point for translating pointers encodings into actual pointers
-		query := backRepoSatellite.db.Save(&satelliteDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoSatellite.db.Save(&satelliteDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -286,9 +288,9 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseTwoInstance(backRep
 func (backRepoSatellite *BackRepoSatelliteStruct) CheckoutPhaseOne() (Error error) {
 
 	satelliteDBArray := make([]SatelliteDB, 0)
-	query := backRepoSatellite.db.Find(&satelliteDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoSatellite.db.Find(&satelliteDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -399,7 +401,7 @@ func (backRepo *BackRepoStruct) CheckoutSatellite(satellite *models.Satellite) {
 			var satelliteDB SatelliteDB
 			satelliteDB.ID = id
 
-			if err := backRepo.BackRepoSatellite.db.First(&satelliteDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoSatellite.db.First(&satelliteDB, id); err != nil {
 				log.Fatalln("CheckoutSatellite : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoSatellite.CheckoutPhaseOneInstance(&satelliteDB)
@@ -654,9 +656,9 @@ func (backRepoSatellite *BackRepoSatelliteStruct) rowVisitorSatellite(row *xlsx.
 
 		satelliteDB_ID_atBackupTime := satelliteDB.ID
 		satelliteDB.ID = 0
-		query := backRepoSatellite.db.Create(satelliteDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoSatellite.db.Create(satelliteDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoSatellite.Map_SatelliteDBID_SatelliteDB[satelliteDB.ID] = satelliteDB
 		BackRepoSatelliteid_atBckpTime_newID[satelliteDB_ID_atBackupTime] = satelliteDB.ID
@@ -691,9 +693,9 @@ func (backRepoSatellite *BackRepoSatelliteStruct) RestorePhaseOne(dirPath string
 
 		satelliteDB_ID_atBackupTime := satelliteDB.ID
 		satelliteDB.ID = 0
-		query := backRepoSatellite.db.Create(satelliteDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoSatellite.db.Create(satelliteDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoSatellite.Map_SatelliteDBID_SatelliteDB[satelliteDB.ID] = satelliteDB
 		BackRepoSatelliteid_atBckpTime_newID[satelliteDB_ID_atBackupTime] = satelliteDB.ID
@@ -715,9 +717,10 @@ func (backRepoSatellite *BackRepoSatelliteStruct) RestorePhaseTwo() {
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoSatellite.db.Model(satelliteDB).Updates(*satelliteDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoSatellite.db.Model(satelliteDB)
+		_, err := db.Updates(*satelliteDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

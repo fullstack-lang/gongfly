@@ -70,12 +70,12 @@ func (controller *Controller) GetSatellites(c *gin.Context) {
 	}
 	db := backRepo.BackRepoSatellite.GetDB()
 
-	query := db.Find(&satelliteDBs)
-	if query.Error != nil {
+	_, err := db.Find(&satelliteDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -151,12 +151,12 @@ func (controller *Controller) PostSatellite(c *gin.Context) {
 	satelliteDB.SatellitePointersEncoding = input.SatellitePointersEncoding
 	satelliteDB.CopyBasicFieldsFromSatellite_WOP(&input.Satellite_WOP)
 
-	query := db.Create(&satelliteDB)
-	if query.Error != nil {
+	_, err = db.Create(&satelliteDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -205,7 +205,7 @@ func (controller *Controller) GetSatellite(c *gin.Context) {
 
 	// Get satelliteDB in DB
 	var satelliteDB orm.SatelliteDB
-	if err := db.First(&satelliteDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&satelliteDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateSatellite(c *gin.Context) {
 	var satelliteDB orm.SatelliteDB
 
 	// fetch the satellite
-	query := db.First(&satelliteDB, c.Param("id"))
+	_, err := db.First(&satelliteDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateSatellite(c *gin.Context) {
 	satelliteDB.CopyBasicFieldsFromSatellite_WOP(&input.Satellite_WOP)
 	satelliteDB.SatellitePointersEncoding = input.SatellitePointersEncoding
 
-	query = db.Model(&satelliteDB).Updates(satelliteDB)
-	if query.Error != nil {
+	db, _ = db.Model(&satelliteDB)
+	_, err = db.Updates(satelliteDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteSatellite(c *gin.Context) {
 
 	// Get model if exist
 	var satelliteDB orm.SatelliteDB
-	if err := db.First(&satelliteDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&satelliteDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteSatellite(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&satelliteDB)
+	db.Unscoped()
+	db.Delete(&satelliteDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	satelliteDeleted := new(models.Satellite)

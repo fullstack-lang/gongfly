@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongfly/go/db"
 	"github.com/fullstack-lang/gongfly/go/models"
 )
 
@@ -113,7 +114,7 @@ type MessageDB struct {
 	// Declation for basic field messageDB.Display
 	// provide the sql storage for the boolan
 	Display_Data sql.NullBool
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	MessagePointersEncoding
@@ -207,7 +208,7 @@ type BackRepoMessageStruct struct {
 	// stores Message according to their gorm ID
 	Map_MessageDBID_MessagePtr map[uint]*models.Message
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -217,7 +218,7 @@ func (backRepoMessage *BackRepoMessageStruct) GetStage() (stage *models.StageStr
 	return
 }
 
-func (backRepoMessage *BackRepoMessageStruct) GetDB() *gorm.DB {
+func (backRepoMessage *BackRepoMessageStruct) GetDB() db.DBInterface {
 	return backRepoMessage.db
 }
 
@@ -254,9 +255,10 @@ func (backRepoMessage *BackRepoMessageStruct) CommitDeleteInstance(id uint) (Err
 
 	// message is not staged anymore, remove messageDB
 	messageDB := backRepoMessage.Map_MessageDBID_MessageDB[id]
-	query := backRepoMessage.db.Unscoped().Delete(&messageDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoMessage.db.Unscoped()
+	_, err := db.Delete(&messageDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -280,9 +282,9 @@ func (backRepoMessage *BackRepoMessageStruct) CommitPhaseOneInstance(message *mo
 	var messageDB MessageDB
 	messageDB.CopyBasicFieldsFromMessage(message)
 
-	query := backRepoMessage.db.Create(&messageDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoMessage.db.Create(&messageDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -314,9 +316,9 @@ func (backRepoMessage *BackRepoMessageStruct) CommitPhaseTwoInstance(backRepo *B
 		messageDB.CopyBasicFieldsFromMessage(message)
 
 		// insertion point for translating pointers encodings into actual pointers
-		query := backRepoMessage.db.Save(&messageDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoMessage.db.Save(&messageDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -335,9 +337,9 @@ func (backRepoMessage *BackRepoMessageStruct) CommitPhaseTwoInstance(backRepo *B
 func (backRepoMessage *BackRepoMessageStruct) CheckoutPhaseOne() (Error error) {
 
 	messageDBArray := make([]MessageDB, 0)
-	query := backRepoMessage.db.Find(&messageDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoMessage.db.Find(&messageDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -448,7 +450,7 @@ func (backRepo *BackRepoStruct) CheckoutMessage(message *models.Message) {
 			var messageDB MessageDB
 			messageDB.ID = id
 
-			if err := backRepo.BackRepoMessage.db.First(&messageDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoMessage.db.First(&messageDB, id); err != nil {
 				log.Fatalln("CheckoutMessage : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoMessage.CheckoutPhaseOneInstance(&messageDB)
@@ -799,9 +801,9 @@ func (backRepoMessage *BackRepoMessageStruct) rowVisitorMessage(row *xlsx.Row) e
 
 		messageDB_ID_atBackupTime := messageDB.ID
 		messageDB.ID = 0
-		query := backRepoMessage.db.Create(messageDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoMessage.db.Create(messageDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoMessage.Map_MessageDBID_MessageDB[messageDB.ID] = messageDB
 		BackRepoMessageid_atBckpTime_newID[messageDB_ID_atBackupTime] = messageDB.ID
@@ -836,9 +838,9 @@ func (backRepoMessage *BackRepoMessageStruct) RestorePhaseOne(dirPath string) {
 
 		messageDB_ID_atBackupTime := messageDB.ID
 		messageDB.ID = 0
-		query := backRepoMessage.db.Create(messageDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoMessage.db.Create(messageDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoMessage.Map_MessageDBID_MessageDB[messageDB.ID] = messageDB
 		BackRepoMessageid_atBckpTime_newID[messageDB_ID_atBackupTime] = messageDB.ID
@@ -860,9 +862,10 @@ func (backRepoMessage *BackRepoMessageStruct) RestorePhaseTwo() {
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoMessage.db.Model(messageDB).Updates(*messageDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoMessage.db.Model(messageDB)
+		_, err := db.Updates(*messageDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

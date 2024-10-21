@@ -70,12 +70,12 @@ func (controller *Controller) GetMessages(c *gin.Context) {
 	}
 	db := backRepo.BackRepoMessage.GetDB()
 
-	query := db.Find(&messageDBs)
-	if query.Error != nil {
+	_, err := db.Find(&messageDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -151,12 +151,12 @@ func (controller *Controller) PostMessage(c *gin.Context) {
 	messageDB.MessagePointersEncoding = input.MessagePointersEncoding
 	messageDB.CopyBasicFieldsFromMessage_WOP(&input.Message_WOP)
 
-	query := db.Create(&messageDB)
-	if query.Error != nil {
+	_, err = db.Create(&messageDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -205,7 +205,7 @@ func (controller *Controller) GetMessage(c *gin.Context) {
 
 	// Get messageDB in DB
 	var messageDB orm.MessageDB
-	if err := db.First(&messageDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&messageDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateMessage(c *gin.Context) {
 	var messageDB orm.MessageDB
 
 	// fetch the message
-	query := db.First(&messageDB, c.Param("id"))
+	_, err := db.First(&messageDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateMessage(c *gin.Context) {
 	messageDB.CopyBasicFieldsFromMessage_WOP(&input.Message_WOP)
 	messageDB.MessagePointersEncoding = input.MessagePointersEncoding
 
-	query = db.Model(&messageDB).Updates(messageDB)
-	if query.Error != nil {
+	db, _ = db.Model(&messageDB)
+	_, err = db.Updates(messageDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteMessage(c *gin.Context) {
 
 	// Get model if exist
 	var messageDB orm.MessageDB
-	if err := db.First(&messageDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&messageDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteMessage(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&messageDB)
+	db.Unscoped()
+	db.Delete(&messageDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	messageDeleted := new(models.Message)
