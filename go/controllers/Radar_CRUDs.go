@@ -280,7 +280,7 @@ func (controller *Controller) UpdateRadar(c *gin.Context) {
 	radarDB.RadarPointersEncoding = input.RadarPointersEncoding
 
 	db, _ = db.Model(&radarDB)
-	_, err = db.Updates(radarDB)
+	_, err = db.Updates(&radarDB)
 	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest

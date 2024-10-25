@@ -280,7 +280,7 @@ func (controller *Controller) UpdateScenario(c *gin.Context) {
 	scenarioDB.ScenarioPointersEncoding = input.ScenarioPointersEncoding
 
 	db, _ = db.Model(&scenarioDB)
-	_, err = db.Updates(scenarioDB)
+	_, err = db.Updates(&scenarioDB)
 	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest

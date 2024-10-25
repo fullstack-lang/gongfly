@@ -280,7 +280,7 @@ func (controller *Controller) UpdateMessage(c *gin.Context) {
 	messageDB.MessagePointersEncoding = input.MessagePointersEncoding
 
 	db, _ = db.Model(&messageDB)
-	_, err = db.Updates(messageDB)
+	_, err = db.Updates(&messageDB)
 	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest

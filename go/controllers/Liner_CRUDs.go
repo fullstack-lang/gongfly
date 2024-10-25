@@ -280,7 +280,7 @@ func (controller *Controller) UpdateLiner(c *gin.Context) {
 	linerDB.LinerPointersEncoding = input.LinerPointersEncoding
 
 	db, _ = db.Model(&linerDB)
-	_, err = db.Updates(linerDB)
+	_, err = db.Updates(&linerDB)
 	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest

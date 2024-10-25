@@ -280,7 +280,7 @@ func (controller *Controller) UpdateCivilianAirport(c *gin.Context) {
 	civilianairportDB.CivilianAirportPointersEncoding = input.CivilianAirportPointersEncoding
 
 	db, _ = db.Model(&civilianairportDB)
-	_, err = db.Updates(civilianairportDB)
+	_, err = db.Updates(&civilianairportDB)
 	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest

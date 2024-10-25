@@ -280,7 +280,7 @@ func (controller *Controller) UpdateSatellite(c *gin.Context) {
 	satelliteDB.SatellitePointersEncoding = input.SatellitePointersEncoding
 
 	db, _ = db.Model(&satelliteDB)
-	_, err = db.Updates(satelliteDB)
+	_, err = db.Updates(&satelliteDB)
 	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest

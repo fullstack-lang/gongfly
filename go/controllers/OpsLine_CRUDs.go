@@ -280,7 +280,7 @@ func (controller *Controller) UpdateOpsLine(c *gin.Context) {
 	opslineDB.OpsLinePointersEncoding = input.OpsLinePointersEncoding
 
 	db, _ = db.Model(&opslineDB)
-	_, err = db.Updates(opslineDB)
+	_, err = db.Updates(&opslineDB)
 	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
