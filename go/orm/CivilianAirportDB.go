@@ -165,7 +165,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitDeleteInstan
 	// civilianairport is not staged anymore, remove civilianairportDB
 	civilianairportDB := backRepoCivilianAirport.Map_CivilianAirportDBID_CivilianAirportDB[id]
 	db, _ := backRepoCivilianAirport.db.Unscoped()
-	_, err := db.Delete(&civilianairportDB)
+	_, err := db.Delete(civilianairportDB)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -225,7 +225,7 @@ func (backRepoCivilianAirport *BackRepoCivilianAirportStruct) CommitPhaseTwoInst
 		civilianairportDB.CopyBasicFieldsFromCivilianAirport(civilianairport)
 
 		// insertion point for translating pointers encodings into actual pointers
-		_, err := backRepoCivilianAirport.db.Save(&civilianairportDB)
+		_, err := backRepoCivilianAirport.db.Save(civilianairportDB)
 		if err != nil {
 			log.Fatal(err)
 		}

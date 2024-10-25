@@ -256,7 +256,7 @@ func (backRepoMessage *BackRepoMessageStruct) CommitDeleteInstance(id uint) (Err
 	// message is not staged anymore, remove messageDB
 	messageDB := backRepoMessage.Map_MessageDBID_MessageDB[id]
 	db, _ := backRepoMessage.db.Unscoped()
-	_, err := db.Delete(&messageDB)
+	_, err := db.Delete(messageDB)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -316,7 +316,7 @@ func (backRepoMessage *BackRepoMessageStruct) CommitPhaseTwoInstance(backRepo *B
 		messageDB.CopyBasicFieldsFromMessage(message)
 
 		// insertion point for translating pointers encodings into actual pointers
-		_, err := backRepoMessage.db.Save(&messageDB)
+		_, err := backRepoMessage.db.Save(messageDB)
 		if err != nil {
 			log.Fatal(err)
 		}

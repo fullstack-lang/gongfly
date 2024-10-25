@@ -235,7 +235,7 @@ func (backRepoLiner *BackRepoLinerStruct) CommitDeleteInstance(id uint) (Error e
 	// liner is not staged anymore, remove linerDB
 	linerDB := backRepoLiner.Map_LinerDBID_LinerDB[id]
 	db, _ := backRepoLiner.db.Unscoped()
-	_, err := db.Delete(&linerDB)
+	_, err := db.Delete(linerDB)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -307,7 +307,7 @@ func (backRepoLiner *BackRepoLinerStruct) CommitPhaseTwoInstance(backRepo *BackR
 			linerDB.ReporingLineID.Valid = true
 		}
 
-		_, err := backRepoLiner.db.Save(&linerDB)
+		_, err := backRepoLiner.db.Save(linerDB)
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -207,7 +207,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitDeleteInstance(id uint) 
 	// satellite is not staged anymore, remove satelliteDB
 	satelliteDB := backRepoSatellite.Map_SatelliteDBID_SatelliteDB[id]
 	db, _ := backRepoSatellite.db.Unscoped()
-	_, err := db.Delete(&satelliteDB)
+	_, err := db.Delete(satelliteDB)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -267,7 +267,7 @@ func (backRepoSatellite *BackRepoSatelliteStruct) CommitPhaseTwoInstance(backRep
 		satelliteDB.CopyBasicFieldsFromSatellite(satellite)
 
 		// insertion point for translating pointers encodings into actual pointers
-		_, err := backRepoSatellite.db.Save(&satelliteDB)
+		_, err := backRepoSatellite.db.Save(satelliteDB)
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -177,7 +177,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitDeleteInstance(id uint) (E
 	// scenario is not staged anymore, remove scenarioDB
 	scenarioDB := backRepoScenario.Map_ScenarioDBID_ScenarioDB[id]
 	db, _ := backRepoScenario.db.Unscoped()
-	_, err := db.Delete(&scenarioDB)
+	_, err := db.Delete(scenarioDB)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -237,7 +237,7 @@ func (backRepoScenario *BackRepoScenarioStruct) CommitPhaseTwoInstance(backRepo 
 		scenarioDB.CopyBasicFieldsFromScenario(scenario)
 
 		// insertion point for translating pointers encodings into actual pointers
-		_, err := backRepoScenario.db.Save(&scenarioDB)
+		_, err := backRepoScenario.db.Save(scenarioDB)
 		if err != nil {
 			log.Fatal(err)
 		}

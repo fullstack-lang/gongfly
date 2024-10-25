@@ -189,7 +189,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitDeleteInstance(id uint) (Err
 	// opsline is not staged anymore, remove opslineDB
 	opslineDB := backRepoOpsLine.Map_OpsLineDBID_OpsLineDB[id]
 	db, _ := backRepoOpsLine.db.Unscoped()
-	_, err := db.Delete(&opslineDB)
+	_, err := db.Delete(opslineDB)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -261,7 +261,7 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CommitPhaseTwoInstance(backRepo *B
 			opslineDB.ScenarioID.Valid = true
 		}
 
-		_, err := backRepoOpsLine.db.Save(&opslineDB)
+		_, err := backRepoOpsLine.db.Save(opslineDB)
 		if err != nil {
 			log.Fatal(err)
 		}

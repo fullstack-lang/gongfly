@@ -177,7 +177,7 @@ func (backRepoRadar *BackRepoRadarStruct) CommitDeleteInstance(id uint) (Error e
 	// radar is not staged anymore, remove radarDB
 	radarDB := backRepoRadar.Map_RadarDBID_RadarDB[id]
 	db, _ := backRepoRadar.db.Unscoped()
-	_, err := db.Delete(&radarDB)
+	_, err := db.Delete(radarDB)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -237,7 +237,7 @@ func (backRepoRadar *BackRepoRadarStruct) CommitPhaseTwoInstance(backRepo *BackR
 		radarDB.CopyBasicFieldsFromRadar(radar)
 
 		// insertion point for translating pointers encodings into actual pointers
-		_, err := backRepoRadar.db.Save(&radarDB)
+		_, err := backRepoRadar.db.Save(radarDB)
 		if err != nil {
 			log.Fatal(err)
 		}

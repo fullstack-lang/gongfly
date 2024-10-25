@@ -10,8 +10,12 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/fullstack-lang/gongfly/go/db"
 	"github.com/fullstack-lang/gongfly/go/models"
+
+	/* THIS IS REMOVED BY GONG COMPILER IF TARGET IS gorm
 	"github.com/fullstack-lang/gongfly/go/orm/dbgorm"
+	THIS IS REMOVED BY GONG COMPILER IF TARGET IS gorm */
 
 	"github.com/tealeg/xlsx/v3"
 )
@@ -46,7 +50,12 @@ type BackRepoStruct struct {
 
 func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepoStruct) {
 
-	dbWrapper := dbgorm.NewDBWrapper(filename, "github_com_fullstack_lang_gongfly_go",
+	var db db.DBInterface
+
+	db = NewDBLite()
+
+	/* THIS IS REMOVED BY GONG COMPILER IF TARGET IS gorm
+	db = dbgorm.NewDBWrapper(filename, "github_com_fullstack_lang_gongfly_go",
 		&CivilianAirportDB{},
 		&LinerDB{},
 		&MessageDB{},
@@ -55,6 +64,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		&SatelliteDB{},
 		&ScenarioDB{},
 	)
+	THIS IS REMOVED BY GONG COMPILER IF TARGET IS gorm */
 
 	backRepo = new(BackRepoStruct)
 
@@ -64,7 +74,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_CivilianAirportDBID_CivilianAirportDB:  make(map[uint]*CivilianAirportDB, 0),
 		Map_CivilianAirportPtr_CivilianAirportDBID: make(map[*models.CivilianAirport]uint, 0),
 
-		db:    dbWrapper,
+		db:    db,
 		stage: stage,
 	}
 	backRepo.BackRepoLiner = BackRepoLinerStruct{
@@ -72,7 +82,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_LinerDBID_LinerDB:  make(map[uint]*LinerDB, 0),
 		Map_LinerPtr_LinerDBID: make(map[*models.Liner]uint, 0),
 
-		db:    dbWrapper,
+		db:    db,
 		stage: stage,
 	}
 	backRepo.BackRepoMessage = BackRepoMessageStruct{
@@ -80,7 +90,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_MessageDBID_MessageDB:  make(map[uint]*MessageDB, 0),
 		Map_MessagePtr_MessageDBID: make(map[*models.Message]uint, 0),
 
-		db:    dbWrapper,
+		db:    db,
 		stage: stage,
 	}
 	backRepo.BackRepoOpsLine = BackRepoOpsLineStruct{
@@ -88,7 +98,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_OpsLineDBID_OpsLineDB:  make(map[uint]*OpsLineDB, 0),
 		Map_OpsLinePtr_OpsLineDBID: make(map[*models.OpsLine]uint, 0),
 
-		db:    dbWrapper,
+		db:    db,
 		stage: stage,
 	}
 	backRepo.BackRepoRadar = BackRepoRadarStruct{
@@ -96,7 +106,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_RadarDBID_RadarDB:  make(map[uint]*RadarDB, 0),
 		Map_RadarPtr_RadarDBID: make(map[*models.Radar]uint, 0),
 
-		db:    dbWrapper,
+		db:    db,
 		stage: stage,
 	}
 	backRepo.BackRepoSatellite = BackRepoSatelliteStruct{
@@ -104,7 +114,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_SatelliteDBID_SatelliteDB:  make(map[uint]*SatelliteDB, 0),
 		Map_SatellitePtr_SatelliteDBID: make(map[*models.Satellite]uint, 0),
 
-		db:    dbWrapper,
+		db:    db,
 		stage: stage,
 	}
 	backRepo.BackRepoScenario = BackRepoScenarioStruct{
@@ -112,7 +122,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_ScenarioDBID_ScenarioDB:  make(map[uint]*ScenarioDB, 0),
 		Map_ScenarioPtr_ScenarioDBID: make(map[*models.Scenario]uint, 0),
 
-		db:    dbWrapper,
+		db:    db,
 		stage: stage,
 	}
 
