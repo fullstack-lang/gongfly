@@ -13,7 +13,9 @@ import (
 	"github.com/fullstack-lang/gongfly/go/db"
 	"github.com/fullstack-lang/gongfly/go/models"
 
+	/* THIS IS REMOVED BY GONG COMPILER IF TARGET IS gorm
 	"github.com/fullstack-lang/gongfly/go/orm/dbgorm"
+	THIS IS REMOVED BY GONG COMPILER IF TARGET IS gorm */
 
 	"github.com/tealeg/xlsx/v3"
 )
@@ -50,10 +52,9 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 
 	var db db.DBInterface
 
-	/* THIS IS REMOVED BY GONG COMPILER IF TARGET IS lite
 	db = NewDBLite()
-	THIS IS REMOVED BY GONG COMPILER IF TARGET IS lite */
 
+	/* THIS IS REMOVED BY GONG COMPILER IF TARGET IS gorm
 	db = dbgorm.NewDBWrapper(filename, "github_com_fullstack_lang_gongfly_go",
 		&CivilianAirportDB{},
 		&LinerDB{},
@@ -63,6 +64,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		&SatelliteDB{},
 		&ScenarioDB{},
 	)
+	THIS IS REMOVED BY GONG COMPILER IF TARGET IS gorm */
 
 	backRepo = new(BackRepoStruct)
 
