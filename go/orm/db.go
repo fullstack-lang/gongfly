@@ -210,43 +210,43 @@ func (db *DBLite) Updates(instanceDB any) (db.DBInterface, error) {
 		if existing, ok := db.civilianairportDBs[v.ID]; ok {
 			*existing = *v
 		} else {
-			return nil, errors.New("github.com/fullstack-lang/gongfly/go, record not found")
+			return nil, errors.New("db CivilianAirport github.com/fullstack-lang/gongfly/go, record not found")
 		}
 	case *LinerDB:
 		if existing, ok := db.linerDBs[v.ID]; ok {
 			*existing = *v
 		} else {
-			return nil, errors.New("github.com/fullstack-lang/gongfly/go, record not found")
+			return nil, errors.New("db Liner github.com/fullstack-lang/gongfly/go, record not found")
 		}
 	case *MessageDB:
 		if existing, ok := db.messageDBs[v.ID]; ok {
 			*existing = *v
 		} else {
-			return nil, errors.New("github.com/fullstack-lang/gongfly/go, record not found")
+			return nil, errors.New("db Message github.com/fullstack-lang/gongfly/go, record not found")
 		}
 	case *OpsLineDB:
 		if existing, ok := db.opslineDBs[v.ID]; ok {
 			*existing = *v
 		} else {
-			return nil, errors.New("github.com/fullstack-lang/gongfly/go, record not found")
+			return nil, errors.New("db OpsLine github.com/fullstack-lang/gongfly/go, record not found")
 		}
 	case *RadarDB:
 		if existing, ok := db.radarDBs[v.ID]; ok {
 			*existing = *v
 		} else {
-			return nil, errors.New("github.com/fullstack-lang/gongfly/go, record not found")
+			return nil, errors.New("db Radar github.com/fullstack-lang/gongfly/go, record not found")
 		}
 	case *SatelliteDB:
 		if existing, ok := db.satelliteDBs[v.ID]; ok {
 			*existing = *v
 		} else {
-			return nil, errors.New("github.com/fullstack-lang/gongfly/go, record not found")
+			return nil, errors.New("db Satellite github.com/fullstack-lang/gongfly/go, record not found")
 		}
 	case *ScenarioDB:
 		if existing, ok := db.scenarioDBs[v.ID]; ok {
 			*existing = *v
 		} else {
-			return nil, errors.New("github.com/fullstack-lang/gongfly/go, record not found")
+			return nil, errors.New("db Scenario github.com/fullstack-lang/gongfly/go, record not found")
 		}
 	default:
 		return nil, errors.New("github.com/fullstack-lang/gongfly/go, unsupported type in Updates")
@@ -263,50 +263,50 @@ func (db *DBLite) Find(instanceDBs any) (db.DBInterface, error) {
 	switch ptr := instanceDBs.(type) {
 	// insertion point find
 	case *[]CivilianAirportDB:
-        *ptr = make([]CivilianAirportDB, 0, len(db.civilianairportDBs))
-        for _, v := range db.civilianairportDBs {
-            *ptr = append(*ptr, *v)
-        }
-        return db, nil
+		*ptr = make([]CivilianAirportDB, 0, len(db.civilianairportDBs))
+		for _, v := range db.civilianairportDBs {
+			*ptr = append(*ptr, *v)
+		}
+		return db, nil
 	case *[]LinerDB:
-        *ptr = make([]LinerDB, 0, len(db.linerDBs))
-        for _, v := range db.linerDBs {
-            *ptr = append(*ptr, *v)
-        }
-        return db, nil
+		*ptr = make([]LinerDB, 0, len(db.linerDBs))
+		for _, v := range db.linerDBs {
+			*ptr = append(*ptr, *v)
+		}
+		return db, nil
 	case *[]MessageDB:
-        *ptr = make([]MessageDB, 0, len(db.messageDBs))
-        for _, v := range db.messageDBs {
-            *ptr = append(*ptr, *v)
-        }
-        return db, nil
+		*ptr = make([]MessageDB, 0, len(db.messageDBs))
+		for _, v := range db.messageDBs {
+			*ptr = append(*ptr, *v)
+		}
+		return db, nil
 	case *[]OpsLineDB:
-        *ptr = make([]OpsLineDB, 0, len(db.opslineDBs))
-        for _, v := range db.opslineDBs {
-            *ptr = append(*ptr, *v)
-        }
-        return db, nil
+		*ptr = make([]OpsLineDB, 0, len(db.opslineDBs))
+		for _, v := range db.opslineDBs {
+			*ptr = append(*ptr, *v)
+		}
+		return db, nil
 	case *[]RadarDB:
-        *ptr = make([]RadarDB, 0, len(db.radarDBs))
-        for _, v := range db.radarDBs {
-            *ptr = append(*ptr, *v)
-        }
-        return db, nil
+		*ptr = make([]RadarDB, 0, len(db.radarDBs))
+		for _, v := range db.radarDBs {
+			*ptr = append(*ptr, *v)
+		}
+		return db, nil
 	case *[]SatelliteDB:
-        *ptr = make([]SatelliteDB, 0, len(db.satelliteDBs))
-        for _, v := range db.satelliteDBs {
-            *ptr = append(*ptr, *v)
-        }
-        return db, nil
+		*ptr = make([]SatelliteDB, 0, len(db.satelliteDBs))
+		for _, v := range db.satelliteDBs {
+			*ptr = append(*ptr, *v)
+		}
+		return db, nil
 	case *[]ScenarioDB:
-        *ptr = make([]ScenarioDB, 0, len(db.scenarioDBs))
-        for _, v := range db.scenarioDBs {
-            *ptr = append(*ptr, *v)
-        }
-        return db, nil
-    default:
-        return nil, errors.New("github.com/fullstack-lang/gongfly/go, Find: unsupported type")
-    }
+		*ptr = make([]ScenarioDB, 0, len(db.scenarioDBs))
+		for _, v := range db.scenarioDBs {
+			*ptr = append(*ptr, *v)
+		}
+		return db, nil
+	default:
+		return nil, errors.New("github.com/fullstack-lang/gongfly/go, Find: unsupported type")
+	}
 }
 
 // First retrieves the first record of a type from the database
@@ -334,59 +334,73 @@ func (db *DBLite) First(instanceDB any, conds ...any) (db.DBInterface, error) {
 	case *CivilianAirportDB:
 		tmp, ok := db.civilianairportDBs[uint(i)]
 
+		if !ok {
+			return nil, errors.New(fmt.Sprintf("db.First CivilianAirport Unkown entry %d", i))
+		}
+
 		civilianairportDB, _ := instanceDB.(*CivilianAirportDB)
 		*civilianairportDB = *tmp
-		if !ok {
-			return nil, errors.New(fmt.Sprintf("Unkown entry %d", i))
-		}
+		
 	case *LinerDB:
 		tmp, ok := db.linerDBs[uint(i)]
 
+		if !ok {
+			return nil, errors.New(fmt.Sprintf("db.First Liner Unkown entry %d", i))
+		}
+
 		linerDB, _ := instanceDB.(*LinerDB)
 		*linerDB = *tmp
-		if !ok {
-			return nil, errors.New(fmt.Sprintf("Unkown entry %d", i))
-		}
+		
 	case *MessageDB:
 		tmp, ok := db.messageDBs[uint(i)]
 
+		if !ok {
+			return nil, errors.New(fmt.Sprintf("db.First Message Unkown entry %d", i))
+		}
+
 		messageDB, _ := instanceDB.(*MessageDB)
 		*messageDB = *tmp
-		if !ok {
-			return nil, errors.New(fmt.Sprintf("Unkown entry %d", i))
-		}
+		
 	case *OpsLineDB:
 		tmp, ok := db.opslineDBs[uint(i)]
 
+		if !ok {
+			return nil, errors.New(fmt.Sprintf("db.First OpsLine Unkown entry %d", i))
+		}
+
 		opslineDB, _ := instanceDB.(*OpsLineDB)
 		*opslineDB = *tmp
-		if !ok {
-			return nil, errors.New(fmt.Sprintf("Unkown entry %d", i))
-		}
+		
 	case *RadarDB:
 		tmp, ok := db.radarDBs[uint(i)]
 
+		if !ok {
+			return nil, errors.New(fmt.Sprintf("db.First Radar Unkown entry %d", i))
+		}
+
 		radarDB, _ := instanceDB.(*RadarDB)
 		*radarDB = *tmp
-		if !ok {
-			return nil, errors.New(fmt.Sprintf("Unkown entry %d", i))
-		}
+		
 	case *SatelliteDB:
 		tmp, ok := db.satelliteDBs[uint(i)]
 
+		if !ok {
+			return nil, errors.New(fmt.Sprintf("db.First Satellite Unkown entry %d", i))
+		}
+
 		satelliteDB, _ := instanceDB.(*SatelliteDB)
 		*satelliteDB = *tmp
-		if !ok {
-			return nil, errors.New(fmt.Sprintf("Unkown entry %d", i))
-		}
+		
 	case *ScenarioDB:
 		tmp, ok := db.scenarioDBs[uint(i)]
 
+		if !ok {
+			return nil, errors.New(fmt.Sprintf("db.First Scenario Unkown entry %d", i))
+		}
+
 		scenarioDB, _ := instanceDB.(*ScenarioDB)
 		*scenarioDB = *tmp
-		if !ok {
-			return nil, errors.New(fmt.Sprintf("Unkown entry %d", i))
-		}
+		
 	default:
 		return nil, errors.New("github.com/fullstack-lang/gongfly/go, Unkown type")
 	}
