@@ -441,3 +441,84 @@ func (gongsimstatusFormCallback *GongsimStatusFormCallback) OnSave() {
 
 	fillUpTree(gongsimstatusFormCallback.probe)
 }
+func __gong__New__UpdateStateFormCallback(
+	updatestate *models.UpdateState,
+	probe *Probe,
+	formGroup *table.FormGroup,
+) (updatestateFormCallback *UpdateStateFormCallback) {
+	updatestateFormCallback = new(UpdateStateFormCallback)
+	updatestateFormCallback.probe = probe
+	updatestateFormCallback.updatestate = updatestate
+	updatestateFormCallback.formGroup = formGroup
+
+	updatestateFormCallback.CreationMode = (updatestate == nil)
+
+	return
+}
+
+type UpdateStateFormCallback struct {
+	updatestate *models.UpdateState
+
+	// If the form call is called on the creation of a new instnace
+	CreationMode bool
+
+	probe *Probe
+
+	formGroup *table.FormGroup
+}
+
+func (updatestateFormCallback *UpdateStateFormCallback) OnSave() {
+
+	log.Println("UpdateStateFormCallback, OnSave")
+
+	// checkout formStage to have the form group on the stage synchronized with the
+	// back repo (and front repo)
+	updatestateFormCallback.probe.formStage.Checkout()
+
+	if updatestateFormCallback.updatestate == nil {
+		updatestateFormCallback.updatestate = new(models.UpdateState).Stage(updatestateFormCallback.probe.stageOfInterest)
+	}
+	updatestate_ := updatestateFormCallback.updatestate
+	_ = updatestate_
+
+	for _, formDiv := range updatestateFormCallback.formGroup.FormDivs {
+		switch formDiv.Name {
+		// insertion point per field
+		case "Name":
+			FormDivBasicFieldToField(&(updatestate_.Name), formDiv)
+		case "Duration":
+			FormDivBasicFieldToField(&(updatestate_.Duration), formDiv)
+		case "Period":
+			FormDivBasicFieldToField(&(updatestate_.Period), formDiv)
+		}
+	}
+
+	// manage the suppress operation
+	if updatestateFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		updatestate_.Unstage(updatestateFormCallback.probe.stageOfInterest)
+	}
+
+	updatestateFormCallback.probe.stageOfInterest.Commit()
+	fillUpTable[models.UpdateState](
+		updatestateFormCallback.probe,
+	)
+	updatestateFormCallback.probe.tableStage.Commit()
+
+	// display a new form by reset the form stage
+	if updatestateFormCallback.CreationMode || updatestateFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		updatestateFormCallback.probe.formStage.Reset()
+		newFormGroup := (&table.FormGroup{
+			Name: table.FormGroupDefaultName.ToString(),
+		}).Stage(updatestateFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__UpdateStateFormCallback(
+			nil,
+			updatestateFormCallback.probe,
+			newFormGroup,
+		)
+		updatestate := new(models.UpdateState)
+		FillUpForm(updatestate, newFormGroup, updatestateFormCallback.probe)
+		updatestateFormCallback.probe.formStage.Commit()
+	}
+
+	fillUpTree(updatestateFormCallback.probe)
+}

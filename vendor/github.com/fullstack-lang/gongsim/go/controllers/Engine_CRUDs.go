@@ -70,12 +70,12 @@ func (controller *Controller) GetEngines(c *gin.Context) {
 	}
 	db := backRepo.BackRepoEngine.GetDB()
 
-	query := db.Find(&engineDBs)
-	if query.Error != nil {
+	_, err := db.Find(&engineDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -151,12 +151,12 @@ func (controller *Controller) PostEngine(c *gin.Context) {
 	engineDB.EnginePointersEncoding = input.EnginePointersEncoding
 	engineDB.CopyBasicFieldsFromEngine_WOP(&input.Engine_WOP)
 
-	query := db.Create(&engineDB)
-	if query.Error != nil {
+	_, err = db.Create(&engineDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -205,7 +205,7 @@ func (controller *Controller) GetEngine(c *gin.Context) {
 
 	// Get engineDB in DB
 	var engineDB orm.EngineDB
-	if err := db.First(&engineDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&engineDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateEngine(c *gin.Context) {
 	var engineDB orm.EngineDB
 
 	// fetch the engine
-	query := db.First(&engineDB, c.Param("id"))
+	_, err := db.First(&engineDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateEngine(c *gin.Context) {
 	engineDB.CopyBasicFieldsFromEngine_WOP(&input.Engine_WOP)
 	engineDB.EnginePointersEncoding = input.EnginePointersEncoding
 
-	query = db.Model(&engineDB).Updates(engineDB)
-	if query.Error != nil {
+	db, _ = db.Model(&engineDB)
+	_, err = db.Updates(&engineDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteEngine(c *gin.Context) {
 
 	// Get model if exist
 	var engineDB orm.EngineDB
-	if err := db.First(&engineDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&engineDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteEngine(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&engineDB)
+	db.Unscoped()
+	db.Delete(&engineDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	engineDeleted := new(models.Engine)

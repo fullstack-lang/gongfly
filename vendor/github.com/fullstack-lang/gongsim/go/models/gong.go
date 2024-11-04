@@ -8,8 +8,6 @@ import (
 	"math"
 	"slices"
 	"time"
-
-	"golang.org/x/exp/maps"
 )
 
 func __Gong__Abs(x int) int {
@@ -94,6 +92,15 @@ type StageStruct struct {
 	OnAfterGongsimStatusDeleteCallback OnAfterDeleteInterface[GongsimStatus]
 	OnAfterGongsimStatusReadCallback   OnAfterReadInterface[GongsimStatus]
 
+	UpdateStates           map[*UpdateState]any
+	UpdateStates_mapString map[string]*UpdateState
+
+	// insertion point for slice of pointers maps
+	OnAfterUpdateStateCreateCallback OnAfterCreateInterface[UpdateState]
+	OnAfterUpdateStateUpdateCallback OnAfterUpdateInterface[UpdateState]
+	OnAfterUpdateStateDeleteCallback OnAfterDeleteInterface[UpdateState]
+	OnAfterUpdateStateReadCallback   OnAfterReadInterface[UpdateState]
+
 	AllModelsStructCreateCallback AllModelsStructCreateInterface
 
 	AllModelsStructDeleteCallback AllModelsStructDeleteInterface
@@ -172,6 +179,8 @@ type BackRepoInterface interface {
 	CheckoutGongsimCommand(gongsimcommand *GongsimCommand)
 	CommitGongsimStatus(gongsimstatus *GongsimStatus)
 	CheckoutGongsimStatus(gongsimstatus *GongsimStatus)
+	CommitUpdateState(updatestate *UpdateState)
+	CheckoutUpdateState(updatestate *UpdateState)
 	GetLastCommitFromBackNb() uint
 	GetLastPushFromFrontNb() uint
 }
@@ -193,6 +202,9 @@ func NewStage(path string) (stage *StageStruct) {
 
 		GongsimStatuss:           make(map[*GongsimStatus]any),
 		GongsimStatuss_mapString: make(map[string]*GongsimStatus),
+
+		UpdateStates:           make(map[*UpdateState]any),
+		UpdateStates_mapString: make(map[string]*UpdateState),
 
 		// end of insertion point
 		Map_GongStructName_InstancesNb: make(map[string]int),
@@ -232,6 +244,7 @@ func (stage *StageStruct) Commit() {
 	stage.Map_GongStructName_InstancesNb["Event"] = len(stage.Events)
 	stage.Map_GongStructName_InstancesNb["GongsimCommand"] = len(stage.GongsimCommands)
 	stage.Map_GongStructName_InstancesNb["GongsimStatus"] = len(stage.GongsimStatuss)
+	stage.Map_GongStructName_InstancesNb["UpdateState"] = len(stage.UpdateStates)
 
 }
 
@@ -247,6 +260,7 @@ func (stage *StageStruct) Checkout() {
 	stage.Map_GongStructName_InstancesNb["Event"] = len(stage.Events)
 	stage.Map_GongStructName_InstancesNb["GongsimCommand"] = len(stage.GongsimCommands)
 	stage.Map_GongStructName_InstancesNb["GongsimStatus"] = len(stage.GongsimStatuss)
+	stage.Map_GongStructName_InstancesNb["UpdateState"] = len(stage.UpdateStates)
 
 }
 
@@ -529,6 +543,56 @@ func (gongsimstatus *GongsimStatus) GetName() (res string) {
 	return gongsimstatus.Name
 }
 
+// Stage puts updatestate to the model stage
+func (updatestate *UpdateState) Stage(stage *StageStruct) *UpdateState {
+	stage.UpdateStates[updatestate] = __member
+	stage.UpdateStates_mapString[updatestate.Name] = updatestate
+
+	return updatestate
+}
+
+// Unstage removes updatestate off the model stage
+func (updatestate *UpdateState) Unstage(stage *StageStruct) *UpdateState {
+	delete(stage.UpdateStates, updatestate)
+	delete(stage.UpdateStates_mapString, updatestate.Name)
+	return updatestate
+}
+
+// UnstageVoid removes updatestate off the model stage
+func (updatestate *UpdateState) UnstageVoid(stage *StageStruct) {
+	delete(stage.UpdateStates, updatestate)
+	delete(stage.UpdateStates_mapString, updatestate.Name)
+}
+
+// commit updatestate to the back repo (if it is already staged)
+func (updatestate *UpdateState) Commit(stage *StageStruct) *UpdateState {
+	if _, ok := stage.UpdateStates[updatestate]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitUpdateState(updatestate)
+		}
+	}
+	return updatestate
+}
+
+func (updatestate *UpdateState) CommitVoid(stage *StageStruct) {
+	updatestate.Commit(stage)
+}
+
+// Checkout updatestate to the back repo (if it is already staged)
+func (updatestate *UpdateState) Checkout(stage *StageStruct) *UpdateState {
+	if _, ok := stage.UpdateStates[updatestate]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutUpdateState(updatestate)
+		}
+	}
+	return updatestate
+}
+
+// for satisfaction of GongStruct interface
+func (updatestate *UpdateState) GetName() (res string) {
+	return updatestate.Name
+}
+
 // swagger:ignore
 type AllModelsStructCreateInterface interface { // insertion point for Callbacks on creation
 	CreateORMDummyAgent(DummyAgent *DummyAgent)
@@ -536,6 +600,7 @@ type AllModelsStructCreateInterface interface { // insertion point for Callbacks
 	CreateORMEvent(Event *Event)
 	CreateORMGongsimCommand(GongsimCommand *GongsimCommand)
 	CreateORMGongsimStatus(GongsimStatus *GongsimStatus)
+	CreateORMUpdateState(UpdateState *UpdateState)
 }
 
 type AllModelsStructDeleteInterface interface { // insertion point for Callbacks on deletion
@@ -544,6 +609,7 @@ type AllModelsStructDeleteInterface interface { // insertion point for Callbacks
 	DeleteORMEvent(Event *Event)
 	DeleteORMGongsimCommand(GongsimCommand *GongsimCommand)
 	DeleteORMGongsimStatus(GongsimStatus *GongsimStatus)
+	DeleteORMUpdateState(UpdateState *UpdateState)
 }
 
 func (stage *StageStruct) Reset() { // insertion point for array reset
@@ -562,6 +628,9 @@ func (stage *StageStruct) Reset() { // insertion point for array reset
 	stage.GongsimStatuss = make(map[*GongsimStatus]any)
 	stage.GongsimStatuss_mapString = make(map[string]*GongsimStatus)
 
+	stage.UpdateStates = make(map[*UpdateState]any)
+	stage.UpdateStates_mapString = make(map[string]*UpdateState)
+
 }
 
 func (stage *StageStruct) Nil() { // insertion point for array nil
@@ -579,6 +648,9 @@ func (stage *StageStruct) Nil() { // insertion point for array nil
 
 	stage.GongsimStatuss = nil
 	stage.GongsimStatuss_mapString = nil
+
+	stage.UpdateStates = nil
+	stage.UpdateStates_mapString = nil
 
 }
 
@@ -603,6 +675,10 @@ func (stage *StageStruct) Unstage() { // insertion point for array nil
 		gongsimstatus.Unstage(stage)
 	}
 
+	for updatestate := range stage.UpdateStates {
+		updatestate.Unstage(stage)
+	}
+
 }
 
 // Gongstruct is the type parameter for generated generic function that allows
@@ -610,7 +686,6 @@ func (stage *StageStruct) Unstage() { // insertion point for array nil
 // - navigation between staged instances by going backward association links between gongstruct
 // - full refactoring of Gongstruct identifiers / fields
 type Gongstruct interface {
-
 }
 
 type GongtructBasicField interface {
@@ -634,7 +709,9 @@ func CompareGongstructByName[T PointerToGongstruct](a, b T) int {
 
 func SortGongstructSetByName[T PointerToGongstruct](set map[T]any) (sortedSlice []T) {
 
-	sortedSlice = maps.Keys(set)
+	for key := range set {
+		sortedSlice = append(sortedSlice, key)
+	}
 	slices.SortFunc(sortedSlice, CompareGongstructByName)
 
 	return
@@ -673,6 +750,8 @@ func GongGetSet[Type GongstructSet](stage *StageStruct) *Type {
 		return any(&stage.GongsimCommands).(*Type)
 	case map[*GongsimStatus]any:
 		return any(&stage.GongsimStatuss).(*Type)
+	case map[*UpdateState]any:
+		return any(&stage.UpdateStates).(*Type)
 	default:
 		return nil
 	}
@@ -695,6 +774,8 @@ func GongGetMap[Type GongstructMapString](stage *StageStruct) *Type {
 		return any(&stage.GongsimCommands_mapString).(*Type)
 	case map[string]*GongsimStatus:
 		return any(&stage.GongsimStatuss_mapString).(*Type)
+	case map[string]*UpdateState:
+		return any(&stage.UpdateStates_mapString).(*Type)
 	default:
 		return nil
 	}
@@ -717,6 +798,8 @@ func GetGongstructInstancesSet[Type Gongstruct](stage *StageStruct) *map[*Type]a
 		return any(&stage.GongsimCommands).(*map[*Type]any)
 	case GongsimStatus:
 		return any(&stage.GongsimStatuss).(*map[*Type]any)
+	case UpdateState:
+		return any(&stage.UpdateStates).(*map[*Type]any)
 	default:
 		return nil
 	}
@@ -739,6 +822,8 @@ func GetGongstructInstancesSetFromPointerType[Type PointerToGongstruct](stage *S
 		return any(&stage.GongsimCommands).(*map[Type]any)
 	case *GongsimStatus:
 		return any(&stage.GongsimStatuss).(*map[Type]any)
+	case *UpdateState:
+		return any(&stage.UpdateStates).(*map[Type]any)
 	default:
 		return nil
 	}
@@ -761,6 +846,8 @@ func GetGongstructInstancesMap[Type Gongstruct](stage *StageStruct) *map[string]
 		return any(&stage.GongsimCommands_mapString).(*map[string]*Type)
 	case GongsimStatus:
 		return any(&stage.GongsimStatuss_mapString).(*map[string]*Type)
+	case UpdateState:
+		return any(&stage.UpdateStates_mapString).(*map[string]*Type)
 	default:
 		return nil
 	}
@@ -795,6 +882,10 @@ func GetAssociationName[Type Gongstruct]() *Type {
 		}).(*Type)
 	case GongsimStatus:
 		return any(&GongsimStatus{
+			// Initialisation of associations
+		}).(*Type)
+	case UpdateState:
+		return any(&UpdateState{
 			// Initialisation of associations
 		}).(*Type)
 	default:
@@ -857,6 +948,11 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string, stage *StageS
 		switch fieldname {
 		// insertion point for per direct association field
 		}
+	// reverse maps of direct associations of UpdateState
+	case UpdateState:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
 	}
 	return nil
 }
@@ -898,6 +994,11 @@ func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string, stage
 		switch fieldname {
 		// insertion point for per direct association field
 		}
+	// reverse maps of direct associations of UpdateState
+	case UpdateState:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
 	}
 	return nil
 }
@@ -920,6 +1021,8 @@ func GetGongstructName[Type Gongstruct]() (res string) {
 		res = "GongsimCommand"
 	case GongsimStatus:
 		res = "GongsimStatus"
+	case UpdateState:
+		res = "UpdateState"
 	}
 	return res
 }
@@ -942,6 +1045,8 @@ func GetPointerToGongstructName[Type PointerToGongstruct]() (res string) {
 		res = "GongsimCommand"
 	case *GongsimStatus:
 		res = "GongsimStatus"
+	case *UpdateState:
+		res = "UpdateState"
 	}
 	return res
 }
@@ -963,6 +1068,8 @@ func GetFields[Type Gongstruct]() (res []string) {
 		res = []string{"Name", "Command", "CommandDate", "SpeedCommandType", "DateSpeedCommand", "Engine"}
 	case GongsimStatus:
 		res = []string{"Name", "CurrentCommand", "CompletionDate", "CurrentSpeedCommand", "SpeedCommandCompletionDate"}
+	case UpdateState:
+		res = []string{"Name", "Duration", "Period"}
 	}
 	return
 }
@@ -996,6 +1103,9 @@ func GetReverseFields[Type Gongstruct]() (res []ReverseField) {
 	case GongsimStatus:
 		var rf ReverseField
 		_ = rf
+	case UpdateState:
+		var rf ReverseField
+		_ = rf
 	}
 	return
 }
@@ -1017,6 +1127,8 @@ func GetFieldsFromPointer[Type PointerToGongstruct]() (res []string) {
 		res = []string{"Name", "Command", "CommandDate", "SpeedCommandType", "DateSpeedCommand", "Engine"}
 	case *GongsimStatus:
 		res = []string{"Name", "CurrentCommand", "CompletionDate", "CurrentSpeedCommand", "SpeedCommandCompletionDate"}
+	case *UpdateState:
+		res = []string{"Name", "Duration", "Period"}
 	}
 	return
 }
@@ -1139,6 +1251,94 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 			res = enum.ToCodeString()
 		case "SpeedCommandCompletionDate":
 			res = inferedInstance.SpeedCommandCompletionDate
+		}
+	case *UpdateState:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = inferedInstance.Name
+		case "Duration":
+			if math.Abs(inferedInstance.Duration.Hours()) >= 24 {
+				days := __Gong__Abs(int(int(inferedInstance.Duration.Hours()) / 24))
+				months := int(days / 31)
+				days = days - months*31
+
+				remainingHours := int(inferedInstance.Duration.Hours()) % 24
+				remainingMinutes := int(inferedInstance.Duration.Minutes()) % 60
+				remainingSeconds := int(inferedInstance.Duration.Seconds()) % 60
+
+				if inferedInstance.Duration.Hours() < 0 {
+					res = "- "
+				}
+
+				if months > 0 {
+					if months > 1 {
+						res = res + fmt.Sprintf("%d months", months)
+					} else {
+						res = res + fmt.Sprintf("%d month", months)
+					}
+				}
+				if days > 0 {
+					if months != 0 {
+						res = res + ", "
+					}
+					if days > 1 {
+						res = res + fmt.Sprintf("%d days", days)
+					} else {
+						res = res + fmt.Sprintf("%d day", days)
+					}
+
+				}
+				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
+					if days != 0 || (days == 0 && months != 0) {
+						res = res + ", "
+					}
+					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+				}
+			} else {
+				res = fmt.Sprintf("%s\n", inferedInstance.Duration.String())
+			}
+		case "Period":
+			if math.Abs(inferedInstance.Period.Hours()) >= 24 {
+				days := __Gong__Abs(int(int(inferedInstance.Period.Hours()) / 24))
+				months := int(days / 31)
+				days = days - months*31
+
+				remainingHours := int(inferedInstance.Period.Hours()) % 24
+				remainingMinutes := int(inferedInstance.Period.Minutes()) % 60
+				remainingSeconds := int(inferedInstance.Period.Seconds()) % 60
+
+				if inferedInstance.Period.Hours() < 0 {
+					res = "- "
+				}
+
+				if months > 0 {
+					if months > 1 {
+						res = res + fmt.Sprintf("%d months", months)
+					} else {
+						res = res + fmt.Sprintf("%d month", months)
+					}
+				}
+				if days > 0 {
+					if months != 0 {
+						res = res + ", "
+					}
+					if days > 1 {
+						res = res + fmt.Sprintf("%d days", days)
+					} else {
+						res = res + fmt.Sprintf("%d day", days)
+					}
+
+				}
+				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
+					if days != 0 || (days == 0 && months != 0) {
+						res = res + ", "
+					}
+					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+				}
+			} else {
+				res = fmt.Sprintf("%s\n", inferedInstance.Period.String())
+			}
 		}
 	default:
 		_ = inferedInstance
@@ -1264,6 +1464,94 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = enum.ToCodeString()
 		case "SpeedCommandCompletionDate":
 			res = inferedInstance.SpeedCommandCompletionDate
+		}
+	case UpdateState:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = inferedInstance.Name
+		case "Duration":
+			if math.Abs(inferedInstance.Duration.Hours()) >= 24 {
+				days := __Gong__Abs(int(int(inferedInstance.Duration.Hours()) / 24))
+				months := int(days / 31)
+				days = days - months*31
+
+				remainingHours := int(inferedInstance.Duration.Hours()) % 24
+				remainingMinutes := int(inferedInstance.Duration.Minutes()) % 60
+				remainingSeconds := int(inferedInstance.Duration.Seconds()) % 60
+
+				if inferedInstance.Duration.Hours() < 0 {
+					res = "- "
+				}
+
+				if months > 0 {
+					if months > 1 {
+						res = res + fmt.Sprintf("%d months", months)
+					} else {
+						res = res + fmt.Sprintf("%d month", months)
+					}
+				}
+				if days > 0 {
+					if months != 0 {
+						res = res + ", "
+					}
+					if days > 1 {
+						res = res + fmt.Sprintf("%d days", days)
+					} else {
+						res = res + fmt.Sprintf("%d day", days)
+					}
+
+				}
+				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
+					if days != 0 || (days == 0 && months != 0) {
+						res = res + ", "
+					}
+					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+				}
+			} else {
+				res = fmt.Sprintf("%s\n", inferedInstance.Duration.String())
+			}
+		case "Period":
+			if math.Abs(inferedInstance.Period.Hours()) >= 24 {
+				days := __Gong__Abs(int(int(inferedInstance.Period.Hours()) / 24))
+				months := int(days / 31)
+				days = days - months*31
+
+				remainingHours := int(inferedInstance.Period.Hours()) % 24
+				remainingMinutes := int(inferedInstance.Period.Minutes()) % 60
+				remainingSeconds := int(inferedInstance.Period.Seconds()) % 60
+
+				if inferedInstance.Period.Hours() < 0 {
+					res = "- "
+				}
+
+				if months > 0 {
+					if months > 1 {
+						res = res + fmt.Sprintf("%d months", months)
+					} else {
+						res = res + fmt.Sprintf("%d month", months)
+					}
+				}
+				if days > 0 {
+					if months != 0 {
+						res = res + ", "
+					}
+					if days > 1 {
+						res = res + fmt.Sprintf("%d days", days)
+					} else {
+						res = res + fmt.Sprintf("%d day", days)
+					}
+
+				}
+				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
+					if days != 0 || (days == 0 && months != 0) {
+						res = res + ", "
+					}
+					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+				}
+			} else {
+				res = fmt.Sprintf("%s\n", inferedInstance.Period.String())
+			}
 		}
 	default:
 		_ = inferedInstance

@@ -30,6 +30,8 @@ func fillUpTablePointerToGongstruct[T models.PointerToGongstruct](
 		fillUpTable[models.GongsimCommand](probe)
 	case *models.GongsimStatus:
 		fillUpTable[models.GongsimStatus](probe)
+	case *models.UpdateState:
+		fillUpTable[models.UpdateState](probe)
 	default:
 		log.Println("unknow type")
 	}
@@ -127,7 +129,11 @@ func fillUpTable[T models.Gongstruct](
 		}).Stage(probe.tableStage)
 		row.Cells = append(row.Cells, cell)
 		cellIcon := (&gongtable.CellIcon{
-			Name: "Delete Icon",
+			Name: fmt.Sprintf("Delete Icon %d", orm.GetID(
+				probe.stageOfInterest,
+				probe.backRepoOfInterest,
+				structInstance,
+			)),
 			Icon: string(maticons.BUTTON_delete),
 		}).Stage(probe.tableStage)
 		cellIcon.Impl = NewCellDeleteIconImpl[T](structInstance, probe)
@@ -184,8 +190,8 @@ func NewRowUpdate[T models.Gongstruct](
 }
 
 type RowUpdate[T models.Gongstruct] struct {
-	Instance   *T
-	probe *Probe
+	Instance *T
+	probe    *Probe
 }
 
 func (rowUpdate *RowUpdate[T]) RowUpdated(stage *gongtable.StageStruct, row, updatedRow *gongtable.Row) {

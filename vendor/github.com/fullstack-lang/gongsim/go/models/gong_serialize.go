@@ -19,6 +19,7 @@ func SerializeStage(stage *StageStruct, filename string) {
 		SerializeExcelize[Event](stage, f)
 		SerializeExcelize[GongsimCommand](stage, f)
 		SerializeExcelize[GongsimStatus](stage, f)
+		SerializeExcelize[UpdateState](stage, f)
 	}
 
 	var tab ExcelizeTabulator

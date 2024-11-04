@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongsim/go/db"
 	"github.com/fullstack-lang/gongsim/go/models"
 )
 
@@ -64,7 +65,7 @@ type EventDB struct {
 
 	// Declation for basic field eventDB.Duration
 	Duration_Data sql.NullInt64
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	EventPointersEncoding
@@ -110,7 +111,7 @@ type BackRepoEventStruct struct {
 	// stores Event according to their gorm ID
 	Map_EventDBID_EventPtr map[uint]*models.Event
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -120,7 +121,7 @@ func (backRepoEvent *BackRepoEventStruct) GetStage() (stage *models.StageStruct)
 	return
 }
 
-func (backRepoEvent *BackRepoEventStruct) GetDB() *gorm.DB {
+func (backRepoEvent *BackRepoEventStruct) GetDB() db.DBInterface {
 	return backRepoEvent.db
 }
 
@@ -157,9 +158,10 @@ func (backRepoEvent *BackRepoEventStruct) CommitDeleteInstance(id uint) (Error e
 
 	// event is not staged anymore, remove eventDB
 	eventDB := backRepoEvent.Map_EventDBID_EventDB[id]
-	query := backRepoEvent.db.Unscoped().Delete(&eventDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoEvent.db.Unscoped()
+	_, err := db.Delete(eventDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -183,9 +185,9 @@ func (backRepoEvent *BackRepoEventStruct) CommitPhaseOneInstance(event *models.E
 	var eventDB EventDB
 	eventDB.CopyBasicFieldsFromEvent(event)
 
-	query := backRepoEvent.db.Create(&eventDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoEvent.db.Create(&eventDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -217,9 +219,9 @@ func (backRepoEvent *BackRepoEventStruct) CommitPhaseTwoInstance(backRepo *BackR
 		eventDB.CopyBasicFieldsFromEvent(event)
 
 		// insertion point for translating pointers encodings into actual pointers
-		query := backRepoEvent.db.Save(&eventDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoEvent.db.Save(eventDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -238,9 +240,9 @@ func (backRepoEvent *BackRepoEventStruct) CommitPhaseTwoInstance(backRepo *BackR
 func (backRepoEvent *BackRepoEventStruct) CheckoutPhaseOne() (Error error) {
 
 	eventDBArray := make([]EventDB, 0)
-	query := backRepoEvent.db.Find(&eventDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoEvent.db.Find(&eventDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -351,7 +353,7 @@ func (backRepo *BackRepoStruct) CheckoutEvent(event *models.Event) {
 			var eventDB EventDB
 			eventDB.ID = id
 
-			if err := backRepo.BackRepoEvent.db.First(&eventDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoEvent.db.First(&eventDB, id); err != nil {
 				log.Fatalln("CheckoutEvent : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoEvent.CheckoutPhaseOneInstance(&eventDB)
@@ -510,9 +512,9 @@ func (backRepoEvent *BackRepoEventStruct) rowVisitorEvent(row *xlsx.Row) error {
 
 		eventDB_ID_atBackupTime := eventDB.ID
 		eventDB.ID = 0
-		query := backRepoEvent.db.Create(eventDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoEvent.db.Create(eventDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoEvent.Map_EventDBID_EventDB[eventDB.ID] = eventDB
 		BackRepoEventid_atBckpTime_newID[eventDB_ID_atBackupTime] = eventDB.ID
@@ -547,9 +549,9 @@ func (backRepoEvent *BackRepoEventStruct) RestorePhaseOne(dirPath string) {
 
 		eventDB_ID_atBackupTime := eventDB.ID
 		eventDB.ID = 0
-		query := backRepoEvent.db.Create(eventDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoEvent.db.Create(eventDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoEvent.Map_EventDBID_EventDB[eventDB.ID] = eventDB
 		BackRepoEventid_atBckpTime_newID[eventDB_ID_atBackupTime] = eventDB.ID
@@ -571,9 +573,10 @@ func (backRepoEvent *BackRepoEventStruct) RestorePhaseTwo() {
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoEvent.db.Model(eventDB).Updates(*eventDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoEvent.db.Model(eventDB)
+		_, err := db.Updates(*eventDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

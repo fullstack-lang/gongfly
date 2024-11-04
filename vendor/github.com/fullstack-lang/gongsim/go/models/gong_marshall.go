@@ -43,7 +43,7 @@ func _(stage *models.StageStruct) {
 }`
 
 const IdentifiersDecls = `
-	{{Identifier}} := (&models.{{GeneratedStructName}}{Name: ` + "`" + `{{GeneratedFieldNameValue}}` + "`" + `}).Stage(stage)`
+	{{Identifier}} := (&models.{{GeneratedStructName}}{}).Stage(stage)`
 
 const StringInitStatement = `
 	{{Identifier}}.{{GeneratedFieldName}} = ` + "`" + `{{GeneratedFieldNameValue}}` + "`"
@@ -384,6 +384,52 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 
 	}
 
+	map_UpdateState_Identifiers := make(map[*UpdateState]string)
+	_ = map_UpdateState_Identifiers
+
+	updatestateOrdered := []*UpdateState{}
+	for updatestate := range stage.UpdateStates {
+		updatestateOrdered = append(updatestateOrdered, updatestate)
+	}
+	sort.Slice(updatestateOrdered[:], func(i, j int) bool {
+		return updatestateOrdered[i].Name < updatestateOrdered[j].Name
+	})
+	if len(updatestateOrdered) > 0 {
+		identifiersDecl += "\n"
+	}
+	for idx, updatestate := range updatestateOrdered {
+
+		id = generatesIdentifier("UpdateState", idx, updatestate.Name)
+		map_UpdateState_Identifiers[updatestate] = id
+
+		decl = IdentifiersDecls
+		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
+		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "UpdateState")
+		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", updatestate.Name)
+		identifiersDecl += decl
+
+		initializerStatements += "\n"
+		// Initialisation of values
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(updatestate.Name))
+		initializerStatements += setValueField
+
+		setValueField = NumberInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Duration")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", updatestate.Duration))
+		initializerStatements += setValueField
+
+		setValueField = NumberInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Period")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%d", updatestate.Period))
+		initializerStatements += setValueField
+
+	}
+
 	// insertion initialization of objects to stage
 	for idx, dummyagent := range dummyagentOrdered {
 		var setPointerField string
@@ -439,6 +485,16 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 
 		id = generatesIdentifier("GongsimStatus", idx, gongsimstatus.Name)
 		map_GongsimStatus_Identifiers[gongsimstatus] = id
+
+		// Initialisation of values
+	}
+
+	for idx, updatestate := range updatestateOrdered {
+		var setPointerField string
+		_ = setPointerField
+
+		id = generatesIdentifier("UpdateState", idx, updatestate.Name)
+		map_UpdateState_Identifiers[updatestate] = id
 
 		// Initialisation of values
 	}

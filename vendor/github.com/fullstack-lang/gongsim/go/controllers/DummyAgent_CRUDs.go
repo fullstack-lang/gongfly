@@ -70,12 +70,12 @@ func (controller *Controller) GetDummyAgents(c *gin.Context) {
 	}
 	db := backRepo.BackRepoDummyAgent.GetDB()
 
-	query := db.Find(&dummyagentDBs)
-	if query.Error != nil {
+	_, err := db.Find(&dummyagentDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -151,12 +151,12 @@ func (controller *Controller) PostDummyAgent(c *gin.Context) {
 	dummyagentDB.DummyAgentPointersEncoding = input.DummyAgentPointersEncoding
 	dummyagentDB.CopyBasicFieldsFromDummyAgent_WOP(&input.DummyAgent_WOP)
 
-	query := db.Create(&dummyagentDB)
-	if query.Error != nil {
+	_, err = db.Create(&dummyagentDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -205,7 +205,7 @@ func (controller *Controller) GetDummyAgent(c *gin.Context) {
 
 	// Get dummyagentDB in DB
 	var dummyagentDB orm.DummyAgentDB
-	if err := db.First(&dummyagentDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&dummyagentDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateDummyAgent(c *gin.Context) {
 	var dummyagentDB orm.DummyAgentDB
 
 	// fetch the dummyagent
-	query := db.First(&dummyagentDB, c.Param("id"))
+	_, err := db.First(&dummyagentDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateDummyAgent(c *gin.Context) {
 	dummyagentDB.CopyBasicFieldsFromDummyAgent_WOP(&input.DummyAgent_WOP)
 	dummyagentDB.DummyAgentPointersEncoding = input.DummyAgentPointersEncoding
 
-	query = db.Model(&dummyagentDB).Updates(dummyagentDB)
-	if query.Error != nil {
+	db, _ = db.Model(&dummyagentDB)
+	_, err = db.Updates(&dummyagentDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteDummyAgent(c *gin.Context) {
 
 	// Get model if exist
 	var dummyagentDB orm.DummyAgentDB
-	if err := db.First(&dummyagentDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&dummyagentDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteDummyAgent(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&dummyagentDB)
+	db.Unscoped()
+	db.Delete(&dummyagentDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	dummyagentDeleted := new(models.DummyAgent)
