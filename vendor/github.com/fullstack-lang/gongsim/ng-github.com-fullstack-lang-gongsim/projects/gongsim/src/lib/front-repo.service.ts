@@ -24,6 +24,10 @@ import { GongsimStatusAPI } from './gongsimstatus-api'
 import { GongsimStatus, CopyGongsimStatusAPIToGongsimStatus } from './gongsimstatus'
 import { GongsimStatusService } from './gongsimstatus.service'
 
+import { UpdateStateAPI } from './updatestate-api'
+import { UpdateState, CopyUpdateStateAPIToUpdateState } from './updatestate'
+import { UpdateStateService } from './updatestate.service'
+
 
 import { BackRepoData } from './back-repo-data'
 
@@ -46,6 +50,9 @@ export class FrontRepo { // insertion point sub template
 	array_GongsimStatuss = new Array<GongsimStatus>() // array of front instances
 	map_ID_GongsimStatus = new Map<number, GongsimStatus>() // map of front instances
 
+	array_UpdateStates = new Array<UpdateState>() // array of front instances
+	map_ID_UpdateState = new Map<number, UpdateState>() // map of front instances
+
 
 	// getFrontArray allows for a get function that is robust to refactoring of the named struct name
 	// for instance frontRepo.getArray<Astruct>( Astruct.GONGSTRUCT_NAME), is robust to a refactoring of Astruct identifier
@@ -63,6 +70,8 @@ export class FrontRepo { // insertion point sub template
 				return this.array_GongsimCommands as unknown as Array<Type>
 			case 'GongsimStatus':
 				return this.array_GongsimStatuss as unknown as Array<Type>
+			case 'UpdateState':
+				return this.array_UpdateStates as unknown as Array<Type>
 			default:
 				throw new Error("Type not recognized");
 		}
@@ -81,6 +90,8 @@ export class FrontRepo { // insertion point sub template
 				return this.map_ID_GongsimCommand as unknown as Map<number, Type>
 			case 'GongsimStatus':
 				return this.map_ID_GongsimStatus as unknown as Map<number, Type>
+			case 'UpdateState':
+				return this.map_ID_UpdateState as unknown as Map<number, Type>
 			default:
 				throw new Error("Type not recognized");
 		}
@@ -153,6 +164,7 @@ export class FrontRepoService {
 		private eventService: EventService,
 		private gongsimcommandService: GongsimCommandService,
 		private gongsimstatusService: GongsimStatusService,
+		private updatestateService: UpdateStateService,
 	) { }
 
 	// postService provides a post function for each struct name
@@ -190,6 +202,7 @@ export class FrontRepoService {
 		Observable<EventAPI[]>,
 		Observable<GongsimCommandAPI[]>,
 		Observable<GongsimStatusAPI[]>,
+		Observable<UpdateStateAPI[]>,
 	] = [
 			// Using "combineLatest" with a placeholder observable.
 			//
@@ -205,6 +218,7 @@ export class FrontRepoService {
 			this.eventService.getEvents(this.GONG__StackPath, this.frontRepo),
 			this.gongsimcommandService.getGongsimCommands(this.GONG__StackPath, this.frontRepo),
 			this.gongsimstatusService.getGongsimStatuss(this.GONG__StackPath, this.frontRepo),
+			this.updatestateService.getUpdateStates(this.GONG__StackPath, this.frontRepo),
 		];
 
 	//
@@ -225,6 +239,7 @@ export class FrontRepoService {
 			this.eventService.getEvents(this.GONG__StackPath, this.frontRepo),
 			this.gongsimcommandService.getGongsimCommands(this.GONG__StackPath, this.frontRepo),
 			this.gongsimstatusService.getGongsimStatuss(this.GONG__StackPath, this.frontRepo),
+			this.updatestateService.getUpdateStates(this.GONG__StackPath, this.frontRepo),
 		]
 
 		return new Observable<FrontRepo>(
@@ -240,6 +255,7 @@ export class FrontRepoService {
 						events_,
 						gongsimcommands_,
 						gongsimstatuss_,
+						updatestates_,
 					]) => {
 						let _this = this
 						// Typing can be messy with many items. Therefore, type casting is necessary here
@@ -254,6 +270,8 @@ export class FrontRepoService {
 						gongsimcommands = gongsimcommands_ as GongsimCommandAPI[]
 						var gongsimstatuss: GongsimStatusAPI[]
 						gongsimstatuss = gongsimstatuss_ as GongsimStatusAPI[]
+						var updatestates: UpdateStateAPI[]
+						updatestates = updatestates_ as UpdateStateAPI[]
 
 						// 
 						// First Step: init map of instances
@@ -318,6 +336,18 @@ export class FrontRepoService {
 							}
 						)
 
+						// init the arrays
+						this.frontRepo.array_UpdateStates = []
+						this.frontRepo.map_ID_UpdateState.clear()
+
+						updatestates.forEach(
+							updatestateAPI => {
+								let updatestate = new UpdateState
+								this.frontRepo.array_UpdateStates.push(updatestate)
+								this.frontRepo.map_ID_UpdateState.set(updatestateAPI.ID, updatestate)
+							}
+						)
+
 
 						// 
 						// Second Step: reddeem front objects
@@ -359,6 +389,14 @@ export class FrontRepoService {
 							gongsimstatusAPI => {
 								let gongsimstatus = this.frontRepo.map_ID_GongsimStatus.get(gongsimstatusAPI.ID)
 								CopyGongsimStatusAPIToGongsimStatus(gongsimstatusAPI, gongsimstatus!, this.frontRepo)
+							}
+						)
+
+						// fill up front objects
+						updatestates.forEach(
+							updatestateAPI => {
+								let updatestate = this.frontRepo.map_ID_UpdateState.get(updatestateAPI.ID)
+								CopyUpdateStateAPIToUpdateState(updatestateAPI, updatestate!, this.frontRepo)
 							}
 						)
 
@@ -453,6 +491,18 @@ export class FrontRepoService {
 					}
 				)
 
+				// init the arrays
+				this.frontRepo.array_UpdateStates = []
+				this.frontRepo.map_ID_UpdateState.clear()
+
+				backRepoData.UpdateStateAPIs.forEach(
+					updatestateAPI => {
+						let updatestate = new UpdateState
+						this.frontRepo.array_UpdateStates.push(updatestate)
+						this.frontRepo.map_ID_UpdateState.set(updatestateAPI.ID, updatestate)
+					}
+				)
+
 
 				// 
 				// Second Step: reddeem front objects
@@ -499,6 +549,14 @@ export class FrontRepoService {
 					}
 				)
 
+				// fill up front objects
+				backRepoData.UpdateStateAPIs.forEach(
+					updatestateAPI => {
+						let updatestate = this.frontRepo.map_ID_UpdateState.get(updatestateAPI.ID)
+						CopyUpdateStateAPIToUpdateState(updatestateAPI, updatestate!, this.frontRepo)
+					}
+				)
+
 
 
 				observer.next(this.frontRepo)
@@ -532,4 +590,7 @@ export function getGongsimCommandUniqueID(id: number): number {
 }
 export function getGongsimStatusUniqueID(id: number): number {
 	return 47 * id
+}
+export function getUpdateStateUniqueID(id: number): number {
+	return 53 * id
 }

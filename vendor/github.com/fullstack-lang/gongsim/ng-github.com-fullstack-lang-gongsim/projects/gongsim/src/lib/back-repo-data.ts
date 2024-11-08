@@ -11,6 +11,8 @@ import { GongsimCommandAPI } from './gongsimcommand-api'
 
 import { GongsimStatusAPI } from './gongsimstatus-api'
 
+import { UpdateStateAPI } from './updatestate-api'
+
 
 export class BackRepoData {
 	// insertion point for declarations
@@ -23,6 +25,8 @@ export class BackRepoData {
 	GongsimCommandAPIs = new Array<GongsimCommandAPI>()
 
 	GongsimStatusAPIs = new Array<GongsimStatusAPI>()
+
+	UpdateStateAPIs = new Array<UpdateStateAPI>()
 
 
 
@@ -37,6 +41,8 @@ export class BackRepoData {
 		this.GongsimCommandAPIs = data?.GongsimCommandAPIs || [];
 
 		this.GongsimStatusAPIs = data?.GongsimStatusAPIs || [];
+
+		this.UpdateStateAPIs = data?.UpdateStateAPIs || [];
 
 	}
 
