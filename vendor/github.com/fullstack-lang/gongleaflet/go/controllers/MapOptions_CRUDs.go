@@ -55,10 +55,10 @@ func (controller *Controller) GetMapOptionss(c *gin.Context) {
 	// source slice
 	var mapoptionsDBs []orm.MapOptionsDB
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetMapOptionss", "GONG__StackPath", stackPath)
@@ -70,12 +70,12 @@ func (controller *Controller) GetMapOptionss(c *gin.Context) {
 	}
 	db := backRepo.BackRepoMapOptions.GetDB()
 
-	query := db.Find(&mapoptionsDBs)
-	if query.Error != nil {
+	_, err := db.Find(&mapoptionsDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -118,10 +118,10 @@ func (controller *Controller) PostMapOptions(c *gin.Context) {
 	mutexMapOptions.Lock()
 	defer mutexMapOptions.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("PostMapOptionss", "GONG__StackPath", stackPath)
@@ -151,12 +151,12 @@ func (controller *Controller) PostMapOptions(c *gin.Context) {
 	mapoptionsDB.MapOptionsPointersEncoding = input.MapOptionsPointersEncoding
 	mapoptionsDB.CopyBasicFieldsFromMapOptions_WOP(&input.MapOptions_WOP)
 
-	query := db.Create(&mapoptionsDB)
-	if query.Error != nil {
+	_, err = db.Create(&mapoptionsDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -188,10 +188,10 @@ func (controller *Controller) PostMapOptions(c *gin.Context) {
 //	200: mapoptionsDBResponse
 func (controller *Controller) GetMapOptions(c *gin.Context) {
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetMapOptions", "GONG__StackPath", stackPath)
@@ -205,7 +205,7 @@ func (controller *Controller) GetMapOptions(c *gin.Context) {
 
 	// Get mapoptionsDB in DB
 	var mapoptionsDB orm.MapOptionsDB
-	if err := db.First(&mapoptionsDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&mapoptionsDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -237,10 +237,10 @@ func (controller *Controller) UpdateMapOptions(c *gin.Context) {
 	mutexMapOptions.Lock()
 	defer mutexMapOptions.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("UpdateMapOptions", "GONG__StackPath", stackPath)
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateMapOptions(c *gin.Context) {
 	var mapoptionsDB orm.MapOptionsDB
 
 	// fetch the mapoptions
-	query := db.First(&mapoptionsDB, c.Param("id"))
+	_, err := db.First(&mapoptionsDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateMapOptions(c *gin.Context) {
 	mapoptionsDB.CopyBasicFieldsFromMapOptions_WOP(&input.MapOptions_WOP)
 	mapoptionsDB.MapOptionsPointersEncoding = input.MapOptionsPointersEncoding
 
-	query = db.Model(&mapoptionsDB).Updates(mapoptionsDB)
-	if query.Error != nil {
+	db, _ = db.Model(&mapoptionsDB)
+	_, err = db.Updates(&mapoptionsDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -326,10 +327,10 @@ func (controller *Controller) DeleteMapOptions(c *gin.Context) {
 	mutexMapOptions.Lock()
 	defer mutexMapOptions.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("DeleteMapOptions", "GONG__StackPath", stackPath)
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteMapOptions(c *gin.Context) {
 
 	// Get model if exist
 	var mapoptionsDB orm.MapOptionsDB
-	if err := db.First(&mapoptionsDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&mapoptionsDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteMapOptions(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&mapoptionsDB)
+	db.Unscoped()
+	db.Delete(&mapoptionsDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	mapoptionsDeleted := new(models.MapOptions)

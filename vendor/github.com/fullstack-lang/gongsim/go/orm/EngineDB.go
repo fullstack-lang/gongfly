@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongsim/go/db"
 	"github.com/fullstack-lang/gongsim/go/models"
 )
 
@@ -85,7 +86,7 @@ type EngineDB struct {
 
 	// Declation for basic field engineDB.Speed
 	Speed_Data sql.NullFloat64
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	EnginePointersEncoding
@@ -152,7 +153,7 @@ type BackRepoEngineStruct struct {
 	// stores Engine according to their gorm ID
 	Map_EngineDBID_EnginePtr map[uint]*models.Engine
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -162,7 +163,7 @@ func (backRepoEngine *BackRepoEngineStruct) GetStage() (stage *models.StageStruc
 	return
 }
 
-func (backRepoEngine *BackRepoEngineStruct) GetDB() *gorm.DB {
+func (backRepoEngine *BackRepoEngineStruct) GetDB() db.DBInterface {
 	return backRepoEngine.db
 }
 
@@ -199,9 +200,10 @@ func (backRepoEngine *BackRepoEngineStruct) CommitDeleteInstance(id uint) (Error
 
 	// engine is not staged anymore, remove engineDB
 	engineDB := backRepoEngine.Map_EngineDBID_EngineDB[id]
-	query := backRepoEngine.db.Unscoped().Delete(&engineDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoEngine.db.Unscoped()
+	_, err := db.Delete(engineDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -225,9 +227,9 @@ func (backRepoEngine *BackRepoEngineStruct) CommitPhaseOneInstance(engine *model
 	var engineDB EngineDB
 	engineDB.CopyBasicFieldsFromEngine(engine)
 
-	query := backRepoEngine.db.Create(&engineDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoEngine.db.Create(&engineDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -259,9 +261,9 @@ func (backRepoEngine *BackRepoEngineStruct) CommitPhaseTwoInstance(backRepo *Bac
 		engineDB.CopyBasicFieldsFromEngine(engine)
 
 		// insertion point for translating pointers encodings into actual pointers
-		query := backRepoEngine.db.Save(&engineDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoEngine.db.Save(engineDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -280,9 +282,9 @@ func (backRepoEngine *BackRepoEngineStruct) CommitPhaseTwoInstance(backRepo *Bac
 func (backRepoEngine *BackRepoEngineStruct) CheckoutPhaseOne() (Error error) {
 
 	engineDBArray := make([]EngineDB, 0)
-	query := backRepoEngine.db.Find(&engineDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoEngine.db.Find(&engineDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -393,7 +395,7 @@ func (backRepo *BackRepoStruct) CheckoutEngine(engine *models.Engine) {
 			var engineDB EngineDB
 			engineDB.ID = id
 
-			if err := backRepo.BackRepoEngine.db.First(&engineDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoEngine.db.First(&engineDB, id); err != nil {
 				log.Fatalln("CheckoutEngine : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoEngine.CheckoutPhaseOneInstance(&engineDB)
@@ -636,9 +638,9 @@ func (backRepoEngine *BackRepoEngineStruct) rowVisitorEngine(row *xlsx.Row) erro
 
 		engineDB_ID_atBackupTime := engineDB.ID
 		engineDB.ID = 0
-		query := backRepoEngine.db.Create(engineDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoEngine.db.Create(engineDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoEngine.Map_EngineDBID_EngineDB[engineDB.ID] = engineDB
 		BackRepoEngineid_atBckpTime_newID[engineDB_ID_atBackupTime] = engineDB.ID
@@ -673,9 +675,9 @@ func (backRepoEngine *BackRepoEngineStruct) RestorePhaseOne(dirPath string) {
 
 		engineDB_ID_atBackupTime := engineDB.ID
 		engineDB.ID = 0
-		query := backRepoEngine.db.Create(engineDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoEngine.db.Create(engineDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoEngine.Map_EngineDBID_EngineDB[engineDB.ID] = engineDB
 		BackRepoEngineid_atBckpTime_newID[engineDB_ID_atBackupTime] = engineDB.ID
@@ -697,9 +699,10 @@ func (backRepoEngine *BackRepoEngineStruct) RestorePhaseTwo() {
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoEngine.db.Model(engineDB).Updates(*engineDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoEngine.db.Model(engineDB)
+		_, err := db.Updates(*engineDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

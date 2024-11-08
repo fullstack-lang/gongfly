@@ -1,25 +1,37 @@
-# github.com/bytedance/sonic v1.11.9
-## explicit; go 1.16
+# github.com/bytedance/sonic v1.12.4
+## explicit; go 1.17
 github.com/bytedance/sonic
 github.com/bytedance/sonic/ast
 github.com/bytedance/sonic/decoder
 github.com/bytedance/sonic/encoder
+github.com/bytedance/sonic/internal/base64
 github.com/bytedance/sonic/internal/caching
 github.com/bytedance/sonic/internal/cpu
-github.com/bytedance/sonic/internal/decoder
+github.com/bytedance/sonic/internal/decoder/api
+github.com/bytedance/sonic/internal/decoder/consts
+github.com/bytedance/sonic/internal/decoder/errors
+github.com/bytedance/sonic/internal/decoder/jitdec
+github.com/bytedance/sonic/internal/decoder/optdec
 github.com/bytedance/sonic/internal/encoder
+github.com/bytedance/sonic/internal/encoder/alg
+github.com/bytedance/sonic/internal/encoder/ir
+github.com/bytedance/sonic/internal/encoder/vars
+github.com/bytedance/sonic/internal/encoder/vm
+github.com/bytedance/sonic/internal/encoder/x86
+github.com/bytedance/sonic/internal/envs
 github.com/bytedance/sonic/internal/jit
 github.com/bytedance/sonic/internal/native
 github.com/bytedance/sonic/internal/native/avx2
 github.com/bytedance/sonic/internal/native/neon
 github.com/bytedance/sonic/internal/native/sse
 github.com/bytedance/sonic/internal/native/types
+github.com/bytedance/sonic/internal/optcaching
 github.com/bytedance/sonic/internal/resolver
 github.com/bytedance/sonic/internal/rt
 github.com/bytedance/sonic/option
 github.com/bytedance/sonic/unquote
 github.com/bytedance/sonic/utf8
-# github.com/bytedance/sonic/loader v0.1.1
+# github.com/bytedance/sonic/loader v0.2.1
 ## explicit; go 1.16
 github.com/bytedance/sonic/loader
 github.com/bytedance/sonic/loader/internal/abi
@@ -40,18 +52,20 @@ github.com/erikstmartin/go-testdb
 # github.com/frankban/quicktest v1.14.6
 ## explicit; go 1.13
 github.com/frankban/quicktest
-# github.com/fullstack-lang/gong v0.0.0-20240721220853-133b5b105d6b
-## explicit; go 1.21.0
+# github.com/fullstack-lang/gong v0.0.0-20241108073442-cd10a91889a7
+## explicit; go 1.23.1
 github.com/fullstack-lang/gong/go/controllers
+github.com/fullstack-lang/gong/go/db
 github.com/fullstack-lang/gong/go/fullstack
 github.com/fullstack-lang/gong/go/ignore
 github.com/fullstack-lang/gong/go/models
 github.com/fullstack-lang/gong/go/orm
 github.com/fullstack-lang/gong/ng-github.com-fullstack-lang-gong/projects
-# github.com/fullstack-lang/gongdoc v0.0.0-20240721220905-1403f2b2d3cf
-## explicit; go 1.21.0
+# github.com/fullstack-lang/gongdoc v0.0.0-20241108073442-666e4e3677fc
+## explicit; go 1.23.1
 github.com/fullstack-lang/gongdoc/go/adapter
 github.com/fullstack-lang/gongdoc/go/controllers
+github.com/fullstack-lang/gongdoc/go/db
 github.com/fullstack-lang/gongdoc/go/diagrammer
 github.com/fullstack-lang/gongdoc/go/doc2svg
 github.com/fullstack-lang/gongdoc/go/fullstack
@@ -59,52 +73,57 @@ github.com/fullstack-lang/gongdoc/go/load
 github.com/fullstack-lang/gongdoc/go/models
 github.com/fullstack-lang/gongdoc/go/orm
 github.com/fullstack-lang/gongdoc/ng-github.com-fullstack-lang-gongdoc/projects
-# github.com/fullstack-lang/gongleaflet v0.0.0-20240509053144-aaaec3dd628b
-## explicit; go 1.21.0
+# github.com/fullstack-lang/gongleaflet v0.0.0-20241108104143-512f677b9c41
+## explicit; go 1.23.1
 github.com/fullstack-lang/gongleaflet/go
 github.com/fullstack-lang/gongleaflet/go/controllers
+github.com/fullstack-lang/gongleaflet/go/db
 github.com/fullstack-lang/gongleaflet/go/fullstack
 github.com/fullstack-lang/gongleaflet/go/models
 github.com/fullstack-lang/gongleaflet/go/orm
 github.com/fullstack-lang/gongleaflet/go/probe
 github.com/fullstack-lang/gongleaflet/go/stack
 github.com/fullstack-lang/gongleaflet/ng-github.com-fullstack-lang-gongleaflet/projects
-# github.com/fullstack-lang/gongsim v0.0.0-20240721220947-77cffa8547ac
-## explicit; go 1.21.0
+# github.com/fullstack-lang/gongsim v0.0.0-20241108073447-63ae7c55fdcd
+## explicit; go 1.23.1
 github.com/fullstack-lang/gongsim/go
 github.com/fullstack-lang/gongsim/go/controllers
+github.com/fullstack-lang/gongsim/go/db
 github.com/fullstack-lang/gongsim/go/fullstack
 github.com/fullstack-lang/gongsim/go/models
 github.com/fullstack-lang/gongsim/go/orm
 github.com/fullstack-lang/gongsim/go/probe
 github.com/fullstack-lang/gongsim/go/stack
 github.com/fullstack-lang/gongsim/ng-github.com-fullstack-lang-gongsim/projects
-# github.com/fullstack-lang/gongsvg v0.0.0-20240721220953-1ca9256b5f7f
-## explicit; go 1.21.0
+# github.com/fullstack-lang/gongsvg v0.0.0-20241108073448-c189e2785728
+## explicit; go 1.23.1
 github.com/fullstack-lang/gongsvg/go/controllers
+github.com/fullstack-lang/gongsvg/go/db
 github.com/fullstack-lang/gongsvg/go/fullstack
 github.com/fullstack-lang/gongsvg/go/models
 github.com/fullstack-lang/gongsvg/go/orm
 github.com/fullstack-lang/gongsvg/ng-github.com-fullstack-lang-gongsvg/projects
-# github.com/fullstack-lang/gongtable v0.0.0-20240721220959-8e8aff7b9336
-## explicit; go 1.21.0
+# github.com/fullstack-lang/gongtable v0.0.0-20241108073449-272e3f80c4e9
+## explicit; go 1.23.1
 github.com/fullstack-lang/gongtable/go/controllers
+github.com/fullstack-lang/gongtable/go/db
 github.com/fullstack-lang/gongtable/go/fullstack
 github.com/fullstack-lang/gongtable/go/models
 github.com/fullstack-lang/gongtable/go/orm
 github.com/fullstack-lang/gongtable/ng-github.com-fullstack-lang-gongtable/projects
-# github.com/fullstack-lang/gongtree v0.0.0-20240721221005-131c437db96a
-## explicit; go 1.21.0
+# github.com/fullstack-lang/gongtree v0.0.0-20241108073450-c557f4382d93
+## explicit; go 1.23.1
 github.com/fullstack-lang/gongtree/go/buttons
 github.com/fullstack-lang/gongtree/go/controllers
+github.com/fullstack-lang/gongtree/go/db
 github.com/fullstack-lang/gongtree/go/fullstack
 github.com/fullstack-lang/gongtree/go/models
 github.com/fullstack-lang/gongtree/go/orm
 github.com/fullstack-lang/gongtree/ng-github.com-fullstack-lang-gongtree/projects
-# github.com/fullstack-lang/maticons v0.0.0-20230823061653-70c364fbdd00
-## explicit; go 1.21.0
+# github.com/fullstack-lang/maticons v0.0.0-20240913013021-27a7b8fd9369
+## explicit; go 1.23.1
 github.com/fullstack-lang/maticons/maticons
-# github.com/gabriel-vasile/mimetype v1.4.4
+# github.com/gabriel-vasile/mimetype v1.4.6
 ## explicit; go 1.20
 github.com/gabriel-vasile/mimetype
 github.com/gabriel-vasile/mimetype/internal/charset
@@ -139,7 +158,7 @@ github.com/go-playground/locales/currency
 # github.com/go-playground/universal-translator v0.18.1
 ## explicit; go 1.18
 github.com/go-playground/universal-translator
-# github.com/go-playground/validator/v10 v10.22.0
+# github.com/go-playground/validator/v10 v10.22.1
 ## explicit; go 1.18
 github.com/go-playground/validator/v10
 # github.com/goccy/go-json v0.10.3
@@ -153,7 +172,7 @@ github.com/goccy/go-json/internal/encoder/vm_color_indent
 github.com/goccy/go-json/internal/encoder/vm_indent
 github.com/goccy/go-json/internal/errors
 github.com/goccy/go-json/internal/runtime
-# github.com/google/btree v1.1.2
+# github.com/google/btree v1.1.3
 ## explicit; go 1.18
 github.com/google/btree
 # github.com/google/go-cmp v0.6.0
@@ -185,8 +204,8 @@ github.com/json-iterator/go
 # github.com/kellydunn/golang-geo v0.7.0
 ## explicit
 github.com/kellydunn/golang-geo
-# github.com/klauspost/cpuid/v2 v2.2.8
-## explicit; go 1.15
+# github.com/klauspost/cpuid/v2 v2.2.9
+## explicit; go 1.20
 github.com/klauspost/cpuid/v2
 # github.com/kr/pretty v0.3.1
 ## explicit; go 1.12
@@ -221,8 +240,8 @@ github.com/mohae/deepcopy
 # github.com/ncruces/go-strftime v0.1.9
 ## explicit; go 1.17
 github.com/ncruces/go-strftime
-# github.com/pelletier/go-toml/v2 v2.2.2
-## explicit; go 1.16
+# github.com/pelletier/go-toml/v2 v2.2.3
+## explicit; go 1.21.0
 github.com/pelletier/go-toml/v2
 github.com/pelletier/go-toml/v2/internal/characters
 github.com/pelletier/go-toml/v2/internal/danger
@@ -240,19 +259,19 @@ github.com/remyoudompheng/bigfft
 # github.com/richardlehane/mscfb v1.0.4
 ## explicit
 github.com/richardlehane/mscfb
-# github.com/richardlehane/msoleps v1.0.3
+# github.com/richardlehane/msoleps v1.0.4
 ## explicit
 github.com/richardlehane/msoleps/types
 # github.com/rogpeppe/fastuuid v1.2.0
 ## explicit; go 1.12
 github.com/rogpeppe/fastuuid
-# github.com/rogpeppe/go-internal v1.12.0
-## explicit; go 1.20
+# github.com/rogpeppe/go-internal v1.13.1
+## explicit; go 1.22
 github.com/rogpeppe/go-internal/fmtsort
 # github.com/shabbyrobe/xmlwriter v0.0.0-20230525083848-85336ec334fa
 ## explicit; go 1.13
 github.com/shabbyrobe/xmlwriter
-# github.com/tealeg/xlsx/v3 v3.3.7
+# github.com/tealeg/xlsx/v3 v3.3.11
 ## explicit; go 1.18
 github.com/tealeg/xlsx/v3
 # github.com/twitchyliquid64/golang-asm v0.15.1
@@ -280,7 +299,7 @@ github.com/ugorji/go/codec
 # github.com/xuri/efp v0.0.0-20240408161823-9ad904a10d6d
 ## explicit; go 1.11
 github.com/xuri/efp
-# github.com/xuri/excelize/v2 v2.8.1
+# github.com/xuri/excelize/v2 v2.9.0
 ## explicit; go 1.18
 github.com/xuri/excelize/v2
 # github.com/xuri/nfp v0.0.0-20240318013403-ab9948c2c4a7
@@ -291,24 +310,25 @@ github.com/xuri/nfp
 github.com/ziutek/mymysql/godrv
 github.com/ziutek/mymysql/mysql
 github.com/ziutek/mymysql/native
-# golang.org/x/arch v0.8.0
+# golang.org/x/arch v0.12.0
 ## explicit; go 1.18
 golang.org/x/arch/x86/x86asm
-# golang.org/x/crypto v0.25.0
+# golang.org/x/crypto v0.29.0
 ## explicit; go 1.20
 golang.org/x/crypto/md4
 golang.org/x/crypto/ripemd160
 golang.org/x/crypto/sha3
-# golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
-## explicit; go 1.20
+# golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c
+## explicit; go 1.22.0
+golang.org/x/exp/constraints
 golang.org/x/exp/maps
-# golang.org/x/mod v0.19.0
-## explicit; go 1.18
+# golang.org/x/mod v0.22.0
+## explicit; go 1.22.0
 golang.org/x/mod/internal/lazyregexp
 golang.org/x/mod/modfile
 golang.org/x/mod/module
 golang.org/x/mod/semver
-# golang.org/x/net v0.27.0
+# golang.org/x/net v0.30.0
 ## explicit; go 1.18
 golang.org/x/net/html
 golang.org/x/net/html/atom
@@ -318,11 +338,12 @@ golang.org/x/net/http2
 golang.org/x/net/http2/h2c
 golang.org/x/net/http2/hpack
 golang.org/x/net/idna
-# golang.org/x/sys v0.22.0
+# golang.org/x/sys v0.27.0
 ## explicit; go 1.18
 golang.org/x/sys/cpu
 golang.org/x/sys/unix
-# golang.org/x/text v0.16.0
+golang.org/x/sys/windows
+# golang.org/x/text v0.20.0
 ## explicit; go 1.18
 golang.org/x/text/cases
 golang.org/x/text/encoding
@@ -353,8 +374,8 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# google.golang.org/protobuf v1.34.2
-## explicit; go 1.20
+# google.golang.org/protobuf v1.35.1
+## explicit; go 1.21
 google.golang.org/protobuf/encoding/protowire
 google.golang.org/protobuf/internal/detrand
 google.golang.org/protobuf/internal/encoding/messageset
@@ -371,7 +392,7 @@ google.golang.org/protobuf/runtime/protoiface
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
-# gorm.io/gorm v1.25.11
+# gorm.io/gorm v1.25.12
 ## explicit; go 1.18
 gorm.io/gorm
 gorm.io/gorm/callbacks
@@ -380,7 +401,7 @@ gorm.io/gorm/logger
 gorm.io/gorm/migrator
 gorm.io/gorm/schema
 gorm.io/gorm/utils
-# modernc.org/libc v1.55.3
+# modernc.org/libc v1.61.0
 ## explicit; go 1.20
 modernc.org/libc
 modernc.org/libc/errno
@@ -414,6 +435,6 @@ modernc.org/mathutil
 # modernc.org/memory v1.8.0
 ## explicit; go 1.18
 modernc.org/memory
-# modernc.org/sqlite v1.31.1
+# modernc.org/sqlite v1.33.1
 ## explicit; go 1.20
 modernc.org/sqlite/lib

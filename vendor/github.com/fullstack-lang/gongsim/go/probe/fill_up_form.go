@@ -74,6 +74,15 @@ func FillUpForm[T models.Gongstruct](
 		BasicFieldtoForm("SpeedCommandCompletionDate", instanceWithInferedType.SpeedCommandCompletionDate, instanceWithInferedType, probe.formStage, formGroup,
 			false, false, 0, false, 0)
 
+	case *models.UpdateState:
+		// insertion point
+		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
+		BasicFieldtoForm("Duration", instanceWithInferedType.Duration, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
+		BasicFieldtoForm("Period", instanceWithInferedType.Period, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
+
 	default:
 		_ = instanceWithInferedType
 	}

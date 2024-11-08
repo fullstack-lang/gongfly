@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongleaflet/go/db"
 	"github.com/fullstack-lang/gongleaflet/go/models"
 )
 
@@ -98,7 +99,7 @@ type VisualTrackDB struct {
 	// Declation for basic field visualtrackDB.DisplayLevelAndSpeed
 	// provide the sql storage for the boolan
 	DisplayLevelAndSpeed_Data sql.NullBool
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	VisualTrackPointersEncoding
@@ -168,7 +169,7 @@ type BackRepoVisualTrackStruct struct {
 	// stores VisualTrack according to their gorm ID
 	Map_VisualTrackDBID_VisualTrackPtr map[uint]*models.VisualTrack
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -178,7 +179,7 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) GetStage() (stage *models.
 	return
 }
 
-func (backRepoVisualTrack *BackRepoVisualTrackStruct) GetDB() *gorm.DB {
+func (backRepoVisualTrack *BackRepoVisualTrackStruct) GetDB() db.DBInterface {
 	return backRepoVisualTrack.db
 }
 
@@ -215,9 +216,10 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitDeleteInstance(id ui
 
 	// visualtrack is not staged anymore, remove visualtrackDB
 	visualtrackDB := backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[id]
-	query := backRepoVisualTrack.db.Unscoped().Delete(&visualtrackDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoVisualTrack.db.Unscoped()
+	_, err := db.Delete(visualtrackDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -241,9 +243,9 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseOneInstance(vis
 	var visualtrackDB VisualTrackDB
 	visualtrackDB.CopyBasicFieldsFromVisualTrack(visualtrack)
 
-	query := backRepoVisualTrack.db.Create(&visualtrackDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoVisualTrack.db.Create(&visualtrackDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -299,9 +301,9 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseTwoInstance(bac
 			visualtrackDB.DivIconID.Valid = true
 		}
 
-		query := backRepoVisualTrack.db.Save(&visualtrackDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoVisualTrack.db.Save(visualtrackDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -320,9 +322,9 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CommitPhaseTwoInstance(bac
 func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseOne() (Error error) {
 
 	visualtrackDBArray := make([]VisualTrackDB, 0)
-	query := backRepoVisualTrack.db.Find(&visualtrackDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoVisualTrack.db.Find(&visualtrackDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -443,7 +445,7 @@ func (backRepo *BackRepoStruct) CheckoutVisualTrack(visualtrack *models.VisualTr
 			var visualtrackDB VisualTrackDB
 			visualtrackDB.ID = id
 
-			if err := backRepo.BackRepoVisualTrack.db.First(&visualtrackDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoVisualTrack.db.First(&visualtrackDB, id); err != nil {
 				log.Fatalln("CheckoutVisualTrack : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoVisualTrack.CheckoutPhaseOneInstance(&visualtrackDB)
@@ -698,9 +700,9 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) rowVisitorVisualTrack(row 
 
 		visualtrackDB_ID_atBackupTime := visualtrackDB.ID
 		visualtrackDB.ID = 0
-		query := backRepoVisualTrack.db.Create(visualtrackDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoVisualTrack.db.Create(visualtrackDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[visualtrackDB.ID] = visualtrackDB
 		BackRepoVisualTrackid_atBckpTime_newID[visualtrackDB_ID_atBackupTime] = visualtrackDB.ID
@@ -735,9 +737,9 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) RestorePhaseOne(dirPath st
 
 		visualtrackDB_ID_atBackupTime := visualtrackDB.ID
 		visualtrackDB.ID = 0
-		query := backRepoVisualTrack.db.Create(visualtrackDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoVisualTrack.db.Create(visualtrackDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoVisualTrack.Map_VisualTrackDBID_VisualTrackDB[visualtrackDB.ID] = visualtrackDB
 		BackRepoVisualTrackid_atBckpTime_newID[visualtrackDB_ID_atBackupTime] = visualtrackDB.ID
@@ -771,9 +773,10 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) RestorePhaseTwo() {
 		}
 
 		// update databse with new index encoding
-		query := backRepoVisualTrack.db.Model(visualtrackDB).Updates(*visualtrackDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoVisualTrack.db.Model(visualtrackDB)
+		_, err := db.Updates(*visualtrackDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

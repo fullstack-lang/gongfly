@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongleaflet/go/db"
 	"github.com/fullstack-lang/gongleaflet/go/models"
 )
 
@@ -93,7 +94,7 @@ type MapOptionsDB struct {
 
 	// Declation for basic field mapoptionsDB.ZoomSnap
 	ZoomSnap_Data sql.NullInt64
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	MapOptionsPointersEncoding
@@ -163,7 +164,7 @@ type BackRepoMapOptionsStruct struct {
 	// stores MapOptions according to their gorm ID
 	Map_MapOptionsDBID_MapOptionsPtr map[uint]*models.MapOptions
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -173,7 +174,7 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) GetStage() (stage *models.St
 	return
 }
 
-func (backRepoMapOptions *BackRepoMapOptionsStruct) GetDB() *gorm.DB {
+func (backRepoMapOptions *BackRepoMapOptionsStruct) GetDB() db.DBInterface {
 	return backRepoMapOptions.db
 }
 
@@ -210,9 +211,10 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitDeleteInstance(id uint
 
 	// mapoptions is not staged anymore, remove mapoptionsDB
 	mapoptionsDB := backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB[id]
-	query := backRepoMapOptions.db.Unscoped().Delete(&mapoptionsDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoMapOptions.db.Unscoped()
+	_, err := db.Delete(mapoptionsDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -236,9 +238,9 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitPhaseOneInstance(mapop
 	var mapoptionsDB MapOptionsDB
 	mapoptionsDB.CopyBasicFieldsFromMapOptions(mapoptions)
 
-	query := backRepoMapOptions.db.Create(&mapoptionsDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoMapOptions.db.Create(&mapoptionsDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -288,9 +290,9 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitPhaseTwoInstance(backR
 				append(mapoptionsDB.MapOptionsPointersEncoding.LayerGroupUses, int(layergroupuseAssocEnd_DB.ID))
 		}
 
-		query := backRepoMapOptions.db.Save(&mapoptionsDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoMapOptions.db.Save(mapoptionsDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -309,9 +311,9 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) CommitPhaseTwoInstance(backR
 func (backRepoMapOptions *BackRepoMapOptionsStruct) CheckoutPhaseOne() (Error error) {
 
 	mapoptionsDBArray := make([]MapOptionsDB, 0)
-	query := backRepoMapOptions.db.Find(&mapoptionsDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoMapOptions.db.Find(&mapoptionsDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -431,7 +433,7 @@ func (backRepo *BackRepoStruct) CheckoutMapOptions(mapoptions *models.MapOptions
 			var mapoptionsDB MapOptionsDB
 			mapoptionsDB.ID = id
 
-			if err := backRepo.BackRepoMapOptions.db.First(&mapoptionsDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoMapOptions.db.First(&mapoptionsDB, id); err != nil {
 				log.Fatalln("CheckoutMapOptions : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoMapOptions.CheckoutPhaseOneInstance(&mapoptionsDB)
@@ -686,9 +688,9 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) rowVisitorMapOptions(row *xl
 
 		mapoptionsDB_ID_atBackupTime := mapoptionsDB.ID
 		mapoptionsDB.ID = 0
-		query := backRepoMapOptions.db.Create(mapoptionsDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoMapOptions.db.Create(mapoptionsDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB[mapoptionsDB.ID] = mapoptionsDB
 		BackRepoMapOptionsid_atBckpTime_newID[mapoptionsDB_ID_atBackupTime] = mapoptionsDB.ID
@@ -723,9 +725,9 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) RestorePhaseOne(dirPath stri
 
 		mapoptionsDB_ID_atBackupTime := mapoptionsDB.ID
 		mapoptionsDB.ID = 0
-		query := backRepoMapOptions.db.Create(mapoptionsDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoMapOptions.db.Create(mapoptionsDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoMapOptions.Map_MapOptionsDBID_MapOptionsDB[mapoptionsDB.ID] = mapoptionsDB
 		BackRepoMapOptionsid_atBckpTime_newID[mapoptionsDB_ID_atBackupTime] = mapoptionsDB.ID
@@ -747,9 +749,10 @@ func (backRepoMapOptions *BackRepoMapOptionsStruct) RestorePhaseTwo() {
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoMapOptions.db.Model(mapoptionsDB).Updates(*mapoptionsDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoMapOptions.db.Model(mapoptionsDB)
+		_, err := db.Updates(*mapoptionsDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

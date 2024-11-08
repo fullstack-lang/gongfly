@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongtree/go/db"
 	"github.com/fullstack-lang/gongtree/go/models"
 )
 
@@ -94,6 +95,21 @@ type NodeDB struct {
 	// provide the sql storage for the boolan
 	IsCheckboxDisabled_Data sql.NullBool
 
+	// Declation for basic field nodeDB.HasSecondCheckboxButton
+	// provide the sql storage for the boolan
+	HasSecondCheckboxButton_Data sql.NullBool
+
+	// Declation for basic field nodeDB.IsSecondCheckboxChecked
+	// provide the sql storage for the boolan
+	IsSecondCheckboxChecked_Data sql.NullBool
+
+	// Declation for basic field nodeDB.IsSecondCheckboxDisabled
+	// provide the sql storage for the boolan
+	IsSecondCheckboxDisabled_Data sql.NullBool
+
+	// Declation for basic field nodeDB.TextAfterSecondCheckbox
+	TextAfterSecondCheckbox_Data sql.NullString
+
 	// Declation for basic field nodeDB.IsInEditMode
 	// provide the sql storage for the boolan
 	IsInEditMode_Data sql.NullBool
@@ -108,7 +124,7 @@ type NodeDB struct {
 
 	// Declation for basic field nodeDB.PreceedingIcon
 	PreceedingIcon_Data sql.NullString
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	NodePointersEncoding
@@ -145,13 +161,21 @@ type NodeWOP struct {
 
 	IsCheckboxDisabled bool `xlsx:"7"`
 
-	IsInEditMode bool `xlsx:"8"`
+	HasSecondCheckboxButton bool `xlsx:"8"`
 
-	IsNodeClickable bool `xlsx:"9"`
+	IsSecondCheckboxChecked bool `xlsx:"9"`
 
-	IsWithPreceedingIcon bool `xlsx:"10"`
+	IsSecondCheckboxDisabled bool `xlsx:"10"`
 
-	PreceedingIcon string `xlsx:"11"`
+	TextAfterSecondCheckbox string `xlsx:"11"`
+
+	IsInEditMode bool `xlsx:"12"`
+
+	IsNodeClickable bool `xlsx:"13"`
+
+	IsWithPreceedingIcon bool `xlsx:"14"`
+
+	PreceedingIcon string `xlsx:"15"`
 	// insertion for WOP pointer fields
 }
 
@@ -165,6 +189,10 @@ var Node_Fields = []string{
 	"HasCheckboxButton",
 	"IsChecked",
 	"IsCheckboxDisabled",
+	"HasSecondCheckboxButton",
+	"IsSecondCheckboxChecked",
+	"IsSecondCheckboxDisabled",
+	"TextAfterSecondCheckbox",
 	"IsInEditMode",
 	"IsNodeClickable",
 	"IsWithPreceedingIcon",
@@ -181,7 +209,7 @@ type BackRepoNodeStruct struct {
 	// stores Node according to their gorm ID
 	Map_NodeDBID_NodePtr map[uint]*models.Node
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -191,7 +219,7 @@ func (backRepoNode *BackRepoNodeStruct) GetStage() (stage *models.StageStruct) {
 	return
 }
 
-func (backRepoNode *BackRepoNodeStruct) GetDB() *gorm.DB {
+func (backRepoNode *BackRepoNodeStruct) GetDB() db.DBInterface {
 	return backRepoNode.db
 }
 
@@ -228,9 +256,10 @@ func (backRepoNode *BackRepoNodeStruct) CommitDeleteInstance(id uint) (Error err
 
 	// node is not staged anymore, remove nodeDB
 	nodeDB := backRepoNode.Map_NodeDBID_NodeDB[id]
-	query := backRepoNode.db.Unscoped().Delete(&nodeDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoNode.db.Unscoped()
+	_, err := db.Delete(nodeDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -254,9 +283,9 @@ func (backRepoNode *BackRepoNodeStruct) CommitPhaseOneInstance(node *models.Node
 	var nodeDB NodeDB
 	nodeDB.CopyBasicFieldsFromNode(node)
 
-	query := backRepoNode.db.Create(&nodeDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoNode.db.Create(&nodeDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -336,9 +365,9 @@ func (backRepoNode *BackRepoNodeStruct) CommitPhaseTwoInstance(backRepo *BackRep
 				append(nodeDB.NodePointersEncoding.Buttons, int(buttonAssocEnd_DB.ID))
 		}
 
-		query := backRepoNode.db.Save(&nodeDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoNode.db.Save(nodeDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -357,9 +386,9 @@ func (backRepoNode *BackRepoNodeStruct) CommitPhaseTwoInstance(backRepo *BackRep
 func (backRepoNode *BackRepoNodeStruct) CheckoutPhaseOne() (Error error) {
 
 	nodeDBArray := make([]NodeDB, 0)
-	query := backRepoNode.db.Find(&nodeDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoNode.db.Find(&nodeDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -493,7 +522,7 @@ func (backRepo *BackRepoStruct) CheckoutNode(node *models.Node) {
 			var nodeDB NodeDB
 			nodeDB.ID = id
 
-			if err := backRepo.BackRepoNode.db.First(&nodeDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoNode.db.First(&nodeDB, id); err != nil {
 				log.Fatalln("CheckoutNode : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoNode.CheckoutPhaseOneInstance(&nodeDB)
@@ -526,6 +555,18 @@ func (nodeDB *NodeDB) CopyBasicFieldsFromNode(node *models.Node) {
 
 	nodeDB.IsCheckboxDisabled_Data.Bool = node.IsCheckboxDisabled
 	nodeDB.IsCheckboxDisabled_Data.Valid = true
+
+	nodeDB.HasSecondCheckboxButton_Data.Bool = node.HasSecondCheckboxButton
+	nodeDB.HasSecondCheckboxButton_Data.Valid = true
+
+	nodeDB.IsSecondCheckboxChecked_Data.Bool = node.IsSecondCheckboxChecked
+	nodeDB.IsSecondCheckboxChecked_Data.Valid = true
+
+	nodeDB.IsSecondCheckboxDisabled_Data.Bool = node.IsSecondCheckboxDisabled
+	nodeDB.IsSecondCheckboxDisabled_Data.Valid = true
+
+	nodeDB.TextAfterSecondCheckbox_Data.String = node.TextAfterSecondCheckbox
+	nodeDB.TextAfterSecondCheckbox_Data.Valid = true
 
 	nodeDB.IsInEditMode_Data.Bool = node.IsInEditMode
 	nodeDB.IsInEditMode_Data.Valid = true
@@ -565,6 +606,18 @@ func (nodeDB *NodeDB) CopyBasicFieldsFromNode_WOP(node *models.Node_WOP) {
 	nodeDB.IsCheckboxDisabled_Data.Bool = node.IsCheckboxDisabled
 	nodeDB.IsCheckboxDisabled_Data.Valid = true
 
+	nodeDB.HasSecondCheckboxButton_Data.Bool = node.HasSecondCheckboxButton
+	nodeDB.HasSecondCheckboxButton_Data.Valid = true
+
+	nodeDB.IsSecondCheckboxChecked_Data.Bool = node.IsSecondCheckboxChecked
+	nodeDB.IsSecondCheckboxChecked_Data.Valid = true
+
+	nodeDB.IsSecondCheckboxDisabled_Data.Bool = node.IsSecondCheckboxDisabled
+	nodeDB.IsSecondCheckboxDisabled_Data.Valid = true
+
+	nodeDB.TextAfterSecondCheckbox_Data.String = node.TextAfterSecondCheckbox
+	nodeDB.TextAfterSecondCheckbox_Data.Valid = true
+
 	nodeDB.IsInEditMode_Data.Bool = node.IsInEditMode
 	nodeDB.IsInEditMode_Data.Valid = true
 
@@ -603,6 +656,18 @@ func (nodeDB *NodeDB) CopyBasicFieldsFromNodeWOP(node *NodeWOP) {
 	nodeDB.IsCheckboxDisabled_Data.Bool = node.IsCheckboxDisabled
 	nodeDB.IsCheckboxDisabled_Data.Valid = true
 
+	nodeDB.HasSecondCheckboxButton_Data.Bool = node.HasSecondCheckboxButton
+	nodeDB.HasSecondCheckboxButton_Data.Valid = true
+
+	nodeDB.IsSecondCheckboxChecked_Data.Bool = node.IsSecondCheckboxChecked
+	nodeDB.IsSecondCheckboxChecked_Data.Valid = true
+
+	nodeDB.IsSecondCheckboxDisabled_Data.Bool = node.IsSecondCheckboxDisabled
+	nodeDB.IsSecondCheckboxDisabled_Data.Valid = true
+
+	nodeDB.TextAfterSecondCheckbox_Data.String = node.TextAfterSecondCheckbox
+	nodeDB.TextAfterSecondCheckbox_Data.Valid = true
+
 	nodeDB.IsInEditMode_Data.Bool = node.IsInEditMode
 	nodeDB.IsInEditMode_Data.Valid = true
 
@@ -626,6 +691,10 @@ func (nodeDB *NodeDB) CopyBasicFieldsToNode(node *models.Node) {
 	node.HasCheckboxButton = nodeDB.HasCheckboxButton_Data.Bool
 	node.IsChecked = nodeDB.IsChecked_Data.Bool
 	node.IsCheckboxDisabled = nodeDB.IsCheckboxDisabled_Data.Bool
+	node.HasSecondCheckboxButton = nodeDB.HasSecondCheckboxButton_Data.Bool
+	node.IsSecondCheckboxChecked = nodeDB.IsSecondCheckboxChecked_Data.Bool
+	node.IsSecondCheckboxDisabled = nodeDB.IsSecondCheckboxDisabled_Data.Bool
+	node.TextAfterSecondCheckbox = nodeDB.TextAfterSecondCheckbox_Data.String
 	node.IsInEditMode = nodeDB.IsInEditMode_Data.Bool
 	node.IsNodeClickable = nodeDB.IsNodeClickable_Data.Bool
 	node.IsWithPreceedingIcon = nodeDB.IsWithPreceedingIcon_Data.Bool
@@ -642,6 +711,10 @@ func (nodeDB *NodeDB) CopyBasicFieldsToNode_WOP(node *models.Node_WOP) {
 	node.HasCheckboxButton = nodeDB.HasCheckboxButton_Data.Bool
 	node.IsChecked = nodeDB.IsChecked_Data.Bool
 	node.IsCheckboxDisabled = nodeDB.IsCheckboxDisabled_Data.Bool
+	node.HasSecondCheckboxButton = nodeDB.HasSecondCheckboxButton_Data.Bool
+	node.IsSecondCheckboxChecked = nodeDB.IsSecondCheckboxChecked_Data.Bool
+	node.IsSecondCheckboxDisabled = nodeDB.IsSecondCheckboxDisabled_Data.Bool
+	node.TextAfterSecondCheckbox = nodeDB.TextAfterSecondCheckbox_Data.String
 	node.IsInEditMode = nodeDB.IsInEditMode_Data.Bool
 	node.IsNodeClickable = nodeDB.IsNodeClickable_Data.Bool
 	node.IsWithPreceedingIcon = nodeDB.IsWithPreceedingIcon_Data.Bool
@@ -659,6 +732,10 @@ func (nodeDB *NodeDB) CopyBasicFieldsToNodeWOP(node *NodeWOP) {
 	node.HasCheckboxButton = nodeDB.HasCheckboxButton_Data.Bool
 	node.IsChecked = nodeDB.IsChecked_Data.Bool
 	node.IsCheckboxDisabled = nodeDB.IsCheckboxDisabled_Data.Bool
+	node.HasSecondCheckboxButton = nodeDB.HasSecondCheckboxButton_Data.Bool
+	node.IsSecondCheckboxChecked = nodeDB.IsSecondCheckboxChecked_Data.Bool
+	node.IsSecondCheckboxDisabled = nodeDB.IsSecondCheckboxDisabled_Data.Bool
+	node.TextAfterSecondCheckbox = nodeDB.TextAfterSecondCheckbox_Data.String
 	node.IsInEditMode = nodeDB.IsInEditMode_Data.Bool
 	node.IsNodeClickable = nodeDB.IsNodeClickable_Data.Bool
 	node.IsWithPreceedingIcon = nodeDB.IsWithPreceedingIcon_Data.Bool
@@ -760,9 +837,9 @@ func (backRepoNode *BackRepoNodeStruct) rowVisitorNode(row *xlsx.Row) error {
 
 		nodeDB_ID_atBackupTime := nodeDB.ID
 		nodeDB.ID = 0
-		query := backRepoNode.db.Create(nodeDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoNode.db.Create(nodeDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoNode.Map_NodeDBID_NodeDB[nodeDB.ID] = nodeDB
 		BackRepoNodeid_atBckpTime_newID[nodeDB_ID_atBackupTime] = nodeDB.ID
@@ -797,9 +874,9 @@ func (backRepoNode *BackRepoNodeStruct) RestorePhaseOne(dirPath string) {
 
 		nodeDB_ID_atBackupTime := nodeDB.ID
 		nodeDB.ID = 0
-		query := backRepoNode.db.Create(nodeDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoNode.db.Create(nodeDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoNode.Map_NodeDBID_NodeDB[nodeDB.ID] = nodeDB
 		BackRepoNodeid_atBckpTime_newID[nodeDB_ID_atBackupTime] = nodeDB.ID
@@ -827,9 +904,10 @@ func (backRepoNode *BackRepoNodeStruct) RestorePhaseTwo() {
 		}
 
 		// update databse with new index encoding
-		query := backRepoNode.db.Model(nodeDB).Updates(*nodeDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoNode.db.Model(nodeDB)
+		_, err := db.Updates(*nodeDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

@@ -70,12 +70,12 @@ func (controller *Controller) GetGongsimCommands(c *gin.Context) {
 	}
 	db := backRepo.BackRepoGongsimCommand.GetDB()
 
-	query := db.Find(&gongsimcommandDBs)
-	if query.Error != nil {
+	_, err := db.Find(&gongsimcommandDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -151,12 +151,12 @@ func (controller *Controller) PostGongsimCommand(c *gin.Context) {
 	gongsimcommandDB.GongsimCommandPointersEncoding = input.GongsimCommandPointersEncoding
 	gongsimcommandDB.CopyBasicFieldsFromGongsimCommand_WOP(&input.GongsimCommand_WOP)
 
-	query := db.Create(&gongsimcommandDB)
-	if query.Error != nil {
+	_, err = db.Create(&gongsimcommandDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -205,7 +205,7 @@ func (controller *Controller) GetGongsimCommand(c *gin.Context) {
 
 	// Get gongsimcommandDB in DB
 	var gongsimcommandDB orm.GongsimCommandDB
-	if err := db.First(&gongsimcommandDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&gongsimcommandDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateGongsimCommand(c *gin.Context) {
 	var gongsimcommandDB orm.GongsimCommandDB
 
 	// fetch the gongsimcommand
-	query := db.First(&gongsimcommandDB, c.Param("id"))
+	_, err := db.First(&gongsimcommandDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateGongsimCommand(c *gin.Context) {
 	gongsimcommandDB.CopyBasicFieldsFromGongsimCommand_WOP(&input.GongsimCommand_WOP)
 	gongsimcommandDB.GongsimCommandPointersEncoding = input.GongsimCommandPointersEncoding
 
-	query = db.Model(&gongsimcommandDB).Updates(gongsimcommandDB)
-	if query.Error != nil {
+	db, _ = db.Model(&gongsimcommandDB)
+	_, err = db.Updates(&gongsimcommandDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteGongsimCommand(c *gin.Context) {
 
 	// Get model if exist
 	var gongsimcommandDB orm.GongsimCommandDB
-	if err := db.First(&gongsimcommandDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&gongsimcommandDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteGongsimCommand(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&gongsimcommandDB)
+	db.Unscoped()
+	db.Delete(&gongsimcommandDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	gongsimcommandDeleted := new(models.GongsimCommand)

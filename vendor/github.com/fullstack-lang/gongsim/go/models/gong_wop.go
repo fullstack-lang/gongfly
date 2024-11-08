@@ -93,3 +93,17 @@ func (from *GongsimStatus) CopyBasicFields(to *GongsimStatus) {
 	to.SpeedCommandCompletionDate = from.SpeedCommandCompletionDate
 }
 
+type UpdateState_WOP struct {
+	// insertion point
+	Name string
+	Duration time.Duration
+	Period time.Duration
+}
+
+func (from *UpdateState) CopyBasicFields(to *UpdateState) {
+	// insertion point
+	to.Name = from.Name
+	to.Duration = from.Duration
+	to.Period = from.Period
+}
+

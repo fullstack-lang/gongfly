@@ -55,10 +55,10 @@ func (controller *Controller) GetCircles(c *gin.Context) {
 	// source slice
 	var circleDBs []orm.CircleDB
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetCircles", "GONG__StackPath", stackPath)
@@ -70,12 +70,12 @@ func (controller *Controller) GetCircles(c *gin.Context) {
 	}
 	db := backRepo.BackRepoCircle.GetDB()
 
-	query := db.Find(&circleDBs)
-	if query.Error != nil {
+	_, err := db.Find(&circleDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -118,10 +118,10 @@ func (controller *Controller) PostCircle(c *gin.Context) {
 	mutexCircle.Lock()
 	defer mutexCircle.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("PostCircles", "GONG__StackPath", stackPath)
@@ -151,12 +151,12 @@ func (controller *Controller) PostCircle(c *gin.Context) {
 	circleDB.CirclePointersEncoding = input.CirclePointersEncoding
 	circleDB.CopyBasicFieldsFromCircle_WOP(&input.Circle_WOP)
 
-	query := db.Create(&circleDB)
-	if query.Error != nil {
+	_, err = db.Create(&circleDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -188,10 +188,10 @@ func (controller *Controller) PostCircle(c *gin.Context) {
 //	200: circleDBResponse
 func (controller *Controller) GetCircle(c *gin.Context) {
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetCircle", "GONG__StackPath", stackPath)
@@ -205,7 +205,7 @@ func (controller *Controller) GetCircle(c *gin.Context) {
 
 	// Get circleDB in DB
 	var circleDB orm.CircleDB
-	if err := db.First(&circleDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&circleDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -237,10 +237,10 @@ func (controller *Controller) UpdateCircle(c *gin.Context) {
 	mutexCircle.Lock()
 	defer mutexCircle.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("UpdateCircle", "GONG__StackPath", stackPath)
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateCircle(c *gin.Context) {
 	var circleDB orm.CircleDB
 
 	// fetch the circle
-	query := db.First(&circleDB, c.Param("id"))
+	_, err := db.First(&circleDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateCircle(c *gin.Context) {
 	circleDB.CopyBasicFieldsFromCircle_WOP(&input.Circle_WOP)
 	circleDB.CirclePointersEncoding = input.CirclePointersEncoding
 
-	query = db.Model(&circleDB).Updates(circleDB)
-	if query.Error != nil {
+	db, _ = db.Model(&circleDB)
+	_, err = db.Updates(&circleDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -326,10 +327,10 @@ func (controller *Controller) DeleteCircle(c *gin.Context) {
 	mutexCircle.Lock()
 	defer mutexCircle.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("DeleteCircle", "GONG__StackPath", stackPath)
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteCircle(c *gin.Context) {
 
 	// Get model if exist
 	var circleDB orm.CircleDB
-	if err := db.First(&circleDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&circleDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteCircle(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&circleDB)
+	db.Unscoped()
+	db.Delete(&circleDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	circleDeleted := new(models.Circle)

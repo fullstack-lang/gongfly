@@ -6,8 +6,8 @@
         "vendor/github.com/fullstack-lang/gongsvg/ng-github.com-fullstack-lang-gongsvg",
         "vendor/github.com/fullstack-lang/gongtable/ng-github.com-fullstack-lang-gongtable",
         "vendor/github.com/fullstack-lang/gongdoc/ng-github.com-fullstack-lang-gongdoc",
-        "vendor/github.com/fullstack-lang/gongdoc/ng-github.com-fullstack-lang-gongsim",
-        "vendor/github.com/fullstack-lang/gongdoc/ng-github.com-fullstack-lang-gongleaflet",
+        "vendor/github.com/fullstack-lang/gongsim/ng-github.com-fullstack-lang-gongsim",
+        "vendor/github.com/fullstack-lang/gongleaflet/ng-github.com-fullstack-lang-gongleaflet",
         ""
     ]
 }

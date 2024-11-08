@@ -20,6 +20,9 @@ func IsStaged[Type Gongstruct](stage *StageStruct, instance *Type) (ok bool) {
 	case *GongsimStatus:
 		ok = stage.IsStagedGongsimStatus(target)
 
+	case *UpdateState:
+		ok = stage.IsStagedUpdateState(target)
+
 	default:
 		_ = target
 	}
@@ -62,6 +65,13 @@ func (stage *StageStruct) IsStagedGongsimStatus(gongsimstatus *GongsimStatus) (o
 	return
 }
 
+func (stage *StageStruct) IsStagedUpdateState(updatestate *UpdateState) (ok bool) {
+
+	_, ok = stage.UpdateStates[updatestate]
+
+	return
+}
+
 // StageBranch stages instance and apply StageBranch on all gongstruct instances that are
 // referenced by pointers or slices of pointers of the instance
 //
@@ -84,6 +94,9 @@ func StageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 
 	case *GongsimStatus:
 		stage.StageBranchGongsimStatus(target)
+
+	case *UpdateState:
+		stage.StageBranchUpdateState(target)
 
 	default:
 		_ = target
@@ -169,6 +182,21 @@ func (stage *StageStruct) StageBranchGongsimStatus(gongsimstatus *GongsimStatus)
 
 }
 
+func (stage *StageStruct) StageBranchUpdateState(updatestate *UpdateState) {
+
+	// check if instance is already staged
+	if IsStaged(stage, updatestate) {
+		return
+	}
+
+	updatestate.Stage(stage)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+}
+
 // CopyBranch stages instance and apply CopyBranch on all gongstruct instances that are
 // referenced by pointers or slices of pointers of the instance
 //
@@ -198,6 +226,10 @@ func CopyBranch[Type Gongstruct](from *Type) (to *Type) {
 
 	case *GongsimStatus:
 		toT := CopyBranchGongsimStatus(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *UpdateState:
+		toT := CopyBranchUpdateState(mapOrigCopy, fromT)
 		return any(toT).(*Type)
 
 	default:
@@ -305,6 +337,25 @@ func CopyBranchGongsimStatus(mapOrigCopy map[any]any, gongsimstatusFrom *Gongsim
 	return
 }
 
+func CopyBranchUpdateState(mapOrigCopy map[any]any, updatestateFrom *UpdateState) (updatestateTo *UpdateState) {
+
+	// updatestateFrom has already been copied
+	if _updatestateTo, ok := mapOrigCopy[updatestateFrom]; ok {
+		updatestateTo = _updatestateTo.(*UpdateState)
+		return
+	}
+
+	updatestateTo = new(UpdateState)
+	mapOrigCopy[updatestateFrom] = updatestateTo
+	updatestateFrom.CopyBasicFields(updatestateTo)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
+}
+
 // UnstageBranch stages instance and apply UnstageBranch on all gongstruct instances that are
 // referenced by pointers or slices of pointers of the insance
 //
@@ -327,6 +378,9 @@ func UnstageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 
 	case *GongsimStatus:
 		stage.UnstageBranchGongsimStatus(target)
+
+	case *UpdateState:
+		stage.UnstageBranchUpdateState(target)
 
 	default:
 		_ = target
@@ -405,6 +459,21 @@ func (stage *StageStruct) UnstageBranchGongsimStatus(gongsimstatus *GongsimStatu
 	}
 
 	gongsimstatus.Unstage(stage)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+
+}
+
+func (stage *StageStruct) UnstageBranchUpdateState(updatestate *UpdateState) {
+
+	// check if instance is already staged
+	if !IsStaged(stage, updatestate) {
+		return
+	}
+
+	updatestate.Unstage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 

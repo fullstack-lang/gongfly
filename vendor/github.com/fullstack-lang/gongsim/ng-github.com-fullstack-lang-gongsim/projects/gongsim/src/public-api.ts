@@ -33,6 +33,10 @@ export * from './lib/gongsimstatus-api'
 export * from './lib/gongsimstatus'
 export * from './lib/gongsimstatus.service'
 
+export * from './lib/updatestate-api'
+export * from './lib/updatestate'
+export * from './lib/updatestate.service'
+
 
 export * from './lib/ControlMode'
 export * from './lib/EngineDriverState'

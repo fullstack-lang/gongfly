@@ -70,12 +70,12 @@ func (controller *Controller) GetEvents(c *gin.Context) {
 	}
 	db := backRepo.BackRepoEvent.GetDB()
 
-	query := db.Find(&eventDBs)
-	if query.Error != nil {
+	_, err := db.Find(&eventDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -151,12 +151,12 @@ func (controller *Controller) PostEvent(c *gin.Context) {
 	eventDB.EventPointersEncoding = input.EventPointersEncoding
 	eventDB.CopyBasicFieldsFromEvent_WOP(&input.Event_WOP)
 
-	query := db.Create(&eventDB)
-	if query.Error != nil {
+	_, err = db.Create(&eventDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -205,7 +205,7 @@ func (controller *Controller) GetEvent(c *gin.Context) {
 
 	// Get eventDB in DB
 	var eventDB orm.EventDB
-	if err := db.First(&eventDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&eventDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateEvent(c *gin.Context) {
 	var eventDB orm.EventDB
 
 	// fetch the event
-	query := db.First(&eventDB, c.Param("id"))
+	_, err := db.First(&eventDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateEvent(c *gin.Context) {
 	eventDB.CopyBasicFieldsFromEvent_WOP(&input.Event_WOP)
 	eventDB.EventPointersEncoding = input.EventPointersEncoding
 
-	query = db.Model(&eventDB).Updates(eventDB)
-	if query.Error != nil {
+	db, _ = db.Model(&eventDB)
+	_, err = db.Updates(&eventDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteEvent(c *gin.Context) {
 
 	// Get model if exist
 	var eventDB orm.EventDB
-	if err := db.First(&eventDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&eventDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteEvent(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&eventDB)
+	db.Unscoped()
+	db.Delete(&eventDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	eventDeleted := new(models.Event)

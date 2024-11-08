@@ -4,19 +4,21 @@ package orm
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"sync"
 
+	"github.com/fullstack-lang/gongsim/go/db"
 	"github.com/fullstack-lang/gongsim/go/models"
 
-	"github.com/tealeg/xlsx/v3"
+	/* THIS IS REMOVED BY GONG COMPILER IF TARGET IS gorm
+	"github.com/fullstack-lang/gongsim/go/orm/dbgorm"
+	THIS IS REMOVED BY GONG COMPILER IF TARGET IS gorm */
 
-	"github.com/glebarez/sqlite"
-	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
+	"github.com/tealeg/xlsx/v3"
 )
 
 // BackRepoStruct supports callback functions
@@ -32,6 +34,8 @@ type BackRepoStruct struct {
 
 	BackRepoGongsimStatus BackRepoGongsimStatusStruct
 
+	BackRepoUpdateState BackRepoUpdateStateStruct
+
 	CommitFromBackNb uint // records commit increments when performed by the back
 
 	PushFromFrontNb uint // records commit increments when performed by the front
@@ -40,49 +44,27 @@ type BackRepoStruct struct {
 
 	// the back repo can broadcast the CommitFromBackNb to all interested subscribers
 	rwMutex     sync.RWMutex
+
+	subscribersRwMutex sync.RWMutex
 	subscribers []chan int
 }
 
 func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepoStruct) {
 
-	// adjust naming strategy to the stack
-	gormConfig := &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
-			TablePrefix: "github_com_fullstack_lang_gong_test_go_", // table name prefix
-		},
-	}
-	db, err := gorm.Open(sqlite.Open(filename), gormConfig)
+	var db db.DBInterface
 
-	// since testsim is a multi threaded application. It is important to set up
-	// only one open connexion at a time
-	dbDB_inMemory, err := db.DB()
-	if err != nil {
-		panic("cannot access DB of db" + err.Error())
-	}
-	// it is mandatory to allow parallel access, otherwise, bizarre errors occurs
-	dbDB_inMemory.SetMaxOpenConns(1)
+	db = NewDBLite()
 
-	if err != nil {
-		panic("Failed to connect to database!")
-	}
-
-	// adjust naming strategy to the stack
-	db.Config.NamingStrategy = &schema.NamingStrategy{
-		TablePrefix: "github_com_fullstack_lang_gong_test_go_", // table name prefix
-	}
-
-	err = db.AutoMigrate( // insertion point for reference to structs
+	/* THIS IS REMOVED BY GONG COMPILER IF TARGET IS gorm
+	db = dbgorm.NewDBWrapper(filename, "github_com_fullstack_lang_gongsim_go",
 		&DummyAgentDB{},
 		&EngineDB{},
 		&EventDB{},
 		&GongsimCommandDB{},
 		&GongsimStatusDB{},
+		&UpdateStateDB{},
 	)
-
-	if err != nil {
-		msg := err.Error()
-		panic("problem with migration " + msg + " on package github.com/fullstack-lang/gong/test/go")
-	}
+	THIS IS REMOVED BY GONG COMPILER IF TARGET IS gorm */
 
 	backRepo = new(BackRepoStruct)
 
@@ -127,6 +109,14 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		db:    db,
 		stage: stage,
 	}
+	backRepo.BackRepoUpdateState = BackRepoUpdateStateStruct{
+		Map_UpdateStateDBID_UpdateStatePtr: make(map[uint]*models.UpdateState, 0),
+		Map_UpdateStateDBID_UpdateStateDB:  make(map[uint]*UpdateStateDB, 0),
+		Map_UpdateStatePtr_UpdateStateDBID: make(map[*models.UpdateState]uint, 0),
+
+		db:    db,
+		stage: stage,
+	}
 
 	stage.BackRepo = backRepo
 	backRepo.stage = stage
@@ -157,7 +147,7 @@ func (backRepo *BackRepoStruct) IncrementCommitFromBackNb() uint {
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 
 	backRepo.broadcastNbCommitToBack()
-	
+
 	return backRepo.CommitFromBackNb
 }
 
@@ -174,12 +164,18 @@ func (backRepo *BackRepoStruct) IncrementPushFromFrontNb() uint {
 
 // Commit the BackRepoStruct inner variables and link to the database
 func (backRepo *BackRepoStruct) Commit(stage *models.StageStruct) {
+
+	// forbid read of back repo during commit
+	backRepo.rwMutex.Lock()
+	defer backRepo.rwMutex.Unlock()
+
 	// insertion point for per struct back repo phase one commit
 	backRepo.BackRepoDummyAgent.CommitPhaseOne(stage)
 	backRepo.BackRepoEngine.CommitPhaseOne(stage)
 	backRepo.BackRepoEvent.CommitPhaseOne(stage)
 	backRepo.BackRepoGongsimCommand.CommitPhaseOne(stage)
 	backRepo.BackRepoGongsimStatus.CommitPhaseOne(stage)
+	backRepo.BackRepoUpdateState.CommitPhaseOne(stage)
 
 	// insertion point for per struct back repo phase two commit
 	backRepo.BackRepoDummyAgent.CommitPhaseTwo(backRepo)
@@ -187,6 +183,7 @@ func (backRepo *BackRepoStruct) Commit(stage *models.StageStruct) {
 	backRepo.BackRepoEvent.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoGongsimCommand.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoGongsimStatus.CommitPhaseTwo(backRepo)
+	backRepo.BackRepoUpdateState.CommitPhaseTwo(backRepo)
 
 	backRepo.IncrementCommitFromBackNb()
 }
@@ -199,6 +196,7 @@ func (backRepo *BackRepoStruct) Checkout(stage *models.StageStruct) {
 	backRepo.BackRepoEvent.CheckoutPhaseOne()
 	backRepo.BackRepoGongsimCommand.CheckoutPhaseOne()
 	backRepo.BackRepoGongsimStatus.CheckoutPhaseOne()
+	backRepo.BackRepoUpdateState.CheckoutPhaseOne()
 
 	// insertion point for per struct back repo phase two commit
 	backRepo.BackRepoDummyAgent.CheckoutPhaseTwo(backRepo)
@@ -206,6 +204,7 @@ func (backRepo *BackRepoStruct) Checkout(stage *models.StageStruct) {
 	backRepo.BackRepoEvent.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoGongsimCommand.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoGongsimStatus.CheckoutPhaseTwo(backRepo)
+	backRepo.BackRepoUpdateState.CheckoutPhaseTwo(backRepo)
 }
 
 // Backup the BackRepoStruct
@@ -218,6 +217,7 @@ func (backRepo *BackRepoStruct) Backup(stage *models.StageStruct, dirPath string
 	backRepo.BackRepoEvent.Backup(dirPath)
 	backRepo.BackRepoGongsimCommand.Backup(dirPath)
 	backRepo.BackRepoGongsimStatus.Backup(dirPath)
+	backRepo.BackRepoUpdateState.Backup(dirPath)
 }
 
 // Backup in XL the BackRepoStruct
@@ -233,6 +233,7 @@ func (backRepo *BackRepoStruct) BackupXL(stage *models.StageStruct, dirPath stri
 	backRepo.BackRepoEvent.BackupXL(file)
 	backRepo.BackRepoGongsimCommand.BackupXL(file)
 	backRepo.BackRepoGongsimStatus.BackupXL(file)
+	backRepo.BackRepoUpdateState.BackupXL(file)
 
 	var b bytes.Buffer
 	writer := bufio.NewWriter(&b)
@@ -262,6 +263,7 @@ func (backRepo *BackRepoStruct) Restore(stage *models.StageStruct, dirPath strin
 	backRepo.BackRepoEvent.RestorePhaseOne(dirPath)
 	backRepo.BackRepoGongsimCommand.RestorePhaseOne(dirPath)
 	backRepo.BackRepoGongsimStatus.RestorePhaseOne(dirPath)
+	backRepo.BackRepoUpdateState.RestorePhaseOne(dirPath)
 
 	//
 	// restauration second phase (reindex pointers with the new ID)
@@ -273,6 +275,7 @@ func (backRepo *BackRepoStruct) Restore(stage *models.StageStruct, dirPath strin
 	backRepo.BackRepoEvent.RestorePhaseTwo()
 	backRepo.BackRepoGongsimCommand.RestorePhaseTwo()
 	backRepo.BackRepoGongsimStatus.RestorePhaseTwo()
+	backRepo.BackRepoUpdateState.RestorePhaseTwo()
 
 	backRepo.stage.Checkout()
 }
@@ -305,35 +308,54 @@ func (backRepo *BackRepoStruct) RestoreXL(stage *models.StageStruct, dirPath str
 	backRepo.BackRepoEvent.RestoreXLPhaseOne(file)
 	backRepo.BackRepoGongsimCommand.RestoreXLPhaseOne(file)
 	backRepo.BackRepoGongsimStatus.RestoreXLPhaseOne(file)
+	backRepo.BackRepoUpdateState.RestoreXLPhaseOne(file)
 
 	// commit the restored stage
 	backRepo.stage.Commit()
 }
 
-func (backRepoStruct *BackRepoStruct) SubscribeToCommitNb() <-chan int {
-	backRepoStruct.rwMutex.Lock()
-	defer backRepoStruct.rwMutex.Unlock()
-
+func (backRepoStruct *BackRepoStruct) SubscribeToCommitNb(ctx context.Context) <-chan int {
 	ch := make(chan int)
+
+	backRepoStruct.subscribersRwMutex.Lock()
 	backRepoStruct.subscribers = append(backRepoStruct.subscribers, ch)
+	backRepoStruct.subscribersRwMutex.Unlock()
+
+	// Goroutine to remove subscriber when context is done
+	go func() {
+		<-ctx.Done()
+		backRepoStruct.unsubscribe(ch)
+	}()
 	return ch
 }
 
-func (backRepoStruct *BackRepoStruct) broadcastNbCommitToBack() {
-	backRepoStruct.rwMutex.RLock()
-	defer backRepoStruct.rwMutex.RUnlock()
-
-	activeChannels := make([]chan int, 0)
-
-	for _, ch := range backRepoStruct.subscribers {
-		select {
-		case ch <- int(backRepoStruct.CommitFromBackNb):
-			activeChannels = append(activeChannels, ch)
-		default:
-			// Assume channel is no longer active; don't add to activeChannels
-			log.Println("Channel no longer active")
-			close(ch)
+// unsubscribe removes a subscriber's channel from the subscribers slice.
+func (backRepoStruct *BackRepoStruct) unsubscribe(ch chan int) {
+	backRepoStruct.subscribersRwMutex.Lock()
+	defer backRepoStruct.subscribersRwMutex.Unlock()
+	for i, subscriber := range backRepoStruct.subscribers {
+		if subscriber == ch {
+			backRepoStruct.subscribers =
+				append(backRepoStruct.subscribers[:i],
+					backRepoStruct.subscribers[i+1:]...)
+			close(ch) // Close the channel to signal completion
+			break
 		}
 	}
-	backRepoStruct.subscribers = activeChannels
+}
+
+func (backRepoStruct *BackRepoStruct) broadcastNbCommitToBack() {
+	backRepoStruct.subscribersRwMutex.RLock()
+	subscribers := make([]chan int, len(backRepoStruct.subscribers))
+	copy(subscribers, backRepoStruct.subscribers)
+	backRepoStruct.subscribersRwMutex.RUnlock()
+
+	for _, ch := range subscribers {
+		select {
+		case ch <- int(backRepoStruct.CommitFromBackNb):
+			// Successfully sent commit from back
+		default:
+			// Subscriber is not ready to receive; skip to avoid blocking
+		}
+	}
 }

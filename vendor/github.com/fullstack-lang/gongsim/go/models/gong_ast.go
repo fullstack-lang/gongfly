@@ -319,6 +319,7 @@ var __gong__map_Engine = make(map[string]*Engine)
 var __gong__map_Event = make(map[string]*Event)
 var __gong__map_GongsimCommand = make(map[string]*GongsimCommand)
 var __gong__map_GongsimStatus = make(map[string]*GongsimStatus)
+var __gong__map_UpdateState = make(map[string]*UpdateState)
 
 // Parser needs to be configured for having the [Name1.Name2] or [pkg.Name1] ...
 // to be recognized as a proper identifier.
@@ -492,25 +493,41 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 									switch gongstructName {
 									// insertion point for identifiers
 									case "DummyAgent":
-										instanceDummyAgent := (&DummyAgent{Name: instanceName}).Stage(stage)
+										instanceDummyAgent := new(DummyAgent)
+										instanceDummyAgent.Name = instanceName
+										instanceDummyAgent.Stage(stage)
 										instance = any(instanceDummyAgent)
 										__gong__map_DummyAgent[identifier] = instanceDummyAgent
 									case "Engine":
-										instanceEngine := (&Engine{Name: instanceName}).Stage(stage)
+										instanceEngine := new(Engine)
+										instanceEngine.Name = instanceName
+										instanceEngine.Stage(stage)
 										instance = any(instanceEngine)
 										__gong__map_Engine[identifier] = instanceEngine
 									case "Event":
-										instanceEvent := (&Event{Name: instanceName}).Stage(stage)
+										instanceEvent := new(Event)
+										instanceEvent.Name = instanceName
+										instanceEvent.Stage(stage)
 										instance = any(instanceEvent)
 										__gong__map_Event[identifier] = instanceEvent
 									case "GongsimCommand":
-										instanceGongsimCommand := (&GongsimCommand{Name: instanceName}).Stage(stage)
+										instanceGongsimCommand := new(GongsimCommand)
+										instanceGongsimCommand.Name = instanceName
+										instanceGongsimCommand.Stage(stage)
 										instance = any(instanceGongsimCommand)
 										__gong__map_GongsimCommand[identifier] = instanceGongsimCommand
 									case "GongsimStatus":
-										instanceGongsimStatus := (&GongsimStatus{Name: instanceName}).Stage(stage)
+										instanceGongsimStatus := new(GongsimStatus)
+										instanceGongsimStatus.Name = instanceName
+										instanceGongsimStatus.Stage(stage)
 										instance = any(instanceGongsimStatus)
 										__gong__map_GongsimStatus[identifier] = instanceGongsimStatus
+									case "UpdateState":
+										instanceUpdateState := new(UpdateState)
+										instanceUpdateState.Name = instanceName
+										instanceUpdateState.Stage(stage)
+										instance = any(instanceUpdateState)
+										__gong__map_UpdateState[identifier] = instanceUpdateState
 									}
 									__gong__map_Indentifiers_gongstructName[identifier] = gongstructName
 									return
@@ -567,6 +584,10 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 							switch fieldName {
 							// insertion point for date assign code
 							}
+						case "UpdateState":
+							switch fieldName {
+							// insertion point for date assign code
+							}
 						}
 					}
 				}
@@ -609,6 +630,10 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 						// insertion point for slice of pointers assign code
 						}
 					case "GongsimStatus":
+						switch fieldName {
+						// insertion point for slice of pointers assign code
+						}
+					case "UpdateState":
 						switch fieldName {
 						// insertion point for slice of pointers assign code
 						}
@@ -761,6 +786,28 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
 					__gong__map_GongsimStatus[identifier].SpeedCommandCompletionDate = fielValue
 				}
+			case "UpdateState":
+				switch fieldName {
+				// insertion point for field dependant code
+				case "Name":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_UpdateState[identifier].Name = fielValue
+				case "Duration":
+					// convert string to duration
+					fielValue, err := strconv.ParseInt(basicLit.Value, 10, 64)
+					if err != nil {
+						log.Fatalln(err)
+					}
+					__gong__map_UpdateState[identifier].Duration = time.Duration(int(exprSign) * int(fielValue))
+				case "Period":
+					// convert string to duration
+					fielValue, err := strconv.ParseInt(basicLit.Value, 10, 64)
+					if err != nil {
+						log.Fatalln(err)
+					}
+					__gong__map_UpdateState[identifier].Period = time.Duration(int(exprSign) * int(fielValue))
+				}
 			}
 		case *ast.Ident:
 			// assignment to boolean field ?
@@ -795,6 +842,10 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					__gong__map_GongsimCommand[identifier].Engine = __gong__map_Engine[targetIdentifier]
 				}
 			case "GongsimStatus":
+				switch fieldName {
+				// insertion point for field dependant code
+				}
+			case "UpdateState":
 				switch fieldName {
 				// insertion point for field dependant code
 				}
@@ -887,6 +938,10 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 							log.Fatalln(err)
 						}
 						__gong__map_GongsimStatus[identifier].CurrentSpeedCommand = SpeedCommandType(val)
+					}
+				case "UpdateState":
+					switch fieldName {
+					// insertion point for enum assign code
 					}
 				}
 			}

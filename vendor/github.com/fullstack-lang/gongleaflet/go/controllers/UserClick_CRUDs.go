@@ -55,10 +55,10 @@ func (controller *Controller) GetUserClicks(c *gin.Context) {
 	// source slice
 	var userclickDBs []orm.UserClickDB
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetUserClicks", "GONG__StackPath", stackPath)
@@ -70,12 +70,12 @@ func (controller *Controller) GetUserClicks(c *gin.Context) {
 	}
 	db := backRepo.BackRepoUserClick.GetDB()
 
-	query := db.Find(&userclickDBs)
-	if query.Error != nil {
+	_, err := db.Find(&userclickDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -118,10 +118,10 @@ func (controller *Controller) PostUserClick(c *gin.Context) {
 	mutexUserClick.Lock()
 	defer mutexUserClick.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("PostUserClicks", "GONG__StackPath", stackPath)
@@ -151,12 +151,12 @@ func (controller *Controller) PostUserClick(c *gin.Context) {
 	userclickDB.UserClickPointersEncoding = input.UserClickPointersEncoding
 	userclickDB.CopyBasicFieldsFromUserClick_WOP(&input.UserClick_WOP)
 
-	query := db.Create(&userclickDB)
-	if query.Error != nil {
+	_, err = db.Create(&userclickDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -188,10 +188,10 @@ func (controller *Controller) PostUserClick(c *gin.Context) {
 //	200: userclickDBResponse
 func (controller *Controller) GetUserClick(c *gin.Context) {
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetUserClick", "GONG__StackPath", stackPath)
@@ -205,7 +205,7 @@ func (controller *Controller) GetUserClick(c *gin.Context) {
 
 	// Get userclickDB in DB
 	var userclickDB orm.UserClickDB
-	if err := db.First(&userclickDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&userclickDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -237,10 +237,10 @@ func (controller *Controller) UpdateUserClick(c *gin.Context) {
 	mutexUserClick.Lock()
 	defer mutexUserClick.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("UpdateUserClick", "GONG__StackPath", stackPath)
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateUserClick(c *gin.Context) {
 	var userclickDB orm.UserClickDB
 
 	// fetch the userclick
-	query := db.First(&userclickDB, c.Param("id"))
+	_, err := db.First(&userclickDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateUserClick(c *gin.Context) {
 	userclickDB.CopyBasicFieldsFromUserClick_WOP(&input.UserClick_WOP)
 	userclickDB.UserClickPointersEncoding = input.UserClickPointersEncoding
 
-	query = db.Model(&userclickDB).Updates(userclickDB)
-	if query.Error != nil {
+	db, _ = db.Model(&userclickDB)
+	_, err = db.Updates(&userclickDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -326,10 +327,10 @@ func (controller *Controller) DeleteUserClick(c *gin.Context) {
 	mutexUserClick.Lock()
 	defer mutexUserClick.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("DeleteUserClick", "GONG__StackPath", stackPath)
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteUserClick(c *gin.Context) {
 
 	// Get model if exist
 	var userclickDB orm.UserClickDB
-	if err := db.First(&userclickDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&userclickDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteUserClick(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&userclickDB)
+	db.Unscoped()
+	db.Delete(&userclickDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	userclickDeleted := new(models.UserClick)

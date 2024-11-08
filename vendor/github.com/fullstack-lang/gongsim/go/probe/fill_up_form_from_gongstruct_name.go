@@ -91,6 +91,19 @@ func FillUpFormFromGongstructName(
 		gongsimstatus := new(models.GongsimStatus)
 		formGroup.HasSuppressButton = !isNewInstance
 		FillUpForm(gongsimstatus, formGroup, probe)
+	case "UpdateState":
+		formGroup := (&form.FormGroup{
+			Name:  form.FormGroupDefaultName.ToString(),
+			Label: prefix + "UpdateState Form",
+		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__UpdateStateFormCallback(
+			nil,
+			probe,
+			formGroup,
+		)
+		updatestate := new(models.UpdateState)
+		formGroup.HasSuppressButton = !isNewInstance
+		FillUpForm(updatestate, formGroup, probe)
 	}
 	formStage.Commit()
 }

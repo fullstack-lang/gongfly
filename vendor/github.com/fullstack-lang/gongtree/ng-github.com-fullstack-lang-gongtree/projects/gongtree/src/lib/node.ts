@@ -26,6 +26,10 @@ export class Node {
 	HasCheckboxButton: boolean = false
 	IsChecked: boolean = false
 	IsCheckboxDisabled: boolean = false
+	HasSecondCheckboxButton: boolean = false
+	IsSecondCheckboxChecked: boolean = false
+	IsSecondCheckboxDisabled: boolean = false
+	TextAfterSecondCheckbox: string = ""
 	IsInEditMode: boolean = false
 	IsNodeClickable: boolean = false
 	IsWithPreceedingIcon: boolean = false
@@ -52,6 +56,10 @@ export function CopyNodeToNodeAPI(node: Node, nodeAPI: NodeAPI) {
 	nodeAPI.HasCheckboxButton = node.HasCheckboxButton
 	nodeAPI.IsChecked = node.IsChecked
 	nodeAPI.IsCheckboxDisabled = node.IsCheckboxDisabled
+	nodeAPI.HasSecondCheckboxButton = node.HasSecondCheckboxButton
+	nodeAPI.IsSecondCheckboxChecked = node.IsSecondCheckboxChecked
+	nodeAPI.IsSecondCheckboxDisabled = node.IsSecondCheckboxDisabled
+	nodeAPI.TextAfterSecondCheckbox = node.TextAfterSecondCheckbox
 	nodeAPI.IsInEditMode = node.IsInEditMode
 	nodeAPI.IsNodeClickable = node.IsNodeClickable
 	nodeAPI.IsWithPreceedingIcon = node.IsWithPreceedingIcon
@@ -97,6 +105,10 @@ export function CopyNodeAPIToNode(nodeAPI: NodeAPI, node: Node, frontRepo: Front
 	node.HasCheckboxButton = nodeAPI.HasCheckboxButton
 	node.IsChecked = nodeAPI.IsChecked
 	node.IsCheckboxDisabled = nodeAPI.IsCheckboxDisabled
+	node.HasSecondCheckboxButton = nodeAPI.HasSecondCheckboxButton
+	node.IsSecondCheckboxChecked = nodeAPI.IsSecondCheckboxChecked
+	node.IsSecondCheckboxDisabled = nodeAPI.IsSecondCheckboxDisabled
+	node.TextAfterSecondCheckbox = nodeAPI.TextAfterSecondCheckbox
 	node.IsInEditMode = nodeAPI.IsInEditMode
 	node.IsNodeClickable = nodeAPI.IsNodeClickable
 	node.IsWithPreceedingIcon = nodeAPI.IsWithPreceedingIcon
@@ -106,6 +118,11 @@ export function CopyNodeAPIToNode(nodeAPI: NodeAPI, node: Node, frontRepo: Front
 	node.PreceedingSVGIcon = frontRepo.map_ID_SVGIcon.get(nodeAPI.NodePointersEncoding.PreceedingSVGIconID.Int64)
 
 	// insertion point for slice of pointers fields encoding
+	if (!Array.isArray(nodeAPI.NodePointersEncoding.Children)) {
+		console.error('Rects is not an array:', nodeAPI.NodePointersEncoding.Children);
+		return;
+	}
+
 	node.Children = new Array<Node>()
 	for (let _id of nodeAPI.NodePointersEncoding.Children) {
 		let _node = frontRepo.map_ID_Node.get(_id)
@@ -113,6 +130,11 @@ export function CopyNodeAPIToNode(nodeAPI: NodeAPI, node: Node, frontRepo: Front
 			node.Children.push(_node!)
 		}
 	}
+	if (!Array.isArray(nodeAPI.NodePointersEncoding.Buttons)) {
+		console.error('Rects is not an array:', nodeAPI.NodePointersEncoding.Buttons);
+		return;
+	}
+
 	node.Buttons = new Array<Button>()
 	for (let _id of nodeAPI.NodePointersEncoding.Buttons) {
 		let _button = frontRepo.map_ID_Button.get(_id)

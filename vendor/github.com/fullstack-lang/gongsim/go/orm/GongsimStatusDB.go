@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongsim/go/db"
 	"github.com/fullstack-lang/gongsim/go/models"
 )
 
@@ -73,7 +74,7 @@ type GongsimStatusDB struct {
 
 	// Declation for basic field gongsimstatusDB.SpeedCommandCompletionDate
 	SpeedCommandCompletionDate_Data sql.NullString
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	GongsimStatusPointersEncoding
@@ -128,7 +129,7 @@ type BackRepoGongsimStatusStruct struct {
 	// stores GongsimStatus according to their gorm ID
 	Map_GongsimStatusDBID_GongsimStatusPtr map[uint]*models.GongsimStatus
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -138,7 +139,7 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) GetStage() (stage *mod
 	return
 }
 
-func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) GetDB() *gorm.DB {
+func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) GetDB() db.DBInterface {
 	return backRepoGongsimStatus.db
 }
 
@@ -175,9 +176,10 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitDeleteInstance(i
 
 	// gongsimstatus is not staged anymore, remove gongsimstatusDB
 	gongsimstatusDB := backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[id]
-	query := backRepoGongsimStatus.db.Unscoped().Delete(&gongsimstatusDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoGongsimStatus.db.Unscoped()
+	_, err := db.Delete(gongsimstatusDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -201,9 +203,9 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseOneInstance
 	var gongsimstatusDB GongsimStatusDB
 	gongsimstatusDB.CopyBasicFieldsFromGongsimStatus(gongsimstatus)
 
-	query := backRepoGongsimStatus.db.Create(&gongsimstatusDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoGongsimStatus.db.Create(&gongsimstatusDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -235,9 +237,9 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseTwoInstance
 		gongsimstatusDB.CopyBasicFieldsFromGongsimStatus(gongsimstatus)
 
 		// insertion point for translating pointers encodings into actual pointers
-		query := backRepoGongsimStatus.db.Save(&gongsimstatusDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoGongsimStatus.db.Save(gongsimstatusDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -256,9 +258,9 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CommitPhaseTwoInstance
 func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) CheckoutPhaseOne() (Error error) {
 
 	gongsimstatusDBArray := make([]GongsimStatusDB, 0)
-	query := backRepoGongsimStatus.db.Find(&gongsimstatusDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoGongsimStatus.db.Find(&gongsimstatusDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -369,7 +371,7 @@ func (backRepo *BackRepoStruct) CheckoutGongsimStatus(gongsimstatus *models.Gong
 			var gongsimstatusDB GongsimStatusDB
 			gongsimstatusDB.ID = id
 
-			if err := backRepo.BackRepoGongsimStatus.db.First(&gongsimstatusDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoGongsimStatus.db.First(&gongsimstatusDB, id); err != nil {
 				log.Fatalln("CheckoutGongsimStatus : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoGongsimStatus.CheckoutPhaseOneInstance(&gongsimstatusDB)
@@ -564,9 +566,9 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) rowVisitorGongsimStatu
 
 		gongsimstatusDB_ID_atBackupTime := gongsimstatusDB.ID
 		gongsimstatusDB.ID = 0
-		query := backRepoGongsimStatus.db.Create(gongsimstatusDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoGongsimStatus.db.Create(gongsimstatusDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[gongsimstatusDB.ID] = gongsimstatusDB
 		BackRepoGongsimStatusid_atBckpTime_newID[gongsimstatusDB_ID_atBackupTime] = gongsimstatusDB.ID
@@ -601,9 +603,9 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) RestorePhaseOne(dirPat
 
 		gongsimstatusDB_ID_atBackupTime := gongsimstatusDB.ID
 		gongsimstatusDB.ID = 0
-		query := backRepoGongsimStatus.db.Create(gongsimstatusDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoGongsimStatus.db.Create(gongsimstatusDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB[gongsimstatusDB.ID] = gongsimstatusDB
 		BackRepoGongsimStatusid_atBckpTime_newID[gongsimstatusDB_ID_atBackupTime] = gongsimstatusDB.ID
@@ -625,9 +627,10 @@ func (backRepoGongsimStatus *BackRepoGongsimStatusStruct) RestorePhaseTwo() {
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoGongsimStatus.db.Model(gongsimstatusDB).Updates(*gongsimstatusDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoGongsimStatus.db.Model(gongsimstatusDB)
+		_, err := db.Updates(*gongsimstatusDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

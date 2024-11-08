@@ -32,20 +32,25 @@ func (colorenum *ColorEnum) FromString(input string) (err error) {
 	// insertion code per enum code
 	case "LIGHT_BROWN_8D6E63":
 		*colorenum = LIGHT_BROWN_8D6E63
+		return
 	case "RED":
 		*colorenum = RED
+		return
 	case "GREY":
 		*colorenum = GREY
+		return
 	case "GREEN":
 		*colorenum = GREEN
+		return
 	case "BLUE":
 		*colorenum = BLUE
+		return
 	case "NONE":
 		*colorenum = NONE
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (colorenum *ColorEnum) FromCodeString(input string) (err error) {
@@ -142,12 +147,13 @@ func (dashstyleenum *DashStyleEnum) FromString(input string) (err error) {
 	// insertion code per enum code
 	case "FIVE_TEN":
 		*dashstyleenum = FIVE_TEN
+		return
 	case "FIVE_TWENTY":
 		*dashstyleenum = FIVE_TWENTY
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (dashstyleenum *DashStyleEnum) FromCodeString(input string) (err error) {
@@ -220,12 +226,13 @@ func (start_to_end_enum *Start_To_End_Enum) FromString(input string) (err error)
 	// insertion code per enum code
 	case "FORWARD_START_TO_END":
 		*start_to_end_enum = FORWARD_START_TO_END
+		return
 	case "BACKWARD_START_TO_END":
 		*start_to_end_enum = BACKWARD_END_TO_START
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (start_to_end_enum *Start_To_End_Enum) FromCodeString(input string) (err error) {
@@ -298,12 +305,13 @@ func (transmittingenum *TransmittingEnum) FromString(input string) (err error) {
 	// insertion code per enum code
 	case "IS_TRANSMITTING":
 		*transmittingenum = IS_TRANSMITTING
+		return
 	case "IS_NOT_TRANSMITTING":
 		*transmittingenum = IS_NOT_TRANSMITTING
+		return
 	default:
 		return errUnkownEnum
 	}
-	return
 }
 
 func (transmittingenum *TransmittingEnum) FromCodeString(input string) (err error) {
@@ -357,13 +365,12 @@ func (transmittingenum TransmittingEnum) CodeValues() (res []string) {
 // end of insertion point for enum utility functions
 
 type GongstructEnumStringField interface {
-	string | ColorEnum | DashStyleEnum | Start_To_End_Enum | TransmittingEnum
 	Codes() []string
 	CodeValues() []string
+	ToString() string
 }
 
 type PointerToGongstructEnumStringField interface {
-	*ColorEnum | *DashStyleEnum | *Start_To_End_Enum | *TransmittingEnum
 	FromCodeString(input string) (err error)
 }
 

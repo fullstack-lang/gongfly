@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongsim/go/db"
 	"github.com/fullstack-lang/gongsim/go/models"
 )
 
@@ -64,7 +65,7 @@ type DummyAgentDB struct {
 
 	// Declation for basic field dummyagentDB.Name
 	Name_Data sql.NullString
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	DummyAgentPointersEncoding
@@ -110,7 +111,7 @@ type BackRepoDummyAgentStruct struct {
 	// stores DummyAgent according to their gorm ID
 	Map_DummyAgentDBID_DummyAgentPtr map[uint]*models.DummyAgent
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -120,7 +121,7 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) GetStage() (stage *models.St
 	return
 }
 
-func (backRepoDummyAgent *BackRepoDummyAgentStruct) GetDB() *gorm.DB {
+func (backRepoDummyAgent *BackRepoDummyAgentStruct) GetDB() db.DBInterface {
 	return backRepoDummyAgent.db
 }
 
@@ -157,9 +158,10 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitDeleteInstance(id uint
 
 	// dummyagent is not staged anymore, remove dummyagentDB
 	dummyagentDB := backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[id]
-	query := backRepoDummyAgent.db.Unscoped().Delete(&dummyagentDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoDummyAgent.db.Unscoped()
+	_, err := db.Delete(dummyagentDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -183,9 +185,9 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseOneInstance(dummy
 	var dummyagentDB DummyAgentDB
 	dummyagentDB.CopyBasicFieldsFromDummyAgent(dummyagent)
 
-	query := backRepoDummyAgent.db.Create(&dummyagentDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoDummyAgent.db.Create(&dummyagentDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -217,9 +219,9 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseTwoInstance(backR
 		dummyagentDB.CopyBasicFieldsFromDummyAgent(dummyagent)
 
 		// insertion point for translating pointers encodings into actual pointers
-		query := backRepoDummyAgent.db.Save(&dummyagentDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoDummyAgent.db.Save(dummyagentDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -238,9 +240,9 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) CommitPhaseTwoInstance(backR
 func (backRepoDummyAgent *BackRepoDummyAgentStruct) CheckoutPhaseOne() (Error error) {
 
 	dummyagentDBArray := make([]DummyAgentDB, 0)
-	query := backRepoDummyAgent.db.Find(&dummyagentDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoDummyAgent.db.Find(&dummyagentDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -351,7 +353,7 @@ func (backRepo *BackRepoStruct) CheckoutDummyAgent(dummyagent *models.DummyAgent
 			var dummyagentDB DummyAgentDB
 			dummyagentDB.ID = id
 
-			if err := backRepo.BackRepoDummyAgent.db.First(&dummyagentDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoDummyAgent.db.First(&dummyagentDB, id); err != nil {
 				log.Fatalln("CheckoutDummyAgent : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoDummyAgent.CheckoutPhaseOneInstance(&dummyagentDB)
@@ -510,9 +512,9 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) rowVisitorDummyAgent(row *xl
 
 		dummyagentDB_ID_atBackupTime := dummyagentDB.ID
 		dummyagentDB.ID = 0
-		query := backRepoDummyAgent.db.Create(dummyagentDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoDummyAgent.db.Create(dummyagentDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[dummyagentDB.ID] = dummyagentDB
 		BackRepoDummyAgentid_atBckpTime_newID[dummyagentDB_ID_atBackupTime] = dummyagentDB.ID
@@ -547,9 +549,9 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) RestorePhaseOne(dirPath stri
 
 		dummyagentDB_ID_atBackupTime := dummyagentDB.ID
 		dummyagentDB.ID = 0
-		query := backRepoDummyAgent.db.Create(dummyagentDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoDummyAgent.db.Create(dummyagentDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB[dummyagentDB.ID] = dummyagentDB
 		BackRepoDummyAgentid_atBckpTime_newID[dummyagentDB_ID_atBackupTime] = dummyagentDB.ID
@@ -571,9 +573,10 @@ func (backRepoDummyAgent *BackRepoDummyAgentStruct) RestorePhaseTwo() {
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoDummyAgent.db.Model(dummyagentDB).Updates(*dummyagentDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoDummyAgent.db.Model(dummyagentDB)
+		_, err := db.Updates(*dummyagentDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

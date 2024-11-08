@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongleaflet/go/db"
 	"github.com/fullstack-lang/gongleaflet/go/models"
 )
 
@@ -64,7 +65,7 @@ type DivIconDB struct {
 
 	// Declation for basic field diviconDB.SVG
 	SVG_Data sql.NullString
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	DivIconPointersEncoding
@@ -110,7 +111,7 @@ type BackRepoDivIconStruct struct {
 	// stores DivIcon according to their gorm ID
 	Map_DivIconDBID_DivIconPtr map[uint]*models.DivIcon
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -120,7 +121,7 @@ func (backRepoDivIcon *BackRepoDivIconStruct) GetStage() (stage *models.StageStr
 	return
 }
 
-func (backRepoDivIcon *BackRepoDivIconStruct) GetDB() *gorm.DB {
+func (backRepoDivIcon *BackRepoDivIconStruct) GetDB() db.DBInterface {
 	return backRepoDivIcon.db
 }
 
@@ -157,9 +158,10 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitDeleteInstance(id uint) (Err
 
 	// divicon is not staged anymore, remove diviconDB
 	diviconDB := backRepoDivIcon.Map_DivIconDBID_DivIconDB[id]
-	query := backRepoDivIcon.db.Unscoped().Delete(&diviconDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoDivIcon.db.Unscoped()
+	_, err := db.Delete(diviconDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -183,9 +185,9 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseOneInstance(divicon *mo
 	var diviconDB DivIconDB
 	diviconDB.CopyBasicFieldsFromDivIcon(divicon)
 
-	query := backRepoDivIcon.db.Create(&diviconDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoDivIcon.db.Create(&diviconDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -217,9 +219,9 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseTwoInstance(backRepo *B
 		diviconDB.CopyBasicFieldsFromDivIcon(divicon)
 
 		// insertion point for translating pointers encodings into actual pointers
-		query := backRepoDivIcon.db.Save(&diviconDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoDivIcon.db.Save(diviconDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -238,9 +240,9 @@ func (backRepoDivIcon *BackRepoDivIconStruct) CommitPhaseTwoInstance(backRepo *B
 func (backRepoDivIcon *BackRepoDivIconStruct) CheckoutPhaseOne() (Error error) {
 
 	diviconDBArray := make([]DivIconDB, 0)
-	query := backRepoDivIcon.db.Find(&diviconDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoDivIcon.db.Find(&diviconDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -351,7 +353,7 @@ func (backRepo *BackRepoStruct) CheckoutDivIcon(divicon *models.DivIcon) {
 			var diviconDB DivIconDB
 			diviconDB.ID = id
 
-			if err := backRepo.BackRepoDivIcon.db.First(&diviconDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoDivIcon.db.First(&diviconDB, id); err != nil {
 				log.Fatalln("CheckoutDivIcon : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoDivIcon.CheckoutPhaseOneInstance(&diviconDB)
@@ -510,9 +512,9 @@ func (backRepoDivIcon *BackRepoDivIconStruct) rowVisitorDivIcon(row *xlsx.Row) e
 
 		diviconDB_ID_atBackupTime := diviconDB.ID
 		diviconDB.ID = 0
-		query := backRepoDivIcon.db.Create(diviconDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoDivIcon.db.Create(diviconDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoDivIcon.Map_DivIconDBID_DivIconDB[diviconDB.ID] = diviconDB
 		BackRepoDivIconid_atBckpTime_newID[diviconDB_ID_atBackupTime] = diviconDB.ID
@@ -547,9 +549,9 @@ func (backRepoDivIcon *BackRepoDivIconStruct) RestorePhaseOne(dirPath string) {
 
 		diviconDB_ID_atBackupTime := diviconDB.ID
 		diviconDB.ID = 0
-		query := backRepoDivIcon.db.Create(diviconDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoDivIcon.db.Create(diviconDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoDivIcon.Map_DivIconDBID_DivIconDB[diviconDB.ID] = diviconDB
 		BackRepoDivIconid_atBckpTime_newID[diviconDB_ID_atBackupTime] = diviconDB.ID
@@ -571,9 +573,10 @@ func (backRepoDivIcon *BackRepoDivIconStruct) RestorePhaseTwo() {
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoDivIcon.db.Model(diviconDB).Updates(*diviconDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoDivIcon.db.Model(diviconDB)
+		_, err := db.Updates(*diviconDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

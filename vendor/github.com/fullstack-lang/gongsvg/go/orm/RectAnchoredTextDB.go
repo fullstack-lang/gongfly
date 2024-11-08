@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongsvg/go/db"
 	"github.com/fullstack-lang/gongsvg/go/models"
 )
 
@@ -74,6 +75,9 @@ type RectAnchoredTextDB struct {
 	// Declation for basic field rectanchoredtextDB.FontSize
 	FontSize_Data sql.NullInt64
 
+	// Declation for basic field rectanchoredtextDB.FontStyle
+	FontStyle_Data sql.NullString
+
 	// Declation for basic field rectanchoredtextDB.X_Offset
 	X_Offset_Data sql.NullFloat64
 
@@ -109,7 +113,7 @@ type RectAnchoredTextDB struct {
 
 	// Declation for basic field rectanchoredtextDB.Transform
 	Transform_Data sql.NullString
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	RectAnchoredTextPointersEncoding
@@ -140,29 +144,31 @@ type RectAnchoredTextWOP struct {
 
 	FontSize int `xlsx:"4"`
 
-	X_Offset float64 `xlsx:"5"`
+	FontStyle string `xlsx:"5"`
 
-	Y_Offset float64 `xlsx:"6"`
+	X_Offset float64 `xlsx:"6"`
 
-	RectAnchorType models.RectAnchorType `xlsx:"7"`
+	Y_Offset float64 `xlsx:"7"`
 
-	TextAnchorType models.TextAnchorType `xlsx:"8"`
+	RectAnchorType models.RectAnchorType `xlsx:"8"`
 
-	Color string `xlsx:"9"`
+	TextAnchorType models.TextAnchorType `xlsx:"9"`
 
-	FillOpacity float64 `xlsx:"10"`
+	Color string `xlsx:"10"`
 
-	Stroke string `xlsx:"11"`
+	FillOpacity float64 `xlsx:"11"`
 
-	StrokeOpacity float64 `xlsx:"12"`
+	Stroke string `xlsx:"12"`
 
-	StrokeWidth float64 `xlsx:"13"`
+	StrokeOpacity float64 `xlsx:"13"`
 
-	StrokeDashArray string `xlsx:"14"`
+	StrokeWidth float64 `xlsx:"14"`
 
-	StrokeDashArrayWhenSelected string `xlsx:"15"`
+	StrokeDashArray string `xlsx:"15"`
 
-	Transform string `xlsx:"16"`
+	StrokeDashArrayWhenSelected string `xlsx:"16"`
+
+	Transform string `xlsx:"17"`
 	// insertion for WOP pointer fields
 }
 
@@ -173,6 +179,7 @@ var RectAnchoredText_Fields = []string{
 	"Content",
 	"FontWeight",
 	"FontSize",
+	"FontStyle",
 	"X_Offset",
 	"Y_Offset",
 	"RectAnchorType",
@@ -197,7 +204,7 @@ type BackRepoRectAnchoredTextStruct struct {
 	// stores RectAnchoredText according to their gorm ID
 	Map_RectAnchoredTextDBID_RectAnchoredTextPtr map[uint]*models.RectAnchoredText
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -207,7 +214,7 @@ func (backRepoRectAnchoredText *BackRepoRectAnchoredTextStruct) GetStage() (stag
 	return
 }
 
-func (backRepoRectAnchoredText *BackRepoRectAnchoredTextStruct) GetDB() *gorm.DB {
+func (backRepoRectAnchoredText *BackRepoRectAnchoredTextStruct) GetDB() db.DBInterface {
 	return backRepoRectAnchoredText.db
 }
 
@@ -244,9 +251,10 @@ func (backRepoRectAnchoredText *BackRepoRectAnchoredTextStruct) CommitDeleteInst
 
 	// rectanchoredtext is not staged anymore, remove rectanchoredtextDB
 	rectanchoredtextDB := backRepoRectAnchoredText.Map_RectAnchoredTextDBID_RectAnchoredTextDB[id]
-	query := backRepoRectAnchoredText.db.Unscoped().Delete(&rectanchoredtextDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoRectAnchoredText.db.Unscoped()
+	_, err := db.Delete(rectanchoredtextDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -270,9 +278,9 @@ func (backRepoRectAnchoredText *BackRepoRectAnchoredTextStruct) CommitPhaseOneIn
 	var rectanchoredtextDB RectAnchoredTextDB
 	rectanchoredtextDB.CopyBasicFieldsFromRectAnchoredText(rectanchoredtext)
 
-	query := backRepoRectAnchoredText.db.Create(&rectanchoredtextDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoRectAnchoredText.db.Create(&rectanchoredtextDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -322,9 +330,9 @@ func (backRepoRectAnchoredText *BackRepoRectAnchoredTextStruct) CommitPhaseTwoIn
 				append(rectanchoredtextDB.RectAnchoredTextPointersEncoding.Animates, int(animateAssocEnd_DB.ID))
 		}
 
-		query := backRepoRectAnchoredText.db.Save(&rectanchoredtextDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoRectAnchoredText.db.Save(rectanchoredtextDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -343,9 +351,9 @@ func (backRepoRectAnchoredText *BackRepoRectAnchoredTextStruct) CommitPhaseTwoIn
 func (backRepoRectAnchoredText *BackRepoRectAnchoredTextStruct) CheckoutPhaseOne() (Error error) {
 
 	rectanchoredtextDBArray := make([]RectAnchoredTextDB, 0)
-	query := backRepoRectAnchoredText.db.Find(&rectanchoredtextDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoRectAnchoredText.db.Find(&rectanchoredtextDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -465,7 +473,7 @@ func (backRepo *BackRepoStruct) CheckoutRectAnchoredText(rectanchoredtext *model
 			var rectanchoredtextDB RectAnchoredTextDB
 			rectanchoredtextDB.ID = id
 
-			if err := backRepo.BackRepoRectAnchoredText.db.First(&rectanchoredtextDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoRectAnchoredText.db.First(&rectanchoredtextDB, id); err != nil {
 				log.Fatalln("CheckoutRectAnchoredText : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoRectAnchoredText.CheckoutPhaseOneInstance(&rectanchoredtextDB)
@@ -489,6 +497,9 @@ func (rectanchoredtextDB *RectAnchoredTextDB) CopyBasicFieldsFromRectAnchoredTex
 
 	rectanchoredtextDB.FontSize_Data.Int64 = int64(rectanchoredtext.FontSize)
 	rectanchoredtextDB.FontSize_Data.Valid = true
+
+	rectanchoredtextDB.FontStyle_Data.String = rectanchoredtext.FontStyle
+	rectanchoredtextDB.FontStyle_Data.Valid = true
 
 	rectanchoredtextDB.X_Offset_Data.Float64 = rectanchoredtext.X_Offset
 	rectanchoredtextDB.X_Offset_Data.Valid = true
@@ -543,6 +554,9 @@ func (rectanchoredtextDB *RectAnchoredTextDB) CopyBasicFieldsFromRectAnchoredTex
 	rectanchoredtextDB.FontSize_Data.Int64 = int64(rectanchoredtext.FontSize)
 	rectanchoredtextDB.FontSize_Data.Valid = true
 
+	rectanchoredtextDB.FontStyle_Data.String = rectanchoredtext.FontStyle
+	rectanchoredtextDB.FontStyle_Data.Valid = true
+
 	rectanchoredtextDB.X_Offset_Data.Float64 = rectanchoredtext.X_Offset
 	rectanchoredtextDB.X_Offset_Data.Valid = true
 
@@ -596,6 +610,9 @@ func (rectanchoredtextDB *RectAnchoredTextDB) CopyBasicFieldsFromRectAnchoredTex
 	rectanchoredtextDB.FontSize_Data.Int64 = int64(rectanchoredtext.FontSize)
 	rectanchoredtextDB.FontSize_Data.Valid = true
 
+	rectanchoredtextDB.FontStyle_Data.String = rectanchoredtext.FontStyle
+	rectanchoredtextDB.FontStyle_Data.Valid = true
+
 	rectanchoredtextDB.X_Offset_Data.Float64 = rectanchoredtext.X_Offset
 	rectanchoredtextDB.X_Offset_Data.Valid = true
 
@@ -640,6 +657,7 @@ func (rectanchoredtextDB *RectAnchoredTextDB) CopyBasicFieldsToRectAnchoredText(
 	rectanchoredtext.Content = rectanchoredtextDB.Content_Data.String
 	rectanchoredtext.FontWeight = rectanchoredtextDB.FontWeight_Data.String
 	rectanchoredtext.FontSize = int(rectanchoredtextDB.FontSize_Data.Int64)
+	rectanchoredtext.FontStyle = rectanchoredtextDB.FontStyle_Data.String
 	rectanchoredtext.X_Offset = rectanchoredtextDB.X_Offset_Data.Float64
 	rectanchoredtext.Y_Offset = rectanchoredtextDB.Y_Offset_Data.Float64
 	rectanchoredtext.RectAnchorType.FromString(rectanchoredtextDB.RectAnchorType_Data.String)
@@ -661,6 +679,7 @@ func (rectanchoredtextDB *RectAnchoredTextDB) CopyBasicFieldsToRectAnchoredText_
 	rectanchoredtext.Content = rectanchoredtextDB.Content_Data.String
 	rectanchoredtext.FontWeight = rectanchoredtextDB.FontWeight_Data.String
 	rectanchoredtext.FontSize = int(rectanchoredtextDB.FontSize_Data.Int64)
+	rectanchoredtext.FontStyle = rectanchoredtextDB.FontStyle_Data.String
 	rectanchoredtext.X_Offset = rectanchoredtextDB.X_Offset_Data.Float64
 	rectanchoredtext.Y_Offset = rectanchoredtextDB.Y_Offset_Data.Float64
 	rectanchoredtext.RectAnchorType.FromString(rectanchoredtextDB.RectAnchorType_Data.String)
@@ -683,6 +702,7 @@ func (rectanchoredtextDB *RectAnchoredTextDB) CopyBasicFieldsToRectAnchoredTextW
 	rectanchoredtext.Content = rectanchoredtextDB.Content_Data.String
 	rectanchoredtext.FontWeight = rectanchoredtextDB.FontWeight_Data.String
 	rectanchoredtext.FontSize = int(rectanchoredtextDB.FontSize_Data.Int64)
+	rectanchoredtext.FontStyle = rectanchoredtextDB.FontStyle_Data.String
 	rectanchoredtext.X_Offset = rectanchoredtextDB.X_Offset_Data.Float64
 	rectanchoredtext.Y_Offset = rectanchoredtextDB.Y_Offset_Data.Float64
 	rectanchoredtext.RectAnchorType.FromString(rectanchoredtextDB.RectAnchorType_Data.String)
@@ -792,9 +812,9 @@ func (backRepoRectAnchoredText *BackRepoRectAnchoredTextStruct) rowVisitorRectAn
 
 		rectanchoredtextDB_ID_atBackupTime := rectanchoredtextDB.ID
 		rectanchoredtextDB.ID = 0
-		query := backRepoRectAnchoredText.db.Create(rectanchoredtextDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoRectAnchoredText.db.Create(rectanchoredtextDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoRectAnchoredText.Map_RectAnchoredTextDBID_RectAnchoredTextDB[rectanchoredtextDB.ID] = rectanchoredtextDB
 		BackRepoRectAnchoredTextid_atBckpTime_newID[rectanchoredtextDB_ID_atBackupTime] = rectanchoredtextDB.ID
@@ -829,9 +849,9 @@ func (backRepoRectAnchoredText *BackRepoRectAnchoredTextStruct) RestorePhaseOne(
 
 		rectanchoredtextDB_ID_atBackupTime := rectanchoredtextDB.ID
 		rectanchoredtextDB.ID = 0
-		query := backRepoRectAnchoredText.db.Create(rectanchoredtextDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoRectAnchoredText.db.Create(rectanchoredtextDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoRectAnchoredText.Map_RectAnchoredTextDBID_RectAnchoredTextDB[rectanchoredtextDB.ID] = rectanchoredtextDB
 		BackRepoRectAnchoredTextid_atBckpTime_newID[rectanchoredtextDB_ID_atBackupTime] = rectanchoredtextDB.ID
@@ -853,9 +873,10 @@ func (backRepoRectAnchoredText *BackRepoRectAnchoredTextStruct) RestorePhaseTwo(
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoRectAnchoredText.db.Model(rectanchoredtextDB).Updates(*rectanchoredtextDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoRectAnchoredText.db.Model(rectanchoredtextDB)
+		_, err := db.Updates(*rectanchoredtextDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

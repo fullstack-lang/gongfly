@@ -13,9 +13,16 @@ type BackRepoData struct {
 	GongsimCommandAPIs []*GongsimCommandAPI
 
 	GongsimStatusAPIs []*GongsimStatusAPI
+
+	UpdateStateAPIs []*UpdateStateAPI
 }
 
 func CopyBackRepoToBackRepoData(backRepo *BackRepoStruct, backRepoData *BackRepoData) {
+
+	// wait till backRepo is written by commit
+	backRepo.rwMutex.RLock()
+	defer backRepo.rwMutex.RUnlock()
+
 	// insertion point for slices copies
 	for _, dummyagentDB := range backRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB {
 
@@ -65,6 +72,16 @@ func CopyBackRepoToBackRepoData(backRepo *BackRepoStruct, backRepoData *BackRepo
 		gongsimstatusDB.CopyBasicFieldsToGongsimStatus_WOP(&gongsimstatusAPI.GongsimStatus_WOP)
 
 		backRepoData.GongsimStatusAPIs = append(backRepoData.GongsimStatusAPIs, &gongsimstatusAPI)
+	}
+
+	for _, updatestateDB := range backRepo.BackRepoUpdateState.Map_UpdateStateDBID_UpdateStateDB {
+
+		var updatestateAPI UpdateStateAPI
+		updatestateAPI.ID = updatestateDB.ID
+		updatestateAPI.UpdateStatePointersEncoding = updatestateDB.UpdateStatePointersEncoding
+		updatestateDB.CopyBasicFieldsToUpdateState_WOP(&updatestateAPI.UpdateState_WOP)
+
+		backRepoData.UpdateStateAPIs = append(backRepoData.UpdateStateAPIs, &updatestateAPI)
 	}
 
 }

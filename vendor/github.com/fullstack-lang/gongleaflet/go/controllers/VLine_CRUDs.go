@@ -55,10 +55,10 @@ func (controller *Controller) GetVLines(c *gin.Context) {
 	// source slice
 	var vlineDBs []orm.VLineDB
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetVLines", "GONG__StackPath", stackPath)
@@ -70,12 +70,12 @@ func (controller *Controller) GetVLines(c *gin.Context) {
 	}
 	db := backRepo.BackRepoVLine.GetDB()
 
-	query := db.Find(&vlineDBs)
-	if query.Error != nil {
+	_, err := db.Find(&vlineDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -118,10 +118,10 @@ func (controller *Controller) PostVLine(c *gin.Context) {
 	mutexVLine.Lock()
 	defer mutexVLine.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("PostVLines", "GONG__StackPath", stackPath)
@@ -151,12 +151,12 @@ func (controller *Controller) PostVLine(c *gin.Context) {
 	vlineDB.VLinePointersEncoding = input.VLinePointersEncoding
 	vlineDB.CopyBasicFieldsFromVLine_WOP(&input.VLine_WOP)
 
-	query := db.Create(&vlineDB)
-	if query.Error != nil {
+	_, err = db.Create(&vlineDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -188,10 +188,10 @@ func (controller *Controller) PostVLine(c *gin.Context) {
 //	200: vlineDBResponse
 func (controller *Controller) GetVLine(c *gin.Context) {
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetVLine", "GONG__StackPath", stackPath)
@@ -205,7 +205,7 @@ func (controller *Controller) GetVLine(c *gin.Context) {
 
 	// Get vlineDB in DB
 	var vlineDB orm.VLineDB
-	if err := db.First(&vlineDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&vlineDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -237,10 +237,10 @@ func (controller *Controller) UpdateVLine(c *gin.Context) {
 	mutexVLine.Lock()
 	defer mutexVLine.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("UpdateVLine", "GONG__StackPath", stackPath)
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateVLine(c *gin.Context) {
 	var vlineDB orm.VLineDB
 
 	// fetch the vline
-	query := db.First(&vlineDB, c.Param("id"))
+	_, err := db.First(&vlineDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateVLine(c *gin.Context) {
 	vlineDB.CopyBasicFieldsFromVLine_WOP(&input.VLine_WOP)
 	vlineDB.VLinePointersEncoding = input.VLinePointersEncoding
 
-	query = db.Model(&vlineDB).Updates(vlineDB)
-	if query.Error != nil {
+	db, _ = db.Model(&vlineDB)
+	_, err = db.Updates(&vlineDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -326,10 +327,10 @@ func (controller *Controller) DeleteVLine(c *gin.Context) {
 	mutexVLine.Lock()
 	defer mutexVLine.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("DeleteVLine", "GONG__StackPath", stackPath)
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteVLine(c *gin.Context) {
 
 	// Get model if exist
 	var vlineDB orm.VLineDB
-	if err := db.First(&vlineDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&vlineDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteVLine(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&vlineDB)
+	db.Unscoped()
+	db.Delete(&vlineDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	vlineDeleted := new(models.VLine)

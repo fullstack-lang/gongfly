@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongleaflet/go/db"
 	"github.com/fullstack-lang/gongleaflet/go/models"
 )
 
@@ -64,7 +65,7 @@ type LayerGroupDB struct {
 
 	// Declation for basic field layergroupDB.DisplayName
 	DisplayName_Data sql.NullString
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	LayerGroupPointersEncoding
@@ -110,7 +111,7 @@ type BackRepoLayerGroupStruct struct {
 	// stores LayerGroup according to their gorm ID
 	Map_LayerGroupDBID_LayerGroupPtr map[uint]*models.LayerGroup
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -120,7 +121,7 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) GetStage() (stage *models.St
 	return
 }
 
-func (backRepoLayerGroup *BackRepoLayerGroupStruct) GetDB() *gorm.DB {
+func (backRepoLayerGroup *BackRepoLayerGroupStruct) GetDB() db.DBInterface {
 	return backRepoLayerGroup.db
 }
 
@@ -157,9 +158,10 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitDeleteInstance(id uint
 
 	// layergroup is not staged anymore, remove layergroupDB
 	layergroupDB := backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[id]
-	query := backRepoLayerGroup.db.Unscoped().Delete(&layergroupDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoLayerGroup.db.Unscoped()
+	_, err := db.Delete(layergroupDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -183,9 +185,9 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitPhaseOneInstance(layer
 	var layergroupDB LayerGroupDB
 	layergroupDB.CopyBasicFieldsFromLayerGroup(layergroup)
 
-	query := backRepoLayerGroup.db.Create(&layergroupDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoLayerGroup.db.Create(&layergroupDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -217,9 +219,9 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitPhaseTwoInstance(backR
 		layergroupDB.CopyBasicFieldsFromLayerGroup(layergroup)
 
 		// insertion point for translating pointers encodings into actual pointers
-		query := backRepoLayerGroup.db.Save(&layergroupDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoLayerGroup.db.Save(layergroupDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -238,9 +240,9 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) CommitPhaseTwoInstance(backR
 func (backRepoLayerGroup *BackRepoLayerGroupStruct) CheckoutPhaseOne() (Error error) {
 
 	layergroupDBArray := make([]LayerGroupDB, 0)
-	query := backRepoLayerGroup.db.Find(&layergroupDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoLayerGroup.db.Find(&layergroupDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -351,7 +353,7 @@ func (backRepo *BackRepoStruct) CheckoutLayerGroup(layergroup *models.LayerGroup
 			var layergroupDB LayerGroupDB
 			layergroupDB.ID = id
 
-			if err := backRepo.BackRepoLayerGroup.db.First(&layergroupDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoLayerGroup.db.First(&layergroupDB, id); err != nil {
 				log.Fatalln("CheckoutLayerGroup : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoLayerGroup.CheckoutPhaseOneInstance(&layergroupDB)
@@ -510,9 +512,9 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) rowVisitorLayerGroup(row *xl
 
 		layergroupDB_ID_atBackupTime := layergroupDB.ID
 		layergroupDB.ID = 0
-		query := backRepoLayerGroup.db.Create(layergroupDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoLayerGroup.db.Create(layergroupDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[layergroupDB.ID] = layergroupDB
 		BackRepoLayerGroupid_atBckpTime_newID[layergroupDB_ID_atBackupTime] = layergroupDB.ID
@@ -547,9 +549,9 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) RestorePhaseOne(dirPath stri
 
 		layergroupDB_ID_atBackupTime := layergroupDB.ID
 		layergroupDB.ID = 0
-		query := backRepoLayerGroup.db.Create(layergroupDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoLayerGroup.db.Create(layergroupDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoLayerGroup.Map_LayerGroupDBID_LayerGroupDB[layergroupDB.ID] = layergroupDB
 		BackRepoLayerGroupid_atBckpTime_newID[layergroupDB_ID_atBackupTime] = layergroupDB.ID
@@ -571,9 +573,10 @@ func (backRepoLayerGroup *BackRepoLayerGroupStruct) RestorePhaseTwo() {
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoLayerGroup.db.Model(layergroupDB).Updates(*layergroupDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoLayerGroup.db.Model(layergroupDB)
+		_, err := db.Updates(*layergroupDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

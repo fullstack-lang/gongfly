@@ -55,10 +55,10 @@ func (controller *Controller) GetMarkers(c *gin.Context) {
 	// source slice
 	var markerDBs []orm.MarkerDB
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetMarkers", "GONG__StackPath", stackPath)
@@ -70,12 +70,12 @@ func (controller *Controller) GetMarkers(c *gin.Context) {
 	}
 	db := backRepo.BackRepoMarker.GetDB()
 
-	query := db.Find(&markerDBs)
-	if query.Error != nil {
+	_, err := db.Find(&markerDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -118,10 +118,10 @@ func (controller *Controller) PostMarker(c *gin.Context) {
 	mutexMarker.Lock()
 	defer mutexMarker.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("PostMarkers", "GONG__StackPath", stackPath)
@@ -151,12 +151,12 @@ func (controller *Controller) PostMarker(c *gin.Context) {
 	markerDB.MarkerPointersEncoding = input.MarkerPointersEncoding
 	markerDB.CopyBasicFieldsFromMarker_WOP(&input.Marker_WOP)
 
-	query := db.Create(&markerDB)
-	if query.Error != nil {
+	_, err = db.Create(&markerDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -188,10 +188,10 @@ func (controller *Controller) PostMarker(c *gin.Context) {
 //	200: markerDBResponse
 func (controller *Controller) GetMarker(c *gin.Context) {
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetMarker", "GONG__StackPath", stackPath)
@@ -205,7 +205,7 @@ func (controller *Controller) GetMarker(c *gin.Context) {
 
 	// Get markerDB in DB
 	var markerDB orm.MarkerDB
-	if err := db.First(&markerDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&markerDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -237,10 +237,10 @@ func (controller *Controller) UpdateMarker(c *gin.Context) {
 	mutexMarker.Lock()
 	defer mutexMarker.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("UpdateMarker", "GONG__StackPath", stackPath)
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateMarker(c *gin.Context) {
 	var markerDB orm.MarkerDB
 
 	// fetch the marker
-	query := db.First(&markerDB, c.Param("id"))
+	_, err := db.First(&markerDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateMarker(c *gin.Context) {
 	markerDB.CopyBasicFieldsFromMarker_WOP(&input.Marker_WOP)
 	markerDB.MarkerPointersEncoding = input.MarkerPointersEncoding
 
-	query = db.Model(&markerDB).Updates(markerDB)
-	if query.Error != nil {
+	db, _ = db.Model(&markerDB)
+	_, err = db.Updates(&markerDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -326,10 +327,10 @@ func (controller *Controller) DeleteMarker(c *gin.Context) {
 	mutexMarker.Lock()
 	defer mutexMarker.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("DeleteMarker", "GONG__StackPath", stackPath)
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteMarker(c *gin.Context) {
 
 	// Get model if exist
 	var markerDB orm.MarkerDB
-	if err := db.First(&markerDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&markerDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteMarker(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&markerDB)
+	db.Unscoped()
+	db.Delete(&markerDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	markerDeleted := new(models.Marker)

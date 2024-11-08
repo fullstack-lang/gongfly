@@ -55,10 +55,10 @@ func (controller *Controller) GetLayerGroupUses(c *gin.Context) {
 	// source slice
 	var layergroupuseDBs []orm.LayerGroupUseDB
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetLayerGroupUses", "GONG__StackPath", stackPath)
@@ -70,12 +70,12 @@ func (controller *Controller) GetLayerGroupUses(c *gin.Context) {
 	}
 	db := backRepo.BackRepoLayerGroupUse.GetDB()
 
-	query := db.Find(&layergroupuseDBs)
-	if query.Error != nil {
+	_, err := db.Find(&layergroupuseDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -118,10 +118,10 @@ func (controller *Controller) PostLayerGroupUse(c *gin.Context) {
 	mutexLayerGroupUse.Lock()
 	defer mutexLayerGroupUse.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("PostLayerGroupUses", "GONG__StackPath", stackPath)
@@ -151,12 +151,12 @@ func (controller *Controller) PostLayerGroupUse(c *gin.Context) {
 	layergroupuseDB.LayerGroupUsePointersEncoding = input.LayerGroupUsePointersEncoding
 	layergroupuseDB.CopyBasicFieldsFromLayerGroupUse_WOP(&input.LayerGroupUse_WOP)
 
-	query := db.Create(&layergroupuseDB)
-	if query.Error != nil {
+	_, err = db.Create(&layergroupuseDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -188,10 +188,10 @@ func (controller *Controller) PostLayerGroupUse(c *gin.Context) {
 //	200: layergroupuseDBResponse
 func (controller *Controller) GetLayerGroupUse(c *gin.Context) {
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("GetLayerGroupUse", "GONG__StackPath", stackPath)
@@ -205,7 +205,7 @@ func (controller *Controller) GetLayerGroupUse(c *gin.Context) {
 
 	// Get layergroupuseDB in DB
 	var layergroupuseDB orm.LayerGroupUseDB
-	if err := db.First(&layergroupuseDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&layergroupuseDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -237,10 +237,10 @@ func (controller *Controller) UpdateLayerGroupUse(c *gin.Context) {
 	mutexLayerGroupUse.Lock()
 	defer mutexLayerGroupUse.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("UpdateLayerGroupUse", "GONG__StackPath", stackPath)
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateLayerGroupUse(c *gin.Context) {
 	var layergroupuseDB orm.LayerGroupUseDB
 
 	// fetch the layergroupuse
-	query := db.First(&layergroupuseDB, c.Param("id"))
+	_, err := db.First(&layergroupuseDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateLayerGroupUse(c *gin.Context) {
 	layergroupuseDB.CopyBasicFieldsFromLayerGroupUse_WOP(&input.LayerGroupUse_WOP)
 	layergroupuseDB.LayerGroupUsePointersEncoding = input.LayerGroupUsePointersEncoding
 
-	query = db.Model(&layergroupuseDB).Updates(layergroupuseDB)
-	if query.Error != nil {
+	db, _ = db.Model(&layergroupuseDB)
+	_, err = db.Updates(&layergroupuseDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -326,10 +327,10 @@ func (controller *Controller) DeleteLayerGroupUse(c *gin.Context) {
 	mutexLayerGroupUse.Lock()
 	defer mutexLayerGroupUse.Unlock()
 
-	values := c.Request.URL.Query()
+	_values := c.Request.URL.Query()
 	stackPath := ""
-	if len(values) == 1 {
-		value := values["GONG__StackPath"]
+	if len(_values) == 1 {
+		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
 			// log.Println("DeleteLayerGroupUse", "GONG__StackPath", stackPath)
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteLayerGroupUse(c *gin.Context) {
 
 	// Get model if exist
 	var layergroupuseDB orm.LayerGroupUseDB
-	if err := db.First(&layergroupuseDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&layergroupuseDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteLayerGroupUse(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&layergroupuseDB)
+	db.Unscoped()
+	db.Delete(&layergroupuseDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	layergroupuseDeleted := new(models.LayerGroupUse)

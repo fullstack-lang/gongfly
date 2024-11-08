@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongleaflet/go/db"
 	"github.com/fullstack-lang/gongleaflet/go/models"
 )
 
@@ -78,7 +79,7 @@ type MarkerDB struct {
 
 	// Declation for basic field markerDB.ColorEnum
 	ColorEnum_Data sql.NullString
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	MarkerPointersEncoding
@@ -130,7 +131,7 @@ type BackRepoMarkerStruct struct {
 	// stores Marker according to their gorm ID
 	Map_MarkerDBID_MarkerPtr map[uint]*models.Marker
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -140,7 +141,7 @@ func (backRepoMarker *BackRepoMarkerStruct) GetStage() (stage *models.StageStruc
 	return
 }
 
-func (backRepoMarker *BackRepoMarkerStruct) GetDB() *gorm.DB {
+func (backRepoMarker *BackRepoMarkerStruct) GetDB() db.DBInterface {
 	return backRepoMarker.db
 }
 
@@ -177,9 +178,10 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitDeleteInstance(id uint) (Error
 
 	// marker is not staged anymore, remove markerDB
 	markerDB := backRepoMarker.Map_MarkerDBID_MarkerDB[id]
-	query := backRepoMarker.db.Unscoped().Delete(&markerDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoMarker.db.Unscoped()
+	_, err := db.Delete(markerDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -203,9 +205,9 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseOneInstance(marker *model
 	var markerDB MarkerDB
 	markerDB.CopyBasicFieldsFromMarker(marker)
 
-	query := backRepoMarker.db.Create(&markerDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoMarker.db.Create(&markerDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -261,9 +263,9 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseTwoInstance(backRepo *Bac
 			markerDB.DivIconID.Valid = true
 		}
 
-		query := backRepoMarker.db.Save(&markerDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoMarker.db.Save(markerDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -282,9 +284,9 @@ func (backRepoMarker *BackRepoMarkerStruct) CommitPhaseTwoInstance(backRepo *Bac
 func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseOne() (Error error) {
 
 	markerDBArray := make([]MarkerDB, 0)
-	query := backRepoMarker.db.Find(&markerDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoMarker.db.Find(&markerDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -405,7 +407,7 @@ func (backRepo *BackRepoStruct) CheckoutMarker(marker *models.Marker) {
 			var markerDB MarkerDB
 			markerDB.ID = id
 
-			if err := backRepo.BackRepoMarker.db.First(&markerDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoMarker.db.First(&markerDB, id); err != nil {
 				log.Fatalln("CheckoutMarker : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoMarker.CheckoutPhaseOneInstance(&markerDB)
@@ -588,9 +590,9 @@ func (backRepoMarker *BackRepoMarkerStruct) rowVisitorMarker(row *xlsx.Row) erro
 
 		markerDB_ID_atBackupTime := markerDB.ID
 		markerDB.ID = 0
-		query := backRepoMarker.db.Create(markerDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoMarker.db.Create(markerDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoMarker.Map_MarkerDBID_MarkerDB[markerDB.ID] = markerDB
 		BackRepoMarkerid_atBckpTime_newID[markerDB_ID_atBackupTime] = markerDB.ID
@@ -625,9 +627,9 @@ func (backRepoMarker *BackRepoMarkerStruct) RestorePhaseOne(dirPath string) {
 
 		markerDB_ID_atBackupTime := markerDB.ID
 		markerDB.ID = 0
-		query := backRepoMarker.db.Create(markerDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoMarker.db.Create(markerDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoMarker.Map_MarkerDBID_MarkerDB[markerDB.ID] = markerDB
 		BackRepoMarkerid_atBckpTime_newID[markerDB_ID_atBackupTime] = markerDB.ID
@@ -661,9 +663,10 @@ func (backRepoMarker *BackRepoMarkerStruct) RestorePhaseTwo() {
 		}
 
 		// update databse with new index encoding
-		query := backRepoMarker.db.Model(markerDB).Updates(*markerDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoMarker.db.Model(markerDB)
+		_, err := db.Updates(*markerDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

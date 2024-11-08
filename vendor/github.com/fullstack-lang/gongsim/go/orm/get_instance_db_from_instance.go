@@ -6,9 +6,6 @@ import (
 )
 
 type GongstructDB interface {
-	// insertion point for generic types
-	// "int" is present to handle the case when no struct is present
-	int | DummyAgentDB | EngineDB | EventDB | GongsimCommandDB | GongsimStatusDB
 }
 
 func GetInstanceDBFromInstance[T models.Gongstruct, T2 GongstructDB](
@@ -37,6 +34,10 @@ func GetInstanceDBFromInstance[T models.Gongstruct, T2 GongstructDB](
 	case *models.GongsimStatus:
 		gongsimstatusInstance := any(concreteInstance).(*models.GongsimStatus)
 		ret2 := backRepo.BackRepoGongsimStatus.GetGongsimStatusDBFromGongsimStatusPtr(gongsimstatusInstance)
+		ret = any(ret2).(*T2)
+	case *models.UpdateState:
+		updatestateInstance := any(concreteInstance).(*models.UpdateState)
+		ret2 := backRepo.BackRepoUpdateState.GetUpdateStateDBFromUpdateStatePtr(updatestateInstance)
 		ret = any(ret2).(*T2)
 	default:
 		_ = concreteInstance
@@ -76,6 +77,11 @@ func GetID[T models.Gongstruct](
 			stage, backRepo, inst,
 		)
 		id = int(tmp.ID)
+	case *models.UpdateState:
+		tmp := GetInstanceDBFromInstance[models.UpdateState, UpdateStateDB](
+			stage, backRepo, inst,
+		)
+		id = int(tmp.ID)
 	default:
 		_ = inst
 	}
@@ -111,6 +117,11 @@ func GetIDPointer[T models.PointerToGongstruct](
 		id = int(tmp.ID)
 	case *models.GongsimStatus:
 		tmp := GetInstanceDBFromInstance[models.GongsimStatus, GongsimStatusDB](
+			stage, backRepo, inst,
+		)
+		id = int(tmp.ID)
+	case *models.UpdateState:
+		tmp := GetInstanceDBFromInstance[models.UpdateState, UpdateStateDB](
 			stage, backRepo, inst,
 		)
 		id = int(tmp.ID)
