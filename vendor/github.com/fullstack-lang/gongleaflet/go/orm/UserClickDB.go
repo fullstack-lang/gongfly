@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongleaflet/go/db"
 	"github.com/fullstack-lang/gongleaflet/go/models"
 )
 
@@ -70,7 +71,7 @@ type UserClickDB struct {
 
 	// Declation for basic field userclickDB.TimeOfClick
 	TimeOfClick_Data sql.NullTime
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	UserClickPointersEncoding
@@ -122,7 +123,7 @@ type BackRepoUserClickStruct struct {
 	// stores UserClick according to their gorm ID
 	Map_UserClickDBID_UserClickPtr map[uint]*models.UserClick
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -132,7 +133,7 @@ func (backRepoUserClick *BackRepoUserClickStruct) GetStage() (stage *models.Stag
 	return
 }
 
-func (backRepoUserClick *BackRepoUserClickStruct) GetDB() *gorm.DB {
+func (backRepoUserClick *BackRepoUserClickStruct) GetDB() db.DBInterface {
 	return backRepoUserClick.db
 }
 
@@ -169,9 +170,10 @@ func (backRepoUserClick *BackRepoUserClickStruct) CommitDeleteInstance(id uint) 
 
 	// userclick is not staged anymore, remove userclickDB
 	userclickDB := backRepoUserClick.Map_UserClickDBID_UserClickDB[id]
-	query := backRepoUserClick.db.Unscoped().Delete(&userclickDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoUserClick.db.Unscoped()
+	_, err := db.Delete(userclickDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -195,9 +197,9 @@ func (backRepoUserClick *BackRepoUserClickStruct) CommitPhaseOneInstance(usercli
 	var userclickDB UserClickDB
 	userclickDB.CopyBasicFieldsFromUserClick(userclick)
 
-	query := backRepoUserClick.db.Create(&userclickDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoUserClick.db.Create(&userclickDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -229,9 +231,9 @@ func (backRepoUserClick *BackRepoUserClickStruct) CommitPhaseTwoInstance(backRep
 		userclickDB.CopyBasicFieldsFromUserClick(userclick)
 
 		// insertion point for translating pointers encodings into actual pointers
-		query := backRepoUserClick.db.Save(&userclickDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoUserClick.db.Save(userclickDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -250,9 +252,9 @@ func (backRepoUserClick *BackRepoUserClickStruct) CommitPhaseTwoInstance(backRep
 func (backRepoUserClick *BackRepoUserClickStruct) CheckoutPhaseOne() (Error error) {
 
 	userclickDBArray := make([]UserClickDB, 0)
-	query := backRepoUserClick.db.Find(&userclickDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoUserClick.db.Find(&userclickDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -363,7 +365,7 @@ func (backRepo *BackRepoStruct) CheckoutUserClick(userclick *models.UserClick) {
 			var userclickDB UserClickDB
 			userclickDB.ID = id
 
-			if err := backRepo.BackRepoUserClick.db.First(&userclickDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoUserClick.db.First(&userclickDB, id); err != nil {
 				log.Fatalln("CheckoutUserClick : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoUserClick.CheckoutPhaseOneInstance(&userclickDB)
@@ -546,9 +548,9 @@ func (backRepoUserClick *BackRepoUserClickStruct) rowVisitorUserClick(row *xlsx.
 
 		userclickDB_ID_atBackupTime := userclickDB.ID
 		userclickDB.ID = 0
-		query := backRepoUserClick.db.Create(userclickDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoUserClick.db.Create(userclickDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoUserClick.Map_UserClickDBID_UserClickDB[userclickDB.ID] = userclickDB
 		BackRepoUserClickid_atBckpTime_newID[userclickDB_ID_atBackupTime] = userclickDB.ID
@@ -583,9 +585,9 @@ func (backRepoUserClick *BackRepoUserClickStruct) RestorePhaseOne(dirPath string
 
 		userclickDB_ID_atBackupTime := userclickDB.ID
 		userclickDB.ID = 0
-		query := backRepoUserClick.db.Create(userclickDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoUserClick.db.Create(userclickDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoUserClick.Map_UserClickDBID_UserClickDB[userclickDB.ID] = userclickDB
 		BackRepoUserClickid_atBckpTime_newID[userclickDB_ID_atBackupTime] = userclickDB.ID
@@ -607,9 +609,10 @@ func (backRepoUserClick *BackRepoUserClickStruct) RestorePhaseTwo() {
 
 		// insertion point for reindexing pointers encoding
 		// update databse with new index encoding
-		query := backRepoUserClick.db.Model(userclickDB).Updates(*userclickDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoUserClick.db.Model(userclickDB)
+		_, err := db.Updates(*userclickDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

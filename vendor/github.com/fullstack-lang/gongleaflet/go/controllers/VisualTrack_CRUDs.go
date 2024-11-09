@@ -70,12 +70,12 @@ func (controller *Controller) GetVisualTracks(c *gin.Context) {
 	}
 	db := backRepo.BackRepoVisualTrack.GetDB()
 
-	query := db.Find(&visualtrackDBs)
-	if query.Error != nil {
+	_, err := db.Find(&visualtrackDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -151,12 +151,12 @@ func (controller *Controller) PostVisualTrack(c *gin.Context) {
 	visualtrackDB.VisualTrackPointersEncoding = input.VisualTrackPointersEncoding
 	visualtrackDB.CopyBasicFieldsFromVisualTrack_WOP(&input.VisualTrack_WOP)
 
-	query := db.Create(&visualtrackDB)
-	if query.Error != nil {
+	_, err = db.Create(&visualtrackDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -205,7 +205,7 @@ func (controller *Controller) GetVisualTrack(c *gin.Context) {
 
 	// Get visualtrackDB in DB
 	var visualtrackDB orm.VisualTrackDB
-	if err := db.First(&visualtrackDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&visualtrackDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateVisualTrack(c *gin.Context) {
 	var visualtrackDB orm.VisualTrackDB
 
 	// fetch the visualtrack
-	query := db.First(&visualtrackDB, c.Param("id"))
+	_, err := db.First(&visualtrackDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateVisualTrack(c *gin.Context) {
 	visualtrackDB.CopyBasicFieldsFromVisualTrack_WOP(&input.VisualTrack_WOP)
 	visualtrackDB.VisualTrackPointersEncoding = input.VisualTrackPointersEncoding
 
-	query = db.Model(&visualtrackDB).Updates(visualtrackDB)
-	if query.Error != nil {
+	db, _ = db.Model(&visualtrackDB)
+	_, err = db.Updates(&visualtrackDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteVisualTrack(c *gin.Context) {
 
 	// Get model if exist
 	var visualtrackDB orm.VisualTrackDB
-	if err := db.First(&visualtrackDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&visualtrackDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteVisualTrack(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&visualtrackDB)
+	db.Unscoped()
+	db.Delete(&visualtrackDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	visualtrackDeleted := new(models.VisualTrack)

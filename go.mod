@@ -3,12 +3,12 @@ module github.com/fullstack-lang/gongfly
 go 1.23.1
 
 require (
-	github.com/fullstack-lang/gong v0.0.0-20241108071829-942c37b48a27
-	github.com/fullstack-lang/gongdoc v0.0.0-20241108071829-c73b6fceec60
-	github.com/fullstack-lang/gongleaflet v0.0.0-20240807014722-05f467ab976d
-	github.com/fullstack-lang/gongsim v0.0.0-20241107180853-4aac2c9fd4b5
-	github.com/fullstack-lang/gongtable v0.0.0-20241108071830-788340bf2abe
-	github.com/fullstack-lang/gongtree v0.0.0-20241108071831-578278020971
+	github.com/fullstack-lang/gong v0.0.0-20241109111535-bbfb41b7cac2
+	github.com/fullstack-lang/gongdoc v0.0.0-20241109111535-aa1796f001aa
+	github.com/fullstack-lang/gongleaflet v0.0.0-20241108104143-512f677b9c41
+	github.com/fullstack-lang/gongsim v0.0.0-20241109111536-36eba1c4fb5c
+	github.com/fullstack-lang/gongtable v0.0.0-20241109111536-c8032ca0d89a
+	github.com/fullstack-lang/gongtree v0.0.0-20241109111537-49632f43fd28
 	github.com/fullstack-lang/maticons v0.0.0-20240913013021-27a7b8fd9369
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-contrib/static v1.1.2
@@ -30,7 +30,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
 	github.com/frankban/quicktest v1.14.6 // indirect
-	github.com/fullstack-lang/gongsvg v0.0.0-20241108071830-2c1a42b52d69 // indirect
+	github.com/fullstack-lang/gongsvg v0.0.0-20241109111536-5f07426906ae // indirect
 	github.com/gabriel-vasile/mimetype v1.4.6 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/glebarez/go-sqlite v1.22.0 // indirect
@@ -71,9 +71,9 @@ require (
 	github.com/ziutek/mymysql v1.5.4 // indirect
 	golang.org/x/arch v0.12.0 // indirect
 	golang.org/x/crypto v0.29.0 // indirect
-	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c // indirect
+	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f // indirect
 	golang.org/x/mod v0.22.0 // indirect
-	golang.org/x/net v0.30.0 // indirect
+	golang.org/x/net v0.31.0 // indirect
 	golang.org/x/sys v0.27.0 // indirect
 	golang.org/x/text v0.20.0 // indirect
 	google.golang.org/protobuf v1.35.1 // indirect

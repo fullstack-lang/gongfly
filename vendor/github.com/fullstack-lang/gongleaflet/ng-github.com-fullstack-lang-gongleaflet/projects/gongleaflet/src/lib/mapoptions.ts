@@ -86,6 +86,11 @@ export function CopyMapOptionsAPIToMapOptions(mapoptionsAPI: MapOptionsAPI, mapo
 	// insertion point for pointer fields encoding
 
 	// insertion point for slice of pointers fields encoding
+	if (!Array.isArray(mapoptionsAPI.MapOptionsPointersEncoding.LayerGroupUses)) {
+		console.error('Rects is not an array:', mapoptionsAPI.MapOptionsPointersEncoding.LayerGroupUses);
+		return;
+	}
+
 	mapoptions.LayerGroupUses = new Array<LayerGroupUse>()
 	for (let _id of mapoptionsAPI.MapOptionsPointersEncoding.LayerGroupUses) {
 		let _layergroupuse = frontRepo.map_ID_LayerGroupUse.get(_id)

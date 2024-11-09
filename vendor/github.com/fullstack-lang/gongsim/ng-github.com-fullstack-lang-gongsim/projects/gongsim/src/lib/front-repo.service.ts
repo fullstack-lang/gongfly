@@ -422,9 +422,11 @@ export class FrontRepoService {
 
 		return new Observable(observer => {
 			this.socket!.onmessage = event => {
-				let _this = this
+
 
 				const backRepoData = new BackRepoData(JSON.parse(event.data))
+
+				let frontRepo = new (FrontRepo)
 
 				// 
 				// First Step: init map of instances
@@ -432,74 +434,74 @@ export class FrontRepoService {
 				// init the arrays
 				// insertion point sub template for init 
 				// init the arrays
-				this.frontRepo.array_DummyAgents = []
-				this.frontRepo.map_ID_DummyAgent.clear()
+				frontRepo.array_DummyAgents = []
+				frontRepo.map_ID_DummyAgent.clear()
 
 				backRepoData.DummyAgentAPIs.forEach(
 					dummyagentAPI => {
 						let dummyagent = new DummyAgent
-						this.frontRepo.array_DummyAgents.push(dummyagent)
-						this.frontRepo.map_ID_DummyAgent.set(dummyagentAPI.ID, dummyagent)
+						frontRepo.array_DummyAgents.push(dummyagent)
+						frontRepo.map_ID_DummyAgent.set(dummyagentAPI.ID, dummyagent)
 					}
 				)
 
 				// init the arrays
-				this.frontRepo.array_Engines = []
-				this.frontRepo.map_ID_Engine.clear()
+				frontRepo.array_Engines = []
+				frontRepo.map_ID_Engine.clear()
 
 				backRepoData.EngineAPIs.forEach(
 					engineAPI => {
 						let engine = new Engine
-						this.frontRepo.array_Engines.push(engine)
-						this.frontRepo.map_ID_Engine.set(engineAPI.ID, engine)
+						frontRepo.array_Engines.push(engine)
+						frontRepo.map_ID_Engine.set(engineAPI.ID, engine)
 					}
 				)
 
 				// init the arrays
-				this.frontRepo.array_Events = []
-				this.frontRepo.map_ID_Event.clear()
+				frontRepo.array_Events = []
+				frontRepo.map_ID_Event.clear()
 
 				backRepoData.EventAPIs.forEach(
 					eventAPI => {
 						let event = new Event
-						this.frontRepo.array_Events.push(event)
-						this.frontRepo.map_ID_Event.set(eventAPI.ID, event)
+						frontRepo.array_Events.push(event)
+						frontRepo.map_ID_Event.set(eventAPI.ID, event)
 					}
 				)
 
 				// init the arrays
-				this.frontRepo.array_GongsimCommands = []
-				this.frontRepo.map_ID_GongsimCommand.clear()
+				frontRepo.array_GongsimCommands = []
+				frontRepo.map_ID_GongsimCommand.clear()
 
 				backRepoData.GongsimCommandAPIs.forEach(
 					gongsimcommandAPI => {
 						let gongsimcommand = new GongsimCommand
-						this.frontRepo.array_GongsimCommands.push(gongsimcommand)
-						this.frontRepo.map_ID_GongsimCommand.set(gongsimcommandAPI.ID, gongsimcommand)
+						frontRepo.array_GongsimCommands.push(gongsimcommand)
+						frontRepo.map_ID_GongsimCommand.set(gongsimcommandAPI.ID, gongsimcommand)
 					}
 				)
 
 				// init the arrays
-				this.frontRepo.array_GongsimStatuss = []
-				this.frontRepo.map_ID_GongsimStatus.clear()
+				frontRepo.array_GongsimStatuss = []
+				frontRepo.map_ID_GongsimStatus.clear()
 
 				backRepoData.GongsimStatusAPIs.forEach(
 					gongsimstatusAPI => {
 						let gongsimstatus = new GongsimStatus
-						this.frontRepo.array_GongsimStatuss.push(gongsimstatus)
-						this.frontRepo.map_ID_GongsimStatus.set(gongsimstatusAPI.ID, gongsimstatus)
+						frontRepo.array_GongsimStatuss.push(gongsimstatus)
+						frontRepo.map_ID_GongsimStatus.set(gongsimstatusAPI.ID, gongsimstatus)
 					}
 				)
 
 				// init the arrays
-				this.frontRepo.array_UpdateStates = []
-				this.frontRepo.map_ID_UpdateState.clear()
+				frontRepo.array_UpdateStates = []
+				frontRepo.map_ID_UpdateState.clear()
 
 				backRepoData.UpdateStateAPIs.forEach(
 					updatestateAPI => {
 						let updatestate = new UpdateState
-						this.frontRepo.array_UpdateStates.push(updatestate)
-						this.frontRepo.map_ID_UpdateState.set(updatestateAPI.ID, updatestate)
+						frontRepo.array_UpdateStates.push(updatestate)
+						frontRepo.map_ID_UpdateState.set(updatestateAPI.ID, updatestate)
 					}
 				)
 
@@ -512,54 +514,54 @@ export class FrontRepoService {
 				// fill up front objects
 				backRepoData.DummyAgentAPIs.forEach(
 					dummyagentAPI => {
-						let dummyagent = this.frontRepo.map_ID_DummyAgent.get(dummyagentAPI.ID)
-						CopyDummyAgentAPIToDummyAgent(dummyagentAPI, dummyagent!, this.frontRepo)
+						let dummyagent = frontRepo.map_ID_DummyAgent.get(dummyagentAPI.ID)
+						CopyDummyAgentAPIToDummyAgent(dummyagentAPI, dummyagent!, frontRepo)
 					}
 				)
 
 				// fill up front objects
 				backRepoData.EngineAPIs.forEach(
 					engineAPI => {
-						let engine = this.frontRepo.map_ID_Engine.get(engineAPI.ID)
-						CopyEngineAPIToEngine(engineAPI, engine!, this.frontRepo)
+						let engine = frontRepo.map_ID_Engine.get(engineAPI.ID)
+						CopyEngineAPIToEngine(engineAPI, engine!, frontRepo)
 					}
 				)
 
 				// fill up front objects
 				backRepoData.EventAPIs.forEach(
 					eventAPI => {
-						let event = this.frontRepo.map_ID_Event.get(eventAPI.ID)
-						CopyEventAPIToEvent(eventAPI, event!, this.frontRepo)
+						let event = frontRepo.map_ID_Event.get(eventAPI.ID)
+						CopyEventAPIToEvent(eventAPI, event!, frontRepo)
 					}
 				)
 
 				// fill up front objects
 				backRepoData.GongsimCommandAPIs.forEach(
 					gongsimcommandAPI => {
-						let gongsimcommand = this.frontRepo.map_ID_GongsimCommand.get(gongsimcommandAPI.ID)
-						CopyGongsimCommandAPIToGongsimCommand(gongsimcommandAPI, gongsimcommand!, this.frontRepo)
+						let gongsimcommand = frontRepo.map_ID_GongsimCommand.get(gongsimcommandAPI.ID)
+						CopyGongsimCommandAPIToGongsimCommand(gongsimcommandAPI, gongsimcommand!, frontRepo)
 					}
 				)
 
 				// fill up front objects
 				backRepoData.GongsimStatusAPIs.forEach(
 					gongsimstatusAPI => {
-						let gongsimstatus = this.frontRepo.map_ID_GongsimStatus.get(gongsimstatusAPI.ID)
-						CopyGongsimStatusAPIToGongsimStatus(gongsimstatusAPI, gongsimstatus!, this.frontRepo)
+						let gongsimstatus = frontRepo.map_ID_GongsimStatus.get(gongsimstatusAPI.ID)
+						CopyGongsimStatusAPIToGongsimStatus(gongsimstatusAPI, gongsimstatus!, frontRepo)
 					}
 				)
 
 				// fill up front objects
 				backRepoData.UpdateStateAPIs.forEach(
 					updatestateAPI => {
-						let updatestate = this.frontRepo.map_ID_UpdateState.get(updatestateAPI.ID)
-						CopyUpdateStateAPIToUpdateState(updatestateAPI, updatestate!, this.frontRepo)
+						let updatestate = frontRepo.map_ID_UpdateState.get(updatestateAPI.ID)
+						CopyUpdateStateAPIToUpdateState(updatestateAPI, updatestate!, frontRepo)
 					}
 				)
 
 
 
-				observer.next(this.frontRepo)
+				observer.next(frontRepo)
 			}
 			this.socket!.onerror = event => {
 				observer.error(event)

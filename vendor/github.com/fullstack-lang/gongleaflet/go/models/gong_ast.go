@@ -496,39 +496,57 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 									switch gongstructName {
 									// insertion point for identifiers
 									case "Circle":
-										instanceCircle := (&Circle{Name: instanceName}).Stage(stage)
+										instanceCircle := new(Circle)
+										instanceCircle.Name = instanceName
+										instanceCircle.Stage(stage)
 										instance = any(instanceCircle)
 										__gong__map_Circle[identifier] = instanceCircle
 									case "DivIcon":
-										instanceDivIcon := (&DivIcon{Name: instanceName}).Stage(stage)
+										instanceDivIcon := new(DivIcon)
+										instanceDivIcon.Name = instanceName
+										instanceDivIcon.Stage(stage)
 										instance = any(instanceDivIcon)
 										__gong__map_DivIcon[identifier] = instanceDivIcon
 									case "LayerGroup":
-										instanceLayerGroup := (&LayerGroup{Name: instanceName}).Stage(stage)
+										instanceLayerGroup := new(LayerGroup)
+										instanceLayerGroup.Name = instanceName
+										instanceLayerGroup.Stage(stage)
 										instance = any(instanceLayerGroup)
 										__gong__map_LayerGroup[identifier] = instanceLayerGroup
 									case "LayerGroupUse":
-										instanceLayerGroupUse := (&LayerGroupUse{Name: instanceName}).Stage(stage)
+										instanceLayerGroupUse := new(LayerGroupUse)
+										instanceLayerGroupUse.Name = instanceName
+										instanceLayerGroupUse.Stage(stage)
 										instance = any(instanceLayerGroupUse)
 										__gong__map_LayerGroupUse[identifier] = instanceLayerGroupUse
 									case "MapOptions":
-										instanceMapOptions := (&MapOptions{Name: instanceName}).Stage(stage)
+										instanceMapOptions := new(MapOptions)
+										instanceMapOptions.Name = instanceName
+										instanceMapOptions.Stage(stage)
 										instance = any(instanceMapOptions)
 										__gong__map_MapOptions[identifier] = instanceMapOptions
 									case "Marker":
-										instanceMarker := (&Marker{Name: instanceName}).Stage(stage)
+										instanceMarker := new(Marker)
+										instanceMarker.Name = instanceName
+										instanceMarker.Stage(stage)
 										instance = any(instanceMarker)
 										__gong__map_Marker[identifier] = instanceMarker
 									case "UserClick":
-										instanceUserClick := (&UserClick{Name: instanceName}).Stage(stage)
+										instanceUserClick := new(UserClick)
+										instanceUserClick.Name = instanceName
+										instanceUserClick.Stage(stage)
 										instance = any(instanceUserClick)
 										__gong__map_UserClick[identifier] = instanceUserClick
 									case "VLine":
-										instanceVLine := (&VLine{Name: instanceName}).Stage(stage)
+										instanceVLine := new(VLine)
+										instanceVLine.Name = instanceName
+										instanceVLine.Stage(stage)
 										instance = any(instanceVLine)
 										__gong__map_VLine[identifier] = instanceVLine
 									case "VisualTrack":
-										instanceVisualTrack := (&VisualTrack{Name: instanceName}).Stage(stage)
+										instanceVisualTrack := new(VisualTrack)
+										instanceVisualTrack.Name = instanceName
+										instanceVisualTrack.Stage(stage)
 										instance = any(instanceVisualTrack)
 										__gong__map_VisualTrack[identifier] = instanceVisualTrack
 									}

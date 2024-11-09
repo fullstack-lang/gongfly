@@ -70,12 +70,12 @@ func (controller *Controller) GetDivIcons(c *gin.Context) {
 	}
 	db := backRepo.BackRepoDivIcon.GetDB()
 
-	query := db.Find(&diviconDBs)
-	if query.Error != nil {
+	_, err := db.Find(&diviconDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -151,12 +151,12 @@ func (controller *Controller) PostDivIcon(c *gin.Context) {
 	diviconDB.DivIconPointersEncoding = input.DivIconPointersEncoding
 	diviconDB.CopyBasicFieldsFromDivIcon_WOP(&input.DivIcon_WOP)
 
-	query := db.Create(&diviconDB)
-	if query.Error != nil {
+	_, err = db.Create(&diviconDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -205,7 +205,7 @@ func (controller *Controller) GetDivIcon(c *gin.Context) {
 
 	// Get diviconDB in DB
 	var diviconDB orm.DivIconDB
-	if err := db.First(&diviconDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&diviconDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateDivIcon(c *gin.Context) {
 	var diviconDB orm.DivIconDB
 
 	// fetch the divicon
-	query := db.First(&diviconDB, c.Param("id"))
+	_, err := db.First(&diviconDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateDivIcon(c *gin.Context) {
 	diviconDB.CopyBasicFieldsFromDivIcon_WOP(&input.DivIcon_WOP)
 	diviconDB.DivIconPointersEncoding = input.DivIconPointersEncoding
 
-	query = db.Model(&diviconDB).Updates(diviconDB)
-	if query.Error != nil {
+	db, _ = db.Model(&diviconDB)
+	_, err = db.Updates(&diviconDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteDivIcon(c *gin.Context) {
 
 	// Get model if exist
 	var diviconDB orm.DivIconDB
-	if err := db.First(&diviconDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&diviconDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteDivIcon(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&diviconDB)
+	db.Unscoped()
+	db.Delete(&diviconDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	diviconDeleted := new(models.DivIcon)

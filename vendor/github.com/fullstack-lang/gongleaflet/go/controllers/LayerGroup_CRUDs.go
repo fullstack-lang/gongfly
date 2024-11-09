@@ -70,12 +70,12 @@ func (controller *Controller) GetLayerGroups(c *gin.Context) {
 	}
 	db := backRepo.BackRepoLayerGroup.GetDB()
 
-	query := db.Find(&layergroupDBs)
-	if query.Error != nil {
+	_, err := db.Find(&layergroupDBs)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -151,12 +151,12 @@ func (controller *Controller) PostLayerGroup(c *gin.Context) {
 	layergroupDB.LayerGroupPointersEncoding = input.LayerGroupPointersEncoding
 	layergroupDB.CopyBasicFieldsFromLayerGroup_WOP(&input.LayerGroup_WOP)
 
-	query := db.Create(&layergroupDB)
-	if query.Error != nil {
+	_, err = db.Create(&layergroupDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -205,7 +205,7 @@ func (controller *Controller) GetLayerGroup(c *gin.Context) {
 
 	// Get layergroupDB in DB
 	var layergroupDB orm.LayerGroupDB
-	if err := db.First(&layergroupDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&layergroupDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -264,13 +264,13 @@ func (controller *Controller) UpdateLayerGroup(c *gin.Context) {
 	var layergroupDB orm.LayerGroupDB
 
 	// fetch the layergroup
-	query := db.First(&layergroupDB, c.Param("id"))
+	_, err := db.First(&layergroupDB, c.Param("id"))
 
-	if query.Error != nil {
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -279,12 +279,13 @@ func (controller *Controller) UpdateLayerGroup(c *gin.Context) {
 	layergroupDB.CopyBasicFieldsFromLayerGroup_WOP(&input.LayerGroup_WOP)
 	layergroupDB.LayerGroupPointersEncoding = input.LayerGroupPointersEncoding
 
-	query = db.Model(&layergroupDB).Updates(layergroupDB)
-	if query.Error != nil {
+	db, _ = db.Model(&layergroupDB)
+	_, err = db.Updates(&layergroupDB)
+	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
-		returnError.Body.Message = query.Error.Error()
-		log.Println(query.Error.Error())
+		returnError.Body.Message = err.Error()
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, returnError.Body)
 		return
 	}
@@ -343,7 +344,7 @@ func (controller *Controller) DeleteLayerGroup(c *gin.Context) {
 
 	// Get model if exist
 	var layergroupDB orm.LayerGroupDB
-	if err := db.First(&layergroupDB, c.Param("id")).Error; err != nil {
+	if _, err := db.First(&layergroupDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,7 +354,8 @@ func (controller *Controller) DeleteLayerGroup(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&layergroupDB)
+	db.Unscoped()
+	db.Delete(&layergroupDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
 	layergroupDeleted := new(models.LayerGroup)

@@ -17,6 +17,7 @@ import (
 
 	"github.com/tealeg/xlsx/v3"
 
+	"github.com/fullstack-lang/gongleaflet/go/db"
 	"github.com/fullstack-lang/gongleaflet/go/models"
 )
 
@@ -95,7 +96,7 @@ type VLineDB struct {
 
 	// Declation for basic field vlineDB.MessageBackward
 	MessageBackward_Data sql.NullString
-	
+
 	// encoding of pointers
 	// for GORM serialization, it is necessary to embed to Pointer Encoding declaration
 	VLinePointersEncoding
@@ -168,7 +169,7 @@ type BackRepoVLineStruct struct {
 	// stores VLine according to their gorm ID
 	Map_VLineDBID_VLinePtr map[uint]*models.VLine
 
-	db *gorm.DB
+	db db.DBInterface
 
 	stage *models.StageStruct
 }
@@ -178,7 +179,7 @@ func (backRepoVLine *BackRepoVLineStruct) GetStage() (stage *models.StageStruct)
 	return
 }
 
-func (backRepoVLine *BackRepoVLineStruct) GetDB() *gorm.DB {
+func (backRepoVLine *BackRepoVLineStruct) GetDB() db.DBInterface {
 	return backRepoVLine.db
 }
 
@@ -215,9 +216,10 @@ func (backRepoVLine *BackRepoVLineStruct) CommitDeleteInstance(id uint) (Error e
 
 	// vline is not staged anymore, remove vlineDB
 	vlineDB := backRepoVLine.Map_VLineDBID_VLineDB[id]
-	query := backRepoVLine.db.Unscoped().Delete(&vlineDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	db, _ := backRepoVLine.db.Unscoped()
+	_, err := db.Delete(vlineDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -241,9 +243,9 @@ func (backRepoVLine *BackRepoVLineStruct) CommitPhaseOneInstance(vline *models.V
 	var vlineDB VLineDB
 	vlineDB.CopyBasicFieldsFromVLine(vline)
 
-	query := backRepoVLine.db.Create(&vlineDB)
-	if query.Error != nil {
-		log.Fatal(query.Error)
+	_, err := backRepoVLine.db.Create(&vlineDB)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// update stores
@@ -287,9 +289,9 @@ func (backRepoVLine *BackRepoVLineStruct) CommitPhaseTwoInstance(backRepo *BackR
 			vlineDB.LayerGroupID.Valid = true
 		}
 
-		query := backRepoVLine.db.Save(&vlineDB)
-		if query.Error != nil {
-			log.Fatalln(query.Error)
+		_, err := backRepoVLine.db.Save(vlineDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 	} else {
@@ -308,9 +310,9 @@ func (backRepoVLine *BackRepoVLineStruct) CommitPhaseTwoInstance(backRepo *BackR
 func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseOne() (Error error) {
 
 	vlineDBArray := make([]VLineDB, 0)
-	query := backRepoVLine.db.Find(&vlineDBArray)
-	if query.Error != nil {
-		return query.Error
+	_, err := backRepoVLine.db.Find(&vlineDBArray)
+	if err != nil {
+		return err
 	}
 
 	// list of instances to be removed
@@ -426,7 +428,7 @@ func (backRepo *BackRepoStruct) CheckoutVLine(vline *models.VLine) {
 			var vlineDB VLineDB
 			vlineDB.ID = id
 
-			if err := backRepo.BackRepoVLine.db.First(&vlineDB, id).Error; err != nil {
+			if _, err := backRepo.BackRepoVLine.db.First(&vlineDB, id); err != nil {
 				log.Fatalln("CheckoutVLine : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoVLine.CheckoutPhaseOneInstance(&vlineDB)
@@ -693,9 +695,9 @@ func (backRepoVLine *BackRepoVLineStruct) rowVisitorVLine(row *xlsx.Row) error {
 
 		vlineDB_ID_atBackupTime := vlineDB.ID
 		vlineDB.ID = 0
-		query := backRepoVLine.db.Create(vlineDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoVLine.db.Create(vlineDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoVLine.Map_VLineDBID_VLineDB[vlineDB.ID] = vlineDB
 		BackRepoVLineid_atBckpTime_newID[vlineDB_ID_atBackupTime] = vlineDB.ID
@@ -730,9 +732,9 @@ func (backRepoVLine *BackRepoVLineStruct) RestorePhaseOne(dirPath string) {
 
 		vlineDB_ID_atBackupTime := vlineDB.ID
 		vlineDB.ID = 0
-		query := backRepoVLine.db.Create(vlineDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		_, err := backRepoVLine.db.Create(vlineDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 		backRepoVLine.Map_VLineDBID_VLineDB[vlineDB.ID] = vlineDB
 		BackRepoVLineid_atBckpTime_newID[vlineDB_ID_atBackupTime] = vlineDB.ID
@@ -760,9 +762,10 @@ func (backRepoVLine *BackRepoVLineStruct) RestorePhaseTwo() {
 		}
 
 		// update databse with new index encoding
-		query := backRepoVLine.db.Model(vlineDB).Updates(*vlineDB)
-		if query.Error != nil {
-			log.Fatal(query.Error)
+		db, _ := backRepoVLine.db.Model(vlineDB)
+		_, err := db.Updates(*vlineDB)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 
