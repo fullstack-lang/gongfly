@@ -19,7 +19,7 @@ var commitFromFrontNbAfterLastEngineCommitOrCheckout uint
 // Since the checkout
 // have to happend when the simulation is not advancing, the "checkout scheduler" only schedule the "engine driver"
 // to checkout the simlation stage when it will be ready.
-func (gongsimCommand *GongsimCommand) checkoutScheduler() {
+func (command *Command) checkoutScheduler() {
 
 	// The period shall not too short for performance sake but not too long because the end user needs a responsive application
 	//
@@ -31,9 +31,9 @@ func (gongsimCommand *GongsimCommand) checkoutScheduler() {
 
 			_ = t
 
-			if simulationEventForLastEngineCommit == gongsimCommand.Engine.Fired &&
-				commitFromFrontNbAfterLastEngineCommitOrCheckout < gongsimCommand.Engine.GetLastCommitNbFromFront() {
-				gongsimCommand.Engine.nextCheckoutDate = time.Now()
+			if simulationEventForLastEngineCommit == command.Engine.Fired &&
+				commitFromFrontNbAfterLastEngineCommitOrCheckout < command.Engine.GetLastCommitNbFromFront() {
+				command.Engine.nextCheckoutDate = time.Now()
 			}
 		}
 	}

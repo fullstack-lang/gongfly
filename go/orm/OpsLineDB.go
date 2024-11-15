@@ -374,11 +374,25 @@ func (backRepoOpsLine *BackRepoOpsLineStruct) CheckoutPhaseTwoInstance(backRepo 
 func (opslineDB *OpsLineDB) DecodePointers(backRepo *BackRepoStruct, opsline *models.OpsLine) {
 
 	// insertion point for checkout of pointer encoding
-	// Scenario field
-	opsline.Scenario = nil
-	if opslineDB.ScenarioID.Int64 != 0 {
-		opsline.Scenario = backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr[uint(opslineDB.ScenarioID.Int64)]
+	// Scenario field	
+	{
+		id := opslineDB.ScenarioID.Int64
+		if id != 0 {
+			tmp, ok := backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr[uint(id)]
+
+			if !ok {
+				log.Fatalln("DecodePointers: opsline.Scenario, unknown pointer id", id)
+			}
+
+			// updates only if field has changed
+			if opsline.Scenario == nil || opsline.Scenario != tmp {
+				opsline.Scenario = tmp
+			}
+		} else {
+			opsline.Scenario = nil
+		}
 	}
+	
 	return
 }
 

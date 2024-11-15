@@ -15,6 +15,10 @@ func GetInstanceDBFromInstance[T models.Gongstruct, T2 GongstructDB](
 
 	switch concreteInstance := any(instance).(type) {
 	// insertion point for per struct backup
+	case *models.Command:
+		commandInstance := any(concreteInstance).(*models.Command)
+		ret2 := backRepo.BackRepoCommand.GetCommandDBFromCommandPtr(commandInstance)
+		ret = any(ret2).(*T2)
 	case *models.DummyAgent:
 		dummyagentInstance := any(concreteInstance).(*models.DummyAgent)
 		ret2 := backRepo.BackRepoDummyAgent.GetDummyAgentDBFromDummyAgentPtr(dummyagentInstance)
@@ -27,13 +31,9 @@ func GetInstanceDBFromInstance[T models.Gongstruct, T2 GongstructDB](
 		eventInstance := any(concreteInstance).(*models.Event)
 		ret2 := backRepo.BackRepoEvent.GetEventDBFromEventPtr(eventInstance)
 		ret = any(ret2).(*T2)
-	case *models.GongsimCommand:
-		gongsimcommandInstance := any(concreteInstance).(*models.GongsimCommand)
-		ret2 := backRepo.BackRepoGongsimCommand.GetGongsimCommandDBFromGongsimCommandPtr(gongsimcommandInstance)
-		ret = any(ret2).(*T2)
-	case *models.GongsimStatus:
-		gongsimstatusInstance := any(concreteInstance).(*models.GongsimStatus)
-		ret2 := backRepo.BackRepoGongsimStatus.GetGongsimStatusDBFromGongsimStatusPtr(gongsimstatusInstance)
+	case *models.Status:
+		statusInstance := any(concreteInstance).(*models.Status)
+		ret2 := backRepo.BackRepoStatus.GetStatusDBFromStatusPtr(statusInstance)
 		ret = any(ret2).(*T2)
 	case *models.UpdateState:
 		updatestateInstance := any(concreteInstance).(*models.UpdateState)
@@ -52,6 +52,11 @@ func GetID[T models.Gongstruct](
 
 	switch inst := any(instance).(type) {
 	// insertion point for per struct backup
+	case *models.Command:
+		tmp := GetInstanceDBFromInstance[models.Command, CommandDB](
+			stage, backRepo, inst,
+		)
+		id = int(tmp.ID)
 	case *models.DummyAgent:
 		tmp := GetInstanceDBFromInstance[models.DummyAgent, DummyAgentDB](
 			stage, backRepo, inst,
@@ -67,13 +72,8 @@ func GetID[T models.Gongstruct](
 			stage, backRepo, inst,
 		)
 		id = int(tmp.ID)
-	case *models.GongsimCommand:
-		tmp := GetInstanceDBFromInstance[models.GongsimCommand, GongsimCommandDB](
-			stage, backRepo, inst,
-		)
-		id = int(tmp.ID)
-	case *models.GongsimStatus:
-		tmp := GetInstanceDBFromInstance[models.GongsimStatus, GongsimStatusDB](
+	case *models.Status:
+		tmp := GetInstanceDBFromInstance[models.Status, StatusDB](
 			stage, backRepo, inst,
 		)
 		id = int(tmp.ID)
@@ -95,6 +95,11 @@ func GetIDPointer[T models.PointerToGongstruct](
 
 	switch inst := any(instance).(type) {
 	// insertion point for per struct backup
+	case *models.Command:
+		tmp := GetInstanceDBFromInstance[models.Command, CommandDB](
+			stage, backRepo, inst,
+		)
+		id = int(tmp.ID)
 	case *models.DummyAgent:
 		tmp := GetInstanceDBFromInstance[models.DummyAgent, DummyAgentDB](
 			stage, backRepo, inst,
@@ -110,13 +115,8 @@ func GetIDPointer[T models.PointerToGongstruct](
 			stage, backRepo, inst,
 		)
 		id = int(tmp.ID)
-	case *models.GongsimCommand:
-		tmp := GetInstanceDBFromInstance[models.GongsimCommand, GongsimCommandDB](
-			stage, backRepo, inst,
-		)
-		id = int(tmp.ID)
-	case *models.GongsimStatus:
-		tmp := GetInstanceDBFromInstance[models.GongsimStatus, GongsimStatusDB](
+	case *models.Status:
+		tmp := GetInstanceDBFromInstance[models.Status, StatusDB](
 			stage, backRepo, inst,
 		)
 		id = int(tmp.ID)

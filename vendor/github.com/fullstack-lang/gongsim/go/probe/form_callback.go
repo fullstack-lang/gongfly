@@ -18,6 +18,89 @@ var __dummmy__letters = slices.Delete([]string{"a"}, 0, 1)
 var __dummy_orm = orm.BackRepoStruct{}
 
 // insertion point
+func __gong__New__CommandFormCallback(
+	command *models.Command,
+	probe *Probe,
+	formGroup *table.FormGroup,
+) (commandFormCallback *CommandFormCallback) {
+	commandFormCallback = new(CommandFormCallback)
+	commandFormCallback.probe = probe
+	commandFormCallback.command = command
+	commandFormCallback.formGroup = formGroup
+
+	commandFormCallback.CreationMode = (command == nil)
+
+	return
+}
+
+type CommandFormCallback struct {
+	command *models.Command
+
+	// If the form call is called on the creation of a new instnace
+	CreationMode bool
+
+	probe *Probe
+
+	formGroup *table.FormGroup
+}
+
+func (commandFormCallback *CommandFormCallback) OnSave() {
+
+	log.Println("CommandFormCallback, OnSave")
+
+	// checkout formStage to have the form group on the stage synchronized with the
+	// back repo (and front repo)
+	commandFormCallback.probe.formStage.Checkout()
+
+	if commandFormCallback.command == nil {
+		commandFormCallback.command = new(models.Command).Stage(commandFormCallback.probe.stageOfInterest)
+	}
+	command_ := commandFormCallback.command
+	_ = command_
+
+	for _, formDiv := range commandFormCallback.formGroup.FormDivs {
+		switch formDiv.Name {
+		// insertion point per field
+		case "Name":
+			FormDivBasicFieldToField(&(command_.Name), formDiv)
+		case "Command":
+			FormDivEnumStringFieldToField(&(command_.Command), formDiv)
+		case "CommandDate":
+			FormDivBasicFieldToField(&(command_.CommandDate), formDiv)
+		case "Engine":
+			FormDivSelectFieldToField(&(command_.Engine), commandFormCallback.probe.stageOfInterest, formDiv)
+		}
+	}
+
+	// manage the suppress operation
+	if commandFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		command_.Unstage(commandFormCallback.probe.stageOfInterest)
+	}
+
+	commandFormCallback.probe.stageOfInterest.Commit()
+	fillUpTable[models.Command](
+		commandFormCallback.probe,
+	)
+	commandFormCallback.probe.tableStage.Commit()
+
+	// display a new form by reset the form stage
+	if commandFormCallback.CreationMode || commandFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		commandFormCallback.probe.formStage.Reset()
+		newFormGroup := (&table.FormGroup{
+			Name: table.FormGroupDefaultName.ToString(),
+		}).Stage(commandFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__CommandFormCallback(
+			nil,
+			commandFormCallback.probe,
+			newFormGroup,
+		)
+		command := new(models.Command)
+		FillUpForm(command, newFormGroup, commandFormCallback.probe)
+		commandFormCallback.probe.formStage.Commit()
+	}
+
+	fillUpTree(commandFormCallback.probe)
+}
 func __gong__New__DummyAgentFormCallback(
 	dummyagent *models.DummyAgent,
 	probe *Probe,
@@ -269,23 +352,23 @@ func (eventFormCallback *EventFormCallback) OnSave() {
 
 	fillUpTree(eventFormCallback.probe)
 }
-func __gong__New__GongsimCommandFormCallback(
-	gongsimcommand *models.GongsimCommand,
+func __gong__New__StatusFormCallback(
+	status *models.Status,
 	probe *Probe,
 	formGroup *table.FormGroup,
-) (gongsimcommandFormCallback *GongsimCommandFormCallback) {
-	gongsimcommandFormCallback = new(GongsimCommandFormCallback)
-	gongsimcommandFormCallback.probe = probe
-	gongsimcommandFormCallback.gongsimcommand = gongsimcommand
-	gongsimcommandFormCallback.formGroup = formGroup
+) (statusFormCallback *StatusFormCallback) {
+	statusFormCallback = new(StatusFormCallback)
+	statusFormCallback.probe = probe
+	statusFormCallback.status = status
+	statusFormCallback.formGroup = formGroup
 
-	gongsimcommandFormCallback.CreationMode = (gongsimcommand == nil)
+	statusFormCallback.CreationMode = (status == nil)
 
 	return
 }
 
-type GongsimCommandFormCallback struct {
-	gongsimcommand *models.GongsimCommand
+type StatusFormCallback struct {
+	status *models.Status
 
 	// If the form call is called on the creation of a new instnace
 	CreationMode bool
@@ -295,151 +378,64 @@ type GongsimCommandFormCallback struct {
 	formGroup *table.FormGroup
 }
 
-func (gongsimcommandFormCallback *GongsimCommandFormCallback) OnSave() {
+func (statusFormCallback *StatusFormCallback) OnSave() {
 
-	log.Println("GongsimCommandFormCallback, OnSave")
-
-	// checkout formStage to have the form group on the stage synchronized with the
-	// back repo (and front repo)
-	gongsimcommandFormCallback.probe.formStage.Checkout()
-
-	if gongsimcommandFormCallback.gongsimcommand == nil {
-		gongsimcommandFormCallback.gongsimcommand = new(models.GongsimCommand).Stage(gongsimcommandFormCallback.probe.stageOfInterest)
-	}
-	gongsimcommand_ := gongsimcommandFormCallback.gongsimcommand
-	_ = gongsimcommand_
-
-	for _, formDiv := range gongsimcommandFormCallback.formGroup.FormDivs {
-		switch formDiv.Name {
-		// insertion point per field
-		case "Name":
-			FormDivBasicFieldToField(&(gongsimcommand_.Name), formDiv)
-		case "Command":
-			FormDivEnumStringFieldToField(&(gongsimcommand_.Command), formDiv)
-		case "CommandDate":
-			FormDivBasicFieldToField(&(gongsimcommand_.CommandDate), formDiv)
-		case "SpeedCommandType":
-			FormDivEnumStringFieldToField(&(gongsimcommand_.SpeedCommandType), formDiv)
-		case "DateSpeedCommand":
-			FormDivBasicFieldToField(&(gongsimcommand_.DateSpeedCommand), formDiv)
-		case "Engine":
-			FormDivSelectFieldToField(&(gongsimcommand_.Engine), gongsimcommandFormCallback.probe.stageOfInterest, formDiv)
-		}
-	}
-
-	// manage the suppress operation
-	if gongsimcommandFormCallback.formGroup.HasSuppressButtonBeenPressed {
-		gongsimcommand_.Unstage(gongsimcommandFormCallback.probe.stageOfInterest)
-	}
-
-	gongsimcommandFormCallback.probe.stageOfInterest.Commit()
-	fillUpTable[models.GongsimCommand](
-		gongsimcommandFormCallback.probe,
-	)
-	gongsimcommandFormCallback.probe.tableStage.Commit()
-
-	// display a new form by reset the form stage
-	if gongsimcommandFormCallback.CreationMode || gongsimcommandFormCallback.formGroup.HasSuppressButtonBeenPressed {
-		gongsimcommandFormCallback.probe.formStage.Reset()
-		newFormGroup := (&table.FormGroup{
-			Name: table.FormGroupDefaultName.ToString(),
-		}).Stage(gongsimcommandFormCallback.probe.formStage)
-		newFormGroup.OnSave = __gong__New__GongsimCommandFormCallback(
-			nil,
-			gongsimcommandFormCallback.probe,
-			newFormGroup,
-		)
-		gongsimcommand := new(models.GongsimCommand)
-		FillUpForm(gongsimcommand, newFormGroup, gongsimcommandFormCallback.probe)
-		gongsimcommandFormCallback.probe.formStage.Commit()
-	}
-
-	fillUpTree(gongsimcommandFormCallback.probe)
-}
-func __gong__New__GongsimStatusFormCallback(
-	gongsimstatus *models.GongsimStatus,
-	probe *Probe,
-	formGroup *table.FormGroup,
-) (gongsimstatusFormCallback *GongsimStatusFormCallback) {
-	gongsimstatusFormCallback = new(GongsimStatusFormCallback)
-	gongsimstatusFormCallback.probe = probe
-	gongsimstatusFormCallback.gongsimstatus = gongsimstatus
-	gongsimstatusFormCallback.formGroup = formGroup
-
-	gongsimstatusFormCallback.CreationMode = (gongsimstatus == nil)
-
-	return
-}
-
-type GongsimStatusFormCallback struct {
-	gongsimstatus *models.GongsimStatus
-
-	// If the form call is called on the creation of a new instnace
-	CreationMode bool
-
-	probe *Probe
-
-	formGroup *table.FormGroup
-}
-
-func (gongsimstatusFormCallback *GongsimStatusFormCallback) OnSave() {
-
-	log.Println("GongsimStatusFormCallback, OnSave")
+	log.Println("StatusFormCallback, OnSave")
 
 	// checkout formStage to have the form group on the stage synchronized with the
 	// back repo (and front repo)
-	gongsimstatusFormCallback.probe.formStage.Checkout()
+	statusFormCallback.probe.formStage.Checkout()
 
-	if gongsimstatusFormCallback.gongsimstatus == nil {
-		gongsimstatusFormCallback.gongsimstatus = new(models.GongsimStatus).Stage(gongsimstatusFormCallback.probe.stageOfInterest)
+	if statusFormCallback.status == nil {
+		statusFormCallback.status = new(models.Status).Stage(statusFormCallback.probe.stageOfInterest)
 	}
-	gongsimstatus_ := gongsimstatusFormCallback.gongsimstatus
-	_ = gongsimstatus_
+	status_ := statusFormCallback.status
+	_ = status_
 
-	for _, formDiv := range gongsimstatusFormCallback.formGroup.FormDivs {
+	for _, formDiv := range statusFormCallback.formGroup.FormDivs {
 		switch formDiv.Name {
 		// insertion point per field
 		case "Name":
-			FormDivBasicFieldToField(&(gongsimstatus_.Name), formDiv)
+			FormDivBasicFieldToField(&(status_.Name), formDiv)
 		case "CurrentCommand":
-			FormDivEnumStringFieldToField(&(gongsimstatus_.CurrentCommand), formDiv)
+			FormDivEnumStringFieldToField(&(status_.CurrentCommand), formDiv)
 		case "CompletionDate":
-			FormDivBasicFieldToField(&(gongsimstatus_.CompletionDate), formDiv)
+			FormDivBasicFieldToField(&(status_.CompletionDate), formDiv)
 		case "CurrentSpeedCommand":
-			FormDivEnumStringFieldToField(&(gongsimstatus_.CurrentSpeedCommand), formDiv)
+			FormDivEnumStringFieldToField(&(status_.CurrentSpeedCommand), formDiv)
 		case "SpeedCommandCompletionDate":
-			FormDivBasicFieldToField(&(gongsimstatus_.SpeedCommandCompletionDate), formDiv)
+			FormDivBasicFieldToField(&(status_.SpeedCommandCompletionDate), formDiv)
 		}
 	}
 
 	// manage the suppress operation
-	if gongsimstatusFormCallback.formGroup.HasSuppressButtonBeenPressed {
-		gongsimstatus_.Unstage(gongsimstatusFormCallback.probe.stageOfInterest)
+	if statusFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		status_.Unstage(statusFormCallback.probe.stageOfInterest)
 	}
 
-	gongsimstatusFormCallback.probe.stageOfInterest.Commit()
-	fillUpTable[models.GongsimStatus](
-		gongsimstatusFormCallback.probe,
+	statusFormCallback.probe.stageOfInterest.Commit()
+	fillUpTable[models.Status](
+		statusFormCallback.probe,
 	)
-	gongsimstatusFormCallback.probe.tableStage.Commit()
+	statusFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
-	if gongsimstatusFormCallback.CreationMode || gongsimstatusFormCallback.formGroup.HasSuppressButtonBeenPressed {
-		gongsimstatusFormCallback.probe.formStage.Reset()
+	if statusFormCallback.CreationMode || statusFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		statusFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
-		}).Stage(gongsimstatusFormCallback.probe.formStage)
-		newFormGroup.OnSave = __gong__New__GongsimStatusFormCallback(
+		}).Stage(statusFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__StatusFormCallback(
 			nil,
-			gongsimstatusFormCallback.probe,
+			statusFormCallback.probe,
 			newFormGroup,
 		)
-		gongsimstatus := new(models.GongsimStatus)
-		FillUpForm(gongsimstatus, newFormGroup, gongsimstatusFormCallback.probe)
-		gongsimstatusFormCallback.probe.formStage.Commit()
+		status := new(models.Status)
+		FillUpForm(status, newFormGroup, statusFormCallback.probe)
+		statusFormCallback.probe.formStage.Commit()
 	}
 
-	fillUpTree(gongsimstatusFormCallback.probe)
+	fillUpTree(statusFormCallback.probe)
 }
 func __gong__New__UpdateStateFormCallback(
 	updatestate *models.UpdateState,

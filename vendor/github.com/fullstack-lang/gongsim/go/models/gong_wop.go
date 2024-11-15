@@ -7,6 +7,20 @@ import "time"
 var __GONG_time_The_fool_doth_think_he_is_wise__ = time.Hour
 
 // insertion point
+type Command_WOP struct {
+	// insertion point
+	Name string
+	Command CommandType
+	CommandDate string
+}
+
+func (from *Command) CopyBasicFields(to *Command) {
+	// insertion point
+	to.Name = from.Name
+	to.Command = from.Command
+	to.CommandDate = from.CommandDate
+}
+
 type DummyAgent_WOP struct {
 	// insertion point
 	TechName string
@@ -57,34 +71,16 @@ func (from *Event) CopyBasicFields(to *Event) {
 	to.Duration = from.Duration
 }
 
-type GongsimCommand_WOP struct {
+type Status_WOP struct {
 	// insertion point
 	Name string
-	Command GongsimCommandType
-	CommandDate string
-	SpeedCommandType SpeedCommandType
-	DateSpeedCommand string
-}
-
-func (from *GongsimCommand) CopyBasicFields(to *GongsimCommand) {
-	// insertion point
-	to.Name = from.Name
-	to.Command = from.Command
-	to.CommandDate = from.CommandDate
-	to.SpeedCommandType = from.SpeedCommandType
-	to.DateSpeedCommand = from.DateSpeedCommand
-}
-
-type GongsimStatus_WOP struct {
-	// insertion point
-	Name string
-	CurrentCommand GongsimCommandType
+	CurrentCommand CommandType
 	CompletionDate string
 	CurrentSpeedCommand SpeedCommandType
 	SpeedCommandCompletionDate string
 }
 
-func (from *GongsimStatus) CopyBasicFields(to *GongsimStatus) {
+func (from *Status) CopyBasicFields(to *Status) {
 	// insertion point
 	to.Name = from.Name
 	to.CurrentCommand = from.CurrentCommand

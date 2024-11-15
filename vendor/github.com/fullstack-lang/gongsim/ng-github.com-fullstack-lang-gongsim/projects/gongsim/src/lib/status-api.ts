@@ -3,9 +3,9 @@
 // usefull for managing pointer ID values that can be nullable
 import { NullInt64 } from './null-int64'
 
-export class GongsimStatusAPI {
+export class StatusAPI {
 
-	static GONGSTRUCT_NAME = "GongsimStatus"
+	static GONGSTRUCT_NAME = "Status"
 
 	CreatedAt?: string
 	DeletedAt?: string
@@ -20,9 +20,9 @@ export class GongsimStatusAPI {
 
 	// insertion point for other decls
 
-	GongsimStatusPointersEncoding: GongsimStatusPointersEncoding = new GongsimStatusPointersEncoding
+	StatusPointersEncoding: StatusPointersEncoding = new StatusPointersEncoding
 }
 
-export class GongsimStatusPointersEncoding {
+export class StatusPointersEncoding {
 	// insertion point for pointers and slices of pointers encoding fields
 }

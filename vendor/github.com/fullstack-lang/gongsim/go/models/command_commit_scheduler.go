@@ -10,13 +10,13 @@ var simulationEventForLastEngineCommit int
 // The commit is performed only if the event number of the engine has increased. Since the commit
 // have to happend when the simulation is not advancing, the "commit scheduler" only schedule the "engine driver"
 // to commit the simlation stage when it will be ready.
-func (gongsimCommand *GongsimCommand) commitScheduler() {
+func (command *Command) commitScheduler() {
 
 	// The period shall not too short for performance sake but not too long because the end user needs a responsive application
 	//
 	// commitSchedulerPeriod is the period of the "commit scheduler"
-	var CommitSchedulerPeriod = time.NewTicker(500 * time.Millisecond)
-	simulationEventForLastEngineCommit = gongsimCommand.Engine.Fired
+	var CommitSchedulerPeriod = time.NewTicker(100 * time.Millisecond)
+	simulationEventForLastEngineCommit = command.Engine.Fired
 	for {
 		select {
 		case t := <-CommitSchedulerPeriod.C:
@@ -24,8 +24,8 @@ func (gongsimCommand *GongsimCommand) commitScheduler() {
 			_ = t
 			// log.Println("commitScheduler  timestamp  at ", t)
 
-			if simulationEventForLastEngineCommit != gongsimCommand.Engine.Fired {
-				gongsimCommand.Engine.nextCommitDate = time.Now()
+			if simulationEventForLastEngineCommit != command.Engine.Fired {
+				command.Engine.nextCommitDate = time.Now()
 			}
 		}
 	}

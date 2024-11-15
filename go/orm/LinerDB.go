@@ -420,11 +420,25 @@ func (backRepoLiner *BackRepoLinerStruct) CheckoutPhaseTwoInstance(backRepo *Bac
 func (linerDB *LinerDB) DecodePointers(backRepo *BackRepoStruct, liner *models.Liner) {
 
 	// insertion point for checkout of pointer encoding
-	// ReporingLine field
-	liner.ReporingLine = nil
-	if linerDB.ReporingLineID.Int64 != 0 {
-		liner.ReporingLine = backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[uint(linerDB.ReporingLineID.Int64)]
+	// ReporingLine field	
+	{
+		id := linerDB.ReporingLineID.Int64
+		if id != 0 {
+			tmp, ok := backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[uint(id)]
+
+			if !ok {
+				log.Fatalln("DecodePointers: liner.ReporingLine, unknown pointer id", id)
+			}
+
+			// updates only if field has changed
+			if liner.ReporingLine == nil || liner.ReporingLine != tmp {
+				liner.ReporingLine = tmp
+			}
+		} else {
+			liner.ReporingLine = nil
+		}
 	}
+	
 	return
 }
 

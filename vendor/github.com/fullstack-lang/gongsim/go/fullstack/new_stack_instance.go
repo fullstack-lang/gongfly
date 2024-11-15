@@ -44,11 +44,11 @@ func NewStackInstance(
 
 	// add orchestration
 	// insertion point
+	models.SetOrchestratorOnAfterUpdate[models.Command](stage)
 	models.SetOrchestratorOnAfterUpdate[models.DummyAgent](stage)
 	models.SetOrchestratorOnAfterUpdate[models.Engine](stage)
 	models.SetOrchestratorOnAfterUpdate[models.Event](stage)
-	models.SetOrchestratorOnAfterUpdate[models.GongsimCommand](stage)
-	models.SetOrchestratorOnAfterUpdate[models.GongsimStatus](stage)
+	models.SetOrchestratorOnAfterUpdate[models.Status](stage)
 	models.SetOrchestratorOnAfterUpdate[models.UpdateState](stage)
 
 	return

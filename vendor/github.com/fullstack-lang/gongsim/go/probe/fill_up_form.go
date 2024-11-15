@@ -18,6 +18,15 @@ func FillUpForm[T models.Gongstruct](
 
 	switch instanceWithInferedType := any(instance).(type) {
 	// insertion point
+	case *models.Command:
+		// insertion point
+		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
+		EnumTypeStringToForm("Command", instanceWithInferedType.Command, instanceWithInferedType, probe.formStage, formGroup)
+		BasicFieldtoForm("CommandDate", instanceWithInferedType.CommandDate, instanceWithInferedType, probe.formStage, formGroup,
+			false, false, 0, false, 0)
+		AssociationFieldToForm("Engine", instanceWithInferedType.Engine, formGroup, probe)
+
 	case *models.DummyAgent:
 		// insertion point
 		BasicFieldtoForm("TechName", instanceWithInferedType.TechName, instanceWithInferedType, probe.formStage, formGroup,
@@ -51,19 +60,7 @@ func FillUpForm[T models.Gongstruct](
 		BasicFieldtoForm("Duration", instanceWithInferedType.Duration, instanceWithInferedType, probe.formStage, formGroup,
 			false, false, 0, false, 0)
 
-	case *models.GongsimCommand:
-		// insertion point
-		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup,
-			false, false, 0, false, 0)
-		EnumTypeStringToForm("Command", instanceWithInferedType.Command, instanceWithInferedType, probe.formStage, formGroup)
-		BasicFieldtoForm("CommandDate", instanceWithInferedType.CommandDate, instanceWithInferedType, probe.formStage, formGroup,
-			false, false, 0, false, 0)
-		EnumTypeStringToForm("SpeedCommandType", instanceWithInferedType.SpeedCommandType, instanceWithInferedType, probe.formStage, formGroup)
-		BasicFieldtoForm("DateSpeedCommand", instanceWithInferedType.DateSpeedCommand, instanceWithInferedType, probe.formStage, formGroup,
-			false, false, 0, false, 0)
-		AssociationFieldToForm("Engine", instanceWithInferedType.Engine, formGroup, probe)
-
-	case *models.GongsimStatus:
+	case *models.Status:
 		// insertion point
 		BasicFieldtoForm("Name", instanceWithInferedType.Name, instanceWithInferedType, probe.formStage, formGroup,
 			false, false, 0, false, 0)

@@ -94,6 +94,54 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	_ = setValueField
 
 	// insertion initialization of objects to stage
+	map_Command_Identifiers := make(map[*Command]string)
+	_ = map_Command_Identifiers
+
+	commandOrdered := []*Command{}
+	for command := range stage.Commands {
+		commandOrdered = append(commandOrdered, command)
+	}
+	sort.Slice(commandOrdered[:], func(i, j int) bool {
+		return commandOrdered[i].Name < commandOrdered[j].Name
+	})
+	if len(commandOrdered) > 0 {
+		identifiersDecl += "\n"
+	}
+	for idx, command := range commandOrdered {
+
+		id = generatesIdentifier("Command", idx, command.Name)
+		map_Command_Identifiers[command] = id
+
+		decl = IdentifiersDecls
+		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
+		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "Command")
+		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", command.Name)
+		identifiersDecl += decl
+
+		initializerStatements += "\n"
+		// Initialisation of values
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(command.Name))
+		initializerStatements += setValueField
+
+		if command.Command != "" {
+			setValueField = StringEnumInitStatement
+			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Command")
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+command.Command.ToCodeString())
+			initializerStatements += setValueField
+		}
+
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CommandDate")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(command.CommandDate))
+		initializerStatements += setValueField
+
+	}
+
 	map_DummyAgent_Identifiers := make(map[*DummyAgent]string)
 	_ = map_DummyAgent_Identifiers
 
@@ -260,28 +308,28 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 
 	}
 
-	map_GongsimCommand_Identifiers := make(map[*GongsimCommand]string)
-	_ = map_GongsimCommand_Identifiers
+	map_Status_Identifiers := make(map[*Status]string)
+	_ = map_Status_Identifiers
 
-	gongsimcommandOrdered := []*GongsimCommand{}
-	for gongsimcommand := range stage.GongsimCommands {
-		gongsimcommandOrdered = append(gongsimcommandOrdered, gongsimcommand)
+	statusOrdered := []*Status{}
+	for status := range stage.Statuss {
+		statusOrdered = append(statusOrdered, status)
 	}
-	sort.Slice(gongsimcommandOrdered[:], func(i, j int) bool {
-		return gongsimcommandOrdered[i].Name < gongsimcommandOrdered[j].Name
+	sort.Slice(statusOrdered[:], func(i, j int) bool {
+		return statusOrdered[i].Name < statusOrdered[j].Name
 	})
-	if len(gongsimcommandOrdered) > 0 {
+	if len(statusOrdered) > 0 {
 		identifiersDecl += "\n"
 	}
-	for idx, gongsimcommand := range gongsimcommandOrdered {
+	for idx, status := range statusOrdered {
 
-		id = generatesIdentifier("GongsimCommand", idx, gongsimcommand.Name)
-		map_GongsimCommand_Identifiers[gongsimcommand] = id
+		id = generatesIdentifier("Status", idx, status.Name)
+		map_Status_Identifiers[status] = id
 
 		decl = IdentifiersDecls
 		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
-		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "GongsimCommand")
-		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", gongsimcommand.Name)
+		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "Status")
+		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", status.Name)
 		identifiersDecl += decl
 
 		initializerStatements += "\n"
@@ -289,97 +337,35 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimcommand.Name))
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(status.Name))
 		initializerStatements += setValueField
 
-		if gongsimcommand.Command != "" {
-			setValueField = StringEnumInitStatement
-			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Command")
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+gongsimcommand.Command.ToCodeString())
-			initializerStatements += setValueField
-		}
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CommandDate")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimcommand.CommandDate))
-		initializerStatements += setValueField
-
-		if gongsimcommand.SpeedCommandType != "" {
-			setValueField = StringEnumInitStatement
-			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "SpeedCommandType")
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+gongsimcommand.SpeedCommandType.ToCodeString())
-			initializerStatements += setValueField
-		}
-
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "DateSpeedCommand")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimcommand.DateSpeedCommand))
-		initializerStatements += setValueField
-
-	}
-
-	map_GongsimStatus_Identifiers := make(map[*GongsimStatus]string)
-	_ = map_GongsimStatus_Identifiers
-
-	gongsimstatusOrdered := []*GongsimStatus{}
-	for gongsimstatus := range stage.GongsimStatuss {
-		gongsimstatusOrdered = append(gongsimstatusOrdered, gongsimstatus)
-	}
-	sort.Slice(gongsimstatusOrdered[:], func(i, j int) bool {
-		return gongsimstatusOrdered[i].Name < gongsimstatusOrdered[j].Name
-	})
-	if len(gongsimstatusOrdered) > 0 {
-		identifiersDecl += "\n"
-	}
-	for idx, gongsimstatus := range gongsimstatusOrdered {
-
-		id = generatesIdentifier("GongsimStatus", idx, gongsimstatus.Name)
-		map_GongsimStatus_Identifiers[gongsimstatus] = id
-
-		decl = IdentifiersDecls
-		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
-		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "GongsimStatus")
-		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", gongsimstatus.Name)
-		identifiersDecl += decl
-
-		initializerStatements += "\n"
-		// Initialisation of values
-		setValueField = StringInitStatement
-		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimstatus.Name))
-		initializerStatements += setValueField
-
-		if gongsimstatus.CurrentCommand != "" {
+		if status.CurrentCommand != "" {
 			setValueField = StringEnumInitStatement
 			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CurrentCommand")
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+gongsimstatus.CurrentCommand.ToCodeString())
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+status.CurrentCommand.ToCodeString())
 			initializerStatements += setValueField
 		}
 
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CompletionDate")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimstatus.CompletionDate))
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(status.CompletionDate))
 		initializerStatements += setValueField
 
-		if gongsimstatus.CurrentSpeedCommand != "" {
+		if status.CurrentSpeedCommand != "" {
 			setValueField = StringEnumInitStatement
 			setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "CurrentSpeedCommand")
-			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+gongsimstatus.CurrentSpeedCommand.ToCodeString())
+			setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", "models."+status.CurrentSpeedCommand.ToCodeString())
 			initializerStatements += setValueField
 		}
 
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "SpeedCommandCompletionDate")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(gongsimstatus.SpeedCommandCompletionDate))
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(status.SpeedCommandCompletionDate))
 		initializerStatements += setValueField
 
 	}
@@ -431,6 +417,24 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	}
 
 	// insertion initialization of objects to stage
+	for idx, command := range commandOrdered {
+		var setPointerField string
+		_ = setPointerField
+
+		id = generatesIdentifier("Command", idx, command.Name)
+		map_Command_Identifiers[command] = id
+
+		// Initialisation of values
+		if command.Engine != nil {
+			setPointerField = PointerFieldInitStatement
+			setPointerField = strings.ReplaceAll(setPointerField, "{{Identifier}}", id)
+			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldName}}", "Engine")
+			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldNameValue}}", map_Engine_Identifiers[command.Engine])
+			pointersInitializesStatements += setPointerField
+		}
+
+	}
+
 	for idx, dummyagent := range dummyagentOrdered {
 		var setPointerField string
 		_ = setPointerField
@@ -461,30 +465,12 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		// Initialisation of values
 	}
 
-	for idx, gongsimcommand := range gongsimcommandOrdered {
+	for idx, status := range statusOrdered {
 		var setPointerField string
 		_ = setPointerField
 
-		id = generatesIdentifier("GongsimCommand", idx, gongsimcommand.Name)
-		map_GongsimCommand_Identifiers[gongsimcommand] = id
-
-		// Initialisation of values
-		if gongsimcommand.Engine != nil {
-			setPointerField = PointerFieldInitStatement
-			setPointerField = strings.ReplaceAll(setPointerField, "{{Identifier}}", id)
-			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldName}}", "Engine")
-			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldNameValue}}", map_Engine_Identifiers[gongsimcommand.Engine])
-			pointersInitializesStatements += setPointerField
-		}
-
-	}
-
-	for idx, gongsimstatus := range gongsimstatusOrdered {
-		var setPointerField string
-		_ = setPointerField
-
-		id = generatesIdentifier("GongsimStatus", idx, gongsimstatus.Name)
-		map_GongsimStatus_Identifiers[gongsimstatus] = id
+		id = generatesIdentifier("Status", idx, status.Name)
+		map_Status_Identifiers[status] = id
 
 		// Initialisation of values
 	}

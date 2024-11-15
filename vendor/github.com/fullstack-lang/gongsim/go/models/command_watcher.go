@@ -10,9 +10,9 @@ var DisplayWatch bool
 var CpuProfile bool
 
 // the watcher thread inspects the status of the simulation
-func (gongsimCommand *GongsimCommand) watcher() {
+func (command *Command) watcher() {
 
-	var lastSimTime = gongsimCommand.Engine.currentTime
+	var lastSimTime = command.Engine.currentTime
 
 	// The period shall not too short for performance sake but not too long because the end user needs a responsive application
 	//
@@ -29,14 +29,14 @@ func (gongsimCommand *GongsimCommand) watcher() {
 
 			// const layout = "Jan 2, 2006 at 15:04:05 (MST)"
 			const layout = "15:04:05.999"
-			measuredSimSpeed := float64(gongsimCommand.Engine.currentTime.Sub(lastSimTime)) / float64(watcherPeriod)
+			measuredSimSpeed := float64(command.Engine.currentTime.Sub(lastSimTime)) / float64(watcherPeriod)
 			if DisplayWatch {
 				log.Printf("time %s, next %s, status %s, speed %f, speed request %f, Sim %s, Ho %s",
-					time.Now().Format(layout), gongsimCommand.Engine.nextRealtimeHorizon.Format(layout),
-					gongsimCommand.Engine.State, measuredSimSpeed, gongsimCommand.Engine.Speed,
-					gongsimCommand.Engine.currentTime.Format(layout), gongsimCommand.Engine.nextSimulatedTimeHorizon.Format(layout))
+					time.Now().Format(layout), command.Engine.nextRealtimeHorizon.Format(layout),
+					command.Engine.State, measuredSimSpeed, command.Engine.Speed,
+					command.Engine.currentTime.Format(layout), command.Engine.nextSimulatedTimeHorizon.Format(layout))
 			}
-			lastSimTime = gongsimCommand.Engine.currentTime
+			lastSimTime = command.Engine.currentTime
 
 			if CpuProfile {
 				if time.Since(realtimeSimStart) > 20*time.Second {

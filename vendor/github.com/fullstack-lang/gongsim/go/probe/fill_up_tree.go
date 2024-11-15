@@ -62,6 +62,16 @@ func fillUpTree(
 
 		switch gongStruct.Name {
 		// insertion point
+		case "Command":
+			nodeGongstruct.Name = name
+			set := *models.GetGongstructInstancesSet[models.Command](probe.stageOfInterest)
+			for _command := range set {
+				nodeInstance := (&tree.Node{Name: _command.GetName()}).Stage(probe.treeStage)
+				nodeInstance.IsNodeClickable = true
+				nodeInstance.Impl = NewInstanceNodeCallback(_command, "Command", probe)
+
+				nodeGongstruct.Children = append(nodeGongstruct.Children, nodeInstance)
+			}
 		case "DummyAgent":
 			nodeGongstruct.Name = name
 			set := *models.GetGongstructInstancesSet[models.DummyAgent](probe.stageOfInterest)
@@ -92,23 +102,13 @@ func fillUpTree(
 
 				nodeGongstruct.Children = append(nodeGongstruct.Children, nodeInstance)
 			}
-		case "GongsimCommand":
+		case "Status":
 			nodeGongstruct.Name = name
-			set := *models.GetGongstructInstancesSet[models.GongsimCommand](probe.stageOfInterest)
-			for _gongsimcommand := range set {
-				nodeInstance := (&tree.Node{Name: _gongsimcommand.GetName()}).Stage(probe.treeStage)
+			set := *models.GetGongstructInstancesSet[models.Status](probe.stageOfInterest)
+			for _status := range set {
+				nodeInstance := (&tree.Node{Name: _status.GetName()}).Stage(probe.treeStage)
 				nodeInstance.IsNodeClickable = true
-				nodeInstance.Impl = NewInstanceNodeCallback(_gongsimcommand, "GongsimCommand", probe)
-
-				nodeGongstruct.Children = append(nodeGongstruct.Children, nodeInstance)
-			}
-		case "GongsimStatus":
-			nodeGongstruct.Name = name
-			set := *models.GetGongstructInstancesSet[models.GongsimStatus](probe.stageOfInterest)
-			for _gongsimstatus := range set {
-				nodeInstance := (&tree.Node{Name: _gongsimstatus.GetName()}).Stage(probe.treeStage)
-				nodeInstance.IsNodeClickable = true
-				nodeInstance.Impl = NewInstanceNodeCallback(_gongsimstatus, "GongsimStatus", probe)
+				nodeInstance.Impl = NewInstanceNodeCallback(_status, "Status", probe)
 
 				nodeGongstruct.Children = append(nodeGongstruct.Children, nodeInstance)
 			}

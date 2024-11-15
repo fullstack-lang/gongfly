@@ -20,6 +20,10 @@ type DBLite struct {
 
 	// insertion point definitions
 
+	commandDBs map[uint]*CommandDB
+
+	nextIDCommandDB uint
+
 	dummyagentDBs map[uint]*DummyAgentDB
 
 	nextIDDummyAgentDB uint
@@ -32,13 +36,9 @@ type DBLite struct {
 
 	nextIDEventDB uint
 
-	gongsimcommandDBs map[uint]*GongsimCommandDB
+	statusDBs map[uint]*StatusDB
 
-	nextIDGongsimCommandDB uint
-
-	gongsimstatusDBs map[uint]*GongsimStatusDB
-
-	nextIDGongsimStatusDB uint
+	nextIDStatusDB uint
 
 	updatestateDBs map[uint]*UpdateStateDB
 
@@ -50,15 +50,15 @@ func NewDBLite() *DBLite {
 	return &DBLite{
 		// insertion point maps init
 
+		commandDBs: make(map[uint]*CommandDB),
+
 		dummyagentDBs: make(map[uint]*DummyAgentDB),
 
 		engineDBs: make(map[uint]*EngineDB),
 
 		eventDBs: make(map[uint]*EventDB),
 
-		gongsimcommandDBs: make(map[uint]*GongsimCommandDB),
-
-		gongsimstatusDBs: make(map[uint]*GongsimStatusDB),
+		statusDBs: make(map[uint]*StatusDB),
 
 		updatestateDBs: make(map[uint]*UpdateStateDB),
 	}
@@ -75,6 +75,10 @@ func (db *DBLite) Create(instanceDB any) (db.DBInterface, error) {
 
 	switch v := instanceDB.(type) {
 	// insertion point create
+	case *CommandDB:
+		db.nextIDCommandDB++
+		v.ID = db.nextIDCommandDB
+		db.commandDBs[v.ID] = v
 	case *DummyAgentDB:
 		db.nextIDDummyAgentDB++
 		v.ID = db.nextIDDummyAgentDB
@@ -87,14 +91,10 @@ func (db *DBLite) Create(instanceDB any) (db.DBInterface, error) {
 		db.nextIDEventDB++
 		v.ID = db.nextIDEventDB
 		db.eventDBs[v.ID] = v
-	case *GongsimCommandDB:
-		db.nextIDGongsimCommandDB++
-		v.ID = db.nextIDGongsimCommandDB
-		db.gongsimcommandDBs[v.ID] = v
-	case *GongsimStatusDB:
-		db.nextIDGongsimStatusDB++
-		v.ID = db.nextIDGongsimStatusDB
-		db.gongsimstatusDBs[v.ID] = v
+	case *StatusDB:
+		db.nextIDStatusDB++
+		v.ID = db.nextIDStatusDB
+		db.statusDBs[v.ID] = v
 	case *UpdateStateDB:
 		db.nextIDUpdateStateDB++
 		v.ID = db.nextIDUpdateStateDB
@@ -127,16 +127,16 @@ func (db *DBLite) Delete(instanceDB any) (db.DBInterface, error) {
 
 	switch v := instanceDB.(type) {
 	// insertion point delete
+	case *CommandDB:
+		delete(db.commandDBs, v.ID)
 	case *DummyAgentDB:
 		delete(db.dummyagentDBs, v.ID)
 	case *EngineDB:
 		delete(db.engineDBs, v.ID)
 	case *EventDB:
 		delete(db.eventDBs, v.ID)
-	case *GongsimCommandDB:
-		delete(db.gongsimcommandDBs, v.ID)
-	case *GongsimStatusDB:
-		delete(db.gongsimstatusDBs, v.ID)
+	case *StatusDB:
+		delete(db.statusDBs, v.ID)
 	case *UpdateStateDB:
 		delete(db.updatestateDBs, v.ID)
 	default:
@@ -157,6 +157,9 @@ func (db *DBLite) Save(instanceDB any) (db.DBInterface, error) {
 
 	switch v := instanceDB.(type) {
 	// insertion point delete
+	case *CommandDB:
+		db.commandDBs[v.ID] = v
+		return db, nil
 	case *DummyAgentDB:
 		db.dummyagentDBs[v.ID] = v
 		return db, nil
@@ -166,11 +169,8 @@ func (db *DBLite) Save(instanceDB any) (db.DBInterface, error) {
 	case *EventDB:
 		db.eventDBs[v.ID] = v
 		return db, nil
-	case *GongsimCommandDB:
-		db.gongsimcommandDBs[v.ID] = v
-		return db, nil
-	case *GongsimStatusDB:
-		db.gongsimstatusDBs[v.ID] = v
+	case *StatusDB:
+		db.statusDBs[v.ID] = v
 		return db, nil
 	case *UpdateStateDB:
 		db.updatestateDBs[v.ID] = v
@@ -191,6 +191,12 @@ func (db *DBLite) Updates(instanceDB any) (db.DBInterface, error) {
 
 	switch v := instanceDB.(type) {
 	// insertion point delete
+	case *CommandDB:
+		if existing, ok := db.commandDBs[v.ID]; ok {
+			*existing = *v
+		} else {
+			return nil, errors.New("db Command github.com/fullstack-lang/gongsim/go, record not found")
+		}
 	case *DummyAgentDB:
 		if existing, ok := db.dummyagentDBs[v.ID]; ok {
 			*existing = *v
@@ -209,17 +215,11 @@ func (db *DBLite) Updates(instanceDB any) (db.DBInterface, error) {
 		} else {
 			return nil, errors.New("db Event github.com/fullstack-lang/gongsim/go, record not found")
 		}
-	case *GongsimCommandDB:
-		if existing, ok := db.gongsimcommandDBs[v.ID]; ok {
+	case *StatusDB:
+		if existing, ok := db.statusDBs[v.ID]; ok {
 			*existing = *v
 		} else {
-			return nil, errors.New("db GongsimCommand github.com/fullstack-lang/gongsim/go, record not found")
-		}
-	case *GongsimStatusDB:
-		if existing, ok := db.gongsimstatusDBs[v.ID]; ok {
-			*existing = *v
-		} else {
-			return nil, errors.New("db GongsimStatus github.com/fullstack-lang/gongsim/go, record not found")
+			return nil, errors.New("db Status github.com/fullstack-lang/gongsim/go, record not found")
 		}
 	case *UpdateStateDB:
 		if existing, ok := db.updatestateDBs[v.ID]; ok {
@@ -241,6 +241,12 @@ func (db *DBLite) Find(instanceDBs any) (db.DBInterface, error) {
 
 	switch ptr := instanceDBs.(type) {
 	// insertion point find
+	case *[]CommandDB:
+		*ptr = make([]CommandDB, 0, len(db.commandDBs))
+		for _, v := range db.commandDBs {
+			*ptr = append(*ptr, *v)
+		}
+		return db, nil
 	case *[]DummyAgentDB:
 		*ptr = make([]DummyAgentDB, 0, len(db.dummyagentDBs))
 		for _, v := range db.dummyagentDBs {
@@ -259,15 +265,9 @@ func (db *DBLite) Find(instanceDBs any) (db.DBInterface, error) {
 			*ptr = append(*ptr, *v)
 		}
 		return db, nil
-	case *[]GongsimCommandDB:
-		*ptr = make([]GongsimCommandDB, 0, len(db.gongsimcommandDBs))
-		for _, v := range db.gongsimcommandDBs {
-			*ptr = append(*ptr, *v)
-		}
-		return db, nil
-	case *[]GongsimStatusDB:
-		*ptr = make([]GongsimStatusDB, 0, len(db.gongsimstatusDBs))
-		for _, v := range db.gongsimstatusDBs {
+	case *[]StatusDB:
+		*ptr = make([]StatusDB, 0, len(db.statusDBs))
+		for _, v := range db.statusDBs {
 			*ptr = append(*ptr, *v)
 		}
 		return db, nil
@@ -310,6 +310,16 @@ func (db *DBLite) First(instanceDB any, conds ...any) (db.DBInterface, error) {
 
 	switch instanceDB.(type) {
 	// insertion point first
+	case *CommandDB:
+		tmp, ok := db.commandDBs[uint(i)]
+
+		if !ok {
+			return nil, errors.New(fmt.Sprintf("db.First Command Unkown entry %d", i))
+		}
+
+		commandDB, _ := instanceDB.(*CommandDB)
+		*commandDB = *tmp
+		
 	case *DummyAgentDB:
 		tmp, ok := db.dummyagentDBs[uint(i)]
 
@@ -340,25 +350,15 @@ func (db *DBLite) First(instanceDB any, conds ...any) (db.DBInterface, error) {
 		eventDB, _ := instanceDB.(*EventDB)
 		*eventDB = *tmp
 		
-	case *GongsimCommandDB:
-		tmp, ok := db.gongsimcommandDBs[uint(i)]
+	case *StatusDB:
+		tmp, ok := db.statusDBs[uint(i)]
 
 		if !ok {
-			return nil, errors.New(fmt.Sprintf("db.First GongsimCommand Unkown entry %d", i))
+			return nil, errors.New(fmt.Sprintf("db.First Status Unkown entry %d", i))
 		}
 
-		gongsimcommandDB, _ := instanceDB.(*GongsimCommandDB)
-		*gongsimcommandDB = *tmp
-		
-	case *GongsimStatusDB:
-		tmp, ok := db.gongsimstatusDBs[uint(i)]
-
-		if !ok {
-			return nil, errors.New(fmt.Sprintf("db.First GongsimStatus Unkown entry %d", i))
-		}
-
-		gongsimstatusDB, _ := instanceDB.(*GongsimStatusDB)
-		*gongsimstatusDB = *tmp
+		statusDB, _ := instanceDB.(*StatusDB)
+		*statusDB = *tmp
 		
 	case *UpdateStateDB:
 		tmp, ok := db.updatestateDBs[uint(i)]

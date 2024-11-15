@@ -14,11 +14,11 @@ func SerializeStage(stage *StageStruct, filename string) {
 	f := excelize.NewFile()
 	{
 		// insertion point
+		SerializeExcelize[Command](stage, f)
 		SerializeExcelize[DummyAgent](stage, f)
 		SerializeExcelize[Engine](stage, f)
 		SerializeExcelize[Event](stage, f)
-		SerializeExcelize[GongsimCommand](stage, f)
-		SerializeExcelize[GongsimStatus](stage, f)
+		SerializeExcelize[Status](stage, f)
 		SerializeExcelize[UpdateState](stage, f)
 	}
 

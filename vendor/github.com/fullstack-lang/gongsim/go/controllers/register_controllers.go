@@ -49,6 +49,13 @@ type ValidationError struct {
 func registerControllers(r *gin.Engine) {
 	v1 := r.Group("/api/github.com/fullstack-lang/gongsim/go")
 	{ // insertion point for registrations
+		v1.GET("/v1/commands", GetController().GetCommands)
+		v1.GET("/v1/commands/:id", GetController().GetCommand)
+		v1.POST("/v1/commands", GetController().PostCommand)
+		v1.PATCH("/v1/commands/:id", GetController().UpdateCommand)
+		v1.PUT("/v1/commands/:id", GetController().UpdateCommand)
+		v1.DELETE("/v1/commands/:id", GetController().DeleteCommand)
+
 		v1.GET("/v1/dummyagents", GetController().GetDummyAgents)
 		v1.GET("/v1/dummyagents/:id", GetController().GetDummyAgent)
 		v1.POST("/v1/dummyagents", GetController().PostDummyAgent)
@@ -70,19 +77,12 @@ func registerControllers(r *gin.Engine) {
 		v1.PUT("/v1/events/:id", GetController().UpdateEvent)
 		v1.DELETE("/v1/events/:id", GetController().DeleteEvent)
 
-		v1.GET("/v1/gongsimcommands", GetController().GetGongsimCommands)
-		v1.GET("/v1/gongsimcommands/:id", GetController().GetGongsimCommand)
-		v1.POST("/v1/gongsimcommands", GetController().PostGongsimCommand)
-		v1.PATCH("/v1/gongsimcommands/:id", GetController().UpdateGongsimCommand)
-		v1.PUT("/v1/gongsimcommands/:id", GetController().UpdateGongsimCommand)
-		v1.DELETE("/v1/gongsimcommands/:id", GetController().DeleteGongsimCommand)
-
-		v1.GET("/v1/gongsimstatuss", GetController().GetGongsimStatuss)
-		v1.GET("/v1/gongsimstatuss/:id", GetController().GetGongsimStatus)
-		v1.POST("/v1/gongsimstatuss", GetController().PostGongsimStatus)
-		v1.PATCH("/v1/gongsimstatuss/:id", GetController().UpdateGongsimStatus)
-		v1.PUT("/v1/gongsimstatuss/:id", GetController().UpdateGongsimStatus)
-		v1.DELETE("/v1/gongsimstatuss/:id", GetController().DeleteGongsimStatus)
+		v1.GET("/v1/statuss", GetController().GetStatuss)
+		v1.GET("/v1/statuss/:id", GetController().GetStatus)
+		v1.POST("/v1/statuss", GetController().PostStatus)
+		v1.PATCH("/v1/statuss/:id", GetController().UpdateStatus)
+		v1.PUT("/v1/statuss/:id", GetController().UpdateStatus)
+		v1.DELETE("/v1/statuss/:id", GetController().DeleteStatus)
 
 		v1.GET("/v1/updatestates", GetController().GetUpdateStates)
 		v1.GET("/v1/updatestates/:id", GetController().GetUpdateState)
@@ -186,7 +186,7 @@ func (controller *Controller) onWebSocketRequestForBackRepoContent(c *gin.Contex
 		fmt.Println(err)
 		return
 	} else {
-		log.Println(time.Now().Format(time.RFC3339Nano), "github.com/fullstack-lang/gongsim/go: 1st sent backRepoData of stack:", stackPath)
+		log.Println(time.Now().Format("2006-01-02 15:04:05.000000"), "github.com/fullstack-lang/gongsim/go: 1st sent backRepoData of stack:", stackPath)
 	}
 	for {
 		select {
@@ -212,7 +212,7 @@ func (controller *Controller) onWebSocketRequestForBackRepoContent(c *gin.Contex
 					cancel() // Cancel the context
 					return
 				} else {
-					log.Println(time.Now().Format(time.RFC3339Nano), "github.com/fullstack-lang/gongsim/go: sent backRepoData of stack:", stackPath)
+					log.Println(time.Now().Format("2006-01-02 15:04:05.000000"), "github.com/fullstack-lang/gongsim/go: sent backRepoData of stack:", stackPath)
 				}
 			}
 		}

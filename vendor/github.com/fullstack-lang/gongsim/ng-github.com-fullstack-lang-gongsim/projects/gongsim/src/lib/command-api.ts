@@ -4,9 +4,9 @@ import { EngineAPI } from './engine-api'
 // usefull for managing pointer ID values that can be nullable
 import { NullInt64 } from './null-int64'
 
-export class GongsimCommandAPI {
+export class CommandAPI {
 
-	static GONGSTRUCT_NAME = "GongsimCommand"
+	static GONGSTRUCT_NAME = "Command"
 
 	CreatedAt?: string
 	DeletedAt?: string
@@ -16,15 +16,13 @@ export class GongsimCommandAPI {
 	Name: string = ""
 	Command: string = ""
 	CommandDate: string = ""
-	SpeedCommandType: string = ""
-	DateSpeedCommand: string = ""
 
 	// insertion point for other decls
 
-	GongsimCommandPointersEncoding: GongsimCommandPointersEncoding = new GongsimCommandPointersEncoding
+	CommandPointersEncoding: CommandPointersEncoding = new CommandPointersEncoding
 }
 
-export class GongsimCommandPointersEncoding {
+export class CommandPointersEncoding {
 	// insertion point for pointers and slices of pointers encoding fields
 	EngineID: NullInt64 = new NullInt64 // if pointer is null, Engine.ID = 0
 

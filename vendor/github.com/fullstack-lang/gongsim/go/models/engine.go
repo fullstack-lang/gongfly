@@ -97,7 +97,9 @@ const RFC3339MillisFormat = "2006-01-02T15:04:05.000Z07:00"
 func (engine *Engine) SetCurrentTime(time time.Time) {
 	engine.currentTime = time
 	engine.CurrentTime = engine.currentTime.Format(RFC3339MillisFormat)
-	engine.CurrentTime = engine.currentTime.Format(engine.DisplayFormat)
+	if engine.DisplayFormat != "" {
+		engine.CurrentTime = engine.currentTime.Format(engine.DisplayFormat)
+	}
 }
 func (engine *Engine) GetCurrentTime() time.Time {
 	return engine.currentTime
@@ -105,7 +107,9 @@ func (engine *Engine) GetCurrentTime() time.Time {
 func (engine *Engine) SetEndTime(time time.Time) {
 	engine.endTime = time
 	engine.EndTime = engine.endTime.Format(RFC3339MillisFormat)
-	engine.EndTime = engine.endTime.Format(engine.DisplayFormat)
+	if engine.DisplayFormat != "" {
+		engine.EndTime = engine.endTime.Format(engine.DisplayFormat)
+	}
 }
 func (engine *Engine) GetEndTime() time.Time {
 	return engine.endTime

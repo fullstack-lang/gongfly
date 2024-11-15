@@ -52,6 +52,9 @@ func (nodeImplGongstruct *TreeNodeImplGongstruct) OnAfterUpdate(
 	log.Println("NodeImplGongstruct:OnAfterUpdate with: ", nodeImplGongstruct.gongStruct.GetName())
 
 	// insertion point
+	if nodeImplGongstruct.gongStruct.GetName() == "Command" {
+		fillUpTable[models.Command](nodeImplGongstruct.probe)
+	}
 	if nodeImplGongstruct.gongStruct.GetName() == "DummyAgent" {
 		fillUpTable[models.DummyAgent](nodeImplGongstruct.probe)
 	}
@@ -61,11 +64,8 @@ func (nodeImplGongstruct *TreeNodeImplGongstruct) OnAfterUpdate(
 	if nodeImplGongstruct.gongStruct.GetName() == "Event" {
 		fillUpTable[models.Event](nodeImplGongstruct.probe)
 	}
-	if nodeImplGongstruct.gongStruct.GetName() == "GongsimCommand" {
-		fillUpTable[models.GongsimCommand](nodeImplGongstruct.probe)
-	}
-	if nodeImplGongstruct.gongStruct.GetName() == "GongsimStatus" {
-		fillUpTable[models.GongsimStatus](nodeImplGongstruct.probe)
+	if nodeImplGongstruct.gongStruct.GetName() == "Status" {
+		fillUpTable[models.Status](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "UpdateState" {
 		fillUpTable[models.UpdateState](nodeImplGongstruct.probe)

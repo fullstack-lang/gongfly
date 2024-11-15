@@ -2,6 +2,151 @@
 package models
 
 // insertion point of enum utility functions
+// Utility function for CommandType
+// if enum values are string, it is stored with the value
+// if enum values are int, they are stored with the code of the value
+func (commandtype CommandType) ToString() (res string) {
+
+	// migration of former implementation of enum
+	switch commandtype {
+	// insertion code per enum code
+	case COMMAND_PLAY:
+		res = "PLAY"
+	case COMMAND_PAUSE:
+		res = "PAUSE"
+	case COMMAND_FIRE_NEXT_EVENT:
+		res = "FIRE_NEXT_EVENT"
+	case COMMAND_FIRE_EVENT_TILL_STATES_CHANGE:
+		res = "FIRE_EVENT_TILL_STATES_CHANGE"
+	case COMMAND_RESET:
+		res = "RESET"
+	case COMMAND_ADVANCE_10_MIN:
+		res = "ADVANCE_10_MIN"
+	case INCREASE_SPEED_100_PERCENTS:
+		res = "INCREASE_SPEED_100_PERCENTS"
+	case DECREASE_SPEED_50_PERCENTS:
+		res = "DECREASE_SPEED_50_PERCENTS"
+	}
+	return
+}
+
+func (commandtype *CommandType) FromString(input string) (err error) {
+
+	switch input {
+	// insertion code per enum code
+	case "PLAY":
+		*commandtype = COMMAND_PLAY
+		return
+	case "PAUSE":
+		*commandtype = COMMAND_PAUSE
+		return
+	case "FIRE_NEXT_EVENT":
+		*commandtype = COMMAND_FIRE_NEXT_EVENT
+		return
+	case "FIRE_EVENT_TILL_STATES_CHANGE":
+		*commandtype = COMMAND_FIRE_EVENT_TILL_STATES_CHANGE
+		return
+	case "RESET":
+		*commandtype = COMMAND_RESET
+		return
+	case "ADVANCE_10_MIN":
+		*commandtype = COMMAND_ADVANCE_10_MIN
+		return
+	case "INCREASE_SPEED_100_PERCENTS":
+		*commandtype = INCREASE_SPEED_100_PERCENTS
+		return
+	case "DECREASE_SPEED_50_PERCENTS":
+		*commandtype = DECREASE_SPEED_50_PERCENTS
+		return
+	default:
+		return errUnkownEnum
+	}
+}
+
+func (commandtype *CommandType) FromCodeString(input string) (err error) {
+
+	switch input {
+	// insertion code per enum code
+	case "COMMAND_PLAY":
+		*commandtype = COMMAND_PLAY
+	case "COMMAND_PAUSE":
+		*commandtype = COMMAND_PAUSE
+	case "COMMAND_FIRE_NEXT_EVENT":
+		*commandtype = COMMAND_FIRE_NEXT_EVENT
+	case "COMMAND_FIRE_EVENT_TILL_STATES_CHANGE":
+		*commandtype = COMMAND_FIRE_EVENT_TILL_STATES_CHANGE
+	case "COMMAND_RESET":
+		*commandtype = COMMAND_RESET
+	case "COMMAND_ADVANCE_10_MIN":
+		*commandtype = COMMAND_ADVANCE_10_MIN
+	case "INCREASE_SPEED_100_PERCENTS":
+		*commandtype = INCREASE_SPEED_100_PERCENTS
+	case "DECREASE_SPEED_50_PERCENTS":
+		*commandtype = DECREASE_SPEED_50_PERCENTS
+	default:
+		return errUnkownEnum
+	}
+	return
+}
+
+func (commandtype *CommandType) ToCodeString() (res string) {
+
+	switch *commandtype {
+	// insertion code per enum code
+	case COMMAND_PLAY:
+		res = "COMMAND_PLAY"
+	case COMMAND_PAUSE:
+		res = "COMMAND_PAUSE"
+	case COMMAND_FIRE_NEXT_EVENT:
+		res = "COMMAND_FIRE_NEXT_EVENT"
+	case COMMAND_FIRE_EVENT_TILL_STATES_CHANGE:
+		res = "COMMAND_FIRE_EVENT_TILL_STATES_CHANGE"
+	case COMMAND_RESET:
+		res = "COMMAND_RESET"
+	case COMMAND_ADVANCE_10_MIN:
+		res = "COMMAND_ADVANCE_10_MIN"
+	case INCREASE_SPEED_100_PERCENTS:
+		res = "INCREASE_SPEED_100_PERCENTS"
+	case DECREASE_SPEED_50_PERCENTS:
+		res = "DECREASE_SPEED_50_PERCENTS"
+	}
+	return
+}
+
+func (commandtype CommandType) Codes() (res []string) {
+
+	res = make([]string, 0)
+
+	// insertion code per enum code
+	res = append(res, "COMMAND_PLAY")
+	res = append(res, "COMMAND_PAUSE")
+	res = append(res, "COMMAND_FIRE_NEXT_EVENT")
+	res = append(res, "COMMAND_FIRE_EVENT_TILL_STATES_CHANGE")
+	res = append(res, "COMMAND_RESET")
+	res = append(res, "COMMAND_ADVANCE_10_MIN")
+	res = append(res, "INCREASE_SPEED_100_PERCENTS")
+	res = append(res, "DECREASE_SPEED_50_PERCENTS")
+
+	return
+}
+
+func (commandtype CommandType) CodeValues() (res []string) {
+
+	res = make([]string, 0)
+
+	// insertion code per enum code
+	res = append(res, "PLAY")
+	res = append(res, "PAUSE")
+	res = append(res, "FIRE_NEXT_EVENT")
+	res = append(res, "FIRE_EVENT_TILL_STATES_CHANGE")
+	res = append(res, "RESET")
+	res = append(res, "ADVANCE_10_MIN")
+	res = append(res, "INCREASE_SPEED_100_PERCENTS")
+	res = append(res, "DECREASE_SPEED_50_PERCENTS")
+
+	return
+}
+
 // Utility function for ControlMode
 // if enum values are string, it is stored with the value
 // if enum values are int, they are stored with the code of the value
@@ -448,129 +593,6 @@ func (enginestopmode EngineStopMode) CodeValues() (res []int) {
 	// insertion code per enum code
 	res = append(res, 0)
 	res = append(res, 1)
-
-	return
-}
-
-// Utility function for GongsimCommandType
-// if enum values are string, it is stored with the value
-// if enum values are int, they are stored with the code of the value
-func (gongsimcommandtype GongsimCommandType) ToString() (res string) {
-
-	// migration of former implementation of enum
-	switch gongsimcommandtype {
-	// insertion code per enum code
-	case COMMAND_PLAY:
-		res = "PLAY"
-	case COMMAND_PAUSE:
-		res = "PAUSE"
-	case COMMAND_FIRE_NEXT_EVENT:
-		res = "FIRE_NEXT_EVENT"
-	case COMMAND_FIRE_EVENT_TILL_STATES_CHANGE:
-		res = "FIRE_EVENT_TILL_STATES_CHANGE"
-	case COMMAND_RESET:
-		res = "RESET"
-	case COMMAND_ADVANCE_10_MIN:
-		res = "ADVANCE_10_MIN"
-	}
-	return
-}
-
-func (gongsimcommandtype *GongsimCommandType) FromString(input string) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case "PLAY":
-		*gongsimcommandtype = COMMAND_PLAY
-		return
-	case "PAUSE":
-		*gongsimcommandtype = COMMAND_PAUSE
-		return
-	case "FIRE_NEXT_EVENT":
-		*gongsimcommandtype = COMMAND_FIRE_NEXT_EVENT
-		return
-	case "FIRE_EVENT_TILL_STATES_CHANGE":
-		*gongsimcommandtype = COMMAND_FIRE_EVENT_TILL_STATES_CHANGE
-		return
-	case "RESET":
-		*gongsimcommandtype = COMMAND_RESET
-		return
-	case "ADVANCE_10_MIN":
-		*gongsimcommandtype = COMMAND_ADVANCE_10_MIN
-		return
-	default:
-		return errUnkownEnum
-	}
-}
-
-func (gongsimcommandtype *GongsimCommandType) FromCodeString(input string) (err error) {
-
-	switch input {
-	// insertion code per enum code
-	case "COMMAND_PLAY":
-		*gongsimcommandtype = COMMAND_PLAY
-	case "COMMAND_PAUSE":
-		*gongsimcommandtype = COMMAND_PAUSE
-	case "COMMAND_FIRE_NEXT_EVENT":
-		*gongsimcommandtype = COMMAND_FIRE_NEXT_EVENT
-	case "COMMAND_FIRE_EVENT_TILL_STATES_CHANGE":
-		*gongsimcommandtype = COMMAND_FIRE_EVENT_TILL_STATES_CHANGE
-	case "COMMAND_RESET":
-		*gongsimcommandtype = COMMAND_RESET
-	case "COMMAND_ADVANCE_10_MIN":
-		*gongsimcommandtype = COMMAND_ADVANCE_10_MIN
-	default:
-		return errUnkownEnum
-	}
-	return
-}
-
-func (gongsimcommandtype *GongsimCommandType) ToCodeString() (res string) {
-
-	switch *gongsimcommandtype {
-	// insertion code per enum code
-	case COMMAND_PLAY:
-		res = "COMMAND_PLAY"
-	case COMMAND_PAUSE:
-		res = "COMMAND_PAUSE"
-	case COMMAND_FIRE_NEXT_EVENT:
-		res = "COMMAND_FIRE_NEXT_EVENT"
-	case COMMAND_FIRE_EVENT_TILL_STATES_CHANGE:
-		res = "COMMAND_FIRE_EVENT_TILL_STATES_CHANGE"
-	case COMMAND_RESET:
-		res = "COMMAND_RESET"
-	case COMMAND_ADVANCE_10_MIN:
-		res = "COMMAND_ADVANCE_10_MIN"
-	}
-	return
-}
-
-func (gongsimcommandtype GongsimCommandType) Codes() (res []string) {
-
-	res = make([]string, 0)
-
-	// insertion code per enum code
-	res = append(res, "COMMAND_PLAY")
-	res = append(res, "COMMAND_PAUSE")
-	res = append(res, "COMMAND_FIRE_NEXT_EVENT")
-	res = append(res, "COMMAND_FIRE_EVENT_TILL_STATES_CHANGE")
-	res = append(res, "COMMAND_RESET")
-	res = append(res, "COMMAND_ADVANCE_10_MIN")
-
-	return
-}
-
-func (gongsimcommandtype GongsimCommandType) CodeValues() (res []string) {
-
-	res = make([]string, 0)
-
-	// insertion code per enum code
-	res = append(res, "PLAY")
-	res = append(res, "PAUSE")
-	res = append(res, "FIRE_NEXT_EVENT")
-	res = append(res, "FIRE_EVENT_TILL_STATES_CHANGE")
-	res = append(res, "RESET")
-	res = append(res, "ADVANCE_10_MIN")
 
 	return
 }

@@ -7,7 +7,8 @@
                 'grey' : ( engine.State === 'RUNNING' ? 'green': 'red'),
                 'width': '5ch'
                 }">{{ engine.State }}</span>
-        <button mat-button class="button" (click)='fireEventTillStateChange()' matTooltip="fire events till at least one state changes">
+        <button mat-button class="button" (click)='fireEventTillStateChange()' 
+                matTooltip="fire events till at least one state changes">
             <mat-icon>
                 skip_next
             </mat-icon>

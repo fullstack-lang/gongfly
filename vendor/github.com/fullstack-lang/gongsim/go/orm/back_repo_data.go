@@ -4,15 +4,15 @@ package orm
 type BackRepoData struct {
 	// insertion point for slices
 
+	CommandAPIs []*CommandAPI
+
 	DummyAgentAPIs []*DummyAgentAPI
 
 	EngineAPIs []*EngineAPI
 
 	EventAPIs []*EventAPI
 
-	GongsimCommandAPIs []*GongsimCommandAPI
-
-	GongsimStatusAPIs []*GongsimStatusAPI
+	StatusAPIs []*StatusAPI
 
 	UpdateStateAPIs []*UpdateStateAPI
 }
@@ -24,6 +24,16 @@ func CopyBackRepoToBackRepoData(backRepo *BackRepoStruct, backRepoData *BackRepo
 	defer backRepo.rwMutex.RUnlock()
 
 	// insertion point for slices copies
+	for _, commandDB := range backRepo.BackRepoCommand.Map_CommandDBID_CommandDB {
+
+		var commandAPI CommandAPI
+		commandAPI.ID = commandDB.ID
+		commandAPI.CommandPointersEncoding = commandDB.CommandPointersEncoding
+		commandDB.CopyBasicFieldsToCommand_WOP(&commandAPI.Command_WOP)
+
+		backRepoData.CommandAPIs = append(backRepoData.CommandAPIs, &commandAPI)
+	}
+
 	for _, dummyagentDB := range backRepo.BackRepoDummyAgent.Map_DummyAgentDBID_DummyAgentDB {
 
 		var dummyagentAPI DummyAgentAPI
@@ -54,24 +64,14 @@ func CopyBackRepoToBackRepoData(backRepo *BackRepoStruct, backRepoData *BackRepo
 		backRepoData.EventAPIs = append(backRepoData.EventAPIs, &eventAPI)
 	}
 
-	for _, gongsimcommandDB := range backRepo.BackRepoGongsimCommand.Map_GongsimCommandDBID_GongsimCommandDB {
+	for _, statusDB := range backRepo.BackRepoStatus.Map_StatusDBID_StatusDB {
 
-		var gongsimcommandAPI GongsimCommandAPI
-		gongsimcommandAPI.ID = gongsimcommandDB.ID
-		gongsimcommandAPI.GongsimCommandPointersEncoding = gongsimcommandDB.GongsimCommandPointersEncoding
-		gongsimcommandDB.CopyBasicFieldsToGongsimCommand_WOP(&gongsimcommandAPI.GongsimCommand_WOP)
+		var statusAPI StatusAPI
+		statusAPI.ID = statusDB.ID
+		statusAPI.StatusPointersEncoding = statusDB.StatusPointersEncoding
+		statusDB.CopyBasicFieldsToStatus_WOP(&statusAPI.Status_WOP)
 
-		backRepoData.GongsimCommandAPIs = append(backRepoData.GongsimCommandAPIs, &gongsimcommandAPI)
-	}
-
-	for _, gongsimstatusDB := range backRepo.BackRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusDB {
-
-		var gongsimstatusAPI GongsimStatusAPI
-		gongsimstatusAPI.ID = gongsimstatusDB.ID
-		gongsimstatusAPI.GongsimStatusPointersEncoding = gongsimstatusDB.GongsimStatusPointersEncoding
-		gongsimstatusDB.CopyBasicFieldsToGongsimStatus_WOP(&gongsimstatusAPI.GongsimStatus_WOP)
-
-		backRepoData.GongsimStatusAPIs = append(backRepoData.GongsimStatusAPIs, &gongsimstatusAPI)
+		backRepoData.StatusAPIs = append(backRepoData.StatusAPIs, &statusAPI)
 	}
 
 	for _, updatestateDB := range backRepo.BackRepoUpdateState.Map_UpdateStateDBID_UpdateStateDB {

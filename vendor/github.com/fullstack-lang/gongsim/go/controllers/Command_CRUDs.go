@@ -14,16 +14,16 @@ import (
 )
 
 // declaration in order to justify use of the models import
-var __GongsimStatus__dummysDeclaration__ models.GongsimStatus
-var __GongsimStatus_time__dummyDeclaration time.Duration
+var __Command__dummysDeclaration__ models.Command
+var __Command_time__dummyDeclaration time.Duration
 
-var mutexGongsimStatus sync.Mutex
+var mutexCommand sync.Mutex
 
-// An GongsimStatusID parameter model.
+// An CommandID parameter model.
 //
 // This is used for operations that want the ID of an order in the path
-// swagger:parameters getGongsimStatus updateGongsimStatus deleteGongsimStatus
-type GongsimStatusID struct {
+// swagger:parameters getCommand updateCommand deleteCommand
+type CommandID struct {
 	// The ID of the order
 	//
 	// in: path
@@ -31,29 +31,29 @@ type GongsimStatusID struct {
 	ID int64
 }
 
-// GongsimStatusInput is a schema that can validate the user’s
+// CommandInput is a schema that can validate the user’s
 // input to prevent us from getting invalid data
-// swagger:parameters postGongsimStatus updateGongsimStatus
-type GongsimStatusInput struct {
-	// The GongsimStatus to submit or modify
+// swagger:parameters postCommand updateCommand
+type CommandInput struct {
+	// The Command to submit or modify
 	// in: body
-	GongsimStatus *orm.GongsimStatusAPI
+	Command *orm.CommandAPI
 }
 
-// GetGongsimStatuss
+// GetCommands
 //
-// swagger:route GET /gongsimstatuss gongsimstatuss getGongsimStatuss
+// swagger:route GET /commands commands getCommands
 //
-// # Get all gongsimstatuss
+// # Get all commands
 //
 // Responses:
 // default: genericError
 //
-//	200: gongsimstatusDBResponse
-func (controller *Controller) GetGongsimStatuss(c *gin.Context) {
+//	200: commandDBResponse
+func (controller *Controller) GetCommands(c *gin.Context) {
 
 	// source slice
-	var gongsimstatusDBs []orm.GongsimStatusDB
+	var commandDBs []orm.CommandDB
 
 	_values := c.Request.URL.Query()
 	stackPath := ""
@@ -61,16 +61,16 @@ func (controller *Controller) GetGongsimStatuss(c *gin.Context) {
 		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
-			// log.Println("GetGongsimStatuss", "GONG__StackPath", stackPath)
+			// log.Println("GetCommands", "GONG__StackPath", stackPath)
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
 	if backRepo == nil {
 		log.Panic("Stack github.com/fullstack-lang/gongsim/go/models, Unkown stack", stackPath)
 	}
-	db := backRepo.BackRepoGongsimStatus.GetDB()
+	db := backRepo.BackRepoCommand.GetDB()
 
-	_, err := db.Find(&gongsimstatusDBs)
+	_, err := db.Find(&commandDBs)
 	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
@@ -81,29 +81,29 @@ func (controller *Controller) GetGongsimStatuss(c *gin.Context) {
 	}
 
 	// slice that will be transmitted to the front
-	gongsimstatusAPIs := make([]orm.GongsimStatusAPI, 0)
+	commandAPIs := make([]orm.CommandAPI, 0)
 
-	// for each gongsimstatus, update fields from the database nullable fields
-	for idx := range gongsimstatusDBs {
-		gongsimstatusDB := &gongsimstatusDBs[idx]
-		_ = gongsimstatusDB
-		var gongsimstatusAPI orm.GongsimStatusAPI
+	// for each command, update fields from the database nullable fields
+	for idx := range commandDBs {
+		commandDB := &commandDBs[idx]
+		_ = commandDB
+		var commandAPI orm.CommandAPI
 
 		// insertion point for updating fields
-		gongsimstatusAPI.ID = gongsimstatusDB.ID
-		gongsimstatusDB.CopyBasicFieldsToGongsimStatus_WOP(&gongsimstatusAPI.GongsimStatus_WOP)
-		gongsimstatusAPI.GongsimStatusPointersEncoding = gongsimstatusDB.GongsimStatusPointersEncoding
-		gongsimstatusAPIs = append(gongsimstatusAPIs, gongsimstatusAPI)
+		commandAPI.ID = commandDB.ID
+		commandDB.CopyBasicFieldsToCommand_WOP(&commandAPI.Command_WOP)
+		commandAPI.CommandPointersEncoding = commandDB.CommandPointersEncoding
+		commandAPIs = append(commandAPIs, commandAPI)
 	}
 
-	c.JSON(http.StatusOK, gongsimstatusAPIs)
+	c.JSON(http.StatusOK, commandAPIs)
 }
 
-// PostGongsimStatus
+// PostCommand
 //
-// swagger:route POST /gongsimstatuss gongsimstatuss postGongsimStatus
+// swagger:route POST /commands commands postCommand
 //
-// Creates a gongsimstatus
+// Creates a command
 //
 //	Consumes:
 //	- application/json
@@ -113,10 +113,10 @@ func (controller *Controller) GetGongsimStatuss(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func (controller *Controller) PostGongsimStatus(c *gin.Context) {
+func (controller *Controller) PostCommand(c *gin.Context) {
 
-	mutexGongsimStatus.Lock()
-	defer mutexGongsimStatus.Unlock()
+	mutexCommand.Lock()
+	defer mutexCommand.Unlock()
 
 	_values := c.Request.URL.Query()
 	stackPath := ""
@@ -124,17 +124,17 @@ func (controller *Controller) PostGongsimStatus(c *gin.Context) {
 		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
-			// log.Println("PostGongsimStatuss", "GONG__StackPath", stackPath)
+			// log.Println("PostCommands", "GONG__StackPath", stackPath)
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
 	if backRepo == nil {
 		log.Panic("Stack github.com/fullstack-lang/gongsim/go/models, Unkown stack", stackPath)
 	}
-	db := backRepo.BackRepoGongsimStatus.GetDB()
+	db := backRepo.BackRepoCommand.GetDB()
 
 	// Validate input
-	var input orm.GongsimStatusAPI
+	var input orm.CommandAPI
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
@@ -146,12 +146,12 @@ func (controller *Controller) PostGongsimStatus(c *gin.Context) {
 		return
 	}
 
-	// Create gongsimstatus
-	gongsimstatusDB := orm.GongsimStatusDB{}
-	gongsimstatusDB.GongsimStatusPointersEncoding = input.GongsimStatusPointersEncoding
-	gongsimstatusDB.CopyBasicFieldsFromGongsimStatus_WOP(&input.GongsimStatus_WOP)
+	// Create command
+	commandDB := orm.CommandDB{}
+	commandDB.CommandPointersEncoding = input.CommandPointersEncoding
+	commandDB.CopyBasicFieldsFromCommand_WOP(&input.Command_WOP)
 
-	_, err = db.Create(&gongsimstatusDB)
+	_, err = db.Create(&commandDB)
 	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
@@ -162,31 +162,31 @@ func (controller *Controller) PostGongsimStatus(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	backRepo.BackRepoGongsimStatus.CheckoutPhaseOneInstance(&gongsimstatusDB)
-	gongsimstatus := backRepo.BackRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr[gongsimstatusDB.ID]
+	backRepo.BackRepoCommand.CheckoutPhaseOneInstance(&commandDB)
+	command := backRepo.BackRepoCommand.Map_CommandDBID_CommandPtr[commandDB.ID]
 
-	if gongsimstatus != nil {
-		models.AfterCreateFromFront(backRepo.GetStage(), gongsimstatus)
+	if command != nil {
+		models.AfterCreateFromFront(backRepo.GetStage(), command)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	backRepo.IncrementPushFromFrontNb()
 
-	c.JSON(http.StatusOK, gongsimstatusDB)
+	c.JSON(http.StatusOK, commandDB)
 }
 
-// GetGongsimStatus
+// GetCommand
 //
-// swagger:route GET /gongsimstatuss/{ID} gongsimstatuss getGongsimStatus
+// swagger:route GET /commands/{ID} commands getCommand
 //
-// Gets the details for a gongsimstatus.
+// Gets the details for a command.
 //
 // Responses:
 // default: genericError
 //
-//	200: gongsimstatusDBResponse
-func (controller *Controller) GetGongsimStatus(c *gin.Context) {
+//	200: commandDBResponse
+func (controller *Controller) GetCommand(c *gin.Context) {
 
 	_values := c.Request.URL.Query()
 	stackPath := ""
@@ -194,18 +194,18 @@ func (controller *Controller) GetGongsimStatus(c *gin.Context) {
 		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
-			// log.Println("GetGongsimStatus", "GONG__StackPath", stackPath)
+			// log.Println("GetCommand", "GONG__StackPath", stackPath)
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
 	if backRepo == nil {
 		log.Panic("Stack github.com/fullstack-lang/gongsim/go/models, Unkown stack", stackPath)
 	}
-	db := backRepo.BackRepoGongsimStatus.GetDB()
+	db := backRepo.BackRepoCommand.GetDB()
 
-	// Get gongsimstatusDB in DB
-	var gongsimstatusDB orm.GongsimStatusDB
-	if _, err := db.First(&gongsimstatusDB, c.Param("id")); err != nil {
+	// Get commandDB in DB
+	var commandDB orm.CommandDB
+	if _, err := db.First(&commandDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -214,28 +214,28 @@ func (controller *Controller) GetGongsimStatus(c *gin.Context) {
 		return
 	}
 
-	var gongsimstatusAPI orm.GongsimStatusAPI
-	gongsimstatusAPI.ID = gongsimstatusDB.ID
-	gongsimstatusAPI.GongsimStatusPointersEncoding = gongsimstatusDB.GongsimStatusPointersEncoding
-	gongsimstatusDB.CopyBasicFieldsToGongsimStatus_WOP(&gongsimstatusAPI.GongsimStatus_WOP)
+	var commandAPI orm.CommandAPI
+	commandAPI.ID = commandDB.ID
+	commandAPI.CommandPointersEncoding = commandDB.CommandPointersEncoding
+	commandDB.CopyBasicFieldsToCommand_WOP(&commandAPI.Command_WOP)
 
-	c.JSON(http.StatusOK, gongsimstatusAPI)
+	c.JSON(http.StatusOK, commandAPI)
 }
 
-// UpdateGongsimStatus
+// UpdateCommand
 //
-// swagger:route PATCH /gongsimstatuss/{ID} gongsimstatuss updateGongsimStatus
+// swagger:route PATCH /commands/{ID} commands updateCommand
 //
-// # Update a gongsimstatus
+// # Update a command
 //
 // Responses:
 // default: genericError
 //
-//	200: gongsimstatusDBResponse
-func (controller *Controller) UpdateGongsimStatus(c *gin.Context) {
+//	200: commandDBResponse
+func (controller *Controller) UpdateCommand(c *gin.Context) {
 
-	mutexGongsimStatus.Lock()
-	defer mutexGongsimStatus.Unlock()
+	mutexCommand.Lock()
+	defer mutexCommand.Unlock()
 
 	_values := c.Request.URL.Query()
 	stackPath := ""
@@ -243,17 +243,17 @@ func (controller *Controller) UpdateGongsimStatus(c *gin.Context) {
 		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
-			// log.Println("UpdateGongsimStatus", "GONG__StackPath", stackPath)
+			// log.Println("UpdateCommand", "GONG__StackPath", stackPath)
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
 	if backRepo == nil {
 		log.Panic("Stack github.com/fullstack-lang/gongsim/go/models, Unkown stack", stackPath)
 	}
-	db := backRepo.BackRepoGongsimStatus.GetDB()
+	db := backRepo.BackRepoCommand.GetDB()
 
 	// Validate input
-	var input orm.GongsimStatusAPI
+	var input orm.CommandAPI
 	if err := c.ShouldBindJSON(&input); err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -261,10 +261,10 @@ func (controller *Controller) UpdateGongsimStatus(c *gin.Context) {
 	}
 
 	// Get model if exist
-	var gongsimstatusDB orm.GongsimStatusDB
+	var commandDB orm.CommandDB
 
-	// fetch the gongsimstatus
-	_, err := db.First(&gongsimstatusDB, c.Param("id"))
+	// fetch the command
+	_, err := db.First(&commandDB, c.Param("id"))
 
 	if err != nil {
 		var returnError GenericError
@@ -276,11 +276,11 @@ func (controller *Controller) UpdateGongsimStatus(c *gin.Context) {
 	}
 
 	// update
-	gongsimstatusDB.CopyBasicFieldsFromGongsimStatus_WOP(&input.GongsimStatus_WOP)
-	gongsimstatusDB.GongsimStatusPointersEncoding = input.GongsimStatusPointersEncoding
+	commandDB.CopyBasicFieldsFromCommand_WOP(&input.Command_WOP)
+	commandDB.CommandPointersEncoding = input.CommandPointersEncoding
 
-	db, _ = db.Model(&gongsimstatusDB)
-	_, err = db.Updates(&gongsimstatusDB)
+	db, _ = db.Model(&commandDB)
+	_, err = db.Updates(&commandDB)
 	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
@@ -291,16 +291,16 @@ func (controller *Controller) UpdateGongsimStatus(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	gongsimstatusNew := new(models.GongsimStatus)
-	gongsimstatusDB.CopyBasicFieldsToGongsimStatus(gongsimstatusNew)
+	commandNew := new(models.Command)
+	commandDB.CopyBasicFieldsToCommand(commandNew)
 
 	// redeem pointers
-	gongsimstatusDB.DecodePointers(backRepo, gongsimstatusNew)
+	commandDB.DecodePointers(backRepo, commandNew)
 
 	// get stage instance from DB instance, and call callback function
-	gongsimstatusOld := backRepo.BackRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr[gongsimstatusDB.ID]
-	if gongsimstatusOld != nil {
-		models.AfterUpdateFromFront(backRepo.GetStage(), gongsimstatusOld, gongsimstatusNew)
+	commandOld := backRepo.BackRepoCommand.Map_CommandDBID_CommandPtr[commandDB.ID]
+	if commandOld != nil {
+		models.AfterUpdateFromFront(backRepo.GetStage(), commandOld, commandNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
@@ -309,23 +309,23 @@ func (controller *Controller) UpdateGongsimStatus(c *gin.Context) {
 	// generates a checkout
 	backRepo.IncrementPushFromFrontNb()
 
-	// return status OK with the marshalling of the the gongsimstatusDB
-	c.JSON(http.StatusOK, gongsimstatusDB)
+	// return status OK with the marshalling of the the commandDB
+	c.JSON(http.StatusOK, commandDB)
 }
 
-// DeleteGongsimStatus
+// DeleteCommand
 //
-// swagger:route DELETE /gongsimstatuss/{ID} gongsimstatuss deleteGongsimStatus
+// swagger:route DELETE /commands/{ID} commands deleteCommand
 //
-// # Delete a gongsimstatus
+// # Delete a command
 //
 // default: genericError
 //
-//	200: gongsimstatusDBResponse
-func (controller *Controller) DeleteGongsimStatus(c *gin.Context) {
+//	200: commandDBResponse
+func (controller *Controller) DeleteCommand(c *gin.Context) {
 
-	mutexGongsimStatus.Lock()
-	defer mutexGongsimStatus.Unlock()
+	mutexCommand.Lock()
+	defer mutexCommand.Unlock()
 
 	_values := c.Request.URL.Query()
 	stackPath := ""
@@ -333,18 +333,18 @@ func (controller *Controller) DeleteGongsimStatus(c *gin.Context) {
 		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
-			// log.Println("DeleteGongsimStatus", "GONG__StackPath", stackPath)
+			// log.Println("DeleteCommand", "GONG__StackPath", stackPath)
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
 	if backRepo == nil {
 		log.Panic("Stack github.com/fullstack-lang/gongsim/go/models, Unkown stack", stackPath)
 	}
-	db := backRepo.BackRepoGongsimStatus.GetDB()
+	db := backRepo.BackRepoCommand.GetDB()
 
 	// Get model if exist
-	var gongsimstatusDB orm.GongsimStatusDB
-	if _, err := db.First(&gongsimstatusDB, c.Param("id")); err != nil {
+	var commandDB orm.CommandDB
+	if _, err := db.First(&commandDB, c.Param("id")); err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -355,16 +355,16 @@ func (controller *Controller) DeleteGongsimStatus(c *gin.Context) {
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
 	db.Unscoped()
-	db.Delete(&gongsimstatusDB)
+	db.Delete(&commandDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
-	gongsimstatusDeleted := new(models.GongsimStatus)
-	gongsimstatusDB.CopyBasicFieldsToGongsimStatus(gongsimstatusDeleted)
+	commandDeleted := new(models.Command)
+	commandDB.CopyBasicFieldsToCommand(commandDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	gongsimstatusStaged := backRepo.BackRepoGongsimStatus.Map_GongsimStatusDBID_GongsimStatusPtr[gongsimstatusDB.ID]
-	if gongsimstatusStaged != nil {
-		models.AfterDeleteFromFront(backRepo.GetStage(), gongsimstatusStaged, gongsimstatusDeleted)
+	commandStaged := backRepo.BackRepoCommand.Map_CommandDBID_CommandPtr[commandDB.ID]
+	if commandStaged != nil {
+		models.AfterDeleteFromFront(backRepo.GetStage(), commandStaged, commandDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase
