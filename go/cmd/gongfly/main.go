@@ -55,6 +55,7 @@ func main() {
 	gongsimStack := gongsim_stack.NewStack(r, gongfly_models.GongsimStackName.ToString(), "", "", "", true, true)
 
 	simulation := simulation.NewSimulation(stage, gongsimStack.Stage, gongleafletStack.Stage)
+	simulation.GetEngine().DisplayFormat = "2006-01-02 15:04:05.00"
 
 	// the gongsim command orchestrates the simulation engine regarding to the
 	// the rest of the stack. It manages when the stage has to be commited to the
