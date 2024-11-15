@@ -376,16 +376,44 @@ func (backRepoMarker *BackRepoMarkerStruct) CheckoutPhaseTwoInstance(backRepo *B
 func (markerDB *MarkerDB) DecodePointers(backRepo *BackRepoStruct, marker *models.Marker) {
 
 	// insertion point for checkout of pointer encoding
-	// LayerGroup field
-	marker.LayerGroup = nil
-	if markerDB.LayerGroupID.Int64 != 0 {
-		marker.LayerGroup = backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(markerDB.LayerGroupID.Int64)]
+	// LayerGroup field	
+	{
+		id := markerDB.LayerGroupID.Int64
+		if id != 0 {
+			tmp, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(id)]
+
+			if !ok {
+				log.Fatalln("DecodePointers: marker.LayerGroup, unknown pointer id", id)
+			}
+
+			// updates only if field has changed
+			if marker.LayerGroup == nil || marker.LayerGroup != tmp {
+				marker.LayerGroup = tmp
+			}
+		} else {
+			marker.LayerGroup = nil
+		}
 	}
-	// DivIcon field
-	marker.DivIcon = nil
-	if markerDB.DivIconID.Int64 != 0 {
-		marker.DivIcon = backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[uint(markerDB.DivIconID.Int64)]
+	
+	// DivIcon field	
+	{
+		id := markerDB.DivIconID.Int64
+		if id != 0 {
+			tmp, ok := backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[uint(id)]
+
+			if !ok {
+				log.Fatalln("DecodePointers: marker.DivIcon, unknown pointer id", id)
+			}
+
+			// updates only if field has changed
+			if marker.DivIcon == nil || marker.DivIcon != tmp {
+				marker.DivIcon = tmp
+			}
+		} else {
+			marker.DivIcon = nil
+		}
 	}
+	
 	return
 }
 

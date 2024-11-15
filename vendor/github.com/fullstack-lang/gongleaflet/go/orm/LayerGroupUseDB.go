@@ -349,11 +349,25 @@ func (backRepoLayerGroupUse *BackRepoLayerGroupUseStruct) CheckoutPhaseTwoInstan
 func (layergroupuseDB *LayerGroupUseDB) DecodePointers(backRepo *BackRepoStruct, layergroupuse *models.LayerGroupUse) {
 
 	// insertion point for checkout of pointer encoding
-	// LayerGroup field
-	layergroupuse.LayerGroup = nil
-	if layergroupuseDB.LayerGroupID.Int64 != 0 {
-		layergroupuse.LayerGroup = backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(layergroupuseDB.LayerGroupID.Int64)]
+	// LayerGroup field	
+	{
+		id := layergroupuseDB.LayerGroupID.Int64
+		if id != 0 {
+			tmp, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(id)]
+
+			if !ok {
+				log.Fatalln("DecodePointers: layergroupuse.LayerGroup, unknown pointer id", id)
+			}
+
+			// updates only if field has changed
+			if layergroupuse.LayerGroup == nil || layergroupuse.LayerGroup != tmp {
+				layergroupuse.LayerGroup = tmp
+			}
+		} else {
+			layergroupuse.LayerGroup = nil
+		}
 	}
+	
 	return
 }
 

@@ -19,8 +19,8 @@ class LayerItem {
 // https://stackoverflow.com/questions/54734329/ngx-leaflet-how-to-add-a-custom-control
 @Component({
   selector: 'app-cartoatc-control-settings',
-  templateUrl: './cartoatc-control-settings.component.html',
-  styleUrls: ['./cartoatc-control-settings.component.scss'],
+  templateUrl: './control.component.html',
+  styleUrls: ['./control.component.scss'],
   standalone: true,
   imports: [
     MatButtonModule,

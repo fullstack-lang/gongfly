@@ -402,11 +402,25 @@ func (backRepoVLine *BackRepoVLineStruct) CheckoutPhaseTwoInstance(backRepo *Bac
 func (vlineDB *VLineDB) DecodePointers(backRepo *BackRepoStruct, vline *models.VLine) {
 
 	// insertion point for checkout of pointer encoding
-	// LayerGroup field
-	vline.LayerGroup = nil
-	if vlineDB.LayerGroupID.Int64 != 0 {
-		vline.LayerGroup = backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(vlineDB.LayerGroupID.Int64)]
+	// LayerGroup field	
+	{
+		id := vlineDB.LayerGroupID.Int64
+		if id != 0 {
+			tmp, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(id)]
+
+			if !ok {
+				log.Fatalln("DecodePointers: vline.LayerGroup, unknown pointer id", id)
+			}
+
+			// updates only if field has changed
+			if vline.LayerGroup == nil || vline.LayerGroup != tmp {
+				vline.LayerGroup = tmp
+			}
+		} else {
+			vline.LayerGroup = nil
+		}
 	}
+	
 	return
 }
 

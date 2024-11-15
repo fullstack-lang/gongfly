@@ -14,7 +14,7 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { MatOptionModule } from '@angular/material/core'
 import { CommonModule } from '@angular/common'
 
-import { CartoatcControlSettingsComponent } from './cartoatc-control-settings/cartoatc-control-settings.component'
+import { CartoatcControlSettingsComponent } from './control/control-component'
 
 
 export const DEFAULT_ICON_SIZE = 60

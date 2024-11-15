@@ -372,11 +372,25 @@ func (backRepoCircle *BackRepoCircleStruct) CheckoutPhaseTwoInstance(backRepo *B
 func (circleDB *CircleDB) DecodePointers(backRepo *BackRepoStruct, circle *models.Circle) {
 
 	// insertion point for checkout of pointer encoding
-	// LayerGroup field
-	circle.LayerGroup = nil
-	if circleDB.LayerGroupID.Int64 != 0 {
-		circle.LayerGroup = backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(circleDB.LayerGroupID.Int64)]
+	// LayerGroup field	
+	{
+		id := circleDB.LayerGroupID.Int64
+		if id != 0 {
+			tmp, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(id)]
+
+			if !ok {
+				log.Fatalln("DecodePointers: circle.LayerGroup, unknown pointer id", id)
+			}
+
+			// updates only if field has changed
+			if circle.LayerGroup == nil || circle.LayerGroup != tmp {
+				circle.LayerGroup = tmp
+			}
+		} else {
+			circle.LayerGroup = nil
+		}
 	}
+	
 	return
 }
 

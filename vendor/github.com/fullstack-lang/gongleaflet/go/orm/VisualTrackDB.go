@@ -414,16 +414,44 @@ func (backRepoVisualTrack *BackRepoVisualTrackStruct) CheckoutPhaseTwoInstance(b
 func (visualtrackDB *VisualTrackDB) DecodePointers(backRepo *BackRepoStruct, visualtrack *models.VisualTrack) {
 
 	// insertion point for checkout of pointer encoding
-	// LayerGroup field
-	visualtrack.LayerGroup = nil
-	if visualtrackDB.LayerGroupID.Int64 != 0 {
-		visualtrack.LayerGroup = backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(visualtrackDB.LayerGroupID.Int64)]
+	// LayerGroup field	
+	{
+		id := visualtrackDB.LayerGroupID.Int64
+		if id != 0 {
+			tmp, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(id)]
+
+			if !ok {
+				log.Fatalln("DecodePointers: visualtrack.LayerGroup, unknown pointer id", id)
+			}
+
+			// updates only if field has changed
+			if visualtrack.LayerGroup == nil || visualtrack.LayerGroup != tmp {
+				visualtrack.LayerGroup = tmp
+			}
+		} else {
+			visualtrack.LayerGroup = nil
+		}
 	}
-	// DivIcon field
-	visualtrack.DivIcon = nil
-	if visualtrackDB.DivIconID.Int64 != 0 {
-		visualtrack.DivIcon = backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[uint(visualtrackDB.DivIconID.Int64)]
+	
+	// DivIcon field	
+	{
+		id := visualtrackDB.DivIconID.Int64
+		if id != 0 {
+			tmp, ok := backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[uint(id)]
+
+			if !ok {
+				log.Fatalln("DecodePointers: visualtrack.DivIcon, unknown pointer id", id)
+			}
+
+			// updates only if field has changed
+			if visualtrack.DivIcon == nil || visualtrack.DivIcon != tmp {
+				visualtrack.DivIcon = tmp
+			}
+		} else {
+			visualtrack.DivIcon = nil
+		}
 	}
+	
 	return
 }
 

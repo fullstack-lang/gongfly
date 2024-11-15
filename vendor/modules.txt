@@ -73,7 +73,7 @@ github.com/fullstack-lang/gongdoc/go/load
 github.com/fullstack-lang/gongdoc/go/models
 github.com/fullstack-lang/gongdoc/go/orm
 github.com/fullstack-lang/gongdoc/ng-github.com-fullstack-lang-gongdoc/projects
-# github.com/fullstack-lang/gongleaflet v0.0.0-20241108104143-512f677b9c41
+# github.com/fullstack-lang/gongleaflet v0.0.0-20241115141201-82c28b97e55d
 ## explicit; go 1.23.1
 github.com/fullstack-lang/gongleaflet/go
 github.com/fullstack-lang/gongleaflet/go/controllers

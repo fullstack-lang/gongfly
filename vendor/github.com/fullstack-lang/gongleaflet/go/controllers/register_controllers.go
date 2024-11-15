@@ -207,7 +207,7 @@ func (controller *Controller) onWebSocketRequestForBackRepoContent(c *gin.Contex
 		fmt.Println(err)
 		return
 	} else {
-		log.Println(time.Now().Format(time.RFC3339Nano), "github.com/fullstack-lang/gongleaflet/go: 1st sent backRepoData of stack:", stackPath)
+		log.Println(time.Now().Format("2006-01-02 15:04:05.000000"), "github.com/fullstack-lang/gongleaflet/go: 1st sent backRepoData of stack:", stackPath)
 	}
 	for {
 		select {
@@ -233,7 +233,7 @@ func (controller *Controller) onWebSocketRequestForBackRepoContent(c *gin.Contex
 					cancel() // Cancel the context
 					return
 				} else {
-					log.Println(time.Now().Format(time.RFC3339Nano), "github.com/fullstack-lang/gongleaflet/go: sent backRepoData of stack:", stackPath)
+					log.Println(time.Now().Format("2006-01-02 15:04:05.000000"), "github.com/fullstack-lang/gongleaflet/go: sent backRepoData of stack:", stackPath)
 				}
 			}
 		}
