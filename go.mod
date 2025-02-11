@@ -8,7 +8,7 @@ require (
 	github.com/fullstack-lang/gongleaflet v0.0.0-20241115141201-82c28b97e55d
 	github.com/fullstack-lang/gongsim v0.0.0-20250122020234-8eac0c64eade
 	github.com/fullstack-lang/gongtable v0.0.0-20250210172415-c00082e756fe
-	github.com/fullstack-lang/gongtree v0.0.0-20250131164534-16327a85fa35
+	github.com/fullstack-lang/gongtree v0.0.0-20250211023854-6a055011abfb
 	github.com/fullstack-lang/maticons v0.0.0-20240913013021-27a7b8fd9369
 	github.com/gin-contrib/cors v1.7.3
 	github.com/gin-contrib/static v1.1.3
