@@ -380,13 +380,15 @@ func (opslineDB *OpsLineDB) DecodePointers(backRepo *BackRepoStruct, opsline *mo
 		if id != 0 {
 			tmp, ok := backRepo.BackRepoScenario.Map_ScenarioDBID_ScenarioPtr[uint(id)]
 
+			// if the pointer id is unknown, it is not a problem, maybe the target was removed from the front
 			if !ok {
-				log.Fatalln("DecodePointers: opsline.Scenario, unknown pointer id", id)
-			}
-
-			// updates only if field has changed
-			if opsline.Scenario == nil || opsline.Scenario != tmp {
-				opsline.Scenario = tmp
+				log.Println("DecodePointers: opsline.Scenario, unknown pointer id", id)
+				opsline.Scenario = nil
+			} else {
+				// updates only if field has changed
+				if opsline.Scenario == nil || opsline.Scenario != tmp {
+					opsline.Scenario = tmp
+				}
 			}
 		} else {
 			opsline.Scenario = nil

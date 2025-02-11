@@ -426,13 +426,15 @@ func (linerDB *LinerDB) DecodePointers(backRepo *BackRepoStruct, liner *models.L
 		if id != 0 {
 			tmp, ok := backRepo.BackRepoOpsLine.Map_OpsLineDBID_OpsLinePtr[uint(id)]
 
+			// if the pointer id is unknown, it is not a problem, maybe the target was removed from the front
 			if !ok {
-				log.Fatalln("DecodePointers: liner.ReporingLine, unknown pointer id", id)
-			}
-
-			// updates only if field has changed
-			if liner.ReporingLine == nil || liner.ReporingLine != tmp {
-				liner.ReporingLine = tmp
+				log.Println("DecodePointers: liner.ReporingLine, unknown pointer id", id)
+				liner.ReporingLine = nil
+			} else {
+				// updates only if field has changed
+				if liner.ReporingLine == nil || liner.ReporingLine != tmp {
+					liner.ReporingLine = tmp
+				}
 			}
 		} else {
 			liner.ReporingLine = nil

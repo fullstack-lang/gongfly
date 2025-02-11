@@ -1265,7 +1265,40 @@ func GetFieldsFromPointer[Type PointerToGongstruct]() (res []string) {
 	return
 }
 
-func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fieldName string) (res string) {
+type GongFieldValueType string
+
+const (
+	GongFieldValueTypeInt     GongFieldValueType = "GongFieldValueTypeInt"
+	GongFieldValueTypeFloat   GongFieldValueType = "GongFieldValueTypeFloat"
+	GongFieldValueTypeBool    GongFieldValueType = "GongFieldValueTypeBool"
+	GongFieldValueTypeOthers  GongFieldValueType = "GongFieldValueTypeOthers"
+)
+
+type GongFieldValue struct {
+	valueString string
+	GongFieldValueType
+	valueInt   int
+	valueFloat float64
+	valueBool  bool
+}
+
+func (gongValueField *GongFieldValue) GetValueString() string {
+	return gongValueField.valueString
+}
+
+func (gongValueField *GongFieldValue) GetValueInt() int {
+	return gongValueField.valueInt
+}
+	
+func (gongValueField *GongFieldValue) GetValueFloat() float64 {
+	return gongValueField.valueFloat
+}
+	
+func (gongValueField *GongFieldValue) GetValueBool() bool {
+	return gongValueField.valueBool
+}
+
+func GetFieldStringValueFromPointer(instance any, fieldName string) (res GongFieldValue) {
 
 	switch inferedInstance := any(instance).(type) {
 	// insertion point for generic get gongstruct field value
@@ -1273,75 +1306,117 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 		switch fieldName {
 		// string value of fields
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		}
 	case *Liner:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Heading":
-			res = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueFloat = inferedInstance.Heading
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Level":
-			res = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueFloat = inferedInstance.Level
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Speed":
-			res = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueFloat = inferedInstance.Speed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "State":
 			enum := inferedInstance.State
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "TargetHeading":
-			res = fmt.Sprintf("%f", inferedInstance.TargetHeading)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.TargetHeading)
+			res.valueFloat = inferedInstance.TargetHeading
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "TargetLocationLat":
-			res = fmt.Sprintf("%f", inferedInstance.TargetLocationLat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.TargetLocationLat)
+			res.valueFloat = inferedInstance.TargetLocationLat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "TargetLocationLng":
-			res = fmt.Sprintf("%f", inferedInstance.TargetLocationLng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.TargetLocationLng)
+			res.valueFloat = inferedInstance.TargetLocationLng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "DistanceToTarget":
-			res = fmt.Sprintf("%f", inferedInstance.DistanceToTarget)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.DistanceToTarget)
+			res.valueFloat = inferedInstance.DistanceToTarget
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "MaxRotationalSpeed":
-			res = fmt.Sprintf("%f", inferedInstance.MaxRotationalSpeed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.MaxRotationalSpeed)
+			res.valueFloat = inferedInstance.MaxRotationalSpeed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "VerticalSpeed":
-			res = fmt.Sprintf("%f", inferedInstance.VerticalSpeed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.VerticalSpeed)
+			res.valueFloat = inferedInstance.VerticalSpeed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Timestampstring":
-			res = inferedInstance.Timestampstring
+			res.valueString = inferedInstance.Timestampstring
 		case "ReporingLine":
 			if inferedInstance.ReporingLine != nil {
-				res = inferedInstance.ReporingLine.Name
+				res.valueString = inferedInstance.ReporingLine.Name
 			}
 		}
 	case *Message:
 		switch fieldName {
 		// string value of fields
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Heading":
-			res = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueFloat = inferedInstance.Heading
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Level":
-			res = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueFloat = inferedInstance.Level
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Speed":
-			res = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueFloat = inferedInstance.Speed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "State":
 			enum := inferedInstance.State
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "TargetLocationLat":
-			res = fmt.Sprintf("%f", inferedInstance.TargetLocationLat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.TargetLocationLat)
+			res.valueFloat = inferedInstance.TargetLocationLat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "TargetLocationLng":
-			res = fmt.Sprintf("%f", inferedInstance.TargetLocationLng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.TargetLocationLng)
+			res.valueFloat = inferedInstance.TargetLocationLng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "DistanceToTarget":
-			res = fmt.Sprintf("%f", inferedInstance.DistanceToTarget)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.DistanceToTarget)
+			res.valueFloat = inferedInstance.DistanceToTarget
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Timestampstring":
-			res = inferedInstance.Timestampstring
+			res.valueString = inferedInstance.Timestampstring
 		case "DurationSinceSimulationStart":
 			if math.Abs(inferedInstance.DurationSinceSimulationStart.Hours()) >= 24 {
 				days := __Gong__Abs(int(int(inferedInstance.DurationSinceSimulationStart.Hours()) / 24))
@@ -1353,122 +1428,154 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 				remainingSeconds := int(inferedInstance.DurationSinceSimulationStart.Seconds()) % 60
 
 				if inferedInstance.DurationSinceSimulationStart.Hours() < 0 {
-					res = "- "
+					res.valueString = "- "
 				}
 
 				if months > 0 {
 					if months > 1 {
-						res = res + fmt.Sprintf("%d months", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d months", months)
 					} else {
-						res = res + fmt.Sprintf("%d month", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d month", months)
 					}
 				}
 				if days > 0 {
 					if months != 0 {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
 					if days > 1 {
-						res = res + fmt.Sprintf("%d days", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d days", days)
 					} else {
-						res = res + fmt.Sprintf("%d day", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d day", days)
 					}
 
 				}
 				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
 					if days != 0 || (days == 0 && months != 0) {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
-					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+					res.valueString = res.valueString + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
 				}
 			} else {
-				res = fmt.Sprintf("%s\n", inferedInstance.DurationSinceSimulationStart.String())
+				res.valueString = fmt.Sprintf("%s\n", inferedInstance.DurationSinceSimulationStart.String())
 			}
 		case "Timestampstartstring":
-			res = inferedInstance.Timestampstartstring
+			res.valueString = inferedInstance.Timestampstartstring
 		case "Source":
-			res = inferedInstance.Source
+			res.valueString = inferedInstance.Source
 		case "Destination":
-			res = inferedInstance.Destination
+			res.valueString = inferedInstance.Destination
 		case "Content":
-			res = inferedInstance.Content
+			res.valueString = inferedInstance.Content
 		case "About_string":
-			res = inferedInstance.About_string
+			res.valueString = inferedInstance.About_string
 		case "Display":
-			res = fmt.Sprintf("%t", inferedInstance.Display)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.Display)
+			res.valueBool = inferedInstance.Display
+			res.GongFieldValueType = GongFieldValueTypeBool
 		}
 	case *OpsLine:
 		switch fieldName {
 		// string value of fields
 		case "IsTransmitting":
-			res = fmt.Sprintf("%t", inferedInstance.IsTransmitting)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.IsTransmitting)
+			res.valueBool = inferedInstance.IsTransmitting
+			res.GongFieldValueType = GongFieldValueTypeBool
 		case "TransmissionMessage":
-			res = inferedInstance.TransmissionMessage
+			res.valueString = inferedInstance.TransmissionMessage
 		case "IsTransmittingBackward":
-			res = fmt.Sprintf("%t", inferedInstance.IsTransmittingBackward)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.IsTransmittingBackward)
+			res.valueBool = inferedInstance.IsTransmittingBackward
+			res.GongFieldValueType = GongFieldValueTypeBool
 		case "TransmissionMessageBackward":
-			res = inferedInstance.TransmissionMessageBackward
+			res.valueString = inferedInstance.TransmissionMessageBackward
 		case "Scenario":
 			if inferedInstance.Scenario != nil {
-				res = inferedInstance.Scenario.Name
+				res.valueString = inferedInstance.Scenario.Name
 			}
 		case "State":
 			enum := inferedInstance.State
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		}
 	case *Radar:
 		switch fieldName {
 		// string value of fields
 		case "State":
 			enum := inferedInstance.State
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Range":
-			res = fmt.Sprintf("%f", inferedInstance.Range)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Range)
+			res.valueFloat = inferedInstance.Range
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		}
 	case *Satellite:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Line1":
-			res = inferedInstance.Line1
+			res.valueString = inferedInstance.Line1
 		case "Line2":
-			res = inferedInstance.Line2
+			res.valueString = inferedInstance.Line2
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Heading":
-			res = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueFloat = inferedInstance.Heading
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Level":
-			res = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueFloat = inferedInstance.Level
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Speed":
-			res = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueFloat = inferedInstance.Speed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "VerticalSpeed":
-			res = fmt.Sprintf("%f", inferedInstance.VerticalSpeed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.VerticalSpeed)
+			res.valueFloat = inferedInstance.VerticalSpeed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Timestampstring":
-			res = inferedInstance.Timestampstring
+			res.valueString = inferedInstance.Timestampstring
 		}
 	case *Scenario:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "ZoomLevel":
-			res = fmt.Sprintf("%f", inferedInstance.ZoomLevel)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.ZoomLevel)
+			res.valueFloat = inferedInstance.ZoomLevel
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "MessageVisualSpeed":
-			res = fmt.Sprintf("%f", inferedInstance.MessageVisualSpeed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.MessageVisualSpeed)
+			res.valueFloat = inferedInstance.MessageVisualSpeed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		}
 	default:
 		_ = inferedInstance
@@ -1476,7 +1583,7 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 	return
 }
 
-func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res string) {
+func GetFieldStringValue(instance any, fieldName string) (res GongFieldValue) {
 
 	switch inferedInstance := any(instance).(type) {
 	// insertion point for generic get gongstruct field value
@@ -1484,75 +1591,117 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 		switch fieldName {
 		// string value of fields
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		}
 	case Liner:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Heading":
-			res = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueFloat = inferedInstance.Heading
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Level":
-			res = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueFloat = inferedInstance.Level
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Speed":
-			res = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueFloat = inferedInstance.Speed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "State":
 			enum := inferedInstance.State
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "TargetHeading":
-			res = fmt.Sprintf("%f", inferedInstance.TargetHeading)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.TargetHeading)
+			res.valueFloat = inferedInstance.TargetHeading
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "TargetLocationLat":
-			res = fmt.Sprintf("%f", inferedInstance.TargetLocationLat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.TargetLocationLat)
+			res.valueFloat = inferedInstance.TargetLocationLat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "TargetLocationLng":
-			res = fmt.Sprintf("%f", inferedInstance.TargetLocationLng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.TargetLocationLng)
+			res.valueFloat = inferedInstance.TargetLocationLng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "DistanceToTarget":
-			res = fmt.Sprintf("%f", inferedInstance.DistanceToTarget)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.DistanceToTarget)
+			res.valueFloat = inferedInstance.DistanceToTarget
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "MaxRotationalSpeed":
-			res = fmt.Sprintf("%f", inferedInstance.MaxRotationalSpeed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.MaxRotationalSpeed)
+			res.valueFloat = inferedInstance.MaxRotationalSpeed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "VerticalSpeed":
-			res = fmt.Sprintf("%f", inferedInstance.VerticalSpeed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.VerticalSpeed)
+			res.valueFloat = inferedInstance.VerticalSpeed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Timestampstring":
-			res = inferedInstance.Timestampstring
+			res.valueString = inferedInstance.Timestampstring
 		case "ReporingLine":
 			if inferedInstance.ReporingLine != nil {
-				res = inferedInstance.ReporingLine.Name
+				res.valueString = inferedInstance.ReporingLine.Name
 			}
 		}
 	case Message:
 		switch fieldName {
 		// string value of fields
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Heading":
-			res = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueFloat = inferedInstance.Heading
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Level":
-			res = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueFloat = inferedInstance.Level
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Speed":
-			res = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueFloat = inferedInstance.Speed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "State":
 			enum := inferedInstance.State
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "TargetLocationLat":
-			res = fmt.Sprintf("%f", inferedInstance.TargetLocationLat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.TargetLocationLat)
+			res.valueFloat = inferedInstance.TargetLocationLat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "TargetLocationLng":
-			res = fmt.Sprintf("%f", inferedInstance.TargetLocationLng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.TargetLocationLng)
+			res.valueFloat = inferedInstance.TargetLocationLng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "DistanceToTarget":
-			res = fmt.Sprintf("%f", inferedInstance.DistanceToTarget)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.DistanceToTarget)
+			res.valueFloat = inferedInstance.DistanceToTarget
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Timestampstring":
-			res = inferedInstance.Timestampstring
+			res.valueString = inferedInstance.Timestampstring
 		case "DurationSinceSimulationStart":
 			if math.Abs(inferedInstance.DurationSinceSimulationStart.Hours()) >= 24 {
 				days := __Gong__Abs(int(int(inferedInstance.DurationSinceSimulationStart.Hours()) / 24))
@@ -1564,122 +1713,154 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 				remainingSeconds := int(inferedInstance.DurationSinceSimulationStart.Seconds()) % 60
 
 				if inferedInstance.DurationSinceSimulationStart.Hours() < 0 {
-					res = "- "
+					res.valueString = "- "
 				}
 
 				if months > 0 {
 					if months > 1 {
-						res = res + fmt.Sprintf("%d months", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d months", months)
 					} else {
-						res = res + fmt.Sprintf("%d month", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d month", months)
 					}
 				}
 				if days > 0 {
 					if months != 0 {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
 					if days > 1 {
-						res = res + fmt.Sprintf("%d days", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d days", days)
 					} else {
-						res = res + fmt.Sprintf("%d day", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d day", days)
 					}
 
 				}
 				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
 					if days != 0 || (days == 0 && months != 0) {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
-					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+					res.valueString = res.valueString + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
 				}
 			} else {
-				res = fmt.Sprintf("%s\n", inferedInstance.DurationSinceSimulationStart.String())
+				res.valueString = fmt.Sprintf("%s\n", inferedInstance.DurationSinceSimulationStart.String())
 			}
 		case "Timestampstartstring":
-			res = inferedInstance.Timestampstartstring
+			res.valueString = inferedInstance.Timestampstartstring
 		case "Source":
-			res = inferedInstance.Source
+			res.valueString = inferedInstance.Source
 		case "Destination":
-			res = inferedInstance.Destination
+			res.valueString = inferedInstance.Destination
 		case "Content":
-			res = inferedInstance.Content
+			res.valueString = inferedInstance.Content
 		case "About_string":
-			res = inferedInstance.About_string
+			res.valueString = inferedInstance.About_string
 		case "Display":
-			res = fmt.Sprintf("%t", inferedInstance.Display)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.Display)
+			res.valueBool = inferedInstance.Display
+			res.GongFieldValueType = GongFieldValueTypeBool
 		}
 	case OpsLine:
 		switch fieldName {
 		// string value of fields
 		case "IsTransmitting":
-			res = fmt.Sprintf("%t", inferedInstance.IsTransmitting)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.IsTransmitting)
+			res.valueBool = inferedInstance.IsTransmitting
+			res.GongFieldValueType = GongFieldValueTypeBool
 		case "TransmissionMessage":
-			res = inferedInstance.TransmissionMessage
+			res.valueString = inferedInstance.TransmissionMessage
 		case "IsTransmittingBackward":
-			res = fmt.Sprintf("%t", inferedInstance.IsTransmittingBackward)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.IsTransmittingBackward)
+			res.valueBool = inferedInstance.IsTransmittingBackward
+			res.GongFieldValueType = GongFieldValueTypeBool
 		case "TransmissionMessageBackward":
-			res = inferedInstance.TransmissionMessageBackward
+			res.valueString = inferedInstance.TransmissionMessageBackward
 		case "Scenario":
 			if inferedInstance.Scenario != nil {
-				res = inferedInstance.Scenario.Name
+				res.valueString = inferedInstance.Scenario.Name
 			}
 		case "State":
 			enum := inferedInstance.State
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		}
 	case Radar:
 		switch fieldName {
 		// string value of fields
 		case "State":
 			enum := inferedInstance.State
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Range":
-			res = fmt.Sprintf("%f", inferedInstance.Range)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Range)
+			res.valueFloat = inferedInstance.Range
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		}
 	case Satellite:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Line1":
-			res = inferedInstance.Line1
+			res.valueString = inferedInstance.Line1
 		case "Line2":
-			res = inferedInstance.Line2
+			res.valueString = inferedInstance.Line2
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Heading":
-			res = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueFloat = inferedInstance.Heading
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Level":
-			res = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueFloat = inferedInstance.Level
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Speed":
-			res = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueFloat = inferedInstance.Speed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "VerticalSpeed":
-			res = fmt.Sprintf("%f", inferedInstance.VerticalSpeed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.VerticalSpeed)
+			res.valueFloat = inferedInstance.VerticalSpeed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Timestampstring":
-			res = inferedInstance.Timestampstring
+			res.valueString = inferedInstance.Timestampstring
 		}
 	case Scenario:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "ZoomLevel":
-			res = fmt.Sprintf("%f", inferedInstance.ZoomLevel)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.ZoomLevel)
+			res.valueFloat = inferedInstance.ZoomLevel
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "MessageVisualSpeed":
-			res = fmt.Sprintf("%f", inferedInstance.MessageVisualSpeed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.MessageVisualSpeed)
+			res.valueFloat = inferedInstance.MessageVisualSpeed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		}
 	default:
 		_ = inferedInstance
