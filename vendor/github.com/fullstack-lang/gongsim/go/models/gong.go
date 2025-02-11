@@ -1133,7 +1133,40 @@ func GetFieldsFromPointer[Type PointerToGongstruct]() (res []string) {
 	return
 }
 
-func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fieldName string) (res string) {
+type GongFieldValueType string
+
+const (
+	GongFieldValueTypeInt     GongFieldValueType = "GongFieldValueTypeInt"
+	GongFieldValueTypeFloat   GongFieldValueType = "GongFieldValueTypeFloat"
+	GongFieldValueTypeBool    GongFieldValueType = "GongFieldValueTypeBool"
+	GongFieldValueTypeOthers  GongFieldValueType = "GongFieldValueTypeOthers"
+)
+
+type GongFieldValue struct {
+	valueString string
+	GongFieldValueType
+	valueInt   int
+	valueFloat float64
+	valueBool  bool
+}
+
+func (gongValueField *GongFieldValue) GetValueString() string {
+	return gongValueField.valueString
+}
+
+func (gongValueField *GongFieldValue) GetValueInt() int {
+	return gongValueField.valueInt
+}
+	
+func (gongValueField *GongFieldValue) GetValueFloat() float64 {
+	return gongValueField.valueFloat
+}
+	
+func (gongValueField *GongFieldValue) GetValueBool() bool {
+	return gongValueField.valueBool
+}
+
+func GetFieldStringValueFromPointer(instance any, fieldName string) (res GongFieldValue) {
 
 	switch inferedInstance := any(instance).(type) {
 	// insertion point for generic get gongstruct field value
@@ -1141,54 +1174,60 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Command":
 			enum := inferedInstance.Command
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "CommandDate":
-			res = inferedInstance.CommandDate
+			res.valueString = inferedInstance.CommandDate
 		case "Engine":
 			if inferedInstance.Engine != nil {
-				res = inferedInstance.Engine.Name
+				res.valueString = inferedInstance.Engine.Name
 			}
 		}
 	case *DummyAgent:
 		switch fieldName {
 		// string value of fields
 		case "TechName":
-			res = inferedInstance.TechName
+			res.valueString = inferedInstance.TechName
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		}
 	case *Engine:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "EndTime":
-			res = inferedInstance.EndTime
+			res.valueString = inferedInstance.EndTime
 		case "CurrentTime":
-			res = inferedInstance.CurrentTime
+			res.valueString = inferedInstance.CurrentTime
 		case "DisplayFormat":
-			res = inferedInstance.DisplayFormat
+			res.valueString = inferedInstance.DisplayFormat
 		case "SecondsSinceStart":
-			res = fmt.Sprintf("%f", inferedInstance.SecondsSinceStart)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.SecondsSinceStart)
+			res.valueFloat = inferedInstance.SecondsSinceStart
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Fired":
-			res = fmt.Sprintf("%d", inferedInstance.Fired)
+			res.valueString = fmt.Sprintf("%d", inferedInstance.Fired)
+			res.valueInt = inferedInstance.Fired
+			res.GongFieldValueType = GongFieldValueTypeInt
 		case "ControlMode":
 			enum := inferedInstance.ControlMode
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "State":
 			enum := inferedInstance.State
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "Speed":
-			res = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueFloat = inferedInstance.Speed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		}
 	case *Event:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Duration":
 			if math.Abs(inferedInstance.Duration.Hours()) >= 24 {
 				days := __Gong__Abs(int(int(inferedInstance.Duration.Hours()) / 24))
@@ -1200,58 +1239,58 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 				remainingSeconds := int(inferedInstance.Duration.Seconds()) % 60
 
 				if inferedInstance.Duration.Hours() < 0 {
-					res = "- "
+					res.valueString = "- "
 				}
 
 				if months > 0 {
 					if months > 1 {
-						res = res + fmt.Sprintf("%d months", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d months", months)
 					} else {
-						res = res + fmt.Sprintf("%d month", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d month", months)
 					}
 				}
 				if days > 0 {
 					if months != 0 {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
 					if days > 1 {
-						res = res + fmt.Sprintf("%d days", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d days", days)
 					} else {
-						res = res + fmt.Sprintf("%d day", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d day", days)
 					}
 
 				}
 				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
 					if days != 0 || (days == 0 && months != 0) {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
-					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+					res.valueString = res.valueString + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
 				}
 			} else {
-				res = fmt.Sprintf("%s\n", inferedInstance.Duration.String())
+				res.valueString = fmt.Sprintf("%s\n", inferedInstance.Duration.String())
 			}
 		}
 	case *Status:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "CurrentCommand":
 			enum := inferedInstance.CurrentCommand
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "CompletionDate":
-			res = inferedInstance.CompletionDate
+			res.valueString = inferedInstance.CompletionDate
 		case "CurrentSpeedCommand":
 			enum := inferedInstance.CurrentSpeedCommand
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "SpeedCommandCompletionDate":
-			res = inferedInstance.SpeedCommandCompletionDate
+			res.valueString = inferedInstance.SpeedCommandCompletionDate
 		}
 	case *UpdateState:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Duration":
 			if math.Abs(inferedInstance.Duration.Hours()) >= 24 {
 				days := __Gong__Abs(int(int(inferedInstance.Duration.Hours()) / 24))
@@ -1263,35 +1302,35 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 				remainingSeconds := int(inferedInstance.Duration.Seconds()) % 60
 
 				if inferedInstance.Duration.Hours() < 0 {
-					res = "- "
+					res.valueString = "- "
 				}
 
 				if months > 0 {
 					if months > 1 {
-						res = res + fmt.Sprintf("%d months", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d months", months)
 					} else {
-						res = res + fmt.Sprintf("%d month", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d month", months)
 					}
 				}
 				if days > 0 {
 					if months != 0 {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
 					if days > 1 {
-						res = res + fmt.Sprintf("%d days", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d days", days)
 					} else {
-						res = res + fmt.Sprintf("%d day", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d day", days)
 					}
 
 				}
 				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
 					if days != 0 || (days == 0 && months != 0) {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
-					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+					res.valueString = res.valueString + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
 				}
 			} else {
-				res = fmt.Sprintf("%s\n", inferedInstance.Duration.String())
+				res.valueString = fmt.Sprintf("%s\n", inferedInstance.Duration.String())
 			}
 		case "Period":
 			if math.Abs(inferedInstance.Period.Hours()) >= 24 {
@@ -1304,35 +1343,35 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 				remainingSeconds := int(inferedInstance.Period.Seconds()) % 60
 
 				if inferedInstance.Period.Hours() < 0 {
-					res = "- "
+					res.valueString = "- "
 				}
 
 				if months > 0 {
 					if months > 1 {
-						res = res + fmt.Sprintf("%d months", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d months", months)
 					} else {
-						res = res + fmt.Sprintf("%d month", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d month", months)
 					}
 				}
 				if days > 0 {
 					if months != 0 {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
 					if days > 1 {
-						res = res + fmt.Sprintf("%d days", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d days", days)
 					} else {
-						res = res + fmt.Sprintf("%d day", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d day", days)
 					}
 
 				}
 				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
 					if days != 0 || (days == 0 && months != 0) {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
-					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+					res.valueString = res.valueString + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
 				}
 			} else {
-				res = fmt.Sprintf("%s\n", inferedInstance.Period.String())
+				res.valueString = fmt.Sprintf("%s\n", inferedInstance.Period.String())
 			}
 		}
 	default:
@@ -1341,7 +1380,7 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 	return
 }
 
-func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res string) {
+func GetFieldStringValue(instance any, fieldName string) (res GongFieldValue) {
 
 	switch inferedInstance := any(instance).(type) {
 	// insertion point for generic get gongstruct field value
@@ -1349,54 +1388,60 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Command":
 			enum := inferedInstance.Command
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "CommandDate":
-			res = inferedInstance.CommandDate
+			res.valueString = inferedInstance.CommandDate
 		case "Engine":
 			if inferedInstance.Engine != nil {
-				res = inferedInstance.Engine.Name
+				res.valueString = inferedInstance.Engine.Name
 			}
 		}
 	case DummyAgent:
 		switch fieldName {
 		// string value of fields
 		case "TechName":
-			res = inferedInstance.TechName
+			res.valueString = inferedInstance.TechName
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		}
 	case Engine:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "EndTime":
-			res = inferedInstance.EndTime
+			res.valueString = inferedInstance.EndTime
 		case "CurrentTime":
-			res = inferedInstance.CurrentTime
+			res.valueString = inferedInstance.CurrentTime
 		case "DisplayFormat":
-			res = inferedInstance.DisplayFormat
+			res.valueString = inferedInstance.DisplayFormat
 		case "SecondsSinceStart":
-			res = fmt.Sprintf("%f", inferedInstance.SecondsSinceStart)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.SecondsSinceStart)
+			res.valueFloat = inferedInstance.SecondsSinceStart
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Fired":
-			res = fmt.Sprintf("%d", inferedInstance.Fired)
+			res.valueString = fmt.Sprintf("%d", inferedInstance.Fired)
+			res.valueInt = inferedInstance.Fired
+			res.GongFieldValueType = GongFieldValueTypeInt
 		case "ControlMode":
 			enum := inferedInstance.ControlMode
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "State":
 			enum := inferedInstance.State
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "Speed":
-			res = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueFloat = inferedInstance.Speed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		}
 	case Event:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Duration":
 			if math.Abs(inferedInstance.Duration.Hours()) >= 24 {
 				days := __Gong__Abs(int(int(inferedInstance.Duration.Hours()) / 24))
@@ -1408,58 +1453,58 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 				remainingSeconds := int(inferedInstance.Duration.Seconds()) % 60
 
 				if inferedInstance.Duration.Hours() < 0 {
-					res = "- "
+					res.valueString = "- "
 				}
 
 				if months > 0 {
 					if months > 1 {
-						res = res + fmt.Sprintf("%d months", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d months", months)
 					} else {
-						res = res + fmt.Sprintf("%d month", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d month", months)
 					}
 				}
 				if days > 0 {
 					if months != 0 {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
 					if days > 1 {
-						res = res + fmt.Sprintf("%d days", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d days", days)
 					} else {
-						res = res + fmt.Sprintf("%d day", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d day", days)
 					}
 
 				}
 				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
 					if days != 0 || (days == 0 && months != 0) {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
-					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+					res.valueString = res.valueString + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
 				}
 			} else {
-				res = fmt.Sprintf("%s\n", inferedInstance.Duration.String())
+				res.valueString = fmt.Sprintf("%s\n", inferedInstance.Duration.String())
 			}
 		}
 	case Status:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "CurrentCommand":
 			enum := inferedInstance.CurrentCommand
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "CompletionDate":
-			res = inferedInstance.CompletionDate
+			res.valueString = inferedInstance.CompletionDate
 		case "CurrentSpeedCommand":
 			enum := inferedInstance.CurrentSpeedCommand
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "SpeedCommandCompletionDate":
-			res = inferedInstance.SpeedCommandCompletionDate
+			res.valueString = inferedInstance.SpeedCommandCompletionDate
 		}
 	case UpdateState:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Duration":
 			if math.Abs(inferedInstance.Duration.Hours()) >= 24 {
 				days := __Gong__Abs(int(int(inferedInstance.Duration.Hours()) / 24))
@@ -1471,35 +1516,35 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 				remainingSeconds := int(inferedInstance.Duration.Seconds()) % 60
 
 				if inferedInstance.Duration.Hours() < 0 {
-					res = "- "
+					res.valueString = "- "
 				}
 
 				if months > 0 {
 					if months > 1 {
-						res = res + fmt.Sprintf("%d months", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d months", months)
 					} else {
-						res = res + fmt.Sprintf("%d month", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d month", months)
 					}
 				}
 				if days > 0 {
 					if months != 0 {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
 					if days > 1 {
-						res = res + fmt.Sprintf("%d days", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d days", days)
 					} else {
-						res = res + fmt.Sprintf("%d day", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d day", days)
 					}
 
 				}
 				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
 					if days != 0 || (days == 0 && months != 0) {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
-					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+					res.valueString = res.valueString + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
 				}
 			} else {
-				res = fmt.Sprintf("%s\n", inferedInstance.Duration.String())
+				res.valueString = fmt.Sprintf("%s\n", inferedInstance.Duration.String())
 			}
 		case "Period":
 			if math.Abs(inferedInstance.Period.Hours()) >= 24 {
@@ -1512,35 +1557,35 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 				remainingSeconds := int(inferedInstance.Period.Seconds()) % 60
 
 				if inferedInstance.Period.Hours() < 0 {
-					res = "- "
+					res.valueString = "- "
 				}
 
 				if months > 0 {
 					if months > 1 {
-						res = res + fmt.Sprintf("%d months", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d months", months)
 					} else {
-						res = res + fmt.Sprintf("%d month", months)
+						res.valueString = res.valueString + fmt.Sprintf("%d month", months)
 					}
 				}
 				if days > 0 {
 					if months != 0 {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
 					if days > 1 {
-						res = res + fmt.Sprintf("%d days", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d days", days)
 					} else {
-						res = res + fmt.Sprintf("%d day", days)
+						res.valueString = res.valueString + fmt.Sprintf("%d day", days)
 					}
 
 				}
 				if remainingHours != 0 || remainingMinutes != 0 || remainingSeconds != 0 {
 					if days != 0 || (days == 0 && months != 0) {
-						res = res + ", "
+						res.valueString = res.valueString + ", "
 					}
-					res = res + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
+					res.valueString = res.valueString + fmt.Sprintf("%d hours, %d minutes, %d seconds\n", remainingHours, remainingMinutes, remainingSeconds)
 				}
 			} else {
-				res = fmt.Sprintf("%s\n", inferedInstance.Period.String())
+				res.valueString = fmt.Sprintf("%s\n", inferedInstance.Period.String())
 			}
 		}
 	default:

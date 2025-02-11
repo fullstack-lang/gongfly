@@ -360,13 +360,15 @@ func (commandDB *CommandDB) DecodePointers(backRepo *BackRepoStruct, command *mo
 		if id != 0 {
 			tmp, ok := backRepo.BackRepoEngine.Map_EngineDBID_EnginePtr[uint(id)]
 
+			// if the pointer id is unknown, it is not a problem, maybe the target was removed from the front
 			if !ok {
-				log.Fatalln("DecodePointers: command.Engine, unknown pointer id", id)
-			}
-
-			// updates only if field has changed
-			if command.Engine == nil || command.Engine != tmp {
-				command.Engine = tmp
+				log.Println("DecodePointers: command.Engine, unknown pointer id", id)
+				command.Engine = nil
+			} else {
+				// updates only if field has changed
+				if command.Engine == nil || command.Engine != tmp {
+					command.Engine = tmp
+				}
 			}
 		} else {
 			command.Engine = nil
