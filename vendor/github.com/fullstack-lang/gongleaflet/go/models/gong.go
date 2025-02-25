@@ -1601,7 +1601,40 @@ func GetFieldsFromPointer[Type PointerToGongstruct]() (res []string) {
 	return
 }
 
-func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fieldName string) (res string) {
+type GongFieldValueType string
+
+const (
+	GongFieldValueTypeInt     GongFieldValueType = "GongFieldValueTypeInt"
+	GongFieldValueTypeFloat   GongFieldValueType = "GongFieldValueTypeFloat"
+	GongFieldValueTypeBool    GongFieldValueType = "GongFieldValueTypeBool"
+	GongFieldValueTypeOthers  GongFieldValueType = "GongFieldValueTypeOthers"
+)
+
+type GongFieldValue struct {
+	valueString string
+	GongFieldValueType
+	valueInt   int
+	valueFloat float64
+	valueBool  bool
+}
+
+func (gongValueField *GongFieldValue) GetValueString() string {
+	return gongValueField.valueString
+}
+
+func (gongValueField *GongFieldValue) GetValueInt() int {
+	return gongValueField.valueInt
+}
+	
+func (gongValueField *GongFieldValue) GetValueFloat() float64 {
+	return gongValueField.valueFloat
+}
+	
+func (gongValueField *GongFieldValue) GetValueBool() bool {
+	return gongValueField.valueBool
+}
+
+func GetFieldStringValueFromPointer(instance any, fieldName string) (res GongFieldValue) {
 
 	switch inferedInstance := any(instance).(type) {
 	// insertion point for generic get gongstruct field value
@@ -1609,182 +1642,236 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 		switch fieldName {
 		// string value of fields
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Radius":
-			res = fmt.Sprintf("%f", inferedInstance.Radius)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Radius)
+			res.valueFloat = inferedInstance.Radius
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "ColorEnum":
 			enum := inferedInstance.ColorEnum
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "DashStyleEnum":
 			enum := inferedInstance.DashStyleEnum
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "LayerGroup":
 			if inferedInstance.LayerGroup != nil {
-				res = inferedInstance.LayerGroup.Name
+				res.valueString = inferedInstance.LayerGroup.Name
 			}
 		}
 	case *DivIcon:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "SVG":
-			res = inferedInstance.SVG
+			res.valueString = inferedInstance.SVG
 		}
 	case *LayerGroup:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "DisplayName":
-			res = inferedInstance.DisplayName
+			res.valueString = inferedInstance.DisplayName
 		}
 	case *LayerGroupUse:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "IsDisplayed":
-			res = fmt.Sprintf("%t", inferedInstance.IsDisplayed)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.IsDisplayed)
+			res.valueBool = inferedInstance.IsDisplayed
+			res.GongFieldValueType = GongFieldValueTypeBool
 		case "LayerGroup":
 			if inferedInstance.LayerGroup != nil {
-				res = inferedInstance.LayerGroup.Name
+				res.valueString = inferedInstance.LayerGroup.Name
 			}
 		}
 	case *MapOptions:
 		switch fieldName {
 		// string value of fields
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "ZoomLevel":
-			res = fmt.Sprintf("%f", inferedInstance.ZoomLevel)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.ZoomLevel)
+			res.valueFloat = inferedInstance.ZoomLevel
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "UrlTemplate":
-			res = inferedInstance.UrlTemplate
+			res.valueString = inferedInstance.UrlTemplate
 		case "Attribution":
-			res = inferedInstance.Attribution
+			res.valueString = inferedInstance.Attribution
 		case "MaxZoom":
-			res = fmt.Sprintf("%d", inferedInstance.MaxZoom)
+			res.valueString = fmt.Sprintf("%d", inferedInstance.MaxZoom)
+			res.valueInt = inferedInstance.MaxZoom
+			res.GongFieldValueType = GongFieldValueTypeInt
 		case "ZoomControl":
-			res = fmt.Sprintf("%t", inferedInstance.ZoomControl)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.ZoomControl)
+			res.valueBool = inferedInstance.ZoomControl
+			res.GongFieldValueType = GongFieldValueTypeBool
 		case "AttributionControl":
-			res = fmt.Sprintf("%t", inferedInstance.AttributionControl)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.AttributionControl)
+			res.valueBool = inferedInstance.AttributionControl
+			res.GongFieldValueType = GongFieldValueTypeBool
 		case "ZoomSnap":
-			res = fmt.Sprintf("%d", inferedInstance.ZoomSnap)
+			res.valueString = fmt.Sprintf("%d", inferedInstance.ZoomSnap)
+			res.valueInt = inferedInstance.ZoomSnap
+			res.GongFieldValueType = GongFieldValueTypeInt
 		case "LayerGroupUses":
 			for idx, __instance__ := range inferedInstance.LayerGroupUses {
 				if idx > 0 {
-					res += "\n"
+					res.valueString += "\n"
 				}
-				res += __instance__.Name
+				res.valueString += __instance__.Name
 			}
 		}
 	case *Marker:
 		switch fieldName {
 		// string value of fields
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "ColorEnum":
 			enum := inferedInstance.ColorEnum
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "LayerGroup":
 			if inferedInstance.LayerGroup != nil {
-				res = inferedInstance.LayerGroup.Name
+				res.valueString = inferedInstance.LayerGroup.Name
 			}
 		case "DivIcon":
 			if inferedInstance.DivIcon != nil {
-				res = inferedInstance.DivIcon.Name
+				res.valueString = inferedInstance.DivIcon.Name
 			}
 		}
 	case *UserClick:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "TimeOfClick":
-			res = inferedInstance.TimeOfClick.String()
+			res.valueString = inferedInstance.TimeOfClick.String()
 		}
 	case *VLine:
 		switch fieldName {
 		// string value of fields
 		case "StartLat":
-			res = fmt.Sprintf("%f", inferedInstance.StartLat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.StartLat)
+			res.valueFloat = inferedInstance.StartLat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "StartLng":
-			res = fmt.Sprintf("%f", inferedInstance.StartLng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.StartLng)
+			res.valueFloat = inferedInstance.StartLng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "EndLat":
-			res = fmt.Sprintf("%f", inferedInstance.EndLat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.EndLat)
+			res.valueFloat = inferedInstance.EndLat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "EndLng":
-			res = fmt.Sprintf("%f", inferedInstance.EndLng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.EndLng)
+			res.valueFloat = inferedInstance.EndLng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "ColorEnum":
 			enum := inferedInstance.ColorEnum
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "DashStyleEnum":
 			enum := inferedInstance.DashStyleEnum
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "LayerGroup":
 			if inferedInstance.LayerGroup != nil {
-				res = inferedInstance.LayerGroup.Name
+				res.valueString = inferedInstance.LayerGroup.Name
 			}
 		case "IsTransmitting":
 			enum := inferedInstance.IsTransmitting
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "Message":
-			res = inferedInstance.Message
+			res.valueString = inferedInstance.Message
 		case "IsTransmittingBackward":
 			enum := inferedInstance.IsTransmittingBackward
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "MessageBackward":
-			res = inferedInstance.MessageBackward
+			res.valueString = inferedInstance.MessageBackward
 		}
 	case *VisualTrack:
 		switch fieldName {
 		// string value of fields
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Heading":
-			res = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueFloat = inferedInstance.Heading
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Level":
-			res = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueFloat = inferedInstance.Level
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Speed":
-			res = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueFloat = inferedInstance.Speed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "VerticalSpeed":
-			res = fmt.Sprintf("%f", inferedInstance.VerticalSpeed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.VerticalSpeed)
+			res.valueFloat = inferedInstance.VerticalSpeed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "ColorEnum":
 			enum := inferedInstance.ColorEnum
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "LayerGroup":
 			if inferedInstance.LayerGroup != nil {
-				res = inferedInstance.LayerGroup.Name
+				res.valueString = inferedInstance.LayerGroup.Name
 			}
 		case "DivIcon":
 			if inferedInstance.DivIcon != nil {
-				res = inferedInstance.DivIcon.Name
+				res.valueString = inferedInstance.DivIcon.Name
 			}
 		case "DisplayTrackHistory":
-			res = fmt.Sprintf("%t", inferedInstance.DisplayTrackHistory)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.DisplayTrackHistory)
+			res.valueBool = inferedInstance.DisplayTrackHistory
+			res.GongFieldValueType = GongFieldValueTypeBool
 		case "DisplayLevelAndSpeed":
-			res = fmt.Sprintf("%t", inferedInstance.DisplayLevelAndSpeed)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.DisplayLevelAndSpeed)
+			res.valueBool = inferedInstance.DisplayLevelAndSpeed
+			res.GongFieldValueType = GongFieldValueTypeBool
 		}
 	default:
 		_ = inferedInstance
@@ -1792,7 +1879,7 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 	return
 }
 
-func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res string) {
+func GetFieldStringValue(instance any, fieldName string) (res GongFieldValue) {
 
 	switch inferedInstance := any(instance).(type) {
 	// insertion point for generic get gongstruct field value
@@ -1800,182 +1887,236 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 		switch fieldName {
 		// string value of fields
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Radius":
-			res = fmt.Sprintf("%f", inferedInstance.Radius)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Radius)
+			res.valueFloat = inferedInstance.Radius
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "ColorEnum":
 			enum := inferedInstance.ColorEnum
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "DashStyleEnum":
 			enum := inferedInstance.DashStyleEnum
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "LayerGroup":
 			if inferedInstance.LayerGroup != nil {
-				res = inferedInstance.LayerGroup.Name
+				res.valueString = inferedInstance.LayerGroup.Name
 			}
 		}
 	case DivIcon:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "SVG":
-			res = inferedInstance.SVG
+			res.valueString = inferedInstance.SVG
 		}
 	case LayerGroup:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "DisplayName":
-			res = inferedInstance.DisplayName
+			res.valueString = inferedInstance.DisplayName
 		}
 	case LayerGroupUse:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "IsDisplayed":
-			res = fmt.Sprintf("%t", inferedInstance.IsDisplayed)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.IsDisplayed)
+			res.valueBool = inferedInstance.IsDisplayed
+			res.GongFieldValueType = GongFieldValueTypeBool
 		case "LayerGroup":
 			if inferedInstance.LayerGroup != nil {
-				res = inferedInstance.LayerGroup.Name
+				res.valueString = inferedInstance.LayerGroup.Name
 			}
 		}
 	case MapOptions:
 		switch fieldName {
 		// string value of fields
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "ZoomLevel":
-			res = fmt.Sprintf("%f", inferedInstance.ZoomLevel)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.ZoomLevel)
+			res.valueFloat = inferedInstance.ZoomLevel
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "UrlTemplate":
-			res = inferedInstance.UrlTemplate
+			res.valueString = inferedInstance.UrlTemplate
 		case "Attribution":
-			res = inferedInstance.Attribution
+			res.valueString = inferedInstance.Attribution
 		case "MaxZoom":
-			res = fmt.Sprintf("%d", inferedInstance.MaxZoom)
+			res.valueString = fmt.Sprintf("%d", inferedInstance.MaxZoom)
+			res.valueInt = inferedInstance.MaxZoom
+			res.GongFieldValueType = GongFieldValueTypeInt
 		case "ZoomControl":
-			res = fmt.Sprintf("%t", inferedInstance.ZoomControl)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.ZoomControl)
+			res.valueBool = inferedInstance.ZoomControl
+			res.GongFieldValueType = GongFieldValueTypeBool
 		case "AttributionControl":
-			res = fmt.Sprintf("%t", inferedInstance.AttributionControl)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.AttributionControl)
+			res.valueBool = inferedInstance.AttributionControl
+			res.GongFieldValueType = GongFieldValueTypeBool
 		case "ZoomSnap":
-			res = fmt.Sprintf("%d", inferedInstance.ZoomSnap)
+			res.valueString = fmt.Sprintf("%d", inferedInstance.ZoomSnap)
+			res.valueInt = inferedInstance.ZoomSnap
+			res.GongFieldValueType = GongFieldValueTypeInt
 		case "LayerGroupUses":
 			for idx, __instance__ := range inferedInstance.LayerGroupUses {
 				if idx > 0 {
-					res += "\n"
+					res.valueString += "\n"
 				}
-				res += __instance__.Name
+				res.valueString += __instance__.Name
 			}
 		}
 	case Marker:
 		switch fieldName {
 		// string value of fields
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "ColorEnum":
 			enum := inferedInstance.ColorEnum
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "LayerGroup":
 			if inferedInstance.LayerGroup != nil {
-				res = inferedInstance.LayerGroup.Name
+				res.valueString = inferedInstance.LayerGroup.Name
 			}
 		case "DivIcon":
 			if inferedInstance.DivIcon != nil {
-				res = inferedInstance.DivIcon.Name
+				res.valueString = inferedInstance.DivIcon.Name
 			}
 		}
 	case UserClick:
 		switch fieldName {
 		// string value of fields
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "TimeOfClick":
-			res = inferedInstance.TimeOfClick.String()
+			res.valueString = inferedInstance.TimeOfClick.String()
 		}
 	case VLine:
 		switch fieldName {
 		// string value of fields
 		case "StartLat":
-			res = fmt.Sprintf("%f", inferedInstance.StartLat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.StartLat)
+			res.valueFloat = inferedInstance.StartLat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "StartLng":
-			res = fmt.Sprintf("%f", inferedInstance.StartLng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.StartLng)
+			res.valueFloat = inferedInstance.StartLng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "EndLat":
-			res = fmt.Sprintf("%f", inferedInstance.EndLat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.EndLat)
+			res.valueFloat = inferedInstance.EndLat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "EndLng":
-			res = fmt.Sprintf("%f", inferedInstance.EndLng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.EndLng)
+			res.valueFloat = inferedInstance.EndLng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "ColorEnum":
 			enum := inferedInstance.ColorEnum
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "DashStyleEnum":
 			enum := inferedInstance.DashStyleEnum
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "LayerGroup":
 			if inferedInstance.LayerGroup != nil {
-				res = inferedInstance.LayerGroup.Name
+				res.valueString = inferedInstance.LayerGroup.Name
 			}
 		case "IsTransmitting":
 			enum := inferedInstance.IsTransmitting
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "Message":
-			res = inferedInstance.Message
+			res.valueString = inferedInstance.Message
 		case "IsTransmittingBackward":
 			enum := inferedInstance.IsTransmittingBackward
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "MessageBackward":
-			res = inferedInstance.MessageBackward
+			res.valueString = inferedInstance.MessageBackward
 		}
 	case VisualTrack:
 		switch fieldName {
 		// string value of fields
 		case "Lat":
-			res = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lat)
+			res.valueFloat = inferedInstance.Lat
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Lng":
-			res = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Lng)
+			res.valueFloat = inferedInstance.Lng
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Heading":
-			res = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Heading)
+			res.valueFloat = inferedInstance.Heading
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Level":
-			res = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Level)
+			res.valueFloat = inferedInstance.Level
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Speed":
-			res = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.Speed)
+			res.valueFloat = inferedInstance.Speed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "VerticalSpeed":
-			res = fmt.Sprintf("%f", inferedInstance.VerticalSpeed)
+			res.valueString = fmt.Sprintf("%f", inferedInstance.VerticalSpeed)
+			res.valueFloat = inferedInstance.VerticalSpeed
+			res.GongFieldValueType = GongFieldValueTypeFloat
 		case "Name":
-			res = inferedInstance.Name
+			res.valueString = inferedInstance.Name
 		case "ColorEnum":
 			enum := inferedInstance.ColorEnum
-			res = enum.ToCodeString()
+			res.valueString = enum.ToCodeString()
 		case "LayerGroup":
 			if inferedInstance.LayerGroup != nil {
-				res = inferedInstance.LayerGroup.Name
+				res.valueString = inferedInstance.LayerGroup.Name
 			}
 		case "DivIcon":
 			if inferedInstance.DivIcon != nil {
-				res = inferedInstance.DivIcon.Name
+				res.valueString = inferedInstance.DivIcon.Name
 			}
 		case "DisplayTrackHistory":
-			res = fmt.Sprintf("%t", inferedInstance.DisplayTrackHistory)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.DisplayTrackHistory)
+			res.valueBool = inferedInstance.DisplayTrackHistory
+			res.GongFieldValueType = GongFieldValueTypeBool
 		case "DisplayLevelAndSpeed":
-			res = fmt.Sprintf("%t", inferedInstance.DisplayLevelAndSpeed)
+			res.valueString = fmt.Sprintf("%t", inferedInstance.DisplayLevelAndSpeed)
+			res.valueBool = inferedInstance.DisplayLevelAndSpeed
+			res.GongFieldValueType = GongFieldValueTypeBool
 		}
 	default:
 		_ = inferedInstance

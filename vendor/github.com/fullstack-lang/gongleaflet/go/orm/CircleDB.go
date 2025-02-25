@@ -378,13 +378,15 @@ func (circleDB *CircleDB) DecodePointers(backRepo *BackRepoStruct, circle *model
 		if id != 0 {
 			tmp, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(id)]
 
+			// if the pointer id is unknown, it is not a problem, maybe the target was removed from the front
 			if !ok {
-				log.Fatalln("DecodePointers: circle.LayerGroup, unknown pointer id", id)
-			}
-
-			// updates only if field has changed
-			if circle.LayerGroup == nil || circle.LayerGroup != tmp {
-				circle.LayerGroup = tmp
+				log.Println("DecodePointers: circle.LayerGroup, unknown pointer id", id)
+				circle.LayerGroup = nil
+			} else {
+				// updates only if field has changed
+				if circle.LayerGroup == nil || circle.LayerGroup != tmp {
+					circle.LayerGroup = tmp
+				}
 			}
 		} else {
 			circle.LayerGroup = nil

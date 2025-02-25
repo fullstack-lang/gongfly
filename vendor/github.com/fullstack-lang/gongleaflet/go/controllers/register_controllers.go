@@ -176,6 +176,7 @@ func (controller *Controller) onWebSocketRequestForBackRepoContent(c *gin.Contex
 	log.Printf("Stack github.com/fullstack-lang/gongleaflet/go: stack path: '%s', new ws index %d",
 		stackPath, controller.listenerIndex,
 	)
+	index := controller.listenerIndex
 	controller.listenerIndex++
 
 	backRepo := controller.Map_BackRepos[stackPath]
@@ -199,6 +200,7 @@ func (controller *Controller) onWebSocketRequestForBackRepoContent(c *gin.Contex
 
 	backRepoData := new(orm.BackRepoData)
 	orm.CopyBackRepoToBackRepoData(backRepo, backRepoData)
+	backRepoData.GONG__Index = index
 
 	err = wsConnection.WriteJSON(backRepoData)
 	if err != nil {
@@ -207,7 +209,7 @@ func (controller *Controller) onWebSocketRequestForBackRepoContent(c *gin.Contex
 		fmt.Println(err)
 		return
 	} else {
-		log.Println(time.Now().Format("2006-01-02 15:04:05.000000"), "github.com/fullstack-lang/gongleaflet/go: 1st sent backRepoData of stack:", stackPath)
+		log.Println(time.Now().Format("2006-01-02 15:04:05.000000"), "github.com/fullstack-lang/gongleaflet/go: 1st sent backRepoData of stack:", stackPath, "index", index)
 	}
 	for {
 		select {
@@ -220,6 +222,7 @@ func (controller *Controller) onWebSocketRequestForBackRepoContent(c *gin.Contex
 
 				backRepoData := new(orm.BackRepoData)
 				orm.CopyBackRepoToBackRepoData(backRepo, backRepoData)
+				backRepoData.GONG__Index = index
 
 				// Set write deadline to prevent blocking indefinitely
 				wsConnection.SetWriteDeadline(time.Now().Add(10 * time.Second))
@@ -233,7 +236,7 @@ func (controller *Controller) onWebSocketRequestForBackRepoContent(c *gin.Contex
 					cancel() // Cancel the context
 					return
 				} else {
-					log.Println(time.Now().Format("2006-01-02 15:04:05.000000"), "github.com/fullstack-lang/gongleaflet/go: sent backRepoData of stack:", stackPath)
+					log.Println(time.Now().Format("2006-01-02 15:04:05.000000"), "github.com/fullstack-lang/gongleaflet/go: sent backRepoData of stack:", stackPath, "index", index)
 				}
 			}
 		}

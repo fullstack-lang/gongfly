@@ -420,13 +420,15 @@ func (visualtrackDB *VisualTrackDB) DecodePointers(backRepo *BackRepoStruct, vis
 		if id != 0 {
 			tmp, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(id)]
 
+			// if the pointer id is unknown, it is not a problem, maybe the target was removed from the front
 			if !ok {
-				log.Fatalln("DecodePointers: visualtrack.LayerGroup, unknown pointer id", id)
-			}
-
-			// updates only if field has changed
-			if visualtrack.LayerGroup == nil || visualtrack.LayerGroup != tmp {
-				visualtrack.LayerGroup = tmp
+				log.Println("DecodePointers: visualtrack.LayerGroup, unknown pointer id", id)
+				visualtrack.LayerGroup = nil
+			} else {
+				// updates only if field has changed
+				if visualtrack.LayerGroup == nil || visualtrack.LayerGroup != tmp {
+					visualtrack.LayerGroup = tmp
+				}
 			}
 		} else {
 			visualtrack.LayerGroup = nil
@@ -439,13 +441,15 @@ func (visualtrackDB *VisualTrackDB) DecodePointers(backRepo *BackRepoStruct, vis
 		if id != 0 {
 			tmp, ok := backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[uint(id)]
 
+			// if the pointer id is unknown, it is not a problem, maybe the target was removed from the front
 			if !ok {
-				log.Fatalln("DecodePointers: visualtrack.DivIcon, unknown pointer id", id)
-			}
-
-			// updates only if field has changed
-			if visualtrack.DivIcon == nil || visualtrack.DivIcon != tmp {
-				visualtrack.DivIcon = tmp
+				log.Println("DecodePointers: visualtrack.DivIcon, unknown pointer id", id)
+				visualtrack.DivIcon = nil
+			} else {
+				// updates only if field has changed
+				if visualtrack.DivIcon == nil || visualtrack.DivIcon != tmp {
+					visualtrack.DivIcon = tmp
+				}
 			}
 		} else {
 			visualtrack.DivIcon = nil

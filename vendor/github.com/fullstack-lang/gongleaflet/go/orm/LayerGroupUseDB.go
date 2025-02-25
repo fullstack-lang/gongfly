@@ -355,13 +355,15 @@ func (layergroupuseDB *LayerGroupUseDB) DecodePointers(backRepo *BackRepoStruct,
 		if id != 0 {
 			tmp, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(id)]
 
+			// if the pointer id is unknown, it is not a problem, maybe the target was removed from the front
 			if !ok {
-				log.Fatalln("DecodePointers: layergroupuse.LayerGroup, unknown pointer id", id)
-			}
-
-			// updates only if field has changed
-			if layergroupuse.LayerGroup == nil || layergroupuse.LayerGroup != tmp {
-				layergroupuse.LayerGroup = tmp
+				log.Println("DecodePointers: layergroupuse.LayerGroup, unknown pointer id", id)
+				layergroupuse.LayerGroup = nil
+			} else {
+				// updates only if field has changed
+				if layergroupuse.LayerGroup == nil || layergroupuse.LayerGroup != tmp {
+					layergroupuse.LayerGroup = tmp
+				}
 			}
 		} else {
 			layergroupuse.LayerGroup = nil

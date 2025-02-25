@@ -48,7 +48,6 @@ func fillUpTable[T models.Gongstruct](
 ) {
 
 	probe.tableStage.Reset()
-	probe.tableStage.Commit()
 
 	table := new(gongtable.Table).Stage(probe.tableStage)
 	table.Name = "Table"
@@ -108,7 +107,8 @@ func fillUpTable[T models.Gongstruct](
 	fieldIndex := 0
 	for _, structInstance := range sliceOfGongStructsSorted {
 		row := new(gongtable.Row).Stage(probe.tableStage)
-		row.Name = models.GetFieldStringValue[T](*structInstance, "Name")
+		value := models.GetFieldStringValue(*structInstance, "Name")
+		row.Name = value.GetValueString()
 
 		updater := NewRowUpdate[T](structInstance, probe)
 		updater.Instance = structInstance
@@ -146,8 +146,8 @@ func fillUpTable[T models.Gongstruct](
 		cell.CellIcon = cellIcon
 
 		for _, fieldName := range fields {
-			value := models.GetFieldStringValue[T](*structInstance, fieldName)
-			name := fmt.Sprintf("%d", fieldIndex) + " " + value
+			value := models.GetFieldStringValue(*structInstance, fieldName)
+			name := fmt.Sprintf("%d", fieldIndex) + " " + value.GetValueString()
 			fieldIndex++
 			// log.Println(fieldName, value)
 			cell := (&gongtable.Cell{
@@ -155,15 +155,37 @@ func fillUpTable[T models.Gongstruct](
 			}).Stage(probe.tableStage)
 			row.Cells = append(row.Cells, cell)
 
-			cellString := (&gongtable.CellString{
-				Name:  name,
-				Value: value,
-			}).Stage(probe.tableStage)
-			cell.CellString = cellString
+			switch value.GongFieldValueType {
+			case models.GongFieldValueTypeInt:
+				cellInt := (&gongtable.CellInt{
+					Name:  name,
+					Value: value.GetValueInt(),
+				}).Stage(probe.tableStage)
+				cell.CellInt = cellInt
+			case models.GongFieldValueTypeFloat:
+				cellFloat := (&gongtable.CellFloat64{
+					Name:  name,
+					Value: value.GetValueFloat(),
+				}).Stage(probe.tableStage)
+				cell.CellFloat64 = cellFloat
+			case models.GongFieldValueTypeBool:
+				cellBool := (&gongtable.CellBoolean{
+					Name:  name,
+					Value: value.GetValueBool(),
+				}).Stage(probe.tableStage)
+				cell.CellBool = cellBool
+			default:
+				cellString := (&gongtable.CellString{
+					Name:  name,
+					Value: value.GetValueString(),
+				}).Stage(probe.tableStage)
+				cell.CellString = cellString
+
+			}
 		}
 		for _, reverseField := range reverseFields {
 
-			value := orm.GetReverseFieldOwnerName[T](
+			value := orm.GetReverseFieldOwnerName(
 				probe.stageOfInterest,
 				probe.backRepoOfInterest,
 				structInstance,

@@ -408,13 +408,15 @@ func (vlineDB *VLineDB) DecodePointers(backRepo *BackRepoStruct, vline *models.V
 		if id != 0 {
 			tmp, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(id)]
 
+			// if the pointer id is unknown, it is not a problem, maybe the target was removed from the front
 			if !ok {
-				log.Fatalln("DecodePointers: vline.LayerGroup, unknown pointer id", id)
-			}
-
-			// updates only if field has changed
-			if vline.LayerGroup == nil || vline.LayerGroup != tmp {
-				vline.LayerGroup = tmp
+				log.Println("DecodePointers: vline.LayerGroup, unknown pointer id", id)
+				vline.LayerGroup = nil
+			} else {
+				// updates only if field has changed
+				if vline.LayerGroup == nil || vline.LayerGroup != tmp {
+					vline.LayerGroup = tmp
+				}
 			}
 		} else {
 			vline.LayerGroup = nil

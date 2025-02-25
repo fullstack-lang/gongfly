@@ -382,13 +382,15 @@ func (markerDB *MarkerDB) DecodePointers(backRepo *BackRepoStruct, marker *model
 		if id != 0 {
 			tmp, ok := backRepo.BackRepoLayerGroup.Map_LayerGroupDBID_LayerGroupPtr[uint(id)]
 
+			// if the pointer id is unknown, it is not a problem, maybe the target was removed from the front
 			if !ok {
-				log.Fatalln("DecodePointers: marker.LayerGroup, unknown pointer id", id)
-			}
-
-			// updates only if field has changed
-			if marker.LayerGroup == nil || marker.LayerGroup != tmp {
-				marker.LayerGroup = tmp
+				log.Println("DecodePointers: marker.LayerGroup, unknown pointer id", id)
+				marker.LayerGroup = nil
+			} else {
+				// updates only if field has changed
+				if marker.LayerGroup == nil || marker.LayerGroup != tmp {
+					marker.LayerGroup = tmp
+				}
 			}
 		} else {
 			marker.LayerGroup = nil
@@ -401,13 +403,15 @@ func (markerDB *MarkerDB) DecodePointers(backRepo *BackRepoStruct, marker *model
 		if id != 0 {
 			tmp, ok := backRepo.BackRepoDivIcon.Map_DivIconDBID_DivIconPtr[uint(id)]
 
+			// if the pointer id is unknown, it is not a problem, maybe the target was removed from the front
 			if !ok {
-				log.Fatalln("DecodePointers: marker.DivIcon, unknown pointer id", id)
-			}
-
-			// updates only if field has changed
-			if marker.DivIcon == nil || marker.DivIcon != tmp {
-				marker.DivIcon = tmp
+				log.Println("DecodePointers: marker.DivIcon, unknown pointer id", id)
+				marker.DivIcon = nil
+			} else {
+				// updates only if field has changed
+				if marker.DivIcon == nil || marker.DivIcon != tmp {
+					marker.DivIcon = tmp
+				}
 			}
 		} else {
 			marker.DivIcon = nil
