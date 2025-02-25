@@ -3,12 +3,12 @@ module github.com/fullstack-lang/gongfly
 go 1.23.1
 
 require (
-	github.com/fullstack-lang/gong v0.0.0-20250225033921-24fb06f214ca
-	github.com/fullstack-lang/gongdoc v0.0.0-20250225033717-69aacb2e9996
-	github.com/fullstack-lang/gongleaflet v0.0.0-20250225040159-814eba11e942
-	github.com/fullstack-lang/gongsim v0.0.0-20250225033723-01569d955165
-	github.com/fullstack-lang/gongtable v0.0.0-20250225033727-02f8dc020e2a
-	github.com/fullstack-lang/gongtree v0.0.0-20250225033732-dfabd01241e7
+	github.com/fullstack-lang/gong v0.0.0-20250225041417-0a3501178985
+	github.com/fullstack-lang/gongdoc v0.0.0-20250225040736-abee855f85a8
+	github.com/fullstack-lang/gongleaflet v0.0.0-20250225041420-7829e92d96f2
+	github.com/fullstack-lang/gongsim v0.0.0-20250225041421-c9693d96e4ea
+	github.com/fullstack-lang/gongtable v0.0.0-20250225041423-0cbce4df35cd
+	github.com/fullstack-lang/gongtree v0.0.0-20250225041424-1235b232a399
 	github.com/fullstack-lang/maticons v0.0.0-20240913013021-27a7b8fd9369
 	github.com/gin-contrib/cors v1.7.3
 	github.com/gin-contrib/static v1.1.3
@@ -29,7 +29,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
 	github.com/frankban/quicktest v1.14.6 // indirect
-	github.com/fullstack-lang/gongsvg v0.0.0-20250225033726-7b247f261f4f // indirect
+	github.com/fullstack-lang/gongsvg v0.0.0-20250225041422-4c2bee5e4226 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/gin-contrib/sse v1.0.0 // indirect
 	github.com/glebarez/go-sqlite v1.22.0 // indirect
