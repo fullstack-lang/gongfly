@@ -64,7 +64,7 @@ github.com/fullstack-lang/gong/go/ignore
 github.com/fullstack-lang/gong/go/models
 github.com/fullstack-lang/gong/go/orm
 github.com/fullstack-lang/gong/ng-github.com-fullstack-lang-gong/projects
-# github.com/fullstack-lang/gongdoc v0.0.0-20250225033104-c23cfc82aae7
+# github.com/fullstack-lang/gongdoc v0.0.0-20250225033717-69aacb2e9996
 ## explicit; go 1.23.1
 github.com/fullstack-lang/gongdoc/go/adapter
 github.com/fullstack-lang/gongdoc/go/controllers
@@ -76,7 +76,7 @@ github.com/fullstack-lang/gongdoc/go/load
 github.com/fullstack-lang/gongdoc/go/models
 github.com/fullstack-lang/gongdoc/go/orm
 github.com/fullstack-lang/gongdoc/ng-github.com-fullstack-lang-gongdoc/projects
-# github.com/fullstack-lang/gongleaflet v0.0.0-20250225033721-5081eb4216f8
+# github.com/fullstack-lang/gongleaflet v0.0.0-20250225040159-814eba11e942
 ## explicit; go 1.23.1
 github.com/fullstack-lang/gongleaflet/go
 github.com/fullstack-lang/gongleaflet/go/controllers
@@ -87,7 +87,7 @@ github.com/fullstack-lang/gongleaflet/go/orm
 github.com/fullstack-lang/gongleaflet/go/probe
 github.com/fullstack-lang/gongleaflet/go/stack
 github.com/fullstack-lang/gongleaflet/ng-github.com-fullstack-lang-gongleaflet/projects
-# github.com/fullstack-lang/gongsim v0.0.0-20250225033104-27b20bd7dd9a
+# github.com/fullstack-lang/gongsim v0.0.0-20250225033723-01569d955165
 ## explicit; go 1.23.1
 github.com/fullstack-lang/gongsim/go
 github.com/fullstack-lang/gongsim/go/controllers
