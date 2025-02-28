@@ -20,36 +20,27 @@ import * as gongtable from '@vendored_components/github.com/fullstack-lang/gongt
 import { PanelComponent } from '@vendored_components/github.com/fullstack-lang/gongdoc/ng-github.com-fullstack-lang-gongdoc/projects/gongdocspecific/src/public-api'
 import { GongflyDashboardComponent } from '../../projects/gongflyspecific/src/lib/gongfly-dashboard/gongfly-dashboard.component';
 
-import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { LeafletModule } from '@bluehalo/ngx-leaflet';
 import { MatOptionModule } from '@angular/material/core'
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-
-    CommonModule,
-    FormsModule,
-
-    MatRadioModule,
-    MatButtonModule,
-    MatIconModule,
-
-    AngularSplitModule,
-
-    TreeComponent,
-    MaterialTableComponent,
-    MaterialFormComponent,
-    PanelComponent,
-
-    GongflyDashboardComponent,
-
-    LeafletModule,
-    MatOptionModule,
-
-  ],
-
-  templateUrl: './app.component.html',
+    selector: 'app-root',
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatRadioModule,
+        MatButtonModule,
+        MatIconModule,
+        AngularSplitModule,
+        TreeComponent,
+        MaterialTableComponent,
+        MaterialFormComponent,
+        PanelComponent,
+        GongflyDashboardComponent,
+        LeafletModule,
+        MatOptionModule,
+    ],
+    templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
 
